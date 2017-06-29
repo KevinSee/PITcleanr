@@ -5,5 +5,9 @@ Authors@R: person("Kevin", "See", email = "Kevin@qcinc.org", role = c("aut", "cr
 Description: This package takes a complete tag history file from PTAGIS and cleans it to be ready as an input into DABOM escapement model.
 Depends: R (>= 3.2.4)
 License: GPL-2
+Imports:
+  httr(>= 1.2.1),
+  dplyr(>= 0.7.0),
+  purrr(>= 0.2.2)
 Encoding: UTF-8
 LazyData: true
