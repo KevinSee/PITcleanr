@@ -9,6 +9,7 @@
 #' @source \url{http://www.ptagis.org}
 #'
 #' @import dplyr httr
+#' @export
 #' @return NULL
 #' @examples queryTagMeta()
 

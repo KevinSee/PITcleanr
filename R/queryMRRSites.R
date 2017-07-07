@@ -9,6 +9,7 @@
 #' @source \url{http://www.ptagis.org}
 #'
 #' @import dplyr httr purrr
+#' @export
 #' @return NULL
 #' @examples queryMRRSites()
 
