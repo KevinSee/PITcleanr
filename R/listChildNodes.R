@@ -15,9 +15,9 @@
 listChildNodes = function(parent_node, parent_child_df) {
 
   child_nodes = parent_child_df %>%
-    filter(ParentArray %in% parent_node,
-           !ChildArray %in% parent_node) %>%
-    select(ChildArray) %>%
+    filter(ParentNode %in% parent_node,
+           !ChildNode %in% parent_node) %>%
+    select(ChildNode) %>%
     distinct() %>%
     as.matrix() %>%
     as.character()
@@ -25,9 +25,9 @@ listChildNodes = function(parent_node, parent_child_df) {
   test = as.list(child_nodes) %>%
     map_int(.f = function(x) {
       parent_child_df %>%
-        filter(ParentArray == x,
-               ChildArray != x) %>%
-        select(ChildArray) %>%
+        filter(ParentNode == x,
+               ChildNode != x) %>%
+        select(ChildNode) %>%
         distinct() %>%
         nrow()
     })
