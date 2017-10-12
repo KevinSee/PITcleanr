@@ -35,8 +35,13 @@ queryTagMeta = function(tagCode = NULL) {
   # parse the response
   parsed = httr::content(web_req,
                          'parsed') %>%
-    as.data.frame() %>%
-    tbl_df()
+    stack() %>%
+    spread(ind, values) %>%
+    tbl_df() %>%
+    mutate_at(vars(matches('Date')),
+              funs(lubridate::ymd_hms)) %>%
+    mutate_at(vars(forkLength, broodYear),
+              funs(as.numeric))
 
     return(parsed)
 
