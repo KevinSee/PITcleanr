@@ -12,7 +12,6 @@
 #' @import dplyr
 #' @export
 #' @return NULL
-#' @examples
 
 cleanCapHist = function(ch,
                         config,
