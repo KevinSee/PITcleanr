@@ -27,7 +27,9 @@ filterLGRtrapDB = function(path = '.',
                    ifelse(species == 'Steelhead', 3, NA))
   if(is.na(sppCode)) stop('Species name not found')
 
-  trap_df = read_csv(path)
+  if(is.null(path)) trap_df = trap_chnk2015
+
+  if(!is.null(path)) trap_df = read_csv(path)
 
   # keep only correct species, spawnyear and adults (returning fish),
   # as well as fish determined to be valid, with ad intact adipose fins and non-missing PIT tags
