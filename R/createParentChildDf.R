@@ -37,13 +37,11 @@ createParentChildDf = function(sites_df,
     mutate(Node = ifelse(is.na(Node), SiteID, Node))
 
   parent_child = tibble(ParentNode = 'GRA',
-                        ChildNode = 'GRA',
-                        RKM = config %>%
-                          filter(SiteID == 'GRA') %>%
-                          select(RKM) %>%
-                          distinct() %>%
-                          as.matrix() %>%
-                          as.character()) %>%
+                        ChildNode = 'GRA') %>%
+    bind_cols(config %>%
+                filter(SiteID == 'GRA') %>%
+                select(RKM, SiteType) %>%
+                distinct()) %>%
     bind_rows(tibble(ParentNode = 'GRA',
                         ChildNode = node_df %>%
                           select(Step1) %>%
