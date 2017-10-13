@@ -5,9 +5,9 @@
 #' FishPath_truncateToLastLeg() and was built by Greg K. Ryan K. altered the function
 #' to work solely in R and doesn't require the SQLite backend, and called in fishPaths(). Kevin S. edited it further
 #'
-#' @param valid_obs
+#' @param valid_obs dataframe built by the function \code{assignNodes}.
 #'
-#' @param valid_paths
+#' @param valid_paths dataframe built by the function \code{getValidPaths}
 #'
 #' @author Greg Kliewer, Ryan Kinzer, Kevin See
 #' @import dplyr
@@ -96,10 +96,10 @@ writeFishPaths = function(valid_obs,
       left_join(proc_obs %>%
                   filter(AutoProcStatus == FALSE) %>%
                   distinct(TagID) %>%
-                  mutate(UserProcStatus = FALSE)) %>%
-      mutate(UserProcStatus = ifelse(is.na(UserProcStatus),TRUE, ''),
+                  mutate(UserProcStatus = '')) %>%
+      mutate(UserProcStatus = ifelse(is.na(UserProcStatus), TRUE, ''),
              UserComment = '') %>%
-      select(AutoProcStatus, UserProcStatus, TagID, MinObsDate = ObsDate, Node, UserComment)
+      select(TagID, MinObsDate = ObsDate, Node, AutoProcStatus, UserProcStatus, UserComment)
 
     return(proc_obs)
 

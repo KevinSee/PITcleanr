@@ -7,9 +7,9 @@
 writeFishPaths(valid_obs, valid_paths)
 }
 \arguments{
-\item{valid_obs}{}
+\item{valid_obs}{dataframe built by the function \code{assignNodes}.}
 
-\item{valid_paths}{}
+\item{valid_paths}{dataframe built by the function \code{getValidPaths}}
 }
 \description{
 The function builds a data frame of all the observed fish paths in the
