@@ -23,7 +23,7 @@
 #'
 #' @param configuration is a data frame which assigns node names to unique SiteID, AntennaID, and site configuration ID combinations. It can be built with the function \code{buildConfig}.
 #'
-#' @param parent_child is a data frame created by \code{createParentChildDf}.
+#' @param parent_child_df is a data frame created by \code{createParentChildDf}.
 #'
 #' @param truncate logical, subsets observations to those with valid nodes, observations dates greater than trapping date at LGD and then to the minimum observation date of each set of observation events at a node, multiple observation events can occur at one node if the observations are split by detections at other nodes. Default is \code{TRUE}.
 #'
@@ -35,12 +35,12 @@
 assignNodes = function(valid_tag_df = NULL,
                        observation = NULL,
                        configuration = NULL,
-                       parent_child = NULL,
+                       parent_child_df = NULL,
                        truncate = T) {
 
   stopifnot(!is.null(valid_tag_df) |
               !is.null(observation) |
-              !is.null(parent_child))
+              !is.null(parent_child_df))
 
   if(is.null(configuration)) {
     print('Building configuration file')
@@ -57,7 +57,7 @@ assignNodes = function(valid_tag_df = NULL,
     left_join(valid_tag_df %>%
                 select(TagID, TrapDate),
               by = c('TagID')) %>%
-    mutate(ValidDate = ifelse(ObsDate > TrapDate, T, F))
+    mutate(ValidDate = ifelse(ObsDate >= TrapDate, T, F))
 
   # which sites are not in the configuration file
   tmp_df <- obs_df %>%
@@ -91,9 +91,9 @@ assignNodes = function(valid_tag_df = NULL,
                        # ModelMainBranch,
                        SiteName,
                        SiteDescription), #%>%
-                # filter(Node %in% union(unique(parent_child$ParentNode), unique(parent_child$ChildNode))),
+                # filter(Node %in% union(unique(parent_child_df$ParentNode), unique(parent_child_df$ChildNode))),
               by = c('SiteID', 'AntennaID', 'ConfigID')) %>%
-    mutate(Node = ifelse(Node %in% union(unique(parent_child$ParentNode), unique(parent_child$ChildNode)), Node, NA),
+    mutate(Node = ifelse(Node %in% union(unique(parent_child_df$ParentNode), unique(parent_child_df$ChildNode)), Node, NA),
            Node = ifelse(is.na(Node), 'ERROR', Node),
            ValidNode = ifelse(Node == 'ERROR', F, T)) %>%
     arrange(TagID, ObsDate)

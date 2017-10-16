@@ -5,7 +5,7 @@
 \title{Assign Observation Nodes}
 \usage{
 assignNodes(valid_tag_df = NULL, observation = NULL, configuration = NULL,
-  parent_child = NULL, truncate = T)
+  parent_child_df = NULL, truncate = T)
 }
 \arguments{
 \item{valid_tag_df}{is a data frame containing the PIT tag ID in a column called \code{TagID}, and the date that fish was caught at the trap, \code{TrapDate}.}
@@ -14,7 +14,7 @@ assignNodes(valid_tag_df = NULL, observation = NULL, configuration = NULL,
 
 \item{configuration}{is a data frame which assigns node names to unique SiteID, AntennaID, and site configuration ID combinations. It can be built with the function \code{buildConfig}.}
 
-\item{parent_child}{is a data frame created by \code{createParentChildDf}.}
+\item{parent_child_df}{is a data frame created by \code{createParentChildDf}.}
 
 \item{truncate}{logical, subsets observations to those with valid nodes, observations dates greater than trapping date at LGD and then to the minimum observation date of each set of observation events at a node, multiple observation events can occur at one node if the observations are split by detections at other nodes. Default is \code{TRUE}.}
 }
