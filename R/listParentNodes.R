@@ -16,22 +16,28 @@
 
 listParentNodes = function(end_node,
                            parent_child_df,
-                           root_site = 'GRA') {
+                           root_site = NULL) {
+
+  stopifnot(!is.null(root_site))
 
   if(!end_node %in% parent_child_df$ChildNode) {
     stop(paste(end_node, 'not found in parent-child table.'))
   }
 
-  parent_nodes = parent_child_df %>%
+  if(!root_site %in% parent_child_df$ParentNode) {
+    stop(paste(root_site, 'not found in parent-child table.'))
+  }
+
+  parent_node = parent_child_df %>%
     filter(ChildNode == end_node) %>%
     select(ParentNode) %>%
     distinct() %>%
     as.matrix() %>%
     as.character()
 
-  test = ifelse(parent_nodes == 'GRA', T, F)
+  test = ifelse(parent_node == root_site, T, F)
 
-  if(test) return(parent_nodes)
-  if(!test) return(c(listParentNodes(parent_nodes, parent_child_df), parent_nodes))
+  if(test) return(parent_node)
+  if(!test) return(c(listParentNodes(parent_node, parent_child_df, root_site), parent_node))
 
 }

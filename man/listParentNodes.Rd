@@ -4,7 +4,7 @@
 \alias{listParentNodes}
 \title{Parent Nodes}
 \usage{
-listParentNodes(end_node, parent_child_df, root_site = "GRA")
+listParentNodes(end_node, parent_child_df, root_site = NULL)
 }
 \arguments{
 \item{end_node}{Code of final node}
