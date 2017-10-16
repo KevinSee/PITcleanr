@@ -11,14 +11,28 @@
 #' @return NULL
 #' @examples getValidPaths()
 
-getValidPaths = function(parent_child_df) {
+getValidPaths = function(parent_child_df = NULL,
+                         root_site = NULL) {
+
+  stopifnot(!is.null(parent_child_df))
+
+  if(is.null(root_site)) root_site = parent_child_df %>%
+      filter(ParentNode == ChildNode) %>%
+      select(ParentNode) %>%
+      distinct() %>%
+      slice(1) %>%
+      as.matrix() %>%
+      as.character()
+
 
   valid_paths = NULL
   num_err = 0
   err_vec = NULL
 
-  for(myNode in unique(parent_child$ChildNode)) {
-    path = try(listParentNodes(myNode, parent_child) %>%
+  for(myNode in unique(parent_child_df$ChildNode)) {
+    path = try(listParentNodes(end_node = myNode,
+                               parent_child_df = parent_child_df,
+                               root_site = root_site) %>%
                  paste(collapse = ' '))
 
     if(class(path) == 'try-error') {

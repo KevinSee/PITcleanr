@@ -4,7 +4,7 @@
 \alias{getValidPaths}
 \title{Valid Paths}
 \usage{
-getValidPaths(parent_child_df)
+getValidPaths(parent_child_df = NULL, root_site = NULL)
 }
 \arguments{
 \item{parent_child_df}{dataframe with at least \code{ParentNode} and \code{ChildNode} columns}
