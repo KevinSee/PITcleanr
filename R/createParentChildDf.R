@@ -36,20 +36,20 @@ createParentChildDf = function(sites_df,
     select(SiteID, SiteType, Node, matches('RKM'), everything()) %>%
     mutate(Node = ifelse(is.na(Node), SiteID, Node))
 
-  parent_child = tibble(ParentNode = 'GRA',
-                        ChildNode = 'GRA') %>%
+  parent_child = tibble(ParentNode = startSite,
+                        ChildNode = startSite) %>%
     bind_cols(config %>%
-                filter(SiteID == 'GRA') %>%
+                filter(SiteID == startSite) %>%
                 select(RKM, SiteType) %>%
                 distinct()) %>%
-    bind_rows(tibble(ParentNode = 'GRA',
+    bind_rows(tibble(ParentNode = startSite,
                         ChildNode = node_df %>%
                           select(Step1) %>%
                           distinct() %>%
                           as.matrix() %>%
                           as.character(),
                         RKM = config %>%
-                          filter(SiteID == 'GRA') %>%
+                          filter(SiteID == startSite) %>%
                           select(RKM) %>%
                           distinct() %>%
                           as.matrix() %>%
@@ -87,15 +87,16 @@ createParentChildDf = function(sites_df,
                   distinct())
   }
 
-  for(i in 1:nrow(parent_child)) {
+  for(my_site in parent_child$ChildNode) {
+
     myNode = node_df %>%
-      filter(SiteID == parent_child$ChildNode[i])
+      filter(SiteID == my_site)
     if(nrow(myNode) < 2) next
 
-    parent_child$ChildNode[i] = myNode$Node[grep('B0$', myNode$Node)]
+    parent_child$ChildNode[match(my_site, parent_child$ChildNode)] = myNode$Node[grep('B0$', myNode$Node)]
     parent_child = parent_child %>%
-      bind_rows(tibble(ParentNode = parent_child$ChildNode[i],
-                       ChildNode = str_replace(parent_child$ChildNode[i], 'B0$', 'A0')) %>%
+      bind_rows(tibble(ParentNode = myNode$Node[grep('B0$', myNode$Node)],
+                       ChildNode = myNode$Node[grep('A0$', myNode$Node)]) %>%
                   bind_cols(myNode %>%
                               filter(grepl('A0$', Node)) %>%
                               select(RKM, SiteType)))
