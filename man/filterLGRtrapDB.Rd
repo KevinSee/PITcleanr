@@ -5,21 +5,30 @@
 \title{Read Trap Database}
 \usage{
 filterLGRtrapDB(path = ".", species = c("Chinook", "Steelhead"),
-  spawnYear = NULL)
+  spawnYear = NULL, saveValidTagList = F, validTagFileNm = NULL,
+  saveCSV = F, validTagDataFileNm = NULL)
 }
 \arguments{
 \item{path}{file path including name of file where .csv file of trap database is stored}
 
 \item{species}{either Chinook or Steelhead}
 
-\item{spawnYear}{spawn year}
+\item{spawnYear}{spawn year, as integer value, e.g. \code{2015}}
+
+\item{saveValidTagList}{Should text file of valid tags be saved in a format able to be uploaded to PTAGIS for a batch query? Default value is \code{FALSE}.}
+
+\item{validTagFileNm}{if \code{saveValidTagList} is \code{TRUE}, this is the path and filename (including .txt) to save that file as.}
+
+\item{saveCSV}{Should csv file of all biological information from the trapping database for the valid tags be saved? Default value is \code{FALSE}.}
+
+\item{validTagDataFileNm}{if \code{saveCSV} is \code{TRUE}, this is the path and filename (including .csv) to save that file as.}
 }
 \description{
-Read and filter LGR adult trap database to only include fish considered part of the valid sample
+Read and filter LGR adult trap database to only include fish considered part of the valid sample for a given species (spring/summer Chinook salmon or steelhead) and given spawn year.
 }
 \examples{
-filterLGRtrapDB(spawnYear = 2014)
+filterLGRtrapDB(path = NULL, species == 'Chinook', spawnYear = 2015)
 }
 \author{
-Kevin See
+Kevin See, Mike Ackerman, Ryan Kinzer, Rick Orme
 }

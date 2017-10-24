@@ -7,6 +7,10 @@
 #' @param path file path including name of file where .csv file of trap database is stored
 #' @param species either Chinook or Steelhead
 #' @param spawnYear spawn year, as integer value, e.g. \code{2015}
+#' @param saveValidTagList Should text file of valid tags be saved in a format able to be uploaded to PTAGIS for a batch query? Default value is \code{FALSE}.
+#' @param validTagFileNm if \code{saveValidTagList} is \code{TRUE}, this is the path and filename (including .txt) to save that file as.
+#' @param saveCSV Should csv file of all biological information from the trapping database for the valid tags be saved? Default value is \code{FALSE}.
+#' @param validTagDataFileNm if \code{saveCSV} is \code{TRUE}, this is the path and filename (including .csv) to save that file as.
 #'
 #' @import dplyr readr
 #' @export
@@ -15,7 +19,11 @@
 
 filterLGRtrapDB = function(path = '.',
                            species = c('Chinook', 'Steelhead'),
-                           spawnYear = NULL) {
+                           spawnYear = NULL,
+                           saveValidTagList = F,
+                           validTagFileNm = NULL,
+                           saveCSV = F,
+                           validTagDataFileNm = NULL) {
 
   # need a year
   stopifnot(!is.null(spawnYear))
@@ -55,6 +63,22 @@ filterLGRtrapDB = function(path = '.',
            BioScaleFinalAge, PtagisEventSites, PtagisLastEventSite, PtagisLastEventDate,
            PtagisEventLastSpawnSite, RepeatSpawner, BiosamplesValid, LGDValid, LGDInjuryiesAll, LGDMarksAll,
            LGDMarkAD)
+
+  if(writeValidTagList) {
+    valid_df %>%
+      select(LGDNumPIT) %>%
+      write.table(validTagFileNm,
+                  quote = F,
+                  row.names = F,
+                  col.names = F,
+                  sep = '\t')
+  }
+
+  if(saveCSV) {
+    valid_df %>%
+      write_csv(validTagDataFileNm,
+                row.names = F)
+  }
 
 
   return(valid_df)
