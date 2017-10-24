@@ -1,17 +1,17 @@
 #' @title Read Trap Database
 #'
-#' @description Read and filter LGR adult trap database to only include fish considered part of the valid sample
+#' @description Read and filter LGR adult trap database to only include fish considered part of the valid sample for a given species (spring/summer Chinook salmon or steelhead) and given spawn year.
 #'
-#' @author Kevin See
+#' @author Kevin See, Mike Ackerman, Ryan Kinzer, Rick Orme
 #'
 #' @param path file path including name of file where .csv file of trap database is stored
 #' @param species either Chinook or Steelhead
-#' @param spawnYear spawn year
+#' @param spawnYear spawn year, as integer value, e.g. \code{2015}
 #'
 #' @import dplyr readr
 #' @export
 #' @return NULL
-#' @examples filterLGRtrapDB(spawnYear = 2014)
+#' @examples filterLGRtrapDB(path = NULL, species == 'Chinook', spawnYear = 2015)
 
 filterLGRtrapDB = function(path = '.',
                            species = c('Chinook', 'Steelhead'),
@@ -23,6 +23,7 @@ filterLGRtrapDB = function(path = '.',
   # set some default values
   species = match.arg(species)
 
+  # determine species code (Chinook == 1, Steelhead == 3)
   sppCode = ifelse(species == 'Chinook', 1,
                    ifelse(species == 'Steelhead', 3, NA))
   if(is.na(sppCode)) stop('Species name not found')
@@ -34,18 +35,27 @@ filterLGRtrapDB = function(path = '.',
   # keep only correct species, spawnyear and adults (returning fish),
   # as well as fish determined to be valid, with ad intact adipose fins and non-missing PIT tags
   valid_df = trap_df %>%
-    filter(LGDSpecies == sppCode,
-           SpawnYear == paste0('SY', spawnYear),
-           LGDLifeStage == 'RF',
-           LGDValid == 1,
-           LGDMarkAD == 'AI',
-           !is.na(LGDNumPIT))
+    filter(LGDSpecies == sppCode,                 # keep only the desired species
+           SpawnYear == paste0('SY', spawnYear),  # keep only the desired spawn year
+           LGDLifeStage == 'RF',                  # keep only adults (returning fish)
+           LGDValid == 1,                         # keep only records marked valid
+           LGDMarkAD == 'AI',                     # keep only adipose-intact records
+           !is.na(LGDNumPIT))                     # remove any records with missing PIT tag code
 
   # drop Chinook jacks
   if(species == 'Chinook') {
     valid_df = valid_df %>%
       filter(grepl('5', SRR))
   }
+
+  # select only columns we're interested in
+  valid_df = valid_df %>%
+    select(MasterID, LGDNumPIT, CollectionDate, SpawnYear, BioSamplesID, LGDFLmm, SRR, GenRear, LGDLifeStage,
+           GenSex, GenStock, GenStockProb, GenParentHatchery, GenBY, GenPBT_ByHat, GenPBT_RGroup,
+           BioScaleFinalAge, PtagisEventSites, PtagisLastEventSite, PtagisLastEventDate,
+           PtagisEventLastSpawnSite, RepeatSpawner, BiosamplesValid, LGDValid, LGDInjuryiesAll, LGDMarksAll,
+           LGDMarkAD)
+
 
   return(valid_df)
 }
