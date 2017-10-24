@@ -64,7 +64,7 @@ filterLGRtrapDB = function(path = '.',
            PtagisEventLastSpawnSite, RepeatSpawner, BiosamplesValid, LGDValid, LGDInjuryiesAll, LGDMarksAll,
            LGDMarkAD)
 
-  if(writeValidTagList) {
+  if(saveValidTagList) {
     valid_df %>%
       select(LGDNumPIT) %>%
       write.table(validTagFileNm,
