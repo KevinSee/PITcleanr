@@ -72,11 +72,37 @@ A user can then make custom changes depending on the model set-up. For example, 
 
 ```{r}
 my_config = my_config %>%
-  mutate(Node = ifelse(SiteID == 'VC2',
-                       'VC2',
+  mutate(Node = ifelse(SiteID %in% c('VC2', 'VC1', 'LTR', 'MTR', 'UTR'),
+                       SiteID,
                        Node),
-         Node = ifelse(SiteID == 'VC1',
-                       'VC1',
+         Node = ifelse(SiteID %in% c('CROTRP',
+                                     'CRT',
+                                     'REDTRP',
+                                     'REDR',
+                                     'RRT'),
+                       'above_SC2',
+                       Node),
+         Node = ifelse(grepl('TUCH', SiteID) | grepl('TFH', SiteID),
+                       'TUCH_TFH',
+                       Node),
+         Node = ifelse(SiteID == 'MCCA',
+                       'STR',
+                       Node),
+         Node = ifelse(SiteID == 'WIMPYC',
+                       'WPCA0',
+                       Node),
+         Node = str_replace(Node, '^BTC', 'BTL'),
+         Node = ifelse(SiteID %in% c('YANKFK', 'CEY'),
+                       'YFKA0',
+                       Node),
+         Node = ifelse(SiteID == 'SAWT',
+                       'STL',
+                       Node),
+         Node = ifelse(SiteID == 'LOOH',
+                       'LOOKGC',
+                       Node),
+         Node = ifelse(SiteID == 'RPDTRP',
+                       'RAPH',
                        Node)) %>%
   distinct()
 
@@ -90,6 +116,16 @@ The next step is to define how the various sites that are to be used with DABOM 
 
 ```{r}
 site_df = writeLGRNodeNetwork()
+
+# remove some sites that have been combined with others (see the modifications to the configuration file)
+site_df = site_df %>%
+  filter(!SiteID %in% c('CROTRP', 'CRT', 'REDTRP', 'REDR', 'RRT',
+                       'MCCA',
+                       'WIMPYC',
+                       'YANKFK', 'CEY',
+                       'SAWT',
+                       'LOOH',
+                       'RPDTRP'))
 
 # a sample of what this looks like
 head(site_df)
@@ -208,19 +244,12 @@ It returns a dataframe with a row for each observed node, showing the tag code, 
 fish_paths = writeFishPaths(valid_obs_dat,
                             valid_paths)
 
-# how many tags are flagged for further review?
+# how many tags are flagged for further review (and what percentage is that)?
 fish_paths %>%
-  filter(UserProcStatus == '') %>%
-  summarise(n_flagged_tags = n_distinct(TagID))
-
-# what percentage is that?
-fish_paths %>%
-  select(TagID, UserProcStatus) %>%
-  distinct() %>%
-  xtabs(~ UserProcStatus, .) %>%
-  prop.table() %>%
-  round(3)
-
+  group_by(UserProcStatus) %>%
+  summarise(n_tags = n_distinct(TagID)) %>%
+  ungroup() %>%
+  mutate(prop_tags = n_tags / sum(n_tags))
 ```
 
 In this example, PITcleaner has flagged `r n_distinct(fish_paths$TagID[fish_paths$UserProcStatus == ''])` tags as having less than straightforward detection paths, out of `r n_distinct(fish_paths$TagID)` total tags. 
