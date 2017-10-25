@@ -48,11 +48,12 @@ writeLGRNodeNetwork = function() {
                                                                                               'TUCH',
                                                                                               'TFH')))),
                                      'Almota' = list('ALMOTC'),
+                                     'Alpowa' = list('ALPOWC'),
                                      'Penawawa' = list('PENAWC'),
                                      'Asotin' = list('ACM' = list('ACM',
                                                                   'GEORGC',
-                                                                  'ASOTIC' = list('ASOTIC',
-                                                                                  'ACB' = list('ACB',
+                                                                  'ACB' = list('ACB',
+                                                                               'ASOTIC' = list('ASOTIC',
                                                                                                'AFC',
                                                                                                'CCA')))))
 
@@ -68,7 +69,6 @@ writeLGRNodeNetwork = function() {
                                                         list('CCW',
                                                              'CATHEW')))),
                                  'Wallowa' = list('LOOKGC',
-                                                  'LOOH',
                                                   'WR1' =
                                                     list('WR1',
                                                          'BCANF',
@@ -101,7 +101,10 @@ writeLGRNodeNetwork = function() {
                                                                                             'GUMBTC',
                                                                                             'DRY2C')))))))))
 
-  bin_list[['Salmon']] = list('SFSalmon' =
+  bin_list[['Salmon']] = list('RapidRiver' =
+                                list('RAPH',
+                                     'RPDTRP'),
+                              'SFSalmon' =
                                 list('SFG' =
                                        list('SFG',
                                             'ZEN' =
@@ -128,7 +131,9 @@ writeLGRNodeNetwork = function() {
                                             'HYC' =
                                               list('HYC',
                                                    'HBC'),
-                                            'WPC',
+                                            'WPC' =
+                                              list('WPC',
+                                                   'WIMPYC'),
                                             'BHC',
                                             'LRW' =
                                               list('LRW',
