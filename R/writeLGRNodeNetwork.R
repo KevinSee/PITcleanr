@@ -104,17 +104,18 @@ writeLGRNodeNetwork = function() {
   bin_list[['Salmon']] = list('SFSalmon' =
                                 list('SFG' =
                                        list('SFG',
-                                            'ZEN',
+                                            'ZEN' =
+                                              list('ZEN',
+                                                   'LAKEC'),
                                             'KRS' =
                                               list('KRS',
-                                                   'STR' =
-                                                     list('STR',
-                                                                'MCCA')),
+                                                   'STR'),
                                             'ESS' =
                                               list('ESS',
                                                    'JOHNSC'))),
                               'BigCreek' =
-                                list('TAY'),
+                                list('TAY',
+                                     'BIG2C'),
                               'NFSalmon' =
                                 list('NFS'),
                               'CarmenCreek' =
