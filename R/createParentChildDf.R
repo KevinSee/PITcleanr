@@ -38,8 +38,11 @@ createParentChildDf = function(sites_df,
     mutate(Node = ifelse(is.na(Node), SiteID, Node)) %>%
     gather(step, value, matches('^Step')) %>%
     group_by(Node) %>%
-    mutate(stepOrder = 1:n()) %>%
     filter(value != '') %>%
+    mutate(stepOrder = str_replace(step, '^Step', ''),
+           stepOrder = as.integer(stepOrder)) %>%
+    mutate(stepOrder = 1:n()) %>%
+
     filter(stepOrder == max(stepOrder[value != ''])) %>%
     ungroup() %>%
     mutate(RKM = ifelse(grepl('\\*', RKM), NA, RKM))
