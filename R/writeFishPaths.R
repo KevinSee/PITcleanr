@@ -49,11 +49,6 @@ writeFishPaths = function(valid_obs,
       str_split(' ') %>%
       unlist()
 
-    # valid_paths %>%
-    #   filter(Node %in% pathNodes)
-
-
-
     tagObs = tagObs %>%
       mutate(InMainPath = ifelse(Node %in% pathNodes, T, F))
 
@@ -61,23 +56,44 @@ writeFishPaths = function(valid_obs,
     # determine if they are in an extended path
     if(sum(!tagObs$InMainPath) > 0) {
 
-      extendedPaths = valid_paths %>%
-        filter(grepl(finalNode, Path))
+      lastPath = valid_paths %>%
+        filter(Node == finalNode) %>%
+        select(Path) %>%
+        as.matrix() %>%
+        as.character() %>%
+        str_trim()
 
       quesObs = tagObs %>%
         filter(!InMainPath) %>%
         select(Node)
 
+      extendedPaths = valid_paths %>%
+        filter(grepl(finalNode, Path)) %>%
+        filter(Node %in% quesObs$Node)
+
       tagObs$InExtendedPath = F
 
-      for(obsNode in rev(quesObs$Node)) {
+      for(i in rev(which(!tagObs$InMainPath))) {
 
-        extendedPaths = extendedPaths %>%
-          filter(grepl(obsNode, Path))
+        obsNode = tagObs$Node[i]
 
-        if(obsNode %in% extendedPaths$Node) {
-          tagObs$InExtendedPath[tagObs$Node == obsNode] = T
+        tmp = valid_paths %>%
+          filter(Node == obsNode)
+
+        if(grepl(lastPath, tmp$Path) | grepl(tmp$Path, lastPath)) {
+          tagObs$InExtendedPath[i] = T
+          lastPath = tmp$Path
         }
+        rm(obsNode, tmp)
+        #
+        #
+        #
+        # extendedPaths = extendedPaths %>%
+        #   filter(grepl(obsNode, Path))
+        #
+        # if(obsNode %in% extendedPaths$Node) {
+        #   tagObs$InExtendedPath[tagObs$Node == obsNode] = T
+        # }
 
       }
 
