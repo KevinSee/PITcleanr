@@ -72,6 +72,7 @@ buildConfig = function() {
                          paste0(SiteID, 'A0'),
                          Node),
            Node = ifelse(grepl('DOWNSTREAM', AntennaGroup, ignore.case = T) |
+                           grepl('DNSTREAM', AntennaGroup, ignore.case = T) |
                            grepl('LOWER', AntennaGroup, ignore.case = T) |
                            grepl('BOTTOM', AntennaGroup, ignore.case = T),
                          paste0(SiteID, 'B0'),
