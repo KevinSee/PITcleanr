@@ -7,7 +7,7 @@
 #'
 #' @param sites_df dataframe containing SiteID, path, and various columns breaking path into Step1, Step2, etc.
 #' @param config a configuration file built by \code{buildConfig}
-#' @param startSite site code for the initial tagging site. Used to arrange the parent-child table with this site at top
+#' @param startSite site code for the initial tagging site. Used to arrange the parent-child table with this site at top. Default is \code{GRA} for Lower Granite Dam.
 #' @param startDate configurations that ended before this date (YYYYMMDD format) will not be included.
 #'
 #' @source \url{http://www.ptagis.org}
@@ -26,6 +26,7 @@ createParentChildDf = function(sites_df,
   # if no configuration table provided, build one
   if(is.null(config)) config = buildConfig()
 
+  # create data.frame of each node, matching up with siteID and path to that siteID
   node_df = sites_df %>%
     mutate(SiteID = as.character(SiteID)) %>%
     left_join(config %>%
@@ -34,94 +35,131 @@ createParentChildDf = function(sites_df,
                 distinct(),
               by = 'SiteID') %>%
     select(SiteID, SiteType, Node, matches('RKM'), everything()) %>%
-    mutate(Node = ifelse(is.na(Node), SiteID, Node))
+    mutate(Node = ifelse(is.na(Node), SiteID, Node)) %>%
+    gather(step, value, matches('^Step')) %>%
+    group_by(Node) %>%
+    mutate(stepOrder = 1:n()) %>%
+    filter(value != '') %>%
+    filter(stepOrder == max(stepOrder[value != ''])) %>%
+    ungroup() %>%
+    mutate(RKM = ifelse(grepl('\\*', RKM), NA, RKM))
 
-  parent_child = tibble(ParentNode = startSite,
-                        ChildNode = startSite) %>%
-    bind_cols(config %>%
-                filter(SiteID == startSite) %>%
-                select(RKM, SiteType) %>%
+  node_df = node_df %>%
+    filter(is.na(RKM)) %>%
+    select(-matches('RKM'), -SiteType) %>%
+    left_join(config %>%
+                select(SiteID, StartDate, matches('RKM'), SiteType) %>%
+                group_by(SiteID) %>%
+                filter(StartDate == max(StartDate, na.rm = T)) %>%
+                ungroup() %>%
+                select(-StartDate) %>%
                 distinct()) %>%
-    bind_rows(tibble(ParentNode = startSite,
-                        ChildNode = node_df %>%
-                          select(Step1) %>%
-                          distinct() %>%
-                          as.matrix() %>%
-                          as.character(),
-                        RKM = config %>%
-                          filter(SiteID == startSite) %>%
-                          select(RKM) %>%
-                          distinct() %>%
-                          as.matrix() %>%
-                          as.character()))
+    bind_rows(anti_join(node_df,
+                        .,
+                        by = c('Node'))) %>%
+    arrange(RKM, stepOrder)
 
-  brk_vec = 1:sum(grepl('^Step', names(node_df)))
-  for(i in brk_vec[brk_vec >= 2]) {
-    parent_child = parent_child %>%
-      bind_rows(node_df %>%
-                  select(ParentNode = grep(paste0('Step', i-1), names(node_df)),
-                         ChildNode = grep(paste0('Step', i), names(node_df)),
-                         RKM, RKMTotal) %>%
-                  filter(ChildNode != '') %>%
-                  group_by(ParentNode, ChildNode) %>%
-                  filter(RKMTotal == min(RKMTotal, na.rm = T)) %>%
-                  ungroup() %>%
-                  select(-RKMTotal) %>%
+  # initial parent-child, containing parent nodes that aren't siteIDs
+  init_pc = tibble(ParentNode = startSite,
+                   ChildNode = startSite) %>%
+    bind_rows(sites_df %>%
+                mutate(ParentNode = startSite) %>%
+                select(ParentNode,
+                       ChildNode = Step1)) %>%
+    distinct()
+
+  for(i in 1:(sum(grepl('^Step', names(sites_df))) - 1) ) {
+    init_pc = init_pc %>%
+      bind_rows(sites_df %>%
+                  select(ParentNode = grep(paste0('Step', i), names(sites_df)),
+                         ChildNode = grep(paste0('Step', i + 1), names(sites_df))) %>%
                   distinct() %>%
-                  filter(ChildNode != ''))
+                  filter(ChildNode != '',
+                         !ParentNode %in% sites_df$SiteID,
+                         !ChildNode %in% sites_df$SiteID))
   }
 
-  parent_child = parent_child %>%
-    filter(!ChildNode %in% unique(node_df$SiteID))
-
-  brk_vec = 1:sum(grepl('^Step', names(node_df)))
-  for(i in brk_vec[brk_vec >= 2]) {
-    parent_child = parent_child %>%
-      bind_rows(node_df %>%
-                  slice(which(node_df[,paste0('Step', i)] == '')) %>%
-                  select(ParentNode = grep(paste0('Step', i-1), names(node_df)),
-                         ChildNode = SiteID,
-                         RKM,
-                         SiteType) %>%
-                  filter(ParentNode != '') %>%
-                  distinct())
-  }
-
-  for(my_site in parent_child$ChildNode) {
-
-    myNode = node_df %>%
-      filter(SiteID == my_site)
-    if(nrow(myNode) < 2) next
-
-    parent_child$ChildNode[match(my_site, parent_child$ChildNode)] = myNode$Node[grep('B0$', myNode$Node)]
-    parent_child = parent_child %>%
-      bind_rows(tibble(ParentNode = myNode$Node[grep('B0$', myNode$Node)],
-                       ChildNode = myNode$Node[grep('A0$', myNode$Node)]) %>%
-                  bind_cols(myNode %>%
-                              filter(grepl('A0$', Node)) %>%
-                              select(RKM, SiteType)))
-
-    tmp = parent_child %>%
-      filter(ParentNode == unique(myNode$SiteID)) %>%
-      mutate(ParentNode = paste0(ParentNode, 'A0'))
-
-    parent_child = parent_child %>%
-      anti_join(tmp,
-                by = 'ChildNode') %>%
-      bind_rows(tmp)
-
-    rm(myNode, tmp)
-
-  }
-
-  # arrange mostly by RKM
-  parent_child = parent_child %>%
-    mutate(RKM = ifelse(grepl('\\*', RKM), NA, RKM)) %>%
-    mutate(initParent = ifelse(ParentNode == startSite, 'A', 'B')) %>%
+  # add minimum RKM total, and RKM associated with that site
+  init_pc = init_pc %>%
+    left_join(node_df %>%
+                mutate(Step1 = str_split_fixed(path, '\\.', n = 4)[,1],
+                       Step2 = str_split_fixed(path, '\\.', n = 4)[,2],
+                       Step3 = str_split_fixed(path, '\\.', n = 4)[,3]) %>%
+                select(Node, RKM, RKMTotal, path, starts_with('Step', ignore.case = F)) %>%
+                gather(step, ChildNode, starts_with('Step')) %>%
+                filter(!ChildNode %in% sites_df$SiteID,
+                       ChildNode != '',
+                       RKMTotal > 0) %>%
+                group_by(ChildNode) %>%
+                summarise_at(vars(RKMTotal),
+                             funs(min),
+                             na.rm = T) %>%
+                left_join(node_df %>%
+                            mutate(Step1 = str_split_fixed(path, '\\.', n = 4)[,1],
+                                   Step2 = str_split_fixed(path, '\\.', n = 4)[,2],
+                                   Step3 = str_split_fixed(path, '\\.', n = 4)[,3]) %>%
+                            select(starts_with('Step', ignore.case = F), RKM, RKMTotal) %>%
+                            distinct() %>%
+                            gather(step, ChildNode, matches('^Step')) %>%
+                            select(-step))) %>%
+    mutate(RKMTotal = ifelse(ChildNode == startSite,
+                             config$RKMTotal[config$SiteID == startSite],
+                             RKMTotal),
+           RKM = ifelse(ChildNode == startSite,
+                        config$RKM[config$SiteID == startSite],
+                        RKM)) %>%
+    mutate(initParent = ifelse(ChildNode == startSite, 'A',
+                               ifelse(ParentNode == startSite, 'B', 'C'))) %>%
     group_by(initParent) %>%
     arrange(RKM, .by_group = T) %>%
     ungroup() %>%
-    select(-initParent)
+    select(-initParent) %>%
+    distinct()
+
+  # create full parent-child table
+  parent_child = init_pc %>%
+    bind_rows(node_df %>%
+                filter(!grepl('A0$', Node)) %>%
+                select(ParentNode = value,
+                       ChildNode = Node,
+                       RKM, RKMTotal, SiteType) %>%
+                bind_rows(node_df %>%
+                            filter(grepl('A0$', Node)) %>%
+                            mutate(ParentNode = str_replace(Node, 'A0$', 'B0')) %>%
+                            select(ParentNode,
+                                   ChildNode = Node,
+                                   RKM, RKMTotal, SiteType))) %>%
+    mutate(SiteType = ifelse(ChildNode == startSite,
+                             config$SiteType[config$SiteID == startSite],
+                             SiteType)) %>%
+    distinct()
+
+  # correct a few parent nodes
+  parent_child = parent_child %>%
+    inner_join(node_df %>%
+                 select(SiteID, Node),
+              by = c('ParentNode' = 'SiteID')) %>%
+    filter(Node != ParentNode,
+           grepl('A0', Node)) %>%
+    mutate(ParentNode = Node) %>%
+    select(-Node) %>%
+    bind_rows(anti_join(parent_child,
+                        .,
+                        by = c('ChildNode'))) %>%
+    # arrange mosty by RKM
+    left_join(node_df %>%
+                select(ChildNode = Node,
+                       RKM,
+                       stepOrder)) %>%
+    mutate(stepOrder = ifelse(is.na(stepOrder), 1, stepOrder)) %>%
+    mutate(RKM = ifelse(grepl('\\*', RKM), NA, RKM)) %>%
+    mutate(initParent = ifelse(ChildNode == startSite, 'A',
+                               ifelse(ParentNode == startSite, 'B', 'C'))) %>%
+    group_by(initParent) %>%
+    arrange(RKM, stepOrder, desc(ChildNode), .by_group = T) %>%
+    ungroup() %>%
+    select(-initParent, -stepOrder) %>%
+    distinct()
 
   return(parent_child)
 }

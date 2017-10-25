@@ -15,7 +15,7 @@ createParentChildDf(sites_df, config = NULL, startSite = "GRA",
 
 \item{config}{a configuration file built by \code{buildConfig}}
 
-\item{startSite}{site code for the initial tagging site. Used to arrange the parent-child table with this site at top}
+\item{startSite}{site code for the initial tagging site. Used to arrange the parent-child table with this site at top. Default is \code{GRA} for Lower Granite Dam.}
 
 \item{startDate}{configurations that ended before this date (YYYYMMDD format) will not be included.}
 }
