@@ -50,10 +50,11 @@ writeLGRNodeNetwork = function() {
                                      'Almota' = list('ALMOTC'),
                                      'Alpowa' = list('ALPOWC'),
                                      'Penawawa' = list('PENAWC'),
+                                     'TenMileCreek' = list('TENMC2'),
                                      'Asotin' = list('ACM' = list('ACM',
                                                                   'GEORGC',
-                                                                  'ACB' = list('ACB',
-                                                                               'ASOTIC' = list('ASOTIC',
+                                                                  'ASOTIC' = list('ASOTIC',
+                                                                                  'ACB' = list('ACB',
                                                                                                'AFC',
                                                                                                'CCA')))))
 
@@ -68,12 +69,14 @@ writeLGRNodeNetwork = function() {
                                                       'CCW' =
                                                         list('CCW',
                                                              'CATHEW')))),
-                                 'Wallowa' = list('LOOKGC',
-                                                  'WR1' =
-                                                    list('WR1',
-                                                         'BCANF',
-                                                         'LOSTIW',
-                                                         'WALH')))
+                                 'Wallowa' =
+                                   list('WR1' =
+                                          list('WR1',
+                                               'BCANF',
+                                               'LOSTIW',
+                                               'WALH')),
+                                 'LookingGlass' =
+                                   list('LOOKGC'))
 
   bin_list[['Imnaha']] = list('CowCreek' =
                                 list('COC'),
@@ -117,8 +120,9 @@ writeLGRNodeNetwork = function() {
                                               list('ESS',
                                                    'JOHNSC'))),
                               'BigCreek' =
-                                list('TAY',
-                                     'BIG2C'),
+                                list('TAY' =
+                                       list('TAY',
+                                            'BIG2C')),
                               'NFSalmon' =
                                 list('NFS'),
                               'CarmenCreek' =
