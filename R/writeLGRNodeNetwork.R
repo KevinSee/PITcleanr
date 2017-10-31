@@ -19,48 +19,69 @@ writeLGRNodeNetwork = function() {
   bin_list = vector('list', length(bin_names))
   names(bin_list) = bin_names
 
-  bin_list[['Clearwater']] = list('Lapwai' = list('LAP' = list('LAP',
-                                                               'MIS',
-                                                               'SWT' = list('SWT', 'WEB'))),
-                                  'Potlatch' = list('JUL' = list('JUL',
-                                                                 'KHS' = list('KHS',
-                                                                              'LBEARC', 'BIGBEC'),
-                                                                 'HLM' = list('HLM',
-                                                                              'POTRWF', 'POTREF'),
-                                                                 'PCM')),
-                                  'Lolo' = list('LC1' = list('LC1', 'LC2')),
-                                  'Lochsa' = list('LRL' = list('LRL',
-                                                               'FISTRP')),
-                                  'SFClearwater' = list('SC1' = list('SC1',
-                                                                     'SC2' = list('SC2',
-                                                                                  'CROTRP',
-                                                                                  'CRT',
-                                                                                  'REDTRP',
-                                                                                  'REDR',
-                                                                                  'RRT'))),
-                                  'ClearCreek' = list('CLC' = list('CLC',
-                                                                   'KOOS')),
+  bin_list[['Clearwater']] = list('Lapwai' = list('LAP' =
+                                                    list('LAP',
+                                                         'MIS',
+                                                         'SWT' =
+                                                           list('SWT',
+                                                                'WEB'))),
+                                  'Potlatch' = list('JUL' =
+                                                      list('JUL',
+                                                           'KHS' =
+                                                             list('KHS',
+                                                                  'LBEARC',
+                                                                  'BIGBEC'),
+                                                           'HLM' =
+                                                             list('HLM',
+                                                                  'POTRWF',
+                                                                  'POTREF'),
+                                                           'PCM')),
+                                  'Lolo' = list('LC1' =
+                                                  list('LC1', 'LC2')),
+                                  'Lochsa' = list('LRL' =
+                                                    list('LRL',
+                                                         'FISTRP')),
+                                  'SFClearwater' = list('SC1' =
+                                                          list('SC1',
+                                                               'SC2' =
+                                                                 list('SC2',
+                                                                      'CROTRP',
+                                                                      'CRT',
+                                                                      'REDTRP',
+                                                                      'REDR',
+                                                                      'RRT'))),
+                                  'ClearCreek' = list('CLC' =
+                                                        list('CLC',
+                                                             'KOOS')),
                                   'Selway' = list('SW1'))
 
-  bin_list[['SW_Washington']] = list('Tucannon' = list('LTR' = list('LTR',
-                                                                    'MTR' = list('MTR',
-                                                                                 'UTR' = list('UTR',
-                                                                                              'TUCH',
-                                                                                              'TFH')))),
+  bin_list[['SW_Washington']] = list('Tucannon' =
+                                       list('LTR' =
+                                              list('LTR',
+                                                   'MTR' =
+                                                     list('MTR',
+                                                          'UTR' =
+                                                            list('UTR',
+                                                                 'TUCH',
+                                                                 'TFH')))),
                                      'Almota' = list('ALMOTC'),
                                      'Alpowa' = list('ALPOWC'),
                                      'Penawawa' = list('PENAWC'),
                                      'TenMileCreek' = list('TENMC2'),
-                                     'Asotin' = list('ACM' = list('ACM',
-                                                                  'GEORGC',
-                                                                  'ASOTIC' = list('ASOTIC',
-                                                                                  'ACB' = list('ACB',
-                                                                                               'AFC',
-                                                                                               'CCA')))))
+                                     'Asotin' = list('ACM' =
+                                                       list('ACM',
+                                                            'GEORGC',
+                                                            'ASOTIC' =
+                                                              list('ASOTIC',
+                                                                   'ACB' =
+                                                                     list('ACB',
+                                                                          'AFC',
+                                                                          'CCA')))))
 
   bin_list[['NE_Oregon']] = list('JosephCreek' =
-                                   list('JOC' = list('JOC',
-                                                     'JOSEPC')),
+                                   list('JOC' =
+                                          list('JOC',
+                                               'JOSEPC')),
                                  'GrandeRonde' =
                                    list('UpperGrandeRonde' =
                                           list('UGR' =
@@ -76,7 +97,8 @@ writeLGRNodeNetwork = function() {
                                                'LOSTIW',
                                                'WALH')),
                                  'LookingGlass' =
-                                   list('LOOKGC'))
+                                   list('LOOKGC',
+                                        'LOOH'))
 
   bin_list[['Imnaha']] = list('CowCreek' =
                                 list('COC'),
@@ -96,13 +118,14 @@ writeLGRNodeNetwork = function() {
                                                           'MAHOGC',
                                                           'IR4' =
                                                             list('IR4',
-                                                                 'IML' = list('IML',
-                                                                              'IMNAHW' =
-                                                                                list('IMNAHW',
-                                                                                     'IR5' =
-                                                                                       list('IR5',
-                                                                                            'GUMBTC',
-                                                                                            'DRY2C')))))))))
+                                                                 'IML' =
+                                                                   list('IML',
+                                                                        'IMNAHW' =
+                                                                          list('IMNAHW',
+                                                                               'IR5' =
+                                                                                 list('IR5',
+                                                                                      'GUMBTC',
+                                                                                      'DRY2C')))))))))
 
   bin_list[['Salmon']] = list('RapidRiver' =
                                 list('RAPH',
