@@ -41,7 +41,7 @@ createParentChildDf = function(sites_df,
     filter(value != '') %>%
     mutate(stepOrder = str_replace(step, '^Step', ''),
            stepOrder = as.integer(stepOrder)) %>%
-    mutate(stepOrder = 1:n()) %>%
+    # mutate(stepOrder = 1:n()) %>%
 
     filter(stepOrder == max(stepOrder[value != ''])) %>%
     ungroup() %>%
@@ -153,7 +153,9 @@ createParentChildDf = function(sites_df,
     left_join(node_df %>%
                 select(ChildNode = Node,
                        RKM,
-                       stepOrder)) %>%
+                       RKMTotal,
+                       stepOrder,
+                       path)) %>%
     mutate(stepOrder = ifelse(is.na(stepOrder), 1, stepOrder)) %>%
     mutate(RKM = ifelse(grepl('\\*', RKM), NA, RKM)) %>%
     mutate(initParent = ifelse(ChildNode == startSite, 'A',
@@ -161,7 +163,8 @@ createParentChildDf = function(sites_df,
     group_by(initParent) %>%
     arrange(RKM, stepOrder, desc(ChildNode), .by_group = T) %>%
     ungroup() %>%
-    select(-initParent, -stepOrder) %>%
+    select(-initParent) %>%
+    # select(-initParent, -stepOrder) %>%
     distinct()
 
   return(parent_child)
