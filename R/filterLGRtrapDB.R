@@ -4,7 +4,7 @@
 #'
 #' @author Kevin See, Mike Ackerman, Ryan Kinzer, Rick Orme
 #'
-#' @param path file path including name of file where .csv file of trap database is stored
+#' @param trap_path file path including name of file where .csv file of trap database is stored
 #' @param species either Chinook or Steelhead
 #' @param spawnYear spawn year, as integer value, e.g. \code{2015}
 #' @param saveValidTagList Should text file of valid tags be saved in a format able to be uploaded to PTAGIS for a batch query? Default value is \code{FALSE}.
@@ -15,9 +15,9 @@
 #' @import dplyr readr
 #' @export
 #' @return NULL
-#' @examples filterLGRtrapDB(path = NULL, species == 'Chinook', spawnYear = 2015)
+#' @examples filterLGRtrapDB(trap_path = NULL, species == 'Chinook', spawnYear = 2015)
 
-filterLGRtrapDB = function(path = '.',
+filterLGRtrapDB = function(trap_path = '.',
                            species = c('Chinook', 'Steelhead'),
                            spawnYear = NULL,
                            saveValidTagList = F,
@@ -36,9 +36,9 @@ filterLGRtrapDB = function(path = '.',
                    ifelse(species == 'Steelhead', 3, NA))
   if(is.na(sppCode)) stop('Species name not found')
 
-  if(is.null(path)) trap_df = trap_chnk2015
+  if(is.null(trap_path)) trap_df = trap_chnk2015
 
-  if(!is.null(path)) trap_df = read_csv(path)
+  if(!is.null(trap_path)) trap_df = read_csv(trap_path)
 
   # keep only correct species, spawnyear and adults (returning fish),
   # as well as fish determined to be valid, with ad intact adipose fins and non-missing PIT tags

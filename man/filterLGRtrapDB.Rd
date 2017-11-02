@@ -4,12 +4,12 @@
 \alias{filterLGRtrapDB}
 \title{Read Trap Database}
 \usage{
-filterLGRtrapDB(path = ".", species = c("Chinook", "Steelhead"),
+filterLGRtrapDB(trap_path = ".", species = c("Chinook", "Steelhead"),
   spawnYear = NULL, saveValidTagList = F, validTagFileNm = NULL,
   saveCSV = F, validTagDataFileNm = NULL)
 }
 \arguments{
-\item{path}{file path including name of file where .csv file of trap database is stored}
+\item{trap_path}{file path including name of file where .csv file of trap database is stored}
 
 \item{species}{either Chinook or Steelhead}
 
@@ -27,7 +27,7 @@ filterLGRtrapDB(path = ".", species = c("Chinook", "Steelhead"),
 Read and filter LGR adult trap database to only include fish considered part of the valid sample for a given species (spring/summer Chinook salmon or steelhead) and given spawn year.
 }
 \examples{
-filterLGRtrapDB(path = NULL, species == 'Chinook', spawnYear = 2015)
+filterLGRtrapDB(trap_path = NULL, species == 'Chinook', spawnYear = 2015)
 }
 \author{
 Kevin See, Mike Ackerman, Ryan Kinzer, Rick Orme
