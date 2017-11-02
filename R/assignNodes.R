@@ -47,15 +47,15 @@ assignNodes = function(valid_tag_df = NULL,
     configuration = buildConfig()
   }
 
-  obs_df <- observation %>%
-    select(TagID = `Tag Code`,
-           ObsDate = `Event Date Time Value`,
-           SiteID = `Event Site Code Value`,
-           AntennaID = `Antenna ID`,
-           ConfigID = `Antenna Group Configuration Value`) %>%
-    mutate(ObsDate = mdy_hms(ObsDate)) %>%
-    left_join(valid_tag_df %>%
-                select(TagID, TrapDate),
+  obs_df <- valid_tag_df %>%
+    select(TagID, TrapDate) %>%
+    left_join(observation %>%
+                select(TagID = `Tag Code`,
+                       ObsDate = `Event Date Time Value`,
+                       SiteID = `Event Site Code Value`,
+                       AntennaID = `Antenna ID`,
+                       ConfigID = `Antenna Group Configuration Value`) %>%
+                mutate(ObsDate = mdy_hms(ObsDate)),
               by = c('TagID')) %>%
     mutate(ValidDate = ifelse(ObsDate >= TrapDate, T, F))
 
