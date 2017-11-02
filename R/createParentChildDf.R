@@ -6,7 +6,7 @@
 #'
 #'
 #' @param sites_df dataframe containing SiteID, path, and various columns breaking path into Step1, Step2, etc.
-#' @param config a configuration file built by \code{buildConfig}
+#' @param configuration a configuration file built by \code{buildConfig}
 #' @param startSite site code for the initial tagging site. Used to arrange the parent-child table with this site at top. Default is \code{GRA} for Lower Granite Dam.
 #' @param startDate configurations that ended before this date (YYYYMMDD format) will not be included.
 #'
@@ -19,17 +19,17 @@
 
 
 createParentChildDf = function(sites_df,
-                               config = NULL,
+                               configuration = NULL,
                                startSite = 'GRA',
                                startDate = NULL) {
 
   # if no configuration table provided, build one
-  if(is.null(config)) config = buildConfig()
+  if(is.null(configuration)) configuration = buildConfig()
 
   # create data.frame of each node, matching up with siteID and path to that siteID
   node_df = sites_df %>%
     mutate(SiteID = as.character(SiteID)) %>%
-    left_join(config %>%
+    left_join(configuration %>%
                 filter(!EndDate < ymd(startDate) | is.na(EndDate)) %>%
                 select(SiteID, Node, SiteType, matches('RKM')) %>%
                 distinct(),
@@ -50,7 +50,7 @@ createParentChildDf = function(sites_df,
   node_df = node_df %>%
     filter(is.na(RKM)) %>%
     select(-matches('RKM'), -SiteType) %>%
-    left_join(config %>%
+    left_join(configuration %>%
                 select(SiteID, StartDate, matches('RKM'), SiteType) %>%
                 group_by(SiteID) %>%
                 filter(StartDate == max(StartDate, na.rm = T)) %>%
@@ -106,10 +106,10 @@ createParentChildDf = function(sites_df,
                             gather(step, ChildNode, matches('^Step')) %>%
                             select(-step))) %>%
     mutate(RKMTotal = ifelse(ChildNode == startSite,
-                             config$RKMTotal[config$SiteID == startSite],
+                             configuration$RKMTotal[configuration$SiteID == startSite],
                              RKMTotal),
            RKM = ifelse(ChildNode == startSite,
-                        config$RKM[config$SiteID == startSite],
+                        configuration$RKM[configuration$SiteID == startSite],
                         RKM)) %>%
     mutate(initParent = ifelse(ChildNode == startSite, 'A',
                                ifelse(ParentNode == startSite, 'B', 'C'))) %>%
@@ -133,7 +133,7 @@ createParentChildDf = function(sites_df,
                                    ChildNode = Node,
                                    RKM, RKMTotal, SiteType))) %>%
     mutate(SiteType = ifelse(ChildNode == startSite,
-                             config$SiteType[config$SiteID == startSite],
+                             configuration$SiteType[configuration$SiteID == startSite],
                              SiteType)) %>%
     distinct()
 
