@@ -10,7 +10,8 @@ Imports:
   dplyr(>= 0.7.0),
   purrr(>= 0.2.2),
   stringr(>= 1.2.0),
-  lubridate(>= 1.6.0)
+  lubridate(>= 1.6.0),
+  WriteXLS(>= 4.0.0)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
