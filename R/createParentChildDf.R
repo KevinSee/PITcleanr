@@ -41,25 +41,22 @@ createParentChildDf = function(sites_df,
     filter(value != '') %>%
     mutate(stepOrder = str_replace(step, '^Step', ''),
            stepOrder = as.integer(stepOrder)) %>%
-    # mutate(stepOrder = 1:n()) %>%
-
     filter(stepOrder == max(stepOrder[value != ''])) %>%
     ungroup() %>%
     mutate(RKM = ifelse(grepl('\\*', RKM), NA, RKM))
 
   node_df = node_df %>%
     filter(is.na(RKM)) %>%
-    select(-matches('RKM'), -SiteType) %>%
+    select(-Node, -SiteType, -matches('RKM')) %>%
     left_join(configuration %>%
-                select(SiteID, StartDate, matches('RKM'), SiteType) %>%
                 group_by(SiteID) %>%
                 filter(StartDate == max(StartDate, na.rm = T)) %>%
                 ungroup() %>%
-                select(-StartDate) %>%
+                select(SiteID, Node, SiteType, matches('RKM')) %>%
                 distinct()) %>%
     bind_rows(anti_join(node_df,
                         .,
-                        by = c('Node'))) %>%
+                        by = c('SiteID'))) %>%
     arrange(RKM, stepOrder)
 
   # initial parent-child, containing parent nodes that aren't siteIDs
