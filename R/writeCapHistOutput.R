@@ -25,6 +25,7 @@ writeCapHistOutput = function(valid_obs = NULL,
 
   fish_paths = writeFishPaths(valid_obs,
                               valid_paths)
+
   spwn_paths = writeSpwnPaths(valid_obs,
                               valid_paths)
 
@@ -39,8 +40,6 @@ writeCapHistOutput = function(valid_obs = NULL,
            NodeOrder:ModelObs,
            SiteDescription, UserComment)
 
-  if(!save_file) return(save_df)
-
   if(save_file) {
     WriteXLS('save_df',
              file_name,
@@ -51,4 +50,6 @@ writeCapHistOutput = function(valid_obs = NULL,
              FreezeCol = 1,
              FreezeRow = 1)
   }
+
+  return(save_df)
 }
