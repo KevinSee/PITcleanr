@@ -77,7 +77,7 @@ assignNodes = function(valid_tag_df = NULL,
       print( paste0(tmp_df$SiteID[i], " - ", tmp_df$AntennaID[i], " - ", tmp_df$ConfigID[i]))
     }
 
-    cat("Observation records with these combinations are flagged with an 'ERROR' in the Node field")
+    cat("Observation records with these combinations are flagged with an 'ERROR' in the Node field\n")
   }
 
   obs_dat <- obs_df %>%
