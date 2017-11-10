@@ -213,6 +213,9 @@ writeLGRNodeNetwork = function() {
                          str_replace(path,
                                      'IR$',
                                      SiteID),
+                         path)) %>%
+    mutate(path = ifelse(str_sub(path, start = -nchar(SiteID)) != SiteID,
+                         paste(path, SiteID, sep = '.'),
                          path))
 
   network_descrip = str_split(site_df_init$path,
@@ -223,13 +226,10 @@ writeLGRNodeNetwork = function() {
   site_df = site_df_init %>%
     bind_cols(network_descrip %>%
                 as.data.frame()) %>%
-    gather(brk, upstrm_site, matches('Step')) %>%
-    mutate(upstrm_site = ifelse(upstrm_site == '', NA, upstrm_site),
-           upstrm_site = ifelse(upstrm_site == SiteID, NA, upstrm_site)) %>%
-    spread(brk, upstrm_site,
-           fill = '') %>%
+    mutate_at(vars(matches('^Step')),
+              funs(as.character)) %>%
     mutate(SiteID = factor(SiteID,
-                           levels = site_df_init$SiteID)) %>%
+                           levels = unique(site_df_init$SiteID))) %>%
     arrange(SiteID)
 
 
