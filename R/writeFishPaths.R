@@ -37,6 +37,7 @@ writeFishPaths = function(valid_obs,
     finalNode = tagObs %>%
       filter(ObsDate == max(ObsDate)) %>%
       select(Node) %>%
+      slice(n()) %>%
       as.matrix() %>%
       as.character()
 
