@@ -9,8 +9,6 @@ output:
     toc_depth: 3
   rmarkdown::html_vignette:
     fig_caption: yes
-    smooth_scroll: yes
-    theme: cerulean
     toc: yes
     toc_depth: 3
     toc_float: yes
@@ -42,8 +40,6 @@ library(lubridate)
 library(PITcleanr)
 ```
 
-
-
 # Data sources
 
 PITcleanr starts with data from an adult trap database, to determine which tags are considered part of the valid tag sample, and what the trap date is for each tag. For the Lower Granite dam, the data can be retreived from the "QCI Downloads" folder on the Idaho Fish and Game's [IFWIS website](https://collaboration.idfg.idaho.gov/default.aspx). The trapping data is stored in an Microsoft Access database that is updated weekly and named "LGTrappingExportJodyW.accdb". Permission must be obtained from Idaho Fish and Game before viewing, accessing and retreiving data from the site. This database contains two tables, which can be exported as .csv files. Once this is done, PITcleanr has a function, `filterLGRtrapDB` to determine which tags are valid, and when they were caught in the adult trap. 
@@ -65,13 +61,13 @@ yr = 2015
 One of the first steps is to compile a configuration file containing information about all of the detection sites that may be present. PITcleanr will create such a configuration file for all sites in the Columbia River basin, using the `buildConfig()` function.
 
 ```{r}
-my_config = buildConfig()
+org_config = buildConfig()
 ```
 
 A user can then make custom changes depending on the model set-up. For example, in the Lower Granite version of DABOM, all antennas in VC1 and VC2 are combined into a single node.
 
 ```{r}
-my_config = my_config %>%
+my_config = org_config %>%
   mutate(Node = ifelse(SiteID %in% c('VC2', 'VC1', 'LTR', 'MTR', 'UTR'),
                        SiteID,
                        Node),
@@ -82,11 +78,22 @@ my_config = my_config %>%
                                      'RRT'),
                        'above_SC2',
                        Node),
-         Node = ifelse(grepl('TUCH', SiteID) | grepl('TFH', SiteID),
+         Node = ifelse(SiteID == 'AFC',
+                       ifelse(grepl('MAINSTEM', AntennaGroup),
+                              'AFCB0',
+                              'AFCA0'),
+                       Node),
+         Node = ifelse(SiteID %in% c('TUCH', 'TFH'),
                        'TUCH_TFH',
                        Node),
          Node = ifelse(SiteID == 'MCCA',
                        'STR',
+                       Node),
+         Node = ifelse(SiteID == 'CARMEC',
+                       'CRCA0',
+                       Node),
+         Node = ifelse(SiteID == 'BIG2C',
+                       'TAYA0',
                        Node),
          Node = ifelse(SiteID == 'WIMPYC',
                        'WPCA0',
@@ -103,8 +110,36 @@ my_config = my_config %>%
                        Node),
          Node = ifelse(SiteID == 'RPDTRP',
                        'RAPH',
+                       Node),
+         Node = ifelse(SiteID == 'CHARLC',
+                       'CCAB0',
+                       Node),
+         Node = ifelse(Node == 'KEN',
+                       'KENB0',
+                       Node),
+         Node = ifelse(Node == 'HYC',
+                       'HYCB0',
+                       Node),
+         Node = ifelse(Node == 'LLR',
+                       'LLRB0',
+                       Node),
+         Node = ifelse(Node == 'LRW',
+                       'LRWB0',
+                       Node),
+         Node = ifelse(SiteID == '18M',
+                       paste0('X', Node),
                        Node)) %>%
   distinct()
+
+# add HBC if it isn't in there yet
+if(!'HBC' %in% unique(my_config$SiteID)) {
+  my_config = my_config %>%
+    bind_rows(tibble(SiteID = 'HBC',
+                     Node = 'HBC',
+                     SiteType = 'INT',
+                     RKM = '522.303.416.049.002',
+                     RKMTotal = 1292))
+}
 
 # a sample of this configuration file
 head(my_config)
@@ -119,13 +154,14 @@ site_df = writeLGRNodeNetwork()
 
 # remove some sites that have been combined with others (see the modifications to the configuration file)
 site_df = site_df %>%
-  filter(!SiteID %in% c('CROTRP', 'CRT', 'REDTRP', 'REDR', 'RRT',
-                       'MCCA',
-                       'WIMPYC',
-                       'YANKFK', 'CEY',
-                       'SAWT',
-                       'LOOH',
-                       'RPDTRP'))
+  filter(!SiteID %in% c('MCCA',
+                        'WIMPYC',
+                        'YANKFK', 'CEY',
+                        'SAWT',
+                        'LOOH',
+                        'CARMEC',
+                        'BIG2C',
+                        'RPDTRP'))
 
 # a sample of what this looks like
 head(site_df)
@@ -148,61 +184,50 @@ parent_child = createParentChildDf(site_df,
                                                       paste0(yr, '0301'),
                                                       paste0(yr-1, '0701')))
 
-```
+# add one site in Kenney Creek, if it's been dropped
+if(sum(grepl('KENA0', parent_child$ChildNode)) == 0) {
+  lineNum = which(parent_child$ChildNode == 'KENB0')
+  
+  parent_child = parent_child %>%
+    slice(1:lineNum) %>%
+    bind_rows(parent_child %>%
+                slice(lineNum) %>%
+                mutate(ParentNode = 'KENB0',
+                       ChildNode = 'KENA0')) %>%
+    bind_rows(parent_child %>%
+                slice((lineNum + 1):n()))
+}
 
-## Valid Paths
-
-Once the parent-child dataframe has been created, PITcleanr uses the `getValidPaths` function to construct a dataframe of all valid paths a fish may follow. 
-
-```{r}
-valid_paths = getValidPaths(parent_child)
 ```
 
 ## Valid Tags
 
-From the trap database, PITcleanr searches for tags that are part of the valid tag list for a particular species and year, and returns a dataframe with their tag code and the date of trapping. PITcleanr contains an example of the trap database (`trap_chnk2015`), which only contains spring/summer Chinook in 2015. Set `path` equal to the file path, including the file name and extension, of the actual table (named tblLGDMasterCombineExportJodyW.csv in my version of the trap database). Currently it must be in CSV format.
+The user must define the path to the adult trap database, which contains the data PITcleanr uses to determine which tags are valid to be fed into DABOM. PITcleanr contains an example of the trap database (`trap_chnk2015`), which only contains spring/summer Chinook in 2015, so if `trap_path` is set to `NULL`, this will be used. If the user has access to the trap database, set `trap_path` equal to the file path, including the file name and extension, of the actual table (named tblLGDMasterCombineExportJodyW.csv in my version of the trap database). Currently it must be in CSV format.
+
+From the trap database, PITcleanr searches for tags that are part of the valid tag list for a particular species and year, and returns a dataframe with their tag code and the date of trapping. Currently, within the Lower Granite trap database, PITcleanr filters for tags of the appropriate species and spawn year, and then filters for returning adults (`LGDLifeStage == 'RF'`), adipose-intact fish (`LGDMarkAD == 'AI'`), with non-missing PIT tag numbers (`!is.na(LGDNumPIT)`) and that are marked as valid (`LGDValid == 1`). Besides filtering out these valid tags, the function `filterLGRtrapDB` provides an arguement to save those tag IDs as a text file, to make it easier to upload to PTAGIS. 
 
 ```{r}
 data(trap_chnk2015)
 head(trap_chnk2015)
 
-valid_df = filterLGRtrapDB(path = NULL,
+valid_df = filterLGRtrapDB(trap_path = NULL,
                            species = spp,
-                           spawnYear = yr)
-
-```
-
-This `valid_df` dataframe contains lots of biological information for all the valid tags that may be useful later, which is why we maintain it in its entirety. However, for DABOM, we only need the PIT tag code and the trap date.
-
-```{r}
-# pull valid tags from trap database, get trap date
-valid_tag_df = summariseValidTagsLGR(valid_df)
+                           spawnYear = yr,
+                           saveValidTagList = T,
+                           validTagFileNm = 'ValidTags.txt')
 ```
 
 ## Complete Tag History
 
-The next step is to query PTAGIS for the complete tag history of all valid tags in our sample. This can be done in two ways.
+The next step is to compile the complete tag history of all valid tags in our sample. This can be done in two ways.
 
 ### Through PTAGIS
 
-The valid tag numbers now need to be exported into a '.txt' file for loading into [PTAGIS](http://PTAGIS.org) to perform a 'Complete Tag History' query. We only need to export the contents of the TagID field which contains the unique PIT-tag codes and save them in a text file with no headers or rownames.
-
-```{r}
-tag_codes <- valid_tag_df$TagID
-# write.table(tag_codes, 
-#             file = '../tag_codes.txt',
-#             quote = FALSE, 
-#             sep = '\n',
-#             row.names = FALSE, 
-#             col.names = FALSE)
-
-```
-
-After logging into [PTAGIS](http://PTAGIS.org), select the "Data" tab, "Advanced Reporting" and then the "Launch" button. Now, select the "New Query Builder2 Report" icon and the "Complete Tag History" option. The __DABOM__ functions require the following attributes to be selected; *Tag*, *Event Date Time*, *Event Site Code*, *Antenna*, and *Antenna Group Configuration*. Other attributes can be selected and they can appear in any order.  After selecting attributes, upload *tag_codes.txt* in the 'Tag Code - List or Text File' section and then run the report and save the output.  Next read the outputted observation file into R or use the example observation file, "chnk15_obs".
+After logging into [PTAGIS](http://PTAGIS.org), select the "Data" tab, "Advanced Reporting" and then the "Launch" button. Now, select the "New Query Builder2 Report" icon and the "Complete Tag History" option. The __DABOM__ functions require the following attributes to be selected; *Tag*, *Event Date Time*, *Event Release Date Time*, *Event Site Code*, *Antenna*, and *Antenna Group Configuration*. Other attributes can be selected and they can appear in any order.  After selecting attributes, upload *ValidTags.txt* in the 'Tag Code - List or Text File' section and then run the report and save the output.  Next read the outputted observation file into R or use the example observation file, "chnk15_obs".
 
 ```{r}
 data(chnk2015_obs)
-observation = chnk2015_obs
+observations = chnk2015_obs
 ```
 
 ### Through DART
@@ -210,7 +235,7 @@ observation = chnk2015_obs
 DART has built an API query allowing users to query the complete tag history of any particular tag. Be warned however, on one test machine, this query could return the records of about 10 tags per minute, so for several thousand tags, it will take awhile. 
 
 ```{r, eval = F}
-observation = valid_tag_df %>%
+observations = valid_tag_df %>%
   select(TagID) %>%
   as.matrix() %>%
   as.character() %>%
@@ -220,87 +245,45 @@ observation = valid_tag_df %>%
 
 ```
 
-## Filter Tag History
+## Process Raw Observations
 
-The next step is to assign each observation to an appropriate node from the DABOM model, as defined in the configuration file. The `assignNodes()` function will do just this. It requires the complete tag histories, the dataframe of valid tags and their trap date, the site configuration dataframe, the parent-child dataframe to filter out observations from sites not contained in the DABOM version. If `truncate` is set to `TRUE` (the default), the `assignNodes()` function will filter out observations that occurred prior to the trap date, and remove consecutive observations at the same node to simplify the file.
+`PITcleanr` contains a single function, `processCapHist_LGD` that processes the raw observations and returns several key pieces of information. First, it constructs a table of all the pathways a fish might take that are "valid" in DABOM, meaning they reflect continual upstream movement along a single branch of the stream network (using an internal function, `getValidPaths`). Next, it uses the trap database to determine the trap date of each tag. The next step is to assign each observation to an appropriate node from the DABOM model, as defined in the configuration file, using an internal function, `assignNodes()`. It requires the complete tag histories, the dataframe of valid tags and their trap date, the site configuration dataframe, and the parent-child dataframe to filter out observations from sites not contained in the DABOM version. If `truncate` is set to `TRUE` (the default), the `assignNodes()` function will filter out observations that occurred prior to the trap date, and remove consecutive observations at the same node to simplify the file. 
 
-```{r}
-valid_obs_dat = assignNodes(valid_tag_df,
-                            observation,
-                            configuration = my_config,
-                            parent_child,
-                            truncate = T)
-```
+Finally, the processing function determines whether each observation should be considered valid for `DABOM`. It does this by determining the final node a fish was observed at, and querying the valid path dataframe for all the downstream sites that may be encountered on the way to that node. It also proposes an extended path of the first set of nodes upstream of the final node, and acknowledges that observations along that extended path may also be valid (e.g. a fish swims a particular route upstream, spawns and then swims partway downstream, past a node or two. The most upstream node should be considered a valid observation, and the likely spawning location.).
 
-## Determine Valid Observations
+It returns a dataframe with a row for each observed node, showing the tag code, the site code, the model node, the minimum observed date-time, and two columns called "AutoProcStatus" and "UserProcStatus". There are additional columns as well, called:
 
-### Fish Paths
+* `NodeOrder`: how many nodes would a tag cross, including the one identified in that row, to reach the current node? This is regardless of whether a tag was observed at those nodes.
+* `Direction`: based on previously observed node, is the tag moving upstream or downstream? If this is `NA`, the current node is not along a valid path containing the previous node.
+* `ValidPath`: Taken together, do all the observed nodes for a particular tag fall along a single valid path? 
+* `ModelObs`: Marked `TRUE` for all observed nodes, in sequence by observation, that initially constitute a valid path. Does not assume that the final observation is along the true valid path.
+* `SiteDescription`: The site description of the site, as provided by PTAGIS.
 
-The final step is to determine if each observation of a particular tag is following a "one-way" path upstream. The logic behind this function was first proposed and implemented by Greg Kliewer and worked within a SQLite database. We have ported that logic into more standard R functions. The `writeFishPaths()` function does this by determining the final node a fish was observed at, and querying the valid path dataframe for all the downstream sites that may be encountered on the way to that node. It also proposes an extended path of the first set of nodes upstream of the final node, and acknowledges that observations along that extended path may also be valid (e.g. a fish swims a particular route upstream, spawns and then swims partway downstream, past a node or two. The most upstream node should be considered a valid observation, and the likely spawning location.).
-
-It returns a dataframe with a row for each observed node, showing the tag code, the node, the minimum observed date-time, and two columns called "AutoProcStatus" and "UserProcStatus". "AutoProcStatus" is PITcleanr's best attempt to determine which observations should be deleted before bringing the data into DABOM. UserProcStatus is there for the user to change things. Any tag that has at least one flagged observation (AutoProcStatus == `FALSE`) will have all of the observations labeled as blanks in the UserProcStatus column. This allows the user to filter initially on the rows with UserProcStatus == '', and see all the observations for each flagged tag. The user can then determine which observations should be included as "valid" by marking the UserProcStatus as `TRUE`, or which ones should be deleted by marking the UserProcStatus as `FALSE`, guided by the suggestions in the AutoProcStatus column, and by the user's knowledge of fish behavior and the system in question. 
-
-```{r}
-fish_paths = writeFishPaths(valid_obs_dat,
-                            valid_paths)
-
-# how many tags are flagged for further review (and what percentage is that)?
-fish_paths %>%
-  group_by(UserProcStatus) %>%
-  summarise(n_tags = n_distinct(TagID)) %>%
-  ungroup() %>%
-  mutate(prop_tags = n_tags / sum(n_tags))
-```
-
-In this example, PITcleaner has flagged `r n_distinct(fish_paths$TagID[fish_paths$UserProcStatus == ''])` tags as having less than straightforward detection paths, out of `r n_distinct(fish_paths$TagID)` total tags. 
-
-### Spawner Paths
-
-Ryan Kinzer put together another function to determine the direction of travel for each individual fish by checking the current and previous node locations against the valid path strings. We've adapted it as part of PITcleanr, and called it `writeSpwnPaths`. For each observation, if the node is within a valid path (regardless of what direction the tag appears to be moving), it is labeled as a valid path. However, if the observation node is downstream of a previously identified upstream node, the direction of travel is labeled as "Down" and the *ModelObs* column is marked as `FALSE`. 
-
-```{r}
-spwn_paths = writeSpwnPaths(valid_obs_dat,
-                            valid_paths)
-
-# how many tags are flagged for further review?
-spwn_paths %>%
-  filter(!ValidPath | !ModelObs) %>%
-  summarise(n_flagged_tags = n_distinct(TagID))
-
-# # determine spawning location (most upstream detection)
-# spwn_paths %>%
-#   filter(ModelObs) %>%
-#   group_by(TagID) %>%
-#   filter(NodeOrder == max(NodeOrder)) %>%
-#   ungroup() %>%
-#   select(TagID, SiteID, Node, ObsDate) %>%
-#   distinct()
-
-
-```
-
-# The User's Remaining Work
-
-The results of these two functions, `writeFishPaths` and `writeSpwnPaths` can be combined to help the user determine which observations to ultimately discard before feeding the data to DABOM. We recommend saving the output as an Excel file with filtering capabiliities. The *UserComment* field is meant to record reasons why certain observations are deleted.
+"AutoProcStatus" is PITcleanr's best attempt to determine which observations should be kept (and which should be deleted) before bringing the data into DABOM. "UserProcStatus"" is there for the user to change things. Any tag that has at least one flagged observation ("AutoProcStatus" == `FALSE`) will have all of the observations labeled as blanks in the "UserProcStatus" column. This allows the user to filter initially on the rows with `UserProcStatus == ''`, and see all the observations for each flagged tag. The user can then determine which observations should be included as "valid" by marking the UserProcStatus as `TRUE`, or which ones should be deleted by marking the UserProcStatus as `FALSE`, guided by the suggestions in the AutoProcStatus column, information contained in the other columns, and by the user's knowledge of fish behavior and the system in question. The *UserComment* field is meant to record reasons why certain observations are deleted.
 
 We imagine the workflow to involve initially filtering on all the blank UserProcStatus rows. Then, for each tag, determine whether each observation should be kept (mark *UserProcStatus* == `TRUE`) or discarded (mark *UserProcStatus* == 'FALSE`) based on suggestions from the *AutoProcStatus*, *ValidPaths* and *ModelObs* fields. For any observation destined to be discarded, a reason should be provided in the *UserComment* for re-producibility. When no blank *UserProcStatus* rows remain, save the file. It is now ready for importation into DABOM.
 
-```{r, eval = F}
-library(WriteXLS)
 
-save_df = spwn_paths %>%
-  select(TagID, TrapDate, ObsDate:SiteID, Node, SiteName, SiteDescription, NodeOrder:ModelObs) %>%
-  full_join(fish_paths %>%
-              rename(ObsDate = MinObsDate)) %>%
-  arrange(TrapDate, TagID, ObsDate)
+```{r}
+proc_list = processCapHist_LGD(species = spp,
+                               spawnYear = yr,
+                               configuration = my_config,
+                               parent_child,
+                               trap_path = NULL,
+                               filter_by_PBT = T,
+                               observations = observations,
+                               truncate = T,
+                               save_file = T,
+                               file_name = 'ProcessedCH.xlsx')
+```
 
-WriteXLS('save_df',
-         'PITcleanr_output.xlsx',
-         AdjWidth = T,
-         AutoFilter = T,
-         BoldHeaderRow = T,
-         FreezeCol = 1,
-         FreezeRow = 1)
+# Summarise final spawning location and biological information
 
+`PITcleanr` provides a function to determine a fish's final spawning location, and combine it with lots of biological data from the trap database at Lower Granite, `summariseTagData`. It relies on a processed capture history file returned by the function `proc_list`. Internally, this relies on another function, `estimateSpawnLoc`, which determines the final spawning location of each tag, by finding the furthest upstream node a tag was observed at within it's valid observations.
+
+```{r}
+tag_summ = summariseTagData(proc_list)
+
+head(tag_summ)
 ```
 
