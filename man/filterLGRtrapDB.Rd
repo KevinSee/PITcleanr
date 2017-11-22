@@ -2,7 +2,7 @@
 % Please edit documentation in R/filterLGRtrapDB.R
 \name{filterLGRtrapDB}
 \alias{filterLGRtrapDB}
-\title{Read Trap Database}
+\title{Read Lower Granite Trap Database}
 \usage{
 filterLGRtrapDB(trap_path = ".", species = c("Chinook", "Steelhead"),
   spawnYear = NULL, saveValidTagList = F, validTagFileNm = NULL,
