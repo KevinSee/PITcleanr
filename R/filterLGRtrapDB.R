@@ -1,4 +1,4 @@
-#' @title Read Trap Database
+#' @title Read Lower Granite Trap Database
 #'
 #' @description Read and filter LGR adult trap database to only include fish considered part of the valid sample for a given species (spring/summer Chinook salmon or steelhead) and given spawn year.
 #'
@@ -43,30 +43,30 @@ filterLGRtrapDB = function(trap_path = '.',
   # keep only correct species, spawnyear and adults (returning fish),
   # as well as fish determined to be valid, with ad intact adipose fins and non-missing PIT tags
   valid_df = trap_df %>%
-    filter(LGDSpecies == sppCode,                 # keep only the desired species
-           SpawnYear == paste0('SY', spawnYear),  # keep only the desired spawn year
-           LGDLifeStage == 'RF',                  # keep only adults (returning fish)
-           LGDValid == 1,                         # keep only records marked valid
-           LGDMarkAD == 'AI',                     # keep only adipose-intact records
-           !is.na(LGDNumPIT))                     # remove any records with missing PIT tag code
+    dplyr::filter(LGDSpecies == sppCode,                 # keep only the desired species
+                  SpawnYear == paste0('SY', spawnYear),  # keep only the desired spawn year
+                  LGDLifeStage == 'RF',                  # keep only adults (returning fish)
+                  LGDValid == 1,                         # keep only records marked valid
+                  LGDMarkAD == 'AI',                     # keep only adipose-intact records
+                  !is.na(LGDNumPIT))                     # remove any records with missing PIT tag code
 
   # drop Chinook jacks
   if(species == 'Chinook') {
     valid_df = valid_df %>%
-      filter(grepl('5', SRR))
+      dplyr::filter(grepl('5', SRR))
   }
 
   # select only columns we're interested in
   valid_df = valid_df %>%
-    select(MasterID, LGDNumPIT, CollectionDate, SpawnYear, BioSamplesID, LGDFLmm, SRR, GenRear, LGDLifeStage,
-           GenSex, GenStock, GenStockProb, GenParentHatchery, GenBY, GenPBT_ByHat, GenPBT_RGroup,
-           BioScaleFinalAge, PtagisEventSites, PtagisLastEventSite, PtagisLastEventDate,
-           PtagisEventLastSpawnSite, RepeatSpawner, BiosamplesValid, LGDValid, LGDInjuryiesAll, LGDMarksAll,
-           LGDMarkAD)
+    dplyr::select(MasterID, LGDNumPIT, CollectionDate, SpawnYear, BioSamplesID, LGDFLmm, SRR, GenRear, LGDLifeStage,
+                  GenSex, GenStock, GenStockProb, GenParentHatchery, GenBY, GenPBT_ByHat, GenPBT_RGroup,
+                  BioScaleFinalAge, PtagisEventSites, PtagisLastEventSite, PtagisLastEventDate,
+                  PtagisEventLastSpawnSite, RepeatSpawner, BiosamplesValid, LGDValid, LGDInjuryiesAll, LGDMarksAll,
+                  LGDMarkAD)
 
   if(saveValidTagList) {
     valid_df %>%
-      select(LGDNumPIT) %>%
+      dplyr::select(LGDNumPIT) %>%
       write.table(validTagFileNm,
                   quote = F,
                   row.names = F,
@@ -76,8 +76,8 @@ filterLGRtrapDB = function(trap_path = '.',
 
   if(saveCSV) {
     valid_df %>%
-      write_csv(validTagDataFileNm,
-                row.names = F)
+      readr::write_csv(validTagDataFileNm,
+                       row.names = F)
   }
 
 

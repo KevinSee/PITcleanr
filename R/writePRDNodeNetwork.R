@@ -129,34 +129,34 @@ writePRDNodeNetwork = function() {
 
 
 
-  site_df_init = tibble(SiteID = unlist(bin_all),
-                        path = names(unlist(bin_all))) %>%
-    mutate(path = str_replace(path,
-                              '[[:digit:]]$',
-                              ''),
-           path = str_replace(path,
-                              'WEA1$',
-                              'WEA'),
-           path = str_replace(path,
-                              'OKL1$',
-                              'OKL') ) %>% #,
-    mutate(path = ifelse(str_sub(path, start = -nchar(SiteID)) != SiteID,
-                         paste(path, SiteID, sep = '.'),
-                         path))
+  site_df_init = dplyr::tibble(SiteID = unlist(bin_all),
+                               path = names(unlist(bin_all))) %>%
+    dplyr::mutate(path = stringr::str_replace(path,
+                                              '[[:digit:]]$',
+                                              ''),
+                  path = stringr::str_replace(path,
+                                              'WEA1$',
+                                              'WEA'),
+                  path = stringr::str_replace(path,
+                                              'OKL1$',
+                                              'OKL') ) %>% #,
+    dplyr::mutate(path = ifelse(stringr::str_sub(path, start = -nchar(SiteID)) != SiteID,
+                                paste(path, SiteID, sep = '.'),
+                                path))
 
-  network_descrip = str_split(site_df_init$path,
-                              '\\.',
-                              simplify = T)
+  network_descrip = stringr::str_split(site_df_init$path,
+                                       '\\.',
+                                       simplify = T)
   colnames(network_descrip) = paste0('Step', 1:ncol(network_descrip))
 
   site_df = site_df_init %>%
-    bind_cols(network_descrip %>%
-                as.data.frame()) %>%
-    mutate_at(vars(matches('^Step')),
-              funs(as.character)) %>%
-    mutate(SiteID = factor(SiteID,
-                           levels = unique(site_df_init$SiteID))) %>%
-    arrange(SiteID)
+    dplyr::bind_cols(network_descrip %>%
+                       as.data.frame()) %>%
+    dplyr::mutate_at(vars(matches('^Step')),
+                     funs(as.character)) %>%
+    dplyr::mutate(SiteID = factor(SiteID,
+                                  levels = unique(site_df_init$SiteID))) %>%
+    dplyr::arrange(SiteID)
 
 
   return(site_df)

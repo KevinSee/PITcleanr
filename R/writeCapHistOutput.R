@@ -31,24 +31,24 @@ writeCapHistOutput = function(valid_obs = NULL,
 
 
   save_df = fish_paths %>%
-    rename(ObsDate = MinObsDate) %>%
-    full_join(spwn_paths %>%
-                select(TagID, TrapDate, ObsDate:SiteID, Node, SiteName, SiteDescription, NodeOrder:ModelObs)) %>%
-    arrange(TrapDate, TagID, ObsDate) %>%
-    select(TagID, TrapDate, ObsDate, SiteID, Node,
-           AutoProcStatus, UserProcStatus,
-           NodeOrder:ModelObs,
-           SiteDescription, UserComment)
+    dplyr::rename(ObsDate = MinObsDate) %>%
+    dplyr::full_join(spwn_paths %>%
+                       select(TagID, TrapDate, ObsDate:SiteID, Node, SiteName, SiteDescription, NodeOrder:ModelObs)) %>%
+    dplyr::arrange(TrapDate, TagID, ObsDate) %>%
+    dplyr::select(TagID, TrapDate, ObsDate, SiteID, Node,
+                  AutoProcStatus, UserProcStatus,
+                  NodeOrder:ModelObs,
+                  SiteDescription, UserComment)
 
   if(save_file) {
-    WriteXLS('save_df',
-             file_name,
-             SheetNames = c('ProcCapHist'),
-             AdjWidth = T,
-             AutoFilter = T,
-             BoldHeaderRow = T,
-             FreezeCol = 1,
-             FreezeRow = 1)
+    WriteXLS::WriteXLS('save_df',
+                       file_name,
+                       SheetNames = c('ProcCapHist'),
+                       AdjWidth = T,
+                       AutoFilter = T,
+                       BoldHeaderRow = T,
+                       FreezeCol = 1,
+                       FreezeRow = 1)
   }
 
   return(save_df)

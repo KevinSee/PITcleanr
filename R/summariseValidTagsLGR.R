@@ -13,6 +13,6 @@
 
 summariseValidTagsLGR = function(valid_df) {
   valid_df %>%
-    group_by(TagID = LGDNumPIT) %>%
-    summarise(TrapDate = min(CollectionDate, na.rm = T))
+    dplyr::group_by(TagID = LGDNumPIT) %>%
+    dplyr::summarise(TrapDate = min(CollectionDate, na.rm = T))
 }

@@ -37,6 +37,11 @@ processCapHist_LGD = function(species = c('Chinook', 'Steelhead'),
   # construct valid paths
   valid_paths = getValidPaths(parent_child)
 
+  if(class(valid_paths) == 'character') {
+    print(paste('The following nodes returned an error:', paste(valid_paths, collapse = ', ')))
+    return(NULL)
+  }
+
   # get trap data
   trap_df = filterLGRtrapDB(trap_path,
                             species,
@@ -49,8 +54,8 @@ processCapHist_LGD = function(species = c('Chinook', 'Steelhead'),
 
   # pull valid tags from trap database, get trap date
   valid_tag_df = trap_df %>%
-    group_by(TagID = LGDNumPIT) %>%
-    summarise(TrapDate = min(CollectionDate, na.rm = T))
+    dplyr::group_by(TagID = LGDNumPIT) %>%
+    dplyr::summarise(TrapDate = min(CollectionDate, na.rm = T))
 
   # translate in nodes and simplify consecutive hits on the same node
   valid_obs = assignNodes(valid_tag_df,

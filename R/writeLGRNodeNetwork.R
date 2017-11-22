@@ -5,7 +5,7 @@
 #' @author Kevin See
 #'
 #'
-#' @import dplyr tibble stringr
+#' @import dplyr stringr
 #' @export
 #' @return NULL
 #' @examples writeLGRNodeNetwork()
@@ -195,42 +195,42 @@ writeLGRNodeNetwork = function() {
 
   # SC1 (SC), IR1 (IR), IR4 (IR), LRW (LRW1), USI (USI1)
 
-  site_df_init = tibble(SiteID = unlist(bin_list),
-                        path = names(unlist(bin_list))) %>%
-    mutate(path = str_replace(path,
-                              '[[:digit:]]$',
-                              ''),
-           path = str_replace(path,
-                              'SC$',
-                              'SC1'),
-           path = str_replace(path,
-                              'USI1',
-                              'USI'),
-           path = str_replace(path,
-                              'LRW1',
-                              'LRW'),
-           path = ifelse(SiteID %in% c('IR1', 'IR4'),
-                         str_replace(path,
-                                     'IR$',
-                                     SiteID),
-                         path)) %>%
-    mutate(path = ifelse(str_sub(path, start = -nchar(SiteID)) != SiteID,
-                         paste(path, SiteID, sep = '.'),
-                         path))
+  site_df_init = dplyr::tibble(SiteID = unlist(bin_list),
+                               path = names(unlist(bin_list))) %>%
+    dplyr::mutate(path = stringr::str_replace(path,
+                                              '[[:digit:]]$',
+                                              ''),
+                  path = stringr::str_replace(path,
+                                              'SC$',
+                                              'SC1'),
+                  path = stringr::str_replace(path,
+                                              'USI1',
+                                              'USI'),
+                  path = stringr::str_replace(path,
+                                              'LRW1',
+                                              'LRW'),
+                  path = ifelse(SiteID %in% c('IR1', 'IR4'),
+                                stringr::str_replace(path,
+                                                     'IR$',
+                                                     SiteID),
+                                path)) %>%
+    dplyr::mutate(path = ifelse(stringr::str_sub(path, start = -nchar(SiteID)) != SiteID,
+                                paste(path, SiteID, sep = '.'),
+                                path))
 
-  network_descrip = str_split(site_df_init$path,
-                              '\\.',
-                              simplify = T)
+  network_descrip = stringr::str_split(site_df_init$path,
+                                       '\\.',
+                                       simplify = T)
   colnames(network_descrip) = paste0('Step', 1:ncol(network_descrip))
 
   site_df = site_df_init %>%
-    bind_cols(network_descrip %>%
-                as.data.frame()) %>%
-    mutate_at(vars(matches('^Step')),
-              funs(as.character)) %>%
-    mutate(SiteID = factor(SiteID,
-                           levels = unique(site_df_init$SiteID))) %>%
-    arrange(SiteID)
+    dplyr::bind_cols(network_descrip %>%
+                       as.data.frame()) %>%
+    dplyr::mutate_at(vars(matches('^Step')),
+                     funs(as.character)) %>%
+    dplyr::mutate(SiteID = factor(SiteID,
+                                  levels = unique(site_df_init$SiteID))) %>%
+    dplyr::arrange(SiteID)
 
 
   return(site_df)

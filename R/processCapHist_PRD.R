@@ -31,13 +31,13 @@ processCapHist_PRD = function(startDate = NULL,
 
   # pull out tag ID and trap date at Priest Rapids
   valid_tag_df = observations %>%
-    filter(`Event Site Code Value` %in% c('PRA')) %>%
-    mutate_at(vars(`Event Date Time Value`),
-              funs(mdy_hms)) %>%
-    filter(`Event Date Time Value` >= ymd(startDate)) %>%
-    group_by(TagID = `Tag Code`) %>%
-    summarise(TrapDate = min(`Event Date Time Value`) - dminutes(1)) %>%
-    ungroup()
+    dplyr::filter(`Event Site Code Value` %in% c('PRA')) %>%
+    dplyr::mutate_at(vars(`Event Date Time Value`),
+                     funs(mdy_hms)) %>%
+    dplyr::filter(`Event Date Time Value` >= ymd(startDate)) %>%
+    dplyr::group_by(TagID = `Tag Code`) %>%
+    dplyr::summarise(TrapDate = min(`Event Date Time Value`) - dminutes(1)) %>%
+    dplyr::ungroup()
 
 
   # translate in nodes and simplify consecutive hits on the same node
@@ -49,48 +49,48 @@ processCapHist_PRD = function(startDate = NULL,
 
   # drop observations at Wells dam for tags that were observed downstream of Wells later
   wells_tags_all = valid_obs %>%
-    filter(Node == 'WEA') %>%
-    select(TagID, ObsDate) %>%
-    group_by(TagID) %>%
-    summarise(WellsDate = max(ObsDate)) %>%
-    ungroup() %>%
-    distinct()
+    dplyr::filter(Node == 'WEA') %>%
+    dplyr::select(TagID, ObsDate) %>%
+    dplyr::group_by(TagID) %>%
+    dplyr::summarise(WellsDate = max(ObsDate)) %>%
+    dplyr::ungroup() %>%
+    dplyr::distinct()
 
   wen_nodes = valid_paths %>%
-    filter(grepl('LWEB0', Path) |
-             grepl('CLK', Path)) %>%
-    select(Node) %>%
-    distinct() %>%
+    dplyr::filter(grepl('LWEB0', Path) |
+                    grepl('CLK', Path)) %>%
+    dplyr::select(Node) %>%
+    dplyr::distinct() %>%
     as.matrix() %>%
     as.character()
 
   ent_nodes = valid_paths %>%
-    filter(grepl('ENL', Path) |
-             grepl('WVT', Path)) %>%
-    select(Node) %>%
-    distinct() %>%
+    dplyr::filter(grepl('ENL', Path) |
+                    grepl('WVT', Path)) %>%
+    dplyr::select(Node) %>%
+    dplyr::distinct() %>%
     as.matrix() %>%
     as.character()
 
   above_wells_nodes = valid_paths %>%
-    filter(grepl('WEA', Path)) %>%
-    select(Node) %>%
+    dplyr::filter(grepl('WEA', Path)) %>%
+    dplyr::select(Node) %>%
     distinct() %>%
     as.matrix() %>%
     as.character()
 
   wells_tags_dwnstm = valid_obs %>%
-    inner_join(wells_tags_all,
-               by = 'TagID') %>%
-    filter(Node %in% c(wen_nodes, ent_nodes)) %>%
-    filter(ObsDate > WellsDate) %>%
-    select(TagID) %>%
-    distinct() %>%
+    dplyr::inner_join(wells_tags_all,
+                      by = 'TagID') %>%
+    dplyr::filter(Node %in% c(wen_nodes, ent_nodes)) %>%
+    dplyr::filter(ObsDate > WellsDate) %>%
+    dplyr::select(TagID) %>%
+    dplyr::distinct() %>%
     as.matrix() %>%
     as.character()
 
   valid_obs = valid_obs %>%
-    filter(!(TagID %in% wells_tags_dwnstm & Node %in% above_wells_nodes))
+    dplyr::filter(!(TagID %in% wells_tags_dwnstm & Node %in% above_wells_nodes))
 
 
   save_df = writeCapHistOutput(valid_obs,

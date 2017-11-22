@@ -56,20 +56,21 @@ queryCapHist = function(tagCode = NULL,
       tagMeta_org = suppressWarnings(queryTagMeta(tagCode))
 
       tagMeta_df = tagMeta_org %>%
-        mutate(`Antenna ID` = as.character(NA),
-               `Antenna Group Configuration Value` = 0,
-               AntennaGroup = as.character(NA)) %>%
-        select(`Tag Code` = tag,
-               `Event Date Time Value` = markDate,
-               `Event Site Code Value` = markSiteCode,
-               `Antenna ID`,
-               `Antenna Group Configuration Value`,
-               AntennaGroup) %>%
-        left_join(configuration %>%
-                    select(`Event Site Code Value` = SiteID,
-                           SiteType) %>%
-                    distinct(),
-                  by = c("Event Site Code Value"))
+        dplyr::mutate(`Antenna ID` = as.character(NA),
+                      `Antenna Group Configuration Value` = 0,
+                      AntennaGroup = as.character(NA)) %>%
+        dplyr::select(`Tag Code` = tag,
+                      `Event Date Time Value` = markDate,
+                      `Event Site Code Value` = markSiteCode,
+                      `Antenna ID`,
+                      `Antenna Group Configuration Value`,
+                      AntennaGroup) %>%
+        dplyr::left_join(configuration %>%
+                           dplyr::select(`Event Site Code Value` = SiteID,
+                                         SiteType) %>%
+                           dplyr::distinct(),
+                         by = c("Event Site Code Value"))
+
       return(tagMeta_df)
     }
 
@@ -112,7 +113,7 @@ queryCapHist = function(tagCode = NULL,
     dplyr::rename(`Antenna Group Configuration Value` = ConfigID) %>%
     dplyr::select(`Tag Code`:`Antenna ID`,
                   `Antenna Group Configuration Value`,
-                  everything())
+                  dplyr::everything())
 
   return(parsed)
 
