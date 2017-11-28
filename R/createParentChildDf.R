@@ -30,7 +30,7 @@ createParentChildDf = function(sites_df,
   node_df = sites_df %>%
     dplyr::rename(EndSite = SiteID) %>%
     dplyr::mutate(Step0 = startSite) %>%
-    dplyr::gather(stepOrder, site, matches('Step')) %>%
+    tidyr::gather(stepOrder, site, matches('Step')) %>%
     dplyr::mutate(stepOrder = stringr::str_replace(stepOrder, '^Step', ''),
                   stepOrder = as.integer(stepOrder)) %>%
     dplyr::arrange(EndSite, stepOrder) %>%
