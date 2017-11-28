@@ -54,9 +54,16 @@ assignNodes = function(valid_tag_df = NULL,
   obs_df <- valid_tag_df %>%
     dplyr::select(TagID, TrapDate) %>%
     dplyr::left_join(observation %>%
-                       dplyr::mutate(ObsDate = ifelse(is.na(`Event Release Date Time Value`) & is.na(`Antenna ID`),
-                                                      `Event Date Time Value`,
-                                                      `Event Release Date Time Value`)) %>%
+                       dplyr::left_join(configuration %>%
+                                          dplyr::select(SiteID, SiteType, SiteTypeName) %>%
+                                          dplyr::distinct(),
+                                        by = c('Event Site Code Value' = 'SiteID')) %>%
+                       dplyr::mutate(ObsDate = ifelse(is.na(`Event Release Date Time Value`) &
+                                                        is.na(`Antenna ID`) &
+                                                        SiteType == 'MRR' &
+                                                        SiteTypeName %in% c('Acclimation Pont', 'Hatchery', 'Hatchery Returns', 'Trap or Weir'),
+                                                      `Event Release Date Time Value`,
+                                                      `Event Date Time Value`)) %>%
                        dplyr::select(TagID = `Tag Code`,
                                      ObsDate,
                                      SiteID = `Event Site Code Value`,
@@ -64,7 +71,8 @@ assignNodes = function(valid_tag_df = NULL,
                                      ConfigID = `Antenna Group Configuration Value`) %>%
                        dplyr::mutate(ObsDate = lubridate::mdy_hms(ObsDate)),
                      by = c('TagID')) %>%
-    dplyr::mutate(ValidDate = ifelse(ObsDate >= TrapDate, T, F))
+    dplyr::mutate(ValidDate = ifelse(ObsDate >= TrapDate, T, F)) %>%
+    dplyr::filter(!is.na(SiteID))
 
   # which sites are not in the configuration file
   tmp_df <- obs_df %>%
