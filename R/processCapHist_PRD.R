@@ -31,7 +31,7 @@ processCapHist_PRD = function(startDate = NULL,
 
   # pull out tag ID and trap date at Priest Rapids
   valid_tag_df = observations %>%
-    dplyr::filter(`Event Site Code Value` %in% c('PRA')) %>%
+    dplyr::filter(`Event Site Code Value` %in% c('PRA', 'PRDLD1')) %>%
     dplyr::mutate_at(vars(`Event Date Time Value`),
                      funs(mdy_hms)) %>%
     dplyr::filter(`Event Date Time Value` >= ymd(startDate)) %>%
