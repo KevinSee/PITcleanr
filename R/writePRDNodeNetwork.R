@@ -99,6 +99,7 @@ writePRDNodeNetwork = function() {
                                          list('ZSL',
                                               'TON',
                                               'NMC',
+                                              'OKI',
                                               'OKC')))
 
   bin_list[['BelowPriest']] = list('BelowJD1',
@@ -137,6 +138,9 @@ writePRDNodeNetwork = function() {
                   path = stringr::str_replace(path,
                                               'WEA1$',
                                               'WEA'),
+                  path = stringr::str_replace(path,
+                                              'RRF1$',
+                                              'RRF'),
                   path = stringr::str_replace(path,
                                               'OKL1$',
                                               'OKL') ) %>% #,
