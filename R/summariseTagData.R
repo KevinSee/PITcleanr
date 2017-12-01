@@ -16,7 +16,6 @@
 
 summariseTagData = function(capHist_proc = NULL,
                             trap_data = NULL,
-                            proc_list = NULL,
                             saveCSV = F,
                             file_name = NULL) {
 
