@@ -4,7 +4,8 @@
 #'
 #' @author Kevin See
 #'
-#' @param proc_list list returned by \code{processCapHist_LGD}.
+#' @param capHist_proc Dataframe returned by \code{processCapHist_LGD}, under the name \code{ProcCapHist}.
+#' @param trap_data Dataframe containing tag ID and relevant biological data from the adult trap. Part of the list returned by \code{processCapHist_LGD}, under the name \code{ValidTrapData}.
 #' @param saveCSV should the resulting dataframe be saved as a csv file? Default value is \code{FALSE}.
 #' @param file_name if \code{saveCSV} is \code{TRUE}, this is the file path and name, with .csv extension, where the file should be save.
 #'
@@ -13,15 +14,15 @@
 #' @return NULL
 #' @examples summariseTagData()
 
-summariseTagData = function(proc_list = NULL,
+summariseTagData = function(capHist_proc = NULL,
+                            trap_data = NULL,
+                            proc_list = NULL,
                             saveCSV = F,
                             file_name = NULL) {
 
-  stopifnot(!is.null(proc_list))
+  stopifnot(!is.null(capHist_proc))
 
-  trap_data = proc_list$ValidTrapData
-
-  spwn_loc = estimateSpawnLoc(proc_list$ProcCapHist) %>%
+  spwn_loc = estimateSpawnLoc(capHist_proc) %>%
     dplyr::rename(LastObs = ObsDate,
                   LastObsSite = SiteID,
                   LastObsNode = Node)
