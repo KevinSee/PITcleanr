@@ -282,7 +282,8 @@ proc_list = processCapHist_LGD(species = spp,
 `PITcleanr` provides a function to determine a fish's final spawning location, and combine it with lots of biological data from the trap database at Lower Granite, `summariseTagData`. It relies on a processed capture history file returned by the function `proc_list`. Internally, this relies on another function, `estimateSpawnLoc`, which determines the final spawning location of each tag, by finding the furthest upstream node a tag was observed at within it's valid observations.
 
 ```{r}
-tag_summ = summariseTagData(proc_list)
+tag_summ = summariseTagData(capHist_proc = proc_list$ProcCapHist,
+                            trap_data = proc_list$ValidTrapData)
 
 head(tag_summ)
 ```
