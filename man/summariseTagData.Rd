@@ -4,10 +4,13 @@
 \alias{summariseTagData}
 \title{Tag Summary}
 \usage{
-summariseTagData(proc_list = NULL, saveCSV = F, file_name = NULL)
+summariseTagData(capHist_proc = NULL, trap_data = NULL, saveCSV = F,
+  file_name = NULL)
 }
 \arguments{
-\item{proc_list}{list returned by \code{processCapHist_LGD}.}
+\item{capHist_proc}{Dataframe returned by \code{processCapHist_LGD}, under the name \code{ProcCapHist}.}
+
+\item{trap_data}{Dataframe containing tag ID and relevant biological data from the adult trap. Part of the list returned by \code{processCapHist_LGD}, under the name \code{ValidTrapData}.}
 
 \item{saveCSV}{should the resulting dataframe be saved as a csv file? Default value is \code{FALSE}.}
 
