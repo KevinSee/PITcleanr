@@ -3,7 +3,9 @@ Title: Cleans up PIT tag capture histories for DABOM
 Version: 0.0.0.9000
 Authors@R: person("Kevin", "See", email = "Kevin@qcinc.org", role = c("aut", "cre"))
 Description: This package takes a complete tag history file from PTAGIS and cleans it to be ready as an input into DABOM escapement model.
-Depends: R (>= 3.4.1)
+Depends: 
+  R (>= 3.4.1),
+  dplyr(>= 0.7.0)
 License: GPL-2
 Imports:
   httr(>= 1.2.1),
