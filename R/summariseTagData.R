@@ -23,8 +23,8 @@ summariseTagData = function(capHist_proc = NULL,
 
   spwn_loc = estimateSpawnLoc(capHist_proc) %>%
     dplyr::rename(LastObs = ObsDate,
-                  LastObsSite = SiteID,
-                  LastObsNode = Node)
+                  AssignSpawnSite = SiteID,
+                  AssignSpawnNode = Node)
 
   tag_df = spwn_loc %>%
     dplyr::full_join(trap_data,
