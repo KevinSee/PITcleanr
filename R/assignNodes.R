@@ -58,7 +58,7 @@ assignNodes = function(valid_tag_df = NULL,
                                           dplyr::select(SiteID, SiteType, SiteTypeName) %>%
                                           dplyr::distinct(),
                                         by = c('Event Site Code Value' = 'SiteID')) %>%
-                       dplyr::mutate(ObsDate = ifelse(is.na(`Event Release Date Time Value`) &
+                       dplyr::mutate(ObsDate = ifelse(!is.na(`Event Release Date Time Value`) &
                                                         is.na(`Antenna ID`) &
                                                         SiteType == 'MRR' &
                                                         SiteTypeName %in% c('Acclimation Pont', 'Hatchery', 'Hatchery Returns', 'Trap or Weir'),
