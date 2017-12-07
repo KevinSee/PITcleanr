@@ -43,14 +43,14 @@ filterLGRtrapDB = function(trap_path = '.',
   # keep only correct species, spawnyear and adults (returning fish),
   # as well as fish determined to be valid, with ad intact adipose fins and non-missing PIT tags
   valid_df = trap_df %>%
-    dplyr::filter(LGDSpecies == sppCode,                 # keep only the desired species
+    dplyr::filter(grepl(paste0('^', sppCode), SRR),      # keep only the desired species
                   SpawnYear == paste0('SY', spawnYear),  # keep only the desired spawn year
                   LGDLifeStage == 'RF',                  # keep only adults (returning fish)
                   LGDValid == 1,                         # keep only records marked valid
                   LGDMarkAD == 'AI',                     # keep only adipose-intact records
                   !is.na(LGDNumPIT))                     # remove any records with missing PIT tag code
 
-  # drop Chinook jacks
+  # drop Fall Chinook
   if(species == 'Chinook') {
     valid_df = valid_df %>%
       dplyr::filter(grepl('5', SRR))
