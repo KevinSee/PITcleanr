@@ -4,12 +4,14 @@
 \alias{writeSpwnPaths}
 \title{Spawning Paths}
 \usage{
-writeSpwnPaths(valid_obs, valid_paths)
+writeSpwnPaths(valid_obs, valid_paths, node_order)
 }
 \arguments{
 \item{valid_obs}{dataframe built by the function \code{assignNodes}.}
 
-\item{valid_paths}{dataframe built by the function \code{getValidPaths}}
+\item{valid_paths}{dataframe built by the function \code{getValidPaths}.}
+
+\item{node_order}{dataframe built by the function \code{createNodeOrder}.}
 }
 \description{
 The function builds a data frame of all the observed fish paths in the

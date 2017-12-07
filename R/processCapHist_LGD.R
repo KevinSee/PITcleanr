@@ -8,6 +8,7 @@
 #' @inheritParams filterLGRtrapDB
 #' @inheritParams assignNodes
 #' @inheritParams writeCapHistOutput
+#' @inheritParams createNodeOrder
 #' @param filter_by_PBT Should fish identified as hatchery origin be filtered out of the sample, based on PBT results? Default value is \code{TRUE}.
 #'
 #' @import dplyr
@@ -23,6 +24,8 @@ processCapHist_LGD = function(species = c('Chinook', 'Steelhead'),
                               filter_by_PBT = T,
                               observations = NULL,
                               truncate = T,
+                              site_df,
+                              step_num = 1,
                               save_file = F,
                               file_name = NULL) {
 
@@ -35,6 +38,7 @@ processCapHist_LGD = function(species = c('Chinook', 'Steelhead'),
   species = match.arg(species)
 
   # construct valid paths
+  cat('Constructing valid pathways\n')
   valid_paths = getValidPaths(parent_child)
 
   if(class(valid_paths) == 'character') {
@@ -43,33 +47,47 @@ processCapHist_LGD = function(species = c('Chinook', 'Steelhead'),
   }
 
   # get trap data
+  cat('Filtering trap database\n')
   trap_df = filterLGRtrapDB(trap_path,
                             species,
                             spawnYear)
 
   if(filter_by_PBT) {
-    trap_df %>%
+    trap_df = trap_df %>%
       filter(!grepl('H$', SRR))
   }
 
   # pull valid tags from trap database, get trap date
+  cat('Getting valid tags\n')
   valid_tag_df = trap_df %>%
     dplyr::group_by(TagID = LGDNumPIT) %>%
     dplyr::summarise(TrapDate = min(CollectionDate, na.rm = T))
 
   # translate in nodes and simplify consecutive hits on the same node
+  cat('Assigning nodes\n')
   valid_obs = assignNodes(valid_tag_df,
                           observations,
                           configuration,
                           parent_child,
                           truncate)
 
+  cat('Creating node order')
+  node_order = createNodeOrder(valid_paths = valid_paths,
+                               configuration = configuration,
+                               parent_child = parent_child,
+                               site_df = site_df,
+                               step_num = step_num)
+
+  cat('Processing assigned nodes\n')
   save_df = writeCapHistOutput(valid_obs,
                                valid_paths,
+                               node_order,
                                save_file,
                                file_name)
 
+
   return(list('ValidPaths' = valid_paths,
+              'NodeOrder' = node_order,
               'ValidTrapData' = trap_df,
               'ValidObs' = valid_obs,
               'ProcCapHist' = save_df))

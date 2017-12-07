@@ -4,7 +4,9 @@
 #'
 #' @param valid_obs dataframe built by the function \code{assignNodes}.
 #'
-#' @param valid_paths dataframe built by the function \code{getValidPaths}
+#' @param valid_paths dataframe built by the function \code{getValidPaths}.
+#'
+#' @param node_order dataframe built by the function \code{createNodeOrder}.
 #'
 #' @param save_file Should output be written to an Excel file? Default value is \code{FALSE}.
 #'
@@ -16,10 +18,13 @@
 
 writeCapHistOutput = function(valid_obs = NULL,
                               valid_paths = NULL,
+                              node_order = NULL,
                               save_file = F,
                               file_name = NULL) {
 
-  stopifnot(!is.null(valid_obs), !is.null(valid_paths))
+  stopifnot(!is.null(valid_obs),
+            !is.null(valid_paths),
+            !is.null(node_order))
 
   if(is.null(file_name) & save_file) file_name = 'CapHistOutput.xlsx'
 
@@ -33,12 +38,15 @@ writeCapHistOutput = function(valid_obs = NULL,
   save_df = fish_paths %>%
     dplyr::rename(ObsDate = MinObsDate) %>%
     dplyr::full_join(spwn_paths %>%
-                       select(TagID, TrapDate, ObsDate:SiteID, Node, SiteName, SiteDescription, NodeOrder:ModelObs)) %>%
+                       select(TagID, TrapDate, ObsDate:SiteID, Node, SiteName, SiteDescription, NodeOrder:Migration)) %>%
     dplyr::arrange(TrapDate, TagID, ObsDate) %>%
     dplyr::select(TagID, TrapDate, ObsDate, SiteID, Node,
-                  AutoProcStatus, UserProcStatus,
-                  NodeOrder:ModelObs,
-                  SiteDescription, UserComment)
+                  AutoProcStatus, UserProcStatus, ModelObs,
+                  NodeOrder:ValidPath, maxUpDate, Migration,
+                  SiteDescription, UserComment) %>%
+    group_by(TagID) %>%
+    mutate(UserProcStatus = ifelse(sum(!ModelObs) > 0, '', UserProcStatus)) %>%
+    ungroup()
 
   if(save_file) {
     WriteXLS::WriteXLS('save_df',

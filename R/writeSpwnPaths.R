@@ -7,7 +7,9 @@
 #'
 #' @param valid_obs dataframe built by the function \code{assignNodes}.
 #'
-#' @param valid_paths dataframe built by the function \code{getValidPaths}
+#' @param valid_paths dataframe built by the function \code{getValidPaths}.
+#'
+#' @param node_order dataframe built by the function \code{createNodeOrder}.
 #'
 #' @author Greg Kliewer, Ryan Kinzer, Kevin See
 #' @import dplyr purrr
@@ -16,28 +18,33 @@
 #' @examples writeSpwnPaths()
 
 writeSpwnPaths = function(valid_obs,
-                          valid_paths) {
+                          valid_paths,
+                          node_order) {
 
-  node_order = valid_paths %>%
-    split(list(.$Node)) %>%
-    purrr::map_df(.id = 'EndNode',
-                  .f = function(x) {
-                    tibble(Node = str_split(x$Path, ' ')[[1]])
-
-                  }) %>%
-    dplyr::filter(Node %in% unique(parent_child$ChildNode[!is.na(parent_child$SiteType)])) %>%
-    dplyr::group_by(EndNode) %>%
-    dplyr::mutate(NodeOrder = 1:n()) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(Node, NodeOrder) %>%
-    dplyr::distinct(Node, .keep_all=TRUE) %>%
-    dplyr::full_join(valid_paths,
-                     by = c('Node')) %>%
-    dplyr::filter(!is.na(Path))
+  # node_order = valid_paths %>%
+  #   split(list(.$Node)) %>%
+  #   purrr::map_df(.id = 'EndNode',
+  #                 .f = function(x) {
+  #                   tibble(Node = str_split(x$Path, ' ')[[1]])
+  #
+  #                 }) %>%
+  #   dplyr::filter(Node %in% unique(parent_child$ChildNode[!is.na(parent_child$SiteType)])) %>%
+  #   dplyr::group_by(EndNode) %>%
+  #   dplyr::mutate(NodeOrder = 1:n()) %>%
+  #   dplyr::ungroup() %>%
+  #   dplyr::select(Node, NodeOrder) %>%
+  #   dplyr::distinct(Node, .keep_all=TRUE) %>%
+  #   dplyr::full_join(valid_paths,
+  #                    by = c('Node')) %>%
+  #   dplyr::filter(!is.na(Path))
 
 
   allObs = valid_obs %>%
-    dplyr::left_join(node_order,
+    dplyr::left_join(node_order %>%
+                       group_by(Node) %>%
+                       slice(1) %>%
+                       ungroup() %>%
+                       select(-SiteID),
                      by = c('Node')) %>%
     dplyr::group_by(TagID) %>%
     dplyr::mutate(previous_node = lag(Node),
@@ -49,7 +56,9 @@ writeSpwnPaths = function(valid_obs,
     dplyr::mutate(Up = ifelse(is.na(previous_node), 'Up',
                               ifelse(grepl(previous_node, Path),'Up', NA)),
                   Down = ifelse(grepl(Node, prev_string),'Down', NA ),
-                  Direction = ifelse(!is.na(Up), Up, Down)) %>%
+                  Hold = ifelse(Node == previous_node, 'Hold', NA),
+                  Direction = ifelse(!is.na(Up), Up, Down),
+                  Direction = ifelse(!is.na(Hold), 'Hold', Direction)) %>%
     dplyr::ungroup() %>%
     dplyr::select(one_of(names(valid_obs)), NodeOrder, Direction)
 
@@ -80,6 +89,18 @@ writeSpwnPaths = function(valid_obs,
     dplyr::left_join(modObs,
                      by = c('TagID', 'Node', 'ObsDate')) %>%
     dplyr::mutate(ModelObs = ifelse(is.na(ModelObs), F, ModelObs))
+
+  # RK added this for migration direction
+  migObs <- allObs %>%
+    filter(Direction == 'Up') %>%
+    group_by(TagID) %>%
+    slice(which.max(ObsDate)) %>%
+    select(TagID, maxUpDate = ObsDate)
+
+  allObs <- allObs %>%
+    left_join(migObs) %>%
+    mutate(Migration = ifelse(ObsDate <= maxUpDate, 'Upstream', 'Downstream'))
+
 
   return(allObs)
 }

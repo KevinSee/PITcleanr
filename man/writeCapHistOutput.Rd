@@ -4,13 +4,15 @@
 \alias{writeCapHistOutput}
 \title{Capture History Output}
 \usage{
-writeCapHistOutput(valid_obs = NULL, valid_paths = NULL, save_file = F,
-  file_name = NULL)
+writeCapHistOutput(valid_obs = NULL, valid_paths = NULL,
+  node_order = NULL, save_file = F, file_name = NULL)
 }
 \arguments{
 \item{valid_obs}{dataframe built by the function \code{assignNodes}.}
 
-\item{valid_paths}{dataframe built by the function \code{getValidPaths}}
+\item{valid_paths}{dataframe built by the function \code{getValidPaths}.}
+
+\item{node_order}{dataframe built by the function \code{createNodeOrder}.}
 
 \item{save_file}{Should output be written to an Excel file? Default value is \code{FALSE}.}
 
