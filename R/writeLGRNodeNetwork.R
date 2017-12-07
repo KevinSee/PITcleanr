@@ -155,9 +155,7 @@ writeLGRNodeNetwork = function() {
                                        list('LLR',
                                             'AGC',
                                             'KEN',
-                                            'HYC' =
-                                              list('HYC',
-                                                   'HBC'),
+                                            'HYC',
                                             'WPC' =
                                               list('WPC',
                                                    'WIMPYC'),
