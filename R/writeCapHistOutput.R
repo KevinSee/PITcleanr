@@ -32,7 +32,8 @@ writeCapHistOutput = function(valid_obs = NULL,
                               valid_paths)
 
   spwn_paths = writeSpwnPaths(valid_obs,
-                              valid_paths)
+                              valid_paths,
+                              node_order)
 
 
   save_df = fish_paths %>%
