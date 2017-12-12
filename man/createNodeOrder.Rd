@@ -4,17 +4,15 @@
 \alias{createNodeOrder}
 \title{Node Order}
 \usage{
-createNodeOrder(valid_paths = NULL, configuration = NULL,
-  parent_child = NULL, site_df = NULL, step_num = 1)
+createNodeOrder(valid_paths = NULL, configuration = NULL, site_df = NULL,
+  step_num = 1)
 }
 \arguments{
 \item{valid_paths}{a dataframe created by the \code{getValidPaths} function.}
 
 \item{configuration}{a configuration file built by \code{buildConfig} function, and possibly modified by the user.}
 
-\item{parent_child}{is a data frame created by \code{createParentChildDf}.}
-
-\item{site_df}{a data frame created by one of the \code{write___NodeNetwork}.}
+\item{site_df}{Optional. A data frame created by one of the \code{write___NodeNetwork}.}
 
 \item{step_num}{in the \code{site_df} data frame, which step should be used to group various nodes? Default value is 1.}
 }
