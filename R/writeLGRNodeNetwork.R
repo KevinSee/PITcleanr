@@ -11,6 +11,7 @@
 #' @examples writeLGRNodeNetwork()
 
 writeLGRNodeNetwork = function() {
+
   bin_names = c('Clearwater',
                 'SW_Washington',
                 'NE_Oregon',
@@ -191,10 +192,16 @@ writeLGRNodeNetwork = function() {
                                                                  'SALEFT',
                                                                  'PAHH'))))
 
-  # SC1 (SC), IR1 (IR), IR4 (IR), LRW (LRW1), USI (USI1)
+  bin_all = list('GRA' =
+                   list('GRA',
+                        'Clearwater' = bin_list[['Clearwater']],
+                        'SW_Washington' = bin_list[['SW_Washington']],
+                        'NE_Oregon' = bin_list[['NE_Oregon']],
+                        'Imnaha' = bin_list[['Imnaha']],
+                        'Salmon' = bin_list[['Salmon']]))
 
-  site_df_init = dplyr::tibble(SiteID = unlist(bin_list),
-                               path = names(unlist(bin_list))) %>%
+  site_df_init = dplyr::tibble(SiteID = unlist(bin_all),
+                               path = names(unlist(bin_all))) %>%
     dplyr::mutate(path = stringr::str_replace(path,
                                               '[[:digit:]]$',
                                               ''),
