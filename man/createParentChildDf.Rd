@@ -7,15 +7,12 @@
 \url{http://www.ptagis.org}
 }
 \usage{
-createParentChildDf(sites_df, configuration = NULL, startSite = "GRA",
-  startDate = NULL)
+createParentChildDf(sites_df, configuration = NULL, startDate = NULL)
 }
 \arguments{
 \item{sites_df}{dataframe containing SiteID, path, and various columns breaking path into Step1, Step2, etc.}
 
 \item{configuration}{a configuration file built by \code{buildConfig}}
-
-\item{startSite}{site code for the initial tagging site. Used to arrange the parent-child table with this site at top. Default is \code{GRA} for Lower Granite Dam.}
 
 \item{startDate}{configurations that ended before this date (YYYYMMDD format) will not be included.}
 }
