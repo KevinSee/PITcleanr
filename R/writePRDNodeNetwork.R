@@ -70,7 +70,9 @@ writePRDNodeNetwork = function() {
                                             'BVC',
                                             'TWR',
                                             'SCP',
-                                            'MSH',
+                                            'MSH' =
+                                              list('MSH',
+                                                   'METH'),
                                             'MRW' =
                                               list('MRW',
                                                    'WFC'),
@@ -114,19 +116,21 @@ writePRDNodeNetwork = function() {
                                           'HST',
                                           'MDR'))
 
-  bin_all = list('BelowPriest' = bin_list[['BelowPriest']],
-                 'RIA' =
-                   list('RIA',
-                        'Wenatchee' = bin_list[['Wenatchee']],
-                        'RRF' =
-                          list('RRF',
-                               'EBO',
-                               'Entiat' = bin_list[['Entiat']],
-                               'WVT',
-                               'WEA' =
-                                 list('WEA',
-                                      'Methow' = bin_list[['Methow']],
-                                      'Okanogan' = bin_list[['Okanogan']]))))
+  bin_all = list('PRA' =
+                   list('PRA',
+                        'BelowPriest' = bin_list[['BelowPriest']],
+                        'RIA' =
+                          list('RIA',
+                               'Wenatchee' = bin_list[['Wenatchee']],
+                               'RRF' =
+                                 list('RRF',
+                                      'EBO',
+                                      'Entiat' = bin_list[['Entiat']],
+                                      'WVT',
+                                      'WEA' =
+                                        list('WEA',
+                                             'Methow' = bin_list[['Methow']],
+                                             'Okanogan' = bin_list[['Okanogan']])))))
 
 
 
