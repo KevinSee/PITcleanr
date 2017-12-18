@@ -10,7 +10,7 @@ writeCapHistOutput(valid_obs = NULL, valid_paths = NULL,
 \arguments{
 \item{valid_obs}{dataframe built by the function \code{assignNodes}.}
 
-\item{valid_paths}{dataframe built by the function \code{getValidPaths}.}
+\item{valid_paths}{dataframe built by the function \code{getValidPaths}}
 
 \item{node_order}{dataframe built by the function \code{createNodeOrder}.}
 

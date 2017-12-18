@@ -2,12 +2,8 @@
 #'
 #' @description This function combines the results from \code{writeFishPaths} and \code{writeSpwnPaths} functions and saves it as an excel file if desired.
 #'
-#' @param valid_obs dataframe built by the function \code{assignNodes}.
-#'
-#' @param valid_paths dataframe built by the function \code{getValidPaths}.
-#'
-#' @param node_order dataframe built by the function \code{createNodeOrder}.
-#'
+#' @inheritParams writeFishPaths
+#' @inheritParams writeSpwnPaths
 #' @param save_file Should output be written to an Excel file? Default value is \code{FALSE}.
 #'
 #' @param file_name If \code{save_file == TRUE}, this is the file name (with possible extension) to be saved to.
@@ -26,7 +22,9 @@ writeCapHistOutput = function(valid_obs = NULL,
             !is.null(valid_paths),
             !is.null(node_order))
 
-  if(is.null(file_name) & save_file) file_name = 'CapHistOutput.xlsx'
+  if(is.null(file_name) & save_file) {
+    file_name = 'CapHistOutput.xlsx'
+  }
 
   fish_paths = writeFishPaths(valid_obs,
                               valid_paths)
