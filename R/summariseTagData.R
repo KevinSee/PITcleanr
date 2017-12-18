@@ -26,9 +26,13 @@ summariseTagData = function(capHist_proc = NULL,
                   AssignSpawnSite = SiteID,
                   AssignSpawnNode = Node)
 
+  if('LGDNumPIT' %in% names(trap_data) ) {
+    trap_data = trap_data %>%
+      rename(TagID = LGDNumPIT)
+  }
+
   tag_df = spwn_loc %>%
-    dplyr::full_join(trap_data,
-                     by = c('TagID' = 'LGDNumPIT'))
+    dplyr::full_join(trap_data)
 
   if(saveCSV) {
     readr::write_csv(tag_df,
