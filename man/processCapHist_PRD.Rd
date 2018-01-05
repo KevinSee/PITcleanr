@@ -5,8 +5,8 @@
 \title{Process capture histories for Priest Rapids}
 \usage{
 processCapHist_PRD(startDate = NULL, configuration = NULL,
-  parent_child = NULL, observations = NULL, truncate = T, save_file = F,
-  file_name = NULL)
+  parent_child = NULL, observations = NULL, truncate = T, site_df,
+  step_num = 1, save_file = F, file_name = NULL)
 }
 \arguments{
 \item{startDate}{observations that occurred before this date (YYYYMMDD format) will not be included.}
@@ -14,6 +14,10 @@ processCapHist_PRD(startDate = NULL, configuration = NULL,
 \item{configuration}{is a data frame which assigns node names to unique SiteID, AntennaID, and site configuration ID combinations. It can be built with the function \code{buildConfig}.}
 
 \item{truncate}{logical, subsets observations to those with valid nodes, observations dates greater than trapping date at LGD and then to the minimum observation date of each set of observation events at a node, multiple observation events can occur at one node if the observations are split by detections at other nodes. Default is \code{TRUE}.}
+
+\item{site_df}{Optional. A data frame created by one of the \code{write___NodeNetwork}.}
+
+\item{step_num}{in the \code{site_df} data frame, which step should be used to group various nodes? Default value is 1.}
 
 \item{save_file}{Should output be written to an Excel file? Default value is \code{FALSE}.}
 

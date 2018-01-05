@@ -7,6 +7,7 @@
 #' @param startDate observations that occurred before this date (YYYYMMDD format) will not be included.
 #' @inheritParams getValidPaths
 #' @inheritParams assignNodes
+#' @inheritParams createNodeOrder
 #' @inheritParams writeCapHistOutput
 #'
 #' @import dplyr
@@ -19,6 +20,8 @@ processCapHist_PRD = function(startDate = NULL,
                               parent_child = NULL,
                               observations = NULL,
                               truncate = T,
+                              site_df,
+                              step_num = 1,
                               save_file = F,
                               file_name = NULL) {
 
@@ -26,79 +29,176 @@ processCapHist_PRD = function(startDate = NULL,
               !is.null(parent_child) |
               !is.null(observations))
 
+  # # drop observations from greater than one year from startDate
+  # observations = observations %>%
+  #   filter(mdy_hms(`Event Date Time Value`) < ymd(startDate) + years(1) | mdy_hms(`Event Release Date Time Value`) < ymd(startDate) + years(1))
+
   # construct valid paths
+  cat('Constructing valid paths.\n')
   valid_paths = getValidPaths(parent_child)
 
+  # create dataframe describing node order
+  cat('Creating node order')
+  node_order = createNodeOrder(valid_paths = valid_paths,
+                               configuration = configuration,
+                               site_df = site_df,
+                               step_num = step_num)
+
   # pull out tag ID and trap date at Priest Rapids
+  cat('Getting trap date.\n')
   valid_tag_df = observations %>%
-    dplyr::filter(`Event Site Code Value` %in% c('PRA', 'PRDLD1')) %>%
-    dplyr::mutate_at(vars(`Event Date Time Value`),
-                     funs(mdy_hms)) %>%
-    dplyr::filter(`Event Date Time Value` >= ymd(startDate)) %>%
-    dplyr::group_by(TagID = `Tag Code`) %>%
-    dplyr::summarise(TrapDate = min(`Event Date Time Value`) - dminutes(1)) %>%
-    dplyr::ungroup()
+    dplyr::filter(`Event Site Code Value` == 'PRDLD1') %>%
+    dplyr::mutate(ObsDate = ifelse(!is.na(`Event Release Date Time Value`) &
+                                     is.na(`Antenna ID`),
+                                   `Event Release Date Time Value`,
+                                   `Event Date Time Value`)) %>%
+    dplyr::mutate_at(vars(ObsDate),
+                     funs(lubridate::mdy_hms)) %>%
+    filter(ObsDate >= lubridate::ymd(startDate)) %>%
+    group_by(TagID = `Tag Code`) %>%
+    summarise(TrapDate = min(lubridate::floor_date(ObsDate,
+                                                   unit = 'days'))) %>%
+    ungroup()
 
 
   # translate in nodes and simplify consecutive hits on the same node
+  cat('Assigning nodes.\n')
   valid_obs = assignNodes(valid_tag_df,
                           observations,
                           configuration,
                           parent_child,
                           truncate)
 
-  # drop observations at Wells dam for tags that were observed downstream of Wells later
-  wells_tags_all = valid_obs %>%
-    dplyr::filter(Node == 'WEA') %>%
-    dplyr::select(TagID, ObsDate) %>%
-    dplyr::group_by(TagID) %>%
-    dplyr::summarise(WellsDate = max(ObsDate)) %>%
-    dplyr::ungroup() %>%
-    dplyr::distinct()
+  # # drop observations at Wells dam for tags that were observed downstream of Wells later
+  # wells_tags_all = valid_obs %>%
+  #   dplyr::filter(Node == 'WEA') %>%
+  #   dplyr::select(TagID, ObsDate) %>%
+  #   dplyr::group_by(TagID) %>%
+  #   dplyr::summarise(WellsDate = max(ObsDate)) %>%
+  #   dplyr::ungroup() %>%
+  #   dplyr::distinct()
+  #
+  # wen_nodes = valid_paths %>%
+  #   dplyr::filter(grepl('LWEB0', Path) |
+  #                   grepl('CLK', Path)) %>%
+  #   dplyr::select(Node) %>%
+  #   dplyr::distinct() %>%
+  #   as.matrix() %>%
+  #   as.character()
+  #
+  # ent_nodes = valid_paths %>%
+  #   dplyr::filter(grepl('ENL', Path) |
+  #                   grepl('WVT', Path)) %>%
+  #   dplyr::select(Node) %>%
+  #   dplyr::distinct() %>%
+  #   as.matrix() %>%
+  #   as.character()
+  #
+  # above_wells_nodes = valid_paths %>%
+  #   dplyr::filter(grepl(' WEA', Path)) %>%
+  #   dplyr::select(Node) %>%
+  #   distinct() %>%
+  #   as.matrix() %>%
+  #   as.character()
+  #
+  # wells_tags_dwnstm = valid_obs %>%
+  #   dplyr::inner_join(wells_tags_all,
+  #                     by = 'TagID') %>%
+  #   dplyr::filter(Node %in% c(wen_nodes, ent_nodes)) %>%
+  #   dplyr::filter(ObsDate > WellsDate) %>%
+  #   dplyr::select(TagID) %>%
+  #   dplyr::distinct() %>%
+  #   as.matrix() %>%
+  #   as.character()
+  #
+  # valid_obs = valid_obs %>%
+  #   dplyr::filter(!(TagID %in% wells_tags_dwnstm & Node %in% above_wells_nodes))
 
-  wen_nodes = valid_paths %>%
-    dplyr::filter(grepl('LWEB0', Path) |
-                    grepl('CLK', Path)) %>%
-    dplyr::select(Node) %>%
-    dplyr::distinct() %>%
-    as.matrix() %>%
-    as.character()
+  # # drop downstream detections for obvious kelts
+  # dwnStrm_nodes = node_order %>%
+  #   mutate(initRKM = as.integer(stringr::str_split(RKM, '\\.', simplify = T)[,1])) %>%
+  #   filter(initRKM < initRKM[NodeOrder == 1]) %>%
+  #   select(Node) %>%
+  #   distinct() %>%
+  #   filter(Node != 'BelowJD1') %>%
+  #   as.matrix() %>%
+  #   as.character()
+  #
+  # upStrm_nodes = node_order %>%
+  #   mutate(initRKM = as.integer(stringr::str_split(RKM, '\\.', simplify = T)[,1])) %>%
+  #   filter(initRKM >= initRKM[NodeOrder == 1],
+  #          Node != Node[NodeOrder == 1]) %>%
+  #   select(Node) %>%
+  #   distinct() %>%
+  #   as.matrix() %>%
+  #   as.character()
+  #
+  # tagPos_df = valid_obs %>%
+  #   mutate(belowJD1 = ifelse(Node == 'BelowJD1',
+  #                            T, F),
+  #          dwnStrm = ifelse(Node %in% dwnStrm_nodes,
+  #                           T, F),
+  #          upStrm = ifelse(Node %in% upStrm_nodes,
+  #                          T, F)) %>%
+  #   group_by(TagID) %>%
+  #   summarise_at(vars(belowJD1, dwnStrm, upStrm),
+  #                funs(sum),
+  #                na.rm = T) %>%
+  #   ungroup()
+  #
+  # upStrm_tags = tagPos_df %>%
+  #   filter(upStrm > 0) %>%
+  #   select(TagID) %>%
+  #   distinct() %>%
+  #   as.matrix() %>%
+  #   as.character()
+  #
+  # dwnStrm_tags = tagPos_df %>%
+  #   filter(dwnStrm > 0 & upStrm == 0)
+  #
+  #
+  # dwnStrm_tags = tagPos_df
+  #   filter((dwnStrm > 0 & upStrm == 0) |
+  #            (belowJD1 > 0 & upstrm == 0)) %>%
+  #   select(TagID) %>%
+  #   distinct() %>%
+  #   as.matrix() %>%
+  #   as.character()
+  #
+  # valid_obs = valid_obs %>%
+  #   filter(TagID %in% dwnStrm_tags |
+  #          (!TagID %in% dwnStrm_tags & !Node %in% dwnStrm_nodes) |
+  #            (TagID %in% dwnStrm_tags & ))
 
-  ent_nodes = valid_paths %>%
-    dplyr::filter(grepl('ENL', Path) |
-                    grepl('WVT', Path)) %>%
-    dplyr::select(Node) %>%
-    dplyr::distinct() %>%
-    as.matrix() %>%
-    as.character()
 
-  above_wells_nodes = valid_paths %>%
-    dplyr::filter(grepl('WEA', Path)) %>%
-    dplyr::select(Node) %>%
+  # drop detecions of BelowJD1 if other detections exist
+  onlyBelowJD1_tags = anti_join(valid_obs,
+                                valid_obs %>%
+                                  group_by(TagID) %>%
+                                  filter(!Node %in% c('BelowJD1', 'PRA')) %>%
+                                  ungroup() %>%
+                                  select(TagID) %>%
+                                  distinct()) %>%
+    select(TagID) %>%
     distinct() %>%
     as.matrix() %>%
     as.character()
 
-  wells_tags_dwnstm = valid_obs %>%
-    dplyr::inner_join(wells_tags_all,
-                      by = 'TagID') %>%
-    dplyr::filter(Node %in% c(wen_nodes, ent_nodes)) %>%
-    dplyr::filter(ObsDate > WellsDate) %>%
-    dplyr::select(TagID) %>%
-    dplyr::distinct() %>%
-    as.matrix() %>%
-    as.character()
-
   valid_obs = valid_obs %>%
-    dplyr::filter(!(TagID %in% wells_tags_dwnstm & Node %in% above_wells_nodes))
+    filter(TagID %in% onlyBelowJD1_tags |
+             (!TagID %in% onlyBelowJD1_tags & Node != 'BelowJD1'))
 
 
+
+  cat('Processing assigned nodes\n')
   save_df = writeCapHistOutput(valid_obs,
                                valid_paths,
+                               node_order,
                                save_file,
                                file_name)
 
   return(list('ValidPaths' = valid_paths,
+              'NodeOrder' = node_order,
               # 'ValidTrapData' = trap_df,
               'ValidObs' = valid_obs,
               'ProcCapHist' = save_df))
