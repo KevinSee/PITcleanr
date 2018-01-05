@@ -43,8 +43,7 @@ writeSpwnPaths = function(valid_obs,
     dplyr::left_join(node_order %>%
                        group_by(Node) %>%
                        slice(1) %>%
-                       ungroup() %>%
-                       select(-SiteID),
+                       ungroup(),
                      by = c('Node')) %>%
     dplyr::group_by(TagID) %>%
     dplyr::mutate(previous_node = lag(Node),
@@ -77,6 +76,7 @@ writeSpwnPaths = function(valid_obs,
     dplyr::ungroup()
 
   modObs <- allObs %>%
+    # filter(TagID == '3D9.1C2DDC96C9') %>%
     dplyr::filter(Direction == 'Up') %>%
     dplyr::group_by(TagID) %>%
     dplyr::distinct(Node, .keep_all=TRUE) %>%
