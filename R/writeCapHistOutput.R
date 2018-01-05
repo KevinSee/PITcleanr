@@ -44,7 +44,8 @@ writeCapHistOutput = function(valid_obs = NULL,
                   NodeOrder:ValidPath, maxUpDate, Migration,
                   SiteDescription, UserComment) %>%
     group_by(TagID) %>%
-    mutate(UserProcStatus = ifelse(sum(!ModelObs) > 0, '', UserProcStatus)) %>%
+    mutate(UserProcStatus = ifelse(sum(!AutoProcStatus) > 0, '', UserProcStatus)) %>%
+    # mutate(UserProcStatus = ifelse(sum(!ModelObs) > 0, '', UserProcStatus)) %>%
     ungroup()
 
   if(save_file) {
