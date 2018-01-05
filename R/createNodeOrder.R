@@ -81,7 +81,8 @@ createNodeOrder = function(valid_paths = NULL,
                   mutate(Group = factor(Group,
                                         levels = unique(Group)))) %>%
       filter(!is.na(Group)) %>%
-      mutate(Group = forcats::fct_reorder(Group, RKMTotal, min)) %>%
+      mutate(Group = forcats::fct_reorder(Group, RKMTotal, min),
+             Group = forcats::fct_drop(Group)) %>%
       arrange(Group, RKM)
 
     init_brch = init_brch %>%
