@@ -71,7 +71,7 @@ assignNodes = function(valid_tag_df = NULL,
                                      ConfigID = `Antenna Group Configuration Value`) %>%
                        dplyr::mutate(ObsDate = lubridate::mdy_hms(ObsDate)),
                      by = c('TagID')) %>%
-    dplyr::mutate(ValidDate = ifelse(ObsDate >= TrapDate, T, F)) %>%
+    dplyr::mutate(ValidDate = ifelse(ObsDate >= lubridate::mdy_hms(TrapDate), T, F)) %>%
     dplyr::filter(!is.na(SiteID))
 
   # which sites are not in the configuration file
