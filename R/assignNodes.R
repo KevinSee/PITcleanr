@@ -52,35 +52,35 @@ assignNodes = function(valid_tag_df = NULL,
   }
 
   obs_df <- valid_tag_df %>%
-    dplyr::select(TagID, TrapDate) %>%
-    dplyr::left_join(observation %>%
-                       dplyr::left_join(configuration %>%
-                                          dplyr::select(SiteID, SiteType, SiteTypeName) %>%
-                                          dplyr::distinct(),
-                                        by = c('Event Site Code Value' = 'SiteID')) %>%
-                       dplyr::mutate(ObsDate = ifelse(!is.na(`Event Release Date Time Value`) &
-                                                        is.na(`Antenna ID`) &
-                                                        SiteType == 'MRR' &
-                                                        SiteTypeName %in% c('Acclimation Pont', 'Hatchery', 'Hatchery Returns', 'Trap or Weir'),
-                                                      `Event Release Date Time Value`,
-                                                      `Event Date Time Value`)) %>%
-                       dplyr::select(TagID = `Tag Code`,
-                                     ObsDate,
-                                     SiteID = `Event Site Code Value`,
-                                     AntennaID = `Antenna ID`,
-                                     ConfigID = `Antenna Group Configuration Value`) %>%
-                       dplyr::mutate(ObsDate = lubridate::mdy_hms(ObsDate)),
-                     by = c('TagID')) %>%
-    dplyr::mutate(ValidDate = ifelse(ObsDate >= lubridate::mdy_hms(TrapDate), T, F)) %>%
-    dplyr::filter(!is.na(SiteID))
+    select(TagID, TrapDate) %>%
+    left_join(observation %>%
+                left_join(configuration %>%
+                            select(SiteID, SiteType, SiteTypeName) %>%
+                            distinct(),
+                          by = c('Event Site Code Value' = 'SiteID')) %>%
+                mutate(ObsDate = ifelse(!is.na(`Event Release Date Time Value`) &
+                                          is.na(`Antenna ID`) &
+                                          SiteType == 'MRR' &
+                                          SiteTypeName %in% c('Acclimation Pont', 'Hatchery', 'Hatchery Returns', 'Trap or Weir'),
+                                        `Event Release Date Time Value`,
+                                        `Event Date Time Value`)) %>%
+                select(TagID = `Tag Code`,
+                       ObsDate,
+                       SiteID = `Event Site Code Value`,
+                       AntennaID = `Antenna ID`,
+                       ConfigID = `Antenna Group Configuration Value`) %>%
+                mutate(ObsDate = lubridate::mdy_hms(ObsDate)),
+              by = c('TagID')) %>%
+    mutate(ValidDate = ifelse(ObsDate >= TrapDate, T, F)) %>%
+    filter(!is.na(SiteID))
 
   # which sites are not in the configuration file
   tmp_df <- obs_df %>%
-    dplyr::select(SiteID, AntennaID, ConfigID) %>%
-    dplyr::distinct() %>%
-    dplyr::anti_join(configuration %>%
-                       dplyr::select(SiteID, AntennaID, ConfigID) %>%
-                       dplyr::distinct())
+    select(SiteID, AntennaID, ConfigID) %>%
+    distinct() %>%
+    anti_join(configuration %>%
+                select(SiteID, AntennaID, ConfigID) %>%
+                distinct())
 
   if( nrow(tmp_df) > 0 ){
 
@@ -96,31 +96,35 @@ assignNodes = function(valid_tag_df = NULL,
   }
 
   obs_dat <- obs_df %>%
-    dplyr::left_join(configuration %>%
-                       dplyr::select(SiteID,
-                                     AntennaID,
-                                     ConfigID,
-                                     Node,
-                                     ValidNode,
-                                     AntennaGroup,
-                                     SiteName,
-                                     SiteDescription),
-                     by = c('SiteID', 'AntennaID', 'ConfigID')) %>%
-    dplyr::mutate(Node = ifelse(Node %in% union(unique(parent_child_df$ParentNode), unique(parent_child_df$ChildNode)), Node, NA),
-                  Node = ifelse(is.na(Node), 'ERROR', Node),
-                  ValidNode = ifelse(Node == 'ERROR', F, T)) %>%
-    dplyr::arrange(TagID, ObsDate)
+    left_join(configuration %>%
+                select(SiteID,
+                       AntennaID,
+                       ConfigID,
+                       Node,
+                       ValidNode,
+                       AntennaGroup,
+                       SiteName,
+                       SiteDescription),
+              by = c('SiteID', 'AntennaID', 'ConfigID')) %>%
+    mutate(Node = ifelse(Node %in% union(unique(parent_child_df$ParentNode), unique(parent_child_df$ChildNode)), Node, NA),
+           Node = ifelse(is.na(Node), 'ERROR', Node),
+           ValidNode = ifelse(Node == 'ERROR', F, T)) %>%
+    arrange(TagID, ObsDate)
 
   if(truncate){
 
     obs_dat = obs_dat %>%
-      dplyr::filter(ValidDate == TRUE,
-                    ValidNode == TRUE) %>%
-      dplyr::group_by(TagID) %>%
-      dplyr::mutate(prev_node = lag(Node)) %>%
-      dplyr::filter(Node != prev_node | is.na(prev_node)) %>%
-      dplyr::select(-prev_node) %>%
-      dplyr::ungroup()
+      filter(ValidDate == TRUE,
+             ValidNode == TRUE) %>%
+      group_by(TagID) %>%
+      mutate(prev_node = lag(Node),
+             node_event = nodeDetectionEvent(Node)) %>%
+      group_by(TagID, node_event) %>%
+      mutate(lastObsDate = max(ObsDate)) %>%
+      ungroup() %>%
+      filter(Node != prev_node | is.na(prev_node)) %>%
+      select(-prev_node, -node_event) %>%
+      select(TagID, TrapDate, ObsDate, lastObsDate, everything())
 
   } # truncate if statement
 
