@@ -40,6 +40,12 @@ filterLGRtrapDB = function(trap_path = '.',
 
   if(!is.null(trap_path)) trap_df = read_csv(trap_path)
 
+  if(class(trap_df$CollectionDate) == 'Date') {
+    trap_df$CollectionDate = as.POSIXct(trap_df$CollectionDate,
+                                        tz = 'UTC') %>%
+      lubridate::floor_date(unit = 'days')
+  }
+
   # keep only correct species, spawnyear and adults (returning fish),
   # as well as fish determined to be valid, with ad intact adipose fins and non-missing PIT tags
   valid_df = trap_df %>%
