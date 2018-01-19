@@ -27,7 +27,7 @@ estimateSpawnLoc = function(capHist_proc = NULL) {
     filter(NodeOrder == max(NodeOrder)) %>%
     slice(1) %>%
     ungroup() %>%
-    select(TagID, ObsDate, SiteID, Node)
+    select(TagID, ObsDate, BranchNum, Group, SiteID, Node)
 
   return(finalLoc)
 
