@@ -48,12 +48,12 @@ processCapHist_PRD = function(startDate = NULL,
   cat('Getting trap date.\n')
   valid_tag_df = observations %>%
     dplyr::filter(`Event Site Code Value` == 'PRDLD1') %>%
-    dplyr::mutate(ObsDate = ifelse(!is.na(`Event Release Date Time Value`) &
+    mutate_at(vars(`Event Date Time Value`, `Event Release Date Time Value`),
+              funs(lubridate::mdy_hms)) %>%
+    dplyr::mutate(ObsDate = if_else(!is.na(`Event Release Date Time Value`) &
                                      is.na(`Antenna ID`),
                                    `Event Release Date Time Value`,
                                    `Event Date Time Value`)) %>%
-    dplyr::mutate_at(vars(ObsDate),
-                     funs(lubridate::mdy_hms)) %>%
     filter(ObsDate >= lubridate::ymd(startDate)) %>%
     group_by(TagID = `Tag Code`) %>%
     summarise(TrapDate = min(lubridate::floor_date(ObsDate,
@@ -68,6 +68,39 @@ processCapHist_PRD = function(startDate = NULL,
                           configuration,
                           parent_child,
                           truncate)
+
+  # add observations at trap back to some tags where it had been removed due to wonky date entries
+  valid_obs = valid_obs %>%
+    bind_rows(anti_join(valid_tag_df,
+                        valid_obs) %>%
+                mutate(Node = 'PRA',
+                       ObsDate = TrapDate) %>%
+                left_join(valid_obs %>%
+                            filter(Node == 'PRA') %>%
+                            select(Node,
+                                   SiteName,
+                                   SiteDescription) %>%
+                            distinct()))
+
+  # add observations at trap back to some tags where it had been removed due to wonky date entries
+  valid_obs = valid_obs %>%
+    bind_rows(valid_obs %>%
+                group_by(TagID) %>%
+                filter(!'PRA' %in% Node) %>%
+                ungroup() %>%
+                select(TagID, TrapDate) %>%
+                distinct() %>%
+                mutate(ObsDate = TrapDate,
+                       Node = 'PRA',
+                       ValidDate = T,
+                       ValidNode = T) %>%
+                left_join(valid_obs %>%
+                            filter(Node == 'PRA') %>%
+                            select(Node,
+                                   SiteName,
+                                   SiteDescription) %>%
+                            distinct()))
+
 
   # # drop observations at Wells dam for tags that were observed downstream of Wells later
   # wells_tags_all = valid_obs %>%
@@ -188,6 +221,10 @@ processCapHist_PRD = function(startDate = NULL,
     filter(TagID %in% onlyBelowJD1_tags |
              (!TagID %in% onlyBelowJD1_tags & Node != 'BelowJD1'))
 
+  # check if any tags have been dropped incorrectly along the way
+  if(n_distinct(valid_obs$TagID) != n_distinct(observations$`Tag Code`)) {
+    stop('Error: some tags being dropped')
+  }
 
 
   cat('Processing assigned nodes\n')
