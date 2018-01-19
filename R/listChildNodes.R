@@ -23,7 +23,7 @@ listChildNodes = function(parent_node, parent_child_df) {
     as.character()
 
   test = as.list(child_nodes) %>%
-    map_int(.f = function(x) {
+    purrr::map_int(.f = function(x) {
       parent_child_df %>%
         filter(ParentNode == x,
                ChildNode != x) %>%

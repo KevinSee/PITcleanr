@@ -37,11 +37,11 @@ queryTagMeta = function(tagCode = NULL) {
                          'parsed') %>%
     stack() %>%
     tidyr::spread(ind, values) %>%
-    dplyr::tbl_df() %>%
-    dplyr::mutate_at(vars(matches('Date')),
-                     funs(lubridate::ymd_hms)) %>%
-    dplyr::mutate_at(vars(forkLength, broodYear),
-                     funs(as.numeric))
+    tbl_df() %>%
+    mutate_at(vars(matches('Date')),
+              funs(lubridate::ymd_hms)) %>%
+    mutate_at(vars(forkLength, broodYear),
+              funs(as.numeric))
 
   return(parsed)
 

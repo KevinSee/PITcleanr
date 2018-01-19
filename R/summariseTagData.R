@@ -22,9 +22,9 @@ summariseTagData = function(capHist_proc = NULL,
   stopifnot(!is.null(capHist_proc))
 
   spwn_loc = estimateSpawnLoc(capHist_proc) %>%
-    dplyr::rename(LastObs = ObsDate,
-                  AssignSpawnSite = SiteID,
-                  AssignSpawnNode = Node)
+    rename(LastObs = ObsDate,
+           AssignSpawnSite = SiteID,
+           AssignSpawnNode = Node)
 
   if('LGDNumPIT' %in% names(trap_data) ) {
     trap_data = trap_data %>%
@@ -32,7 +32,7 @@ summariseTagData = function(capHist_proc = NULL,
   }
 
   tag_df = spwn_loc %>%
-    dplyr::full_join(trap_data)
+    full_join(trap_data)
 
   if(saveCSV) {
     readr::write_csv(tag_df,

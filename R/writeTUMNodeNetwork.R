@@ -44,25 +44,25 @@ writeTUMNodeNetwork = function() {
                                                     'NAU')))
 
 
-  site_df_init = dplyr::tibble(SiteID = unlist(bin_list),
-                               path = names(unlist(bin_list))) %>%
-    dplyr::mutate(path = stringr::str_replace(path,
-                                              '[[:digit:]]$',
-                                              ''),
-                  path = stringr::str_replace(path,
-                                              'SC$',
-                                              'SC1'),
-                  path = stringr::str_replace(path,
-                                              'USI1',
-                                              'USI'),
-                  path = stringr::str_replace(path,
-                                              'LRW1',
-                                              'LRW'),
-                  path = ifelse(SiteID %in% c('IR1', 'IR4'),
-                                stringr::str_replace(path,
-                                                     'IR$',
-                                                     SiteID),
-                                path))
+  site_df_init = tibble(SiteID = unlist(bin_list),
+                        path = names(unlist(bin_list))) %>%
+    mutate(path = stringr::str_replace(path,
+                                       '[[:digit:]]$',
+                                       ''),
+           path = stringr::str_replace(path,
+                                       'SC$',
+                                       'SC1'),
+           path = stringr::str_replace(path,
+                                       'USI1',
+                                       'USI'),
+           path = stringr::str_replace(path,
+                                       'LRW1',
+                                       'LRW'),
+           path = ifelse(SiteID %in% c('IR1', 'IR4'),
+                         stringr::str_replace(path,
+                                              'IR$',
+                                              SiteID),
+                         path))
 
   network_descrip = stringr::str_split(site_df_init$path,
                                        '\\.',
@@ -70,16 +70,16 @@ writeTUMNodeNetwork = function() {
   colnames(network_descrip) = paste0('Step', 1:ncol(network_descrip))
 
   site_df = site_df_init %>%
-    dplyr::bind_cols(network_descrip %>%
-                       as.data.frame()) %>%
+    bind_cols(network_descrip %>%
+                as.data.frame()) %>%
     tidyr::gather(brk, upstrm_site, matches('Step')) %>%
-    dplyr::mutate(upstrm_site = ifelse(upstrm_site == '', NA, upstrm_site),
-                  upstrm_site = ifelse(upstrm_site == SiteID, NA, upstrm_site)) %>%
+    mutate(upstrm_site = ifelse(upstrm_site == '', NA, upstrm_site),
+           upstrm_site = ifelse(upstrm_site == SiteID, NA, upstrm_site)) %>%
     tidyr::spread(brk, upstrm_site,
                   fill = '') %>%
-    dplyr::mutate(SiteID = factor(SiteID,
-                                  levels = site_df_init$SiteID)) %>%
-    dplyr::arrange(SiteID)
+    mutate(SiteID = factor(SiteID,
+                           levels = site_df_init$SiteID)) %>%
+    arrange(SiteID)
 
 
   return(site_df)

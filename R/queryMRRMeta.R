@@ -47,9 +47,9 @@ queryMRRMeta = function(site = NULL) {
                  })
     }) %>%
     purrr::map_df(.f = identity) %>%
-    dplyr::rename(rkm = rkmMask) %>%
-    dplyr::mutate_at(vars(latitude,longitude),
-                     funs(as.numeric))
+    rename(rkm = rkmMask) %>%
+    mutate_at(vars(latitude,longitude),
+              funs(as.numeric))
 
   return(res)
 

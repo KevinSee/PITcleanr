@@ -17,10 +17,10 @@ getValidPaths = function(parent_child_df = NULL,
   stopifnot(!is.null(parent_child_df))
 
   if(is.null(root_site)) root_site = parent_child_df %>%
-      dplyr::filter(ParentNode == ChildNode) %>%
-      dplyr::select(ParentNode) %>%
-      dplyr::distinct() %>%
-      dplyr::slice(1) %>%
+      filter(ParentNode == ChildNode) %>%
+      select(ParentNode) %>%
+      distinct() %>%
+      slice(1) %>%
       as.matrix() %>%
       as.character()
 
@@ -44,7 +44,7 @@ getValidPaths = function(parent_child_df = NULL,
     if(path == myNode) path = NULL
 
     valid_paths  = valid_paths %>%
-      dplyr::bind_rows(dplyr::tibble(Node = myNode,
+      bind_rows(tibble(Node = myNode,
                                      Path = paste(path, myNode, collapse = ' ')))
   }
 

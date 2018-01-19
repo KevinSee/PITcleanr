@@ -35,11 +35,11 @@ writeCapHistOutput = function(valid_obs = NULL,
 
 
   save_df = fish_paths %>%
-    dplyr::rename(ObsDate = MinObsDate) %>%
-    dplyr::full_join(spwn_paths %>%
+    rename(ObsDate = MinObsDate) %>%
+    full_join(spwn_paths %>%
                        select(TagID, TrapDate, ObsDate:SiteID, Node, SiteName, SiteDescription, NodeOrder:Migration)) %>%
-    dplyr::arrange(TrapDate, TagID, ObsDate) %>%
-    dplyr::select(TagID, TrapDate, ObsDate, SiteID, Node,
+    arrange(TrapDate, TagID, ObsDate) %>%
+    select(TagID, TrapDate, ObsDate, SiteID, Node,
                   AutoProcStatus, UserProcStatus, ModelObs,
                   NodeOrder:ValidPath, maxUpDate, Migration,
                   SiteDescription, UserComment) %>%

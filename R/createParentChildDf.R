@@ -34,74 +34,74 @@ createParentChildDf = function(sites_df,
 
   # create data.frame of each node, matching up with siteID and path to that siteID
   node_df = sites_df %>%
-    dplyr::rename(EndSite = SiteID) %>%
-    dplyr::mutate(Step0 = root_site) %>%
+    rename(EndSite = SiteID) %>%
+    mutate(Step0 = root_site) %>%
     tidyr::gather(stepOrder, site, matches('Step')) %>%
-    dplyr::mutate(stepOrder = stringr::str_replace(stepOrder, '^Step', ''),
-                  stepOrder = as.integer(stepOrder)) %>%
-    dplyr::arrange(EndSite, stepOrder) %>%
-    dplyr::filter(site != '',
-                  site %in% c(root_site, as.character(sites_df$SiteID))) %>%
-    dplyr::group_by(EndSite) %>%
-    dplyr::mutate(stepOrder = 1:n()) %>%
-    dplyr::ungroup() %>%
-    dplyr::left_join(configuration %>%
-                       dplyr::filter(!EndDate < lubridate::ymd(startDate) | is.na(EndDate)) %>%
-                       dplyr::select(SiteID, Node, SiteType, matches('RKM')) %>%
-                       dplyr::distinct() %>%
-                       dplyr::bind_rows(dplyr::anti_join(configuration %>%
-                                                           dplyr::group_by(SiteID) %>%
-                                                           dplyr::filter(StartDate == max(StartDate, na.rm = T)) %>%
-                                                           dplyr::ungroup() %>%
-                                                           dplyr::select(SiteID, Node, SiteType, matches('RKM')) %>%
-                                                           dplyr::distinct(),
-                                                         .,
-                                                         by = c('SiteID', 'Node'))) %>%
-                       mutate(site = stringr::str_replace(Node, 'A0$', ''),
-                              site = stringr::str_replace(site, 'B0$', '')) %>%
-                       group_by(Node, site) %>%
-                       filter(RKMTotal == min(RKMTotal)) %>%
-                       ungroup(),
-                     by = c('site')) %>%
-    dplyr::arrange(EndSite, stepOrder, desc(Node)) %>%
-    dplyr::group_by(EndSite) %>%
-    dplyr::mutate(nodeOrder = 1:n()) %>%
+    mutate(stepOrder = stringr::str_replace(stepOrder, '^Step', ''),
+           stepOrder = as.integer(stepOrder)) %>%
+    arrange(EndSite, stepOrder) %>%
+    filter(site != '',
+           site %in% c(root_site, as.character(sites_df$SiteID))) %>%
+    group_by(EndSite) %>%
+    mutate(stepOrder = 1:n()) %>%
+    ungroup() %>%
+    left_join(configuration %>%
+                filter(!EndDate < lubridate::ymd(startDate) | is.na(EndDate)) %>%
+                select(SiteID, Node, SiteType, matches('RKM')) %>%
+                distinct() %>%
+                bind_rows(anti_join(configuration %>%
+                                      group_by(SiteID) %>%
+                                      filter(StartDate == max(StartDate, na.rm = T)) %>%
+                                      ungroup() %>%
+                                      select(SiteID, Node, SiteType, matches('RKM')) %>%
+                                      distinct(),
+                                    .,
+                                    by = c('SiteID', 'Node'))) %>%
+                mutate(site = stringr::str_replace(Node, 'A0$', ''),
+                       site = stringr::str_replace(site, 'B0$', '')) %>%
+                group_by(Node, site) %>%
+                filter(RKMTotal == min(RKMTotal)) %>%
+                ungroup(),
+              by = c('site')) %>%
+    arrange(EndSite, stepOrder, desc(Node)) %>%
+    group_by(EndSite) %>%
+    mutate(nodeOrder = 1:n()) %>%
     group_by(Node) %>%
     filter(nodeOrder == min(nodeOrder)) %>%
     ungroup() %>%
-    dplyr::group_by(EndSite) %>%
-    dplyr::mutate(nodeOrder = 1:n()) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(EndSite, NodeSite = site, SiteID, SiteType, Node, nodeOrder, matches('RKM'), path)
+    group_by(EndSite) %>%
+    mutate(nodeOrder = 1:n()) %>%
+    ungroup() %>%
+    select(EndSite, NodeSite = site, SiteID, SiteType, Node, nodeOrder, matches('RKM'), path)
 
   parent_child = node_df %>%
-    dplyr::group_by(EndSite) %>%
-    dplyr::mutate(prevNode = lag(Node)) %>%
-    dplyr::ungroup() %>%
-    dplyr::filter(!is.na(prevNode)) %>%
-    dplyr::select(ParentNode = prevNode,
-                  ChildNode = Node,
-                  SiteType, matches('RKM'),
-                  nodeOrder) %>%
-    dplyr::bind_rows(dplyr::tibble(ParentNode = root_site,
-                                   ChildNode = root_site,
-                                   nodeOrder = 1) %>%
-                       dplyr::left_join(configuration %>%
-                                          dplyr::filter(SiteID == root_site) %>%
-                                          dplyr::select(ChildNode = SiteID,
-                                                        SiteType, matches('RKM')) %>%
-                                          dplyr::distinct(),
-                                        by = 'ChildNode')) %>%
-    dplyr::distinct() %>%
+    group_by(EndSite) %>%
+    mutate(prevNode = lag(Node)) %>%
+    ungroup() %>%
+    filter(!is.na(prevNode)) %>%
+    select(ParentNode = prevNode,
+           ChildNode = Node,
+           SiteType, matches('RKM'),
+           nodeOrder) %>%
+    bind_rows(tibble(ParentNode = root_site,
+                     ChildNode = root_site,
+                     nodeOrder = 1) %>%
+                left_join(configuration %>%
+                            filter(SiteID == root_site) %>%
+                            select(ChildNode = SiteID,
+                                   SiteType, matches('RKM')) %>%
+                            distinct(),
+                          by = 'ChildNode')) %>%
+    distinct() %>%
     # arrange mosty by RKM
-    dplyr::mutate(initParent = ifelse(ChildNode == root_site, 'A',
-                                      ifelse(ParentNode == root_site, 'B', 'C'))) %>%
-    dplyr::arrange(initParent, RKM) %>%
-    dplyr::select(-initParent) %>%
-    dplyr::group_by(ChildNode) %>%
-    dplyr::filter(RKMTotal == max(RKMTotal)) %>%
-    dplyr::slice(1) %>%
-    dplyr::ungroup()
+    mutate(initParent = ifelse(ChildNode == root_site, 'A',
+                               ifelse(ParentNode == root_site, 'B', 'C'))) %>%
+    arrange(initParent, RKM) %>%
+    select(-initParent) %>%
+    group_by(ChildNode) %>%
+    filter(RKMTotal == max(RKMTotal)) %>%
+    slice(1) %>%
+    ungroup()
 
   return(parent_child)
 }

@@ -29,9 +29,9 @@ listParentNodes = function(end_node,
   }
 
   parent_node = parent_child_df %>%
-    dplyr::filter(ChildNode == end_node) %>%
-    dplyr::select(ParentNode) %>%
-    dplyr::distinct() %>%
+    filter(ChildNode == end_node) %>%
+    select(ParentNode) %>%
+    distinct() %>%
     as.matrix() %>%
     as.character()
 

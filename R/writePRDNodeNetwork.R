@@ -134,23 +134,23 @@ writePRDNodeNetwork = function() {
 
 
 
-  site_df_init = dplyr::tibble(SiteID = unlist(bin_all),
-                               path = names(unlist(bin_all))) %>%
-    dplyr::mutate(path = stringr::str_replace(path,
-                                              '[[:digit:]]$',
-                                              ''),
-                  path = stringr::str_replace(path,
-                                              'WEA1$',
-                                              'WEA'),
-                  path = stringr::str_replace(path,
-                                              'RRF1$',
-                                              'RRF'),
-                  path = stringr::str_replace(path,
-                                              'OKL1$',
-                                              'OKL') ) %>% #,
-    dplyr::mutate(path = ifelse(stringr::str_sub(path, start = -nchar(SiteID)) != SiteID,
-                                paste(path, SiteID, sep = '.'),
-                                path))
+  site_df_init = tibble(SiteID = unlist(bin_all),
+                        path = names(unlist(bin_all))) %>%
+    mutate(path = stringr::str_replace(path,
+                                       '[[:digit:]]$',
+                                       ''),
+           path = stringr::str_replace(path,
+                                       'WEA1$',
+                                       'WEA'),
+           path = stringr::str_replace(path,
+                                       'RRF1$',
+                                       'RRF'),
+           path = stringr::str_replace(path,
+                                       'OKL1$',
+                                       'OKL') ) %>% #,
+    mutate(path = ifelse(stringr::str_sub(path, start = -nchar(SiteID)) != SiteID,
+                         paste(path, SiteID, sep = '.'),
+                         path))
 
   network_descrip = stringr::str_split(site_df_init$path,
                                        '\\.',
@@ -158,13 +158,13 @@ writePRDNodeNetwork = function() {
   colnames(network_descrip) = paste0('Step', 1:ncol(network_descrip))
 
   site_df = site_df_init %>%
-    dplyr::bind_cols(network_descrip %>%
-                       as.data.frame()) %>%
-    dplyr::mutate_at(vars(matches('^Step')),
-                     funs(as.character)) %>%
-    dplyr::mutate(SiteID = factor(SiteID,
-                                  levels = unique(site_df_init$SiteID))) %>%
-    dplyr::arrange(SiteID)
+    bind_cols(network_descrip %>%
+                as.data.frame()) %>%
+    mutate_at(vars(matches('^Step')),
+              funs(as.character)) %>%
+    mutate(SiteID = factor(SiteID,
+                           levels = unique(site_df_init$SiteID))) %>%
+    arrange(SiteID)
 
 
   return(site_df)

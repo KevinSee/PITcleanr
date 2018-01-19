@@ -34,12 +34,12 @@ processCapHist_TUM = function(species = c('Chinook', 'Steelhead'),
 
   # pull out tag ID and trap date at Tumwater
   valid_tag_df = observations %>%
-    dplyr::filter(`Event Site Code Value` %in% c('TUF', 'TUM', 'TUMFBY')) %>%
-    dplyr::mutate_at(vars(`Event Date Time Value`),
-                     funs(mdy_hms)) %>%
-    dplyr::group_by(TagID = `Tag Code`) %>%
-    dplyr::summarise(TrapDate = min(`Event Date Time Value`) - dminutes(1)) %>%
-    dplyr::ungroup()
+    filter(`Event Site Code Value` %in% c('TUF', 'TUM', 'TUMFBY')) %>%
+    mutate_at(vars(`Event Date Time Value`),
+              funs(mdy_hms)) %>%
+    group_by(TagID = `Tag Code`) %>%
+    summarise(TrapDate = min(`Event Date Time Value`) - dminutes(1)) %>%
+    ungroup()
 
 
   # translate in nodes and simplify consecutive hits on the same node

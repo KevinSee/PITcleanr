@@ -47,10 +47,10 @@ queryInterrogationMeta = function(site = NULL) {
                  })
     }) %>%
     purrr::map_df(.f = identity) %>%
-    dplyr::mutate_at(vars(latitude:longitude,
-                          firstYearOperated,
-                          lastYearOperated),
-                     funs(as.numeric))
+    mutate_at(vars(latitude:longitude,
+                   firstYearOperated,
+                   lastYearOperated),
+              funs(as.numeric))
 
   return(res)
 

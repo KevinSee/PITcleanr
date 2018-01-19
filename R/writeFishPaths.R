@@ -18,7 +18,7 @@
 writeFishPaths = function(valid_obs,
                           valid_paths) {
 
-  tags <- dplyr::distinct(valid_obs, TagID) %>%
+  tags <- distinct(valid_obs, TagID) %>%
     as.matrix() %>%
     as.character()
 
@@ -30,47 +30,47 @@ writeFishPaths = function(valid_obs,
     if( which(tags == tag) %% 500 == 0){ print(paste0(Sys.time(), "  ", which(tags == tag), " of ", length(tags), " tags. Current tag: ",tag))  }
 
     tagObs <- valid_obs %>%
-      dplyr::filter(TagID == tag) %>%
-      dplyr::select(TagID, Node, ObsDate) %>%
-      dplyr::arrange(ObsDate)
+      filter(TagID == tag) %>%
+      select(TagID, Node, ObsDate) %>%
+      arrange(ObsDate)
 
     finalNode = tagObs %>%
-      dplyr::filter(ObsDate == max(ObsDate)) %>%
-      dplyr::select(Node) %>%
-      dplyr::slice(n()) %>%
+      filter(ObsDate == max(ObsDate)) %>%
+      select(Node) %>%
+      slice(n()) %>%
       as.matrix() %>%
       as.character()
 
 
     pathNodes <- valid_paths %>%
-      dplyr::filter(Node == finalNode) %>%
-      dplyr::select(Path) %>%
+      filter(Node == finalNode) %>%
+      select(Path) %>%
       as.matrix() %>%
       as.character() %>%
       stringr::str_split(' ') %>%
       unlist()
 
     tagObs = tagObs %>%
-      dplyr::mutate(InMainPath = ifelse(Node %in% pathNodes, T, F))
+      mutate(InMainPath = ifelse(Node %in% pathNodes, T, F))
 
     # check out observed nodes not in main path
     # determine if they are in an extended path
     if(sum(!tagObs$InMainPath) > 0) {
 
       lastPath = valid_paths %>%
-        dplyr::filter(Node == finalNode) %>%
-        dplyr::select(Path) %>%
+        filter(Node == finalNode) %>%
+        select(Path) %>%
         as.matrix() %>%
         as.character() %>%
         stringr::str_trim()
 
       quesObs = tagObs %>%
-        dplyr::filter(!InMainPath) %>%
-        dplyr::select(Node)
+        filter(!InMainPath) %>%
+        select(Node)
 
       extendedPaths = valid_paths %>%
-        dplyr::filter(grepl(finalNode, Path)) %>%
-        dplyr::filter(Node %in% quesObs$Node)
+        filter(grepl(finalNode, Path)) %>%
+        filter(Node %in% quesObs$Node)
 
       tagObs$InExtendedPath = F
 
@@ -79,7 +79,7 @@ writeFishPaths = function(valid_obs,
         obsNode = tagObs$Node[i]
 
         tmp = valid_paths %>%
-          dplyr::filter(Node == obsNode)
+          filter(Node == obsNode)
 
         if(grepl(lastPath, tmp$Path) | grepl(tmp$Path, lastPath)) {
           tagObs$InExtendedPath[i] = T
@@ -91,22 +91,22 @@ writeFishPaths = function(valid_obs,
     }
 
     alltagObs = alltagObs %>%
-      dplyr::bind_rows(tagObs)
+      bind_rows(tagObs)
 
   }
 
   proc_obs <- alltagObs %>%
-    dplyr::mutate(AutoProcStatus = ifelse(InMainPath, TRUE,
+    mutate(AutoProcStatus = ifelse(InMainPath, TRUE,
                                           ifelse(InExtendedPath, TRUE, FALSE)))
 
   proc_obs <- proc_obs %>%
-    dplyr::left_join(proc_obs %>%
-                       dplyr::filter(AutoProcStatus == FALSE) %>%
-                       dplyr::distinct(TagID) %>%
-                       dplyr::mutate(UserProcStatus = '')) %>%
-    dplyr::mutate(UserProcStatus = ifelse(is.na(UserProcStatus), TRUE, ''),
+    left_join(proc_obs %>%
+                       filter(AutoProcStatus == FALSE) %>%
+                       distinct(TagID) %>%
+                       mutate(UserProcStatus = '')) %>%
+    mutate(UserProcStatus = ifelse(is.na(UserProcStatus), TRUE, ''),
                   UserComment = '') %>%
-    dplyr::select(TagID, MinObsDate = ObsDate, Node, AutoProcStatus, UserProcStatus, UserComment)
+    select(TagID, MinObsDate = ObsDate, Node, AutoProcStatus, UserProcStatus, UserComment)
 
   return(proc_obs)
 

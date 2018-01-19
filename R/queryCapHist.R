@@ -56,20 +56,20 @@ queryCapHist = function(tagCode = NULL,
       tagMeta_org = suppressWarnings(queryTagMeta(tagCode))
 
       tagMeta_df = tagMeta_org %>%
-        dplyr::mutate(`Antenna ID` = as.character(NA),
-                      `Antenna Group Configuration Value` = 0,
-                      AntennaGroup = as.character(NA)) %>%
-        dplyr::select(`Tag Code` = tag,
-                      `Event Date Time Value` = markDate,
-                      `Event Site Code Value` = markSiteCode,
-                      `Antenna ID`,
-                      `Antenna Group Configuration Value`,
-                      AntennaGroup) %>%
-        dplyr::left_join(configuration %>%
-                           dplyr::select(`Event Site Code Value` = SiteID,
-                                         SiteType) %>%
-                           dplyr::distinct(),
-                         by = c("Event Site Code Value"))
+        mutate(`Antenna ID` = as.character(NA),
+               `Antenna Group Configuration Value` = 0,
+               AntennaGroup = as.character(NA)) %>%
+        select(`Tag Code` = tag,
+               `Event Date Time Value` = markDate,
+               `Event Site Code Value` = markSiteCode,
+               `Antenna ID`,
+               `Antenna Group Configuration Value`,
+               AntennaGroup) %>%
+        left_join(configuration %>%
+                    select(`Event Site Code Value` = SiteID,
+                           SiteType) %>%
+                    distinct(),
+                  by = c("Event Site Code Value"))
 
       return(tagMeta_df)
     }
@@ -85,35 +85,35 @@ queryCapHist = function(tagCode = NULL,
   parsed = suppressMessages(httr::content(web_req,
                                           'parsed',
                                           encoding = 'UTF-8')) %>%
-    dplyr::rename(`Tag Code` = tag_id,
-                  `Event Date Time Value` = eventdatetime,
-                  `Event Site Code Value` = site_code,
-                  `Antenna ID` = antenna_id,
-                  AntennaGroup = antenna_group,
-                  SiteType = obs_type)
+    rename(`Tag Code` = tag_id,
+           `Event Date Time Value` = eventdatetime,
+           `Event Site Code Value` = site_code,
+           `Antenna ID` = antenna_id,
+           AntennaGroup = antenna_group,
+           SiteType = obs_type)
 
   # get configuration ID
   config_df = parsed %>%
-    dplyr::mutate(Date = floor_date(`Event Date Time Value`,
-                                    'day')) %>%
-    dplyr::select(SiteID = `Event Site Code Value`,
-                  AntennaID = `Antenna ID`,
-                  Date) %>%
-    dplyr::distinct() %>%
-    dplyr::left_join(configuration,
-                     by = c('SiteID', 'AntennaID')) %>%
-    dplyr::filter((StartDate <= Date | (is.na(StartDate) & is.na(EndDate))),
-                  (EndDate > Date | is.na(EndDate))) %>%
-    dplyr::select(SiteID, ConfigID) %>%
-    dplyr::distinct()
+    mutate(Date = floor_date(`Event Date Time Value`,
+                             'day')) %>%
+    select(SiteID = `Event Site Code Value`,
+           AntennaID = `Antenna ID`,
+           Date) %>%
+    distinct() %>%
+    left_join(configuration,
+              by = c('SiteID', 'AntennaID')) %>%
+    filter((StartDate <= Date | (is.na(StartDate) & is.na(EndDate))),
+           (EndDate > Date | is.na(EndDate))) %>%
+    select(SiteID, ConfigID) %>%
+    distinct()
 
   parsed = parsed %>%
-    dplyr::left_join(config_df,
-                     by = c('Event Site Code Value' = 'SiteID')) %>%
-    dplyr::rename(`Antenna Group Configuration Value` = ConfigID) %>%
-    dplyr::select(`Tag Code`:`Antenna ID`,
-                  `Antenna Group Configuration Value`,
-                  dplyr::everything())
+    left_join(config_df,
+              by = c('Event Site Code Value' = 'SiteID')) %>%
+    rename(`Antenna Group Configuration Value` = ConfigID) %>%
+    select(`Tag Code`:`Antenna ID`,
+           `Antenna Group Configuration Value`,
+           everything())
 
   return(parsed)
 

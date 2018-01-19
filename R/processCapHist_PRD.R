@@ -47,13 +47,13 @@ processCapHist_PRD = function(startDate = NULL,
   # pull out tag ID and trap date at Priest Rapids
   cat('Getting trap date.\n')
   valid_tag_df = observations %>%
-    dplyr::filter(`Event Site Code Value` == 'PRDLD1') %>%
+    filter(`Event Site Code Value` == 'PRDLD1') %>%
     mutate_at(vars(`Event Date Time Value`, `Event Release Date Time Value`),
               funs(lubridate::mdy_hms)) %>%
-    dplyr::mutate(ObsDate = if_else(!is.na(`Event Release Date Time Value`) &
-                                     is.na(`Antenna ID`),
-                                   `Event Release Date Time Value`,
-                                   `Event Date Time Value`)) %>%
+    mutate(ObsDate = if_else(!is.na(`Event Release Date Time Value`) &
+                               is.na(`Antenna ID`),
+                             `Event Release Date Time Value`,
+                             `Event Date Time Value`)) %>%
     filter(ObsDate >= lubridate::ymd(startDate)) %>%
     group_by(TagID = `Tag Code`) %>%
     summarise(TrapDate = min(lubridate::floor_date(ObsDate,
@@ -104,48 +104,48 @@ processCapHist_PRD = function(startDate = NULL,
 
   # # drop observations at Wells dam for tags that were observed downstream of Wells later
   # wells_tags_all = valid_obs %>%
-  #   dplyr::filter(Node == 'WEA') %>%
-  #   dplyr::select(TagID, ObsDate) %>%
-  #   dplyr::group_by(TagID) %>%
-  #   dplyr::summarise(WellsDate = max(ObsDate)) %>%
-  #   dplyr::ungroup() %>%
-  #   dplyr::distinct()
+  #   filter(Node == 'WEA') %>%
+  #   select(TagID, ObsDate) %>%
+  #   group_by(TagID) %>%
+  #   summarise(WellsDate = max(ObsDate)) %>%
+  #   ungroup() %>%
+  #   distinct()
   #
   # wen_nodes = valid_paths %>%
-  #   dplyr::filter(grepl('LWEB0', Path) |
+  #   filter(grepl('LWEB0', Path) |
   #                   grepl('CLK', Path)) %>%
-  #   dplyr::select(Node) %>%
-  #   dplyr::distinct() %>%
+  #   select(Node) %>%
+  #   distinct() %>%
   #   as.matrix() %>%
   #   as.character()
   #
   # ent_nodes = valid_paths %>%
-  #   dplyr::filter(grepl('ENL', Path) |
+  #   filter(grepl('ENL', Path) |
   #                   grepl('WVT', Path)) %>%
-  #   dplyr::select(Node) %>%
-  #   dplyr::distinct() %>%
+  #   select(Node) %>%
+  #   distinct() %>%
   #   as.matrix() %>%
   #   as.character()
   #
   # above_wells_nodes = valid_paths %>%
-  #   dplyr::filter(grepl(' WEA', Path)) %>%
-  #   dplyr::select(Node) %>%
+  #   filter(grepl(' WEA', Path)) %>%
+  #   select(Node) %>%
   #   distinct() %>%
   #   as.matrix() %>%
   #   as.character()
   #
   # wells_tags_dwnstm = valid_obs %>%
-  #   dplyr::inner_join(wells_tags_all,
+  #   inner_join(wells_tags_all,
   #                     by = 'TagID') %>%
-  #   dplyr::filter(Node %in% c(wen_nodes, ent_nodes)) %>%
-  #   dplyr::filter(ObsDate > WellsDate) %>%
-  #   dplyr::select(TagID) %>%
-  #   dplyr::distinct() %>%
+  #   filter(Node %in% c(wen_nodes, ent_nodes)) %>%
+  #   filter(ObsDate > WellsDate) %>%
+  #   select(TagID) %>%
+  #   distinct() %>%
   #   as.matrix() %>%
   #   as.character()
   #
   # valid_obs = valid_obs %>%
-  #   dplyr::filter(!(TagID %in% wells_tags_dwnstm & Node %in% above_wells_nodes))
+  #   filter(!(TagID %in% wells_tags_dwnstm & Node %in% above_wells_nodes))
 
   # # drop downstream detections for obvious kelts
   # dwnStrm_nodes = node_order %>%

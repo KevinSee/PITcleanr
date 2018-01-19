@@ -23,7 +23,7 @@ listChildSites = function(parent_site, parent_child_df) {
     as.character()
 
   test = as.list(child_sites) %>%
-    map_int(.f = function(x) {
+    purrr::map_int(.f = function(x) {
       parent_child_df %>%
         filter(ParentSite == x,
                ChildSite != x) %>%

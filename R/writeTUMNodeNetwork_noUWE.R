@@ -45,15 +45,15 @@ writeTUMNodeNetwork_noUWE = function() {
 
   bin_list[['WhiteRiver']] = list('WTL')
 
-  site_df_init = dplyr::tibble(SiteID = unlist(bin_list),
-                               path = names(unlist(bin_list))) %>%
-    dplyr::mutate(path = stringr::str_replace(path,
-                                              '[[:digit:]]$',
-                                              '')) %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(path = stringr::str_replace(path, paste0('\\.', SiteID), '') ) %>% #,
+  site_df_init = tibble(SiteID = unlist(bin_list),
+                        path = names(unlist(bin_list))) %>%
+    mutate(path = stringr::str_replace(path,
+                                       '[[:digit:]]$',
+                                       '')) %>%
+    rowwise() %>%
+    mutate(path = stringr::str_replace(path, paste0('\\.', SiteID), '') ) %>% #,
     # path = paste(path, SiteID, sep = '.')) %>%
-    dplyr::ungroup()
+    ungroup()
 
   network_descrip = stringr::str_split(site_df_init$path,
                                        '\\.',
@@ -61,15 +61,15 @@ writeTUMNodeNetwork_noUWE = function() {
   colnames(network_descrip) = paste0('Step', 1:ncol(network_descrip))
 
   site_df = site_df_init %>%
-    dplyr::bind_cols(network_descrip %>%
-                       as.data.frame()) %>%
+    bind_cols(network_descrip %>%
+                as.data.frame()) %>%
     tidyr::gather(brk, upstrm_site, matches('Step')) %>%
-    dplyr::mutate(upstrm_site = ifelse(upstrm_site == '', NA, upstrm_site)) %>%
+    mutate(upstrm_site = ifelse(upstrm_site == '', NA, upstrm_site)) %>%
     tidyr::spread(brk, upstrm_site,
                   fill = '') %>%
-    dplyr::mutate(SiteID = factor(SiteID,
-                                  levels = site_df_init$SiteID)) %>%
-    dplyr::arrange(SiteID)
+    mutate(SiteID = factor(SiteID,
+                           levels = site_df_init$SiteID)) %>%
+    arrange(SiteID)
 
 
   return(site_df)
