@@ -22,6 +22,10 @@ estimateSpawnLoc = function(capHist_proc = NULL) {
                                    AutoProcStatus,
                                    UserProcStatus))
 
+  # filter for observations that should be kept
+  capHist_proc = capHist_proc %>%
+    filter(UserProcStatus)
+
   finalLoc = capHist_proc %>%
     group_by(TagID) %>%
     filter(NodeOrder == max(NodeOrder)) %>%
