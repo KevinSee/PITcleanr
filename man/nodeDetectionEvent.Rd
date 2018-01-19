@@ -9,6 +9,9 @@ nodeDetectionEvent(x)
 \arguments{
 \item{x}{character string of Node names}
 }
+\value{
+character string
+}
 \description{
 the function uses base R and run length encoding to identify the
   number of times a fish is detected on a single node during a single event and before being interupted

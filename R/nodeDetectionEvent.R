@@ -8,7 +8,7 @@
 #'
 #' @param x character string of Node names
 #'
-#' @return
+#' @return character string
 #' @export
 #'
 #' @examples nodeDetectionEvent()
