@@ -59,7 +59,7 @@ writeSpwnPaths = function(valid_obs,
            Direction = ifelse(!is.na(Up), Up, Down),
            Direction = ifelse(!is.na(Hold), 'Hold', Direction)) %>%
     ungroup() %>%
-    select(one_of(names(valid_obs)), NodeOrder, Direction)
+    select(one_of(names(valid_obs)), BranchNum, Group, NodeOrder, Direction)
 
   # identical(nrow(valid_obs), nrow(allObs))
 
@@ -99,7 +99,9 @@ writeSpwnPaths = function(valid_obs,
 
   allObs <- allObs %>%
     left_join(migObs) %>%
-    mutate(Migration = ifelse(ObsDate <= maxUpDate, 'Upstream', 'Downstream'))
+    mutate(Migration = ifelse(ObsDate <= maxUpDate, 'Upstream', 'Downstream'),
+           ModelObs = ifelse(!ValidPath, '', ModelObs)) %>%
+    select(-maxUpDate)
 
 
   return(allObs)
