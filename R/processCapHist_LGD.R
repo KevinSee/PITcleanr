@@ -60,8 +60,8 @@ processCapHist_LGD = function(species = c('Chinook', 'Steelhead'),
   # pull valid tags from trap database, get trap date
   cat('Getting valid tags\n')
   valid_tag_df = trap_df %>%
-    dplyr::group_by(TagID = LGDNumPIT) %>%
-    dplyr::summarise(TrapDate = min(CollectionDate, na.rm = T))
+    group_by(TagID = LGDNumPIT) %>%
+    summarise(TrapDate = min(CollectionDate, na.rm = T))
 
   # translate in nodes and simplify consecutive hits on the same node
   cat('Assigning nodes\n')
