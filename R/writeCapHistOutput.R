@@ -37,12 +37,13 @@ writeCapHistOutput = function(valid_obs = NULL,
   save_df = fish_paths %>%
     rename(ObsDate = MinObsDate) %>%
     full_join(spwn_paths %>%
-                       select(TagID, TrapDate, ObsDate:SiteID, Node, SiteName, SiteDescription, NodeOrder:Migration)) %>%
+                       select(TagID, TrapDate, ObsDate:SiteID, BranchNum, Group, Node, SiteName, SiteDescription, NodeOrder:Migration)) %>%
     arrange(TrapDate, TagID, ObsDate) %>%
-    select(TagID, TrapDate, ObsDate, SiteID, Node,
+    select(TagID, TrapDate, ObsDate, lastObsDate, BranchNum, Group, SiteID, Node,
                   AutoProcStatus, UserProcStatus, ModelObs,
-                  NodeOrder:ValidPath, maxUpDate, Migration,
+                  NodeOrder:ValidPath, Migration,
                   SiteDescription, UserComment) %>%
+    select(TagID, TrapDate, ObsDate, lastObsDate, BranchNum, Group, SiteID, Node, NodeOrder, Direction, Migration, AutoProcStatus, UserProcStatus, ModelObs, ValidPath, UserComment) %>%
     group_by(TagID) %>%
     mutate(UserProcStatus = ifelse(sum(!AutoProcStatus) > 0, '', UserProcStatus)) %>%
     # mutate(UserProcStatus = ifelse(sum(!ModelObs) > 0, '', UserProcStatus)) %>%
