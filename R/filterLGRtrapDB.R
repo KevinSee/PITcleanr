@@ -68,7 +68,8 @@ filterLGRtrapDB = function(trap_path = '.',
            GenSex, GenStock, GenStockProb, GenParentHatchery, GenBY, GenPBT_ByHat, GenPBT_RGroup,
            BioScaleFinalAge, PtagisEventSites, PtagisLastEventSite, PtagisLastEventDate,
            PtagisEventLastSpawnSite, RepeatSpawner, BiosamplesValid, LGDValid, LGDInjuryiesAll, LGDMarksAll,
-           LGDMarkAD)
+           LGDMarkAD) %>%
+    mutate(CollectionDate = mdy_hms(CollectionDate))
 
   if(saveValidTagList) {
     valid_df %>%
