@@ -26,12 +26,20 @@ estimateSpawnLoc = function(capHist_proc = NULL) {
   capHist_proc = capHist_proc %>%
     filter(UserProcStatus)
 
+  # create tag_path field for each tag
+  tag_path <- capHist_proc %>%
+    select(TagID, Node) %>%
+    group_by(TagID) %>%
+    summarise(TagPath = toString(Node)) %>%
+    ungroup()
+
   finalLoc = capHist_proc %>%
     group_by(TagID) %>%
     filter(NodeOrder == max(NodeOrder)) %>%
     slice(1) %>%
     ungroup() %>%
-    select(TagID, ObsDate, BranchNum, Group, SiteID, Node)
+    select(TagID, ObsDate, BranchNum, Group, SiteID, Node) %>%
+    full_join(tag_path)
 
   return(finalLoc)
 
