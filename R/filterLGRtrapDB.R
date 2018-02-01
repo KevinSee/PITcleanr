@@ -46,7 +46,7 @@ filterLGRtrapDB = function(trap_path = '.',
       lubridate::floor_date(unit = 'days')
   }
 
-  if(class(trap_df$CollectionDate) == 'character') {
+  if(class(trap_df$CollectionDate) %in% c('character', 'factor')) {
     trap_df$CollectionDate = lubridate::mdy_hms(trap_df$CollectionDate) %>%
       lubridate::floor_date(unit = 'days')
   }
