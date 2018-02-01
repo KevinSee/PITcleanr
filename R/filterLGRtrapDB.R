@@ -17,7 +17,7 @@
 #' @return NULL
 #' @examples filterLGRtrapDB(trap_path = NULL, species == 'Chinook', spawnYear = 2015)
 
-filterLGRtrapDB = function(trap_path = '.',
+filterLGRtrapDB = function(trap_path = NULL,
                            species = c('Chinook', 'Steelhead'),
                            spawnYear = NULL,
                            saveValidTagList = F,
@@ -28,6 +28,11 @@ filterLGRtrapDB = function(trap_path = '.',
   # need a year
   stopifnot(!is.null(spawnYear))
 
+  # stop if no file path to the trap database is provided
+  if(is.null(trap_path)) {
+    stop('File path to the trap database csv file must be provided.')
+  }
+
   # set some default values
   species = match.arg(species)
 
@@ -36,9 +41,7 @@ filterLGRtrapDB = function(trap_path = '.',
                    ifelse(species == 'Steelhead', 3, NA))
   if(is.na(sppCode)) stop('Species name not found')
 
-  if(is.null(trap_path)) trap_df = trap_chnk2015
-
-  if(!is.null(trap_path)) trap_df = read_csv(trap_path)
+  trap_df = read_csv(trap_path)
 
   if(class(trap_df$CollectionDate) == 'Date') {
     trap_df$CollectionDate = as.POSIXct(trap_df$CollectionDate,

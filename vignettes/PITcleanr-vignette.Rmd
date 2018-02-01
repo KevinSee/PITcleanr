@@ -22,15 +22,15 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 
 # Introduction
 
-The PITcleanr package was developed to help query the necessary data to fit a DABOM model (**D**am **A**dult **B**ranch **O**ccupancy **M**odel) in order to estimate adult escapement to various tributaries above a tagging location. A key assumption of a DABOM model is that fish travel along a single upstream route. Therefore, the model will fail if presented with detections by a single fish in multiple tributaries above a branching node. PITcleanr is designed to help clean the PIT tag detection data to identify non-linear upstream pathways and help the user determine which observations to keep.
+The `PITcleanr` package was developed to help query the necessary data to fit a DABOM model (**D**am **A**dult **B**ranch **O**ccupancy **M**odel) in order to estimate adult escapement to various tributaries above a tagging location. A key assumption of a DABOM model is that fish travel along a single upstream route. Therefore, the model will fail if presented with detections by a single fish in multiple tributaries above a branching node. `PITcleanr` is designed to help clean the PIT tag detection data to identify non-linear upstream pathways and help the user determine which observations to keep.
 
 # System requirements
 
-PITcleanr relies on the following R packages which can be downloaded via [CRAN](https://cran.r-project.org/web/packages/available_packages_by_name.html) or by using the function `install.packages()`:
+`PITcleanr` relies on the following R packages which can be downloaded via [CRAN](https://cran.r-project.org/web/packages/available_packages_by_name.html) or by using the function `install.packages()`:
 
 * `dplyr`, `lubridate`, `httr`, `purrr` and `stringr`: can all be installed by installing the `tidyverse` package
 
-In addition, many of the various queries in PITcleanr require connection to the internet.
+In addition, many of the various queries in `PITcleanr` require connection to the internet.
 
 ```{r}
 library(tidyverse)
@@ -42,23 +42,23 @@ library(PITcleanr)
 
 # Data sources
 
-PITcleanr starts with data from an adult trap database, to determine which tags are considered part of the valid tag sample, and what the trap date is for each tag. For the Lower Granite dam, the data can be retreived from the "QCI Downloads" folder on the Idaho Fish and Game's [IFWIS website](https://collaboration.idfg.idaho.gov/default.aspx). The trapping data is stored in an Microsoft Access database that is updated weekly and named "LGTrappingExportJodyW.accdb". Permission must be obtained from Idaho Fish and Game before viewing, accessing and retreiving data from the site. This database contains two tables, which can be exported as .csv files. Once this is done, PITcleanr has a function, `filterLGRtrapDB` to determine which tags are valid, and when they were caught in the adult trap. 
+`PITcleanr` starts with data from an adult trap database, to determine which tags are considered part of the valid tag sample, and what the trap date is for each tag. For the Lower Granite dam, the data can be retreived from the "QCI Downloads" folder on the Idaho Fish and Game's [IFWIS website](https://collaboration.idfg.idaho.gov/default.aspx). The trapping data is stored in an Microsoft Access database that is updated weekly and named "LGTrappingExportJodyW.accdb". Permission must be obtained from Idaho Fish and Game before viewing, accessing and retreiving data from the site. This database contains two tables, which can be exported as .csv files. Once this is done, `PITcleanr` has a function, `filterLGRtrapDB` to determine which tags are valid, and when they were caught in the adult trap. 
 
-Other than the adult trap database, PITcleanr relies on queries from the Columbia Basin Research Data Access in Real Time ([DART](http://www.cbr.washington.edu/dart)) and the Columbia Basin PIT Tag Information System ([PTAGIS](https://ptagis.org/)). 
+Other than the adult trap database, `PITcleanr` relies on queries from the Columbia Basin Research Data Access in Real Time ([DART](http://www.cbr.washington.edu/dart)) and the Columbia Basin PIT Tag Information System ([PTAGIS](https://ptagis.org/)). 
 
 # Workflow
 
 For the purposes of this vignette, we will focus on data to be fed into the Lower Granite version of DABOM, using data from spring/summer Chinook that crossed Lower Granite in the spring and summer of 2015.
 
 ```{r}
-spp = c('Chinook', 'Steelhead')[1]
-yr = 2015
+spp = 'Chinook'
+yr = 2014
 ```
 
 
 ## Configuration Table
 
-One of the first steps is to compile a configuration file containing information about all of the detection sites that may be present. PITcleanr will create such a configuration file for all sites in the Columbia River basin, using the `buildConfig()` function.
+One of the first steps is to compile a configuration file containing information about all of the detection sites that may be present. `PITcleanr` will create such a configuration file for all sites in the Columbia River basin, using the `buildConfig()` function.
 
 ```{r}
 org_config = buildConfig()
@@ -147,7 +147,7 @@ head(my_config)
 
 ## Node Network 
 
-The next step is to define how the various sites that are to be used with DABOM are related to each other. PITcleanr contains a function to describe that network for the Lower Granite version of DABOM, `writeLGRNodeNetwork()`. This serves two purposes: it defines which sites are to be used in the DABOM model, and it describes how they are related to each other along the stream network.
+The next step is to define how the various sites that are to be used with DABOM are related to each other. `PITcleanr` contains a function to describe that network for the Lower Granite version of DABOM, `writeLGRNodeNetwork()`. This serves two purposes: it defines which sites are to be used in the DABOM model, and it describes how they are related to each other along the stream network.
 
 ```{r}
 site_df = writeLGRNodeNetwork()
@@ -202,15 +202,12 @@ if(sum(grepl('KENA0', parent_child$ChildNode)) == 0) {
 
 ## Valid Tags
 
-The user must define the path to the adult trap database, which contains the data PITcleanr uses to determine which tags are valid to be fed into DABOM. PITcleanr contains an example of the trap database (`trap_chnk2015`), which only contains spring/summer Chinook in 2015, so if `trap_path` is set to `NULL`, this will be used. If the user has access to the trap database, set `trap_path` equal to the file path, including the file name and extension, of the actual table (named tblLGDMasterCombineExportJodyW.csv in my version of the trap database). Currently it must be in CSV format.
+The user must define the path to the adult trap database, which contains the data `PITcleanr` uses to determine which tags are valid to be fed into DABOM. `PITcleanr` contains an fictional example of the trap database, modeled after the one maintained by IDFG. If the user has access to the trap database, set `trap_path` equal to the file path, including the file name and extension. Currently it must be in CSV format. If the user does not have a copy of the trap database, one must be obtained before running `PITcleanr`.
 
-From the trap database, PITcleanr searches for tags that are part of the valid tag list for a particular species and year, and returns a dataframe with their tag code and the date of trapping. Currently, within the Lower Granite trap database, PITcleanr filters for tags of the appropriate species and spawn year, and then filters for returning adults (`LGDLifeStage == 'RF'`), adipose-intact fish (`LGDMarkAD == 'AI'`), with non-missing PIT tag numbers (`!is.na(LGDNumPIT)`) and that are marked as valid (`LGDValid == 1`). Besides filtering out these valid tags, the function `filterLGRtrapDB` provides an arguement to save those tag IDs as a text file, to make it easier to upload to PTAGIS. 
+From the trap database, `PITcleanr` searches for tags that are part of the valid tag list for a particular species and year, and returns a dataframe with their tag code and the date of trapping. Currently, within the Lower Granite trap database, `PITcleanr` filters for tags of the appropriate species and spawn year, and then filters for returning adults (`LGDLifeStage == 'RF'`), adipose-intact fish (`LGDMarkAD == 'AI'`), with non-missing PIT tag numbers (`!is.na(LGDNumPIT)`) and that are marked as valid (`LGDValid == 1`). Besides filtering out these valid tags, the function `filterLGRtrapDB` provides an arguement to save those tag IDs as a text file, to make it easier to upload to PTAGIS. 
 
 ```{r}
-data(trap_chnk2015)
-head(trap_chnk2015)
-
-valid_df = filterLGRtrapDB(trap_path = NULL,
+valid_df = filterLGRtrapDB(trap_path = '../inst/extdata/Chnk2014_TrapDatabase.csv',
                            species = spp,
                            spawnYear = yr,
                            saveValidTagList = T,
@@ -259,7 +256,7 @@ It returns a dataframe with a row for each observed node, showing the tag code, 
 * `ModelObs`: Marked `TRUE` for all observed nodes, in sequence by observation, that initially constitute a valid path. Does not assume that the final observation is along the true valid path.
 * `SiteDescription`: The site description of the site, as provided by PTAGIS.
 
-"AutoProcStatus" is PITcleanr's best attempt to determine which observations should be kept (and which should be deleted) before bringing the data into DABOM. "UserProcStatus"" is there for the user to change things. Any tag that has at least one flagged observation ("AutoProcStatus" == `FALSE`) will have all of the observations labeled as blanks in the "UserProcStatus" column. This allows the user to filter initially on the rows with `UserProcStatus == ''`, and see all the observations for each flagged tag. The user can then determine which observations should be included as "valid" by marking the UserProcStatus as `TRUE`, or which ones should be deleted by marking the UserProcStatus as `FALSE`, guided by the suggestions in the AutoProcStatus column, information contained in the other columns, and by the user's knowledge of fish behavior and the system in question. The *UserComment* field is meant to record reasons why certain observations are deleted.
+"AutoProcStatus" is `PITcleanr`'s best attempt to determine which observations should be kept (and which should be deleted) before bringing the data into DABOM. "UserProcStatus"" is there for the user to change things. Any tag that has at least one flagged observation ("AutoProcStatus" == `FALSE`) will have all of the observations labeled as blanks in the "UserProcStatus" column. This allows the user to filter initially on the rows with `UserProcStatus == ''`, and see all the observations for each flagged tag. The user can then determine which observations should be included as "valid" by marking the UserProcStatus as `TRUE`, or which ones should be deleted by marking the UserProcStatus as `FALSE`, guided by the suggestions in the AutoProcStatus column, information contained in the other columns, and by the user's knowledge of fish behavior and the system in question. The *UserComment* field is meant to record reasons why certain observations are deleted.
 
 We imagine the workflow to involve initially filtering on all the blank UserProcStatus rows. Then, for each tag, determine whether each observation should be kept (mark *UserProcStatus* == `TRUE`) or discarded (mark *UserProcStatus* == 'FALSE`) based on suggestions from the *AutoProcStatus*, *ValidPaths* and *ModelObs* fields. For any observation destined to be discarded, a reason should be provided in the *UserComment* for re-producibility. When no blank *UserProcStatus* rows remain, save the file. It is now ready for importation into DABOM.
 
