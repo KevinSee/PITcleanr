@@ -21,10 +21,7 @@ summariseTagData = function(capHist_proc = NULL,
 
   stopifnot(!is.null(capHist_proc))
 
-  spwn_loc = estimateSpawnLoc(capHist_proc) %>%
-    rename(LastObs = ObsDate,
-           AssignSpawnSite = SiteID,
-           AssignSpawnNode = Node)
+  spwn_loc = estimateSpawnLoc(capHist_proc)
 
   if('LGDNumPIT' %in% names(trap_data) ) {
     trap_data = trap_data %>%

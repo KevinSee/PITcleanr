@@ -20,7 +20,8 @@ estimateSpawnLoc = function(capHist_proc = NULL) {
   capHist_proc = capHist_proc %>%
     mutate(UserProcStatus = ifelse(UserProcStatus == '',
                                    AutoProcStatus,
-                                   UserProcStatus))
+                                   UserProcStatus),
+           UserProcStatus = as.logical(UserProcStatus))
 
   # filter for observations that should be kept
   capHist_proc = capHist_proc %>%
@@ -38,7 +39,12 @@ estimateSpawnLoc = function(capHist_proc = NULL) {
     filter(NodeOrder == max(NodeOrder)) %>%
     slice(1) %>%
     ungroup() %>%
-    select(TagID, ObsDate, BranchNum, Group, SiteID, Node) %>%
+    select(TagID,
+           LastObs = lastObsDate,
+           BranchNum,
+           Group,
+           AssignSpawnSite = SiteID,
+           AssignSpawnNode = Node) %>%
     full_join(tag_path)
 
   return(finalLoc)
