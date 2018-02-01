@@ -46,6 +46,11 @@ filterLGRtrapDB = function(trap_path = '.',
       lubridate::floor_date(unit = 'days')
   }
 
+  if(class(trap_df$CollectionDate) == 'character') {
+    trap_df$CollectionDate = lubridate::mdy_hms(trap_df$CollectionDate) %>%
+      lubridate::floor_date(unit = 'days')
+  }
+
   # keep only correct species, spawnyear and adults (returning fish),
   # as well as fish determined to be valid, with ad intact adipose fins and non-missing PIT tags
   valid_df = trap_df %>%
@@ -68,8 +73,7 @@ filterLGRtrapDB = function(trap_path = '.',
            GenSex, GenStock, GenStockProb, GenParentHatchery, GenBY, GenPBT_ByHat, GenPBT_RGroup,
            BioScaleFinalAge, PtagisEventSites, PtagisLastEventSite, PtagisLastEventDate,
            PtagisEventLastSpawnSite, RepeatSpawner, BiosamplesValid, LGDValid, LGDInjuryiesAll, LGDMarksAll,
-           LGDMarkAD) %>%
-    mutate(CollectionDate = mdy_hms(CollectionDate))
+           LGDMarkAD)
 
   if(saveValidTagList) {
     valid_df %>%
