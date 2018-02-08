@@ -25,7 +25,7 @@ estNodeEff = function(capHist_proc = NULL,
 
   # get a vector of nodes upstream of
   node_vec = node_order %>%
-    filter(grepl(node, Path)) %>%
+    filter(grepl(paste0(node, ' '), Path) | Node == node) %>%
     select(Node) %>%
     as.matrix() %>%
     as.vector()
