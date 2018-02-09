@@ -68,7 +68,9 @@ writePRDNodeNetwork = function() {
                                      'MRC' =
                                        list('MRC',
                                             'BVC',
-                                            'TWR',
+                                            'TWR' =
+                                              list('TWR',
+                                                   'TWISPW'),
                                             'SCP',
                                             'MSH' =
                                               list('MSH',
