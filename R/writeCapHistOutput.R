@@ -9,7 +9,7 @@
 #' @param file_name If \code{save_file == TRUE}, this is the file name (with possible extension) to be saved to.
 #'
 #' @author Kevin See
-#' @import dplyr WriteXLS
+#' @import dplyr readr WriteXLS
 #' @export
 
 writeCapHistOutput = function(valid_obs = NULL,
@@ -50,14 +50,26 @@ writeCapHistOutput = function(valid_obs = NULL,
     ungroup()
 
   if(save_file) {
-    WriteXLS::WriteXLS('save_df',
-                       file_name,
-                       SheetNames = c('ProcCapHist'),
-                       AdjWidth = T,
-                       AutoFilter = T,
-                       BoldHeaderRow = T,
-                       FreezeCol = 1,
-                       FreezeRow = 1)
+    if(grepl('\\.xls', file_name)) {
+      WriteXLS::WriteXLS('save_df',
+                         file_name,
+                         SheetNames = c('ProcCapHist'),
+                         AdjWidth = T,
+                         AutoFilter = T,
+                         BoldHeaderRow = T,
+                         FreezeCol = 1,
+                         FreezeRow = 1)
+    }
+
+    if(grepl('\\.csv', file_name)) {
+      write_csv(save_df,
+                file_name)
+    }
+
+    else {
+      write_delim(save_df,
+                  file_name)
+    }
   }
 
   return(save_df)
