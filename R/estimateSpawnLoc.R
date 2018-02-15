@@ -16,12 +16,16 @@ estimateSpawnLoc = function(capHist_proc = NULL) {
 
   stopifnot(!is.null(capHist_proc))
 
-  # if the user processed column is blank, use the auto processed column
-  capHist_proc = capHist_proc %>%
-    mutate(UserProcStatus = ifelse(UserProcStatus == '',
-                                   AutoProcStatus,
-                                   UserProcStatus),
-           UserProcStatus = as.logical(UserProcStatus))
+  if(sum(capHist_proc$UserProcStatus == '') > 0) {
+    stop('UserProcStatus must be defined for each observation.')
+  }
+
+  # # if the user processed column is blank, use the auto processed column
+  # capHist_proc = capHist_proc %>%
+  #   mutate(UserProcStatus = ifelse(UserProcStatus == '',
+  #                                  AutoProcStatus,
+  #                                  UserProcStatus),
+  #          UserProcStatus = as.logical(UserProcStatus))
 
   # filter for observations that should be kept
   capHist_proc = capHist_proc %>%
