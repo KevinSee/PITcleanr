@@ -4,7 +4,7 @@
 \alias{filterLGRtrapDB}
 \title{Read Lower Granite Trap Database}
 \usage{
-filterLGRtrapDB(trap_path = ".", species = c("Chinook", "Steelhead"),
+filterLGRtrapDB(trap_path = NULL, species = c("Chinook", "Steelhead"),
   spawnYear = NULL, saveValidTagList = F, validTagFileNm = NULL,
   saveCSV = F, validTagDataFileNm = NULL)
 }
