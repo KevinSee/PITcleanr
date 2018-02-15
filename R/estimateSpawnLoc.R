@@ -24,8 +24,8 @@ estimateSpawnLoc = function(capHist_proc = NULL) {
            UserProcStatus = as.logical(UserProcStatus))
 
   # filter for observations that should be kept
-  #capHist_proc = capHist_proc %>%
-  #  filter(UserProcStatus)
+  capHist_proc = capHist_proc %>%
+    filter(UserProcStatus)
 
   # create tag_path field for each tag
   tag_path <- capHist_proc %>%
