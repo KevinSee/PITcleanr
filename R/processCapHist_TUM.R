@@ -43,18 +43,28 @@ processCapHist_TUM = function(species = c('Chinook', 'Steelhead'),
 
 
   # translate in nodes and simplify consecutive hits on the same node
+  cat('Assigning nodes\n')
   valid_obs = assignNodes(valid_tag_df,
                           observations,
                           configuration,
                           parent_child,
                           truncate)
 
+  cat('Creating node order\n')
+  node_order = createNodeOrder(valid_paths = valid_paths,
+                               configuration = configuration,
+                               site_df = site_df,
+                               step_num = 2)
+
+  cat('Processing assigned nodes\n')
   save_df = writeCapHistOutput(valid_obs,
                                valid_paths,
+                               node_order,
                                save_file,
                                file_name)
 
   return(list('ValidPaths' = valid_paths,
+              'NodeOrder' = node_order,
               # 'ValidTrapData' = trap_df,
               'ValidObs' = valid_obs,
               'ProcCapHist' = save_df))
