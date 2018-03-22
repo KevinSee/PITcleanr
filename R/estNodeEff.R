@@ -6,7 +6,7 @@
 #'
 #' @param node_order Dataframe returned by \code{processCapHist_*}, under the name \code{NodeOrder}.
 #'
-#' @param node character string of the node of interest.
+#' @param node character string of the node(s) of interest.
 #'
 #' @author Kevin See
 #' @import dplyr
@@ -21,27 +21,44 @@ estNodeEff = function(capHist_proc = NULL,
   stopifnot(!is.null(capHist_proc),
             !is.null(node_order))
 
-  if(is.null(node)) stop('Node must be supplied.')
+  # if(is.null(node)) stop('Node must be supplied.')
 
-  # get a vector of nodes upstream of
-  node_vec = node_order %>%
-    filter(grepl(paste0(node, ' '), Path) | Node == node) %>%
-    select(Node) %>%
-    as.matrix() %>%
-    as.vector()
+  if(is.null(node)) {
+    cat('If no node is supplied, calculated for all nodes')
+    node = node_order %>%
+      select(Node) %>%
+      distinct() %>%
+      as.matrix() %>%
+      as.character()
+  }
 
-  # calculate node efficiency and estimate tags above that node
-  node_eff = proc_ch %>%
-    filter(Node %in% node_vec) %>%
-    summarise(n_tags_node = n_distinct(TagID[Node == node]),
-              n_tags_tot = n_distinct(TagID),
-              obsEff = n_tags_node / n_tags_tot,
-              obsEff_se = sqrt((obsEff * (1 - obsEff)) / n_tags_tot)) %>%
-    mutate(Node = node) %>%
-    select(Node, everything()) %>%
-    mutate(est_tags = n_tags_node / obsEff,
-           est_tags = round(est_tags),
-           est_tags_se = n_tags_node * obsEff_se / (obsEff^2))
+  node_list = as.list(node)
+  names(node_list) = node
+
+  node_eff = node_list %>%
+    purrr::map_df(.id = 'Node',
+                  .f = function(x) {
+
+                    # get a vector of nodes upstream of node
+                    node_vec = node_order %>%
+                      filter(grepl(paste0(x, ' '), Path) | Node == x) %>%
+                      select(Node) %>%
+                      as.matrix() %>%
+                      as.vector()
+
+                    # if interested in an upstream array, use detections at downstream array as well to estimate efficiency
+                    if(grepl('A0$', x)) {
+                      node_vec = c(node_vec, gsub('A0$', 'B0', x))
+                    }
+
+                    # calculate node efficiency and estimate tags above that node
+                    proc_ch %>%
+                      filter(Node %in% node_vec) %>%
+                      summarise(n_tags_node = n_distinct(TagID[Node == x]),
+                                n_tags_tot = n_distinct(TagID),
+                                obsEff = n_tags_node / n_tags_tot,
+                                obsEff_se = sqrt((obsEff * (1 - obsEff)) / n_tags_tot))
+                  })
 
   return(node_eff)
 }
