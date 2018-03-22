@@ -45,14 +45,19 @@ writeTUMNodeNetwork_noUWE = function() {
 
   bin_list[['WhiteRiver']] = list('WTL')
 
-  site_df_init = tibble(SiteID = unlist(bin_list),
-                        path = names(unlist(bin_list))) %>%
+  bin_all = list('TUM' =
+                   list('TUM',
+                        bin_list))
+
+  site_df_init = tibble(SiteID = unlist(bin_all),
+                        path = names(unlist(bin_all))) %>%
     mutate(path = stringr::str_replace(path,
                                        '[[:digit:]]$',
                                        '')) %>%
     rowwise() %>%
-    mutate(path = stringr::str_replace(path, paste0('\\.', SiteID), '') ) %>% #,
-    # path = paste(path, SiteID, sep = '.')) %>%
+    mutate(path = ifelse(stringr::str_sub(path, start = -nchar(SiteID)) != SiteID,
+                         paste(path, SiteID, sep = '.'),
+                         path)) %>%
     ungroup()
 
   network_descrip = stringr::str_split(site_df_init$path,

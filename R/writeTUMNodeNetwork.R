@@ -44,25 +44,20 @@ writeTUMNodeNetwork = function() {
                                                     'NAU')))
 
 
-  site_df_init = tibble(SiteID = unlist(bin_list),
-                        path = names(unlist(bin_list))) %>%
+  bin_all = list('TUM' =
+                   list('TUM',
+                        bin_list))
+
+  site_df_init = tibble(SiteID = unlist(bin_all),
+                        path = names(unlist(bin_all))) %>%
     mutate(path = stringr::str_replace(path,
                                        '[[:digit:]]$',
-                                       ''),
-           path = stringr::str_replace(path,
-                                       'SC$',
-                                       'SC1'),
-           path = stringr::str_replace(path,
-                                       'USI1',
-                                       'USI'),
-           path = stringr::str_replace(path,
-                                       'LRW1',
-                                       'LRW'),
-           path = ifelse(SiteID %in% c('IR1', 'IR4'),
-                         stringr::str_replace(path,
-                                              'IR$',
-                                              SiteID),
-                         path))
+                                       '')) %>%
+    rowwise() %>%
+    mutate(path = ifelse(stringr::str_sub(path, start = -nchar(SiteID)) != SiteID,
+                         paste(path, SiteID, sep = '.'),
+                         path)) %>%
+    ungroup()
 
   network_descrip = stringr::str_split(site_df_init$path,
                                        '\\.',
@@ -73,8 +68,7 @@ writeTUMNodeNetwork = function() {
     bind_cols(network_descrip %>%
                 as.data.frame()) %>%
     tidyr::gather(brk, upstrm_site, matches('Step')) %>%
-    mutate(upstrm_site = ifelse(upstrm_site == '', NA, upstrm_site),
-           upstrm_site = ifelse(upstrm_site == SiteID, NA, upstrm_site)) %>%
+    mutate(upstrm_site = ifelse(upstrm_site == '', NA, upstrm_site)) %>%
     tidyr::spread(brk, upstrm_site,
                   fill = '') %>%
     mutate(SiteID = factor(SiteID,
