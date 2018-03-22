@@ -71,7 +71,7 @@ processCapHist_LGD = function(species = c('Chinook', 'Steelhead'),
                           parent_child,
                           truncate)
 
-  cat('Creating node order')
+  cat('Creating node order\n')
   node_order = createNodeOrder(valid_paths = valid_paths,
                                configuration = configuration,
                                site_df = site_df,
