@@ -3,8 +3,6 @@
 .RData
 .DS_Store
 Example
-PDHPT
-GregFiles
 inst/doc
 vignettes/ProcessedCH.xlsx
 vignettes/ValidTags.txt
