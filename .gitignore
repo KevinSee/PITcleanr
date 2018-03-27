@@ -3,6 +3,5 @@
 .RData
 .DS_Store
 Example
-inst/doc
 vignettes/ProcessedCH.xlsx
 vignettes/ValidTags.txt
