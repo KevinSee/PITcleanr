@@ -1,17 +1,20 @@
 ---
 title: "PITcleanr Vignette"
 author: "Kevin E. See"
-date: '`r Sys.Date()`'
+date: "`r Sys.Date()`"
 output:
-  pdf_document:
-    fig_caption: yes
-    toc: yes
-    toc_depth: 3
   rmarkdown::html_vignette:
     fig_caption: yes
     toc: yes
     toc_depth: 3
-    toc_float: yes
+  pdf_document:
+    fig_caption: yes
+    toc: yes
+    toc_depth: 3
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '3'
 vignette: |
   %\VignetteIndexEntry{PITcleanr} %\VignetteEngine{knitr::rmarkdown} %\VignetteEncoding{UTF-8}
 ---
@@ -48,7 +51,7 @@ Other than the adult trap database, `PITcleanr` relies on queries from the Colum
 
 # Workflow
 
-For the purposes of this vignette, we will focus on data to be fed into the Lower Granite version of DABOM, using data from spring/summer Chinook that crossed Lower Granite in the spring and summer of 2015.
+For the purposes of this vignette, we will focus on data to be fed into the Lower Granite version of DABOM, using data from spring/summer Chinook that crossed Lower Granite in the spring and summer of 2014.
 
 ```{r}
 spp = 'Chinook'
@@ -172,14 +175,12 @@ head(site_df)
 Next, we build a parent-child dataframe describing which child nodes are directly upstream of each parent node in our system. The `createParentChildDf` function contains several arguements:
 
 * `sites_df`: This is the dataframe we built using the `writeLGRNodeNetwork()` function.
-* `config`: This is the configuration file we built using the `buildConfig()` function.
-* `startSite`: This defines which site all paths will start from. This is typically the dam where the adult trap is located.
+* `configuration`: This is the configuration file we built using the `buildConfig()` function.
 * `startDate`: The first date (in YYYYMMDD format) when fish may start being caught in the adult trap. Configurations that ended prior to this date are excluded.
 
 ```{r}
 parent_child = createParentChildDf(site_df,
                                    my_config,
-                                   startSite = 'GRA',
                                    startDate = ifelse(spp == 'Chinook',
                                                       paste0(yr, '0301'),
                                                       paste0(yr-1, '0701')))
@@ -207,7 +208,8 @@ The user must define the path to the adult trap database, which contains the dat
 From the trap database, `PITcleanr` searches for tags that are part of the valid tag list for a particular species and year, and returns a dataframe with their tag code and the date of trapping. Currently, within the Lower Granite trap database, `PITcleanr` filters for tags of the appropriate species and spawn year, and then filters for returning adults (`LGDLifeStage == 'RF'`), adipose-intact fish (`LGDMarkAD == 'AI'`), with non-missing PIT tag numbers (`!is.na(LGDNumPIT)`) and that are marked as valid (`LGDValid == 1`). Besides filtering out these valid tags, the function `filterLGRtrapDB` provides an arguement to save those tag IDs as a text file, to make it easier to upload to PTAGIS. 
 
 ```{r}
-valid_df = filterLGRtrapDB(trap_path = '../inst/extdata/Chnk2014_TrapDatabase.csv',
+trap_path = '../inst/extdata/Chnk2014_TrapDatabase.csv'
+valid_df = filterLGRtrapDB(trap_path,
                            species = spp,
                            spawnYear = yr,
                            saveValidTagList = T,
@@ -220,11 +222,10 @@ The next step is to compile the complete tag history of all valid tags in our sa
 
 ### Through PTAGIS
 
-After logging into [PTAGIS](http://PTAGIS.org), select the "Data" tab, "Advanced Reporting" and then the "Launch" button. Now, select the "New Query Builder2 Report" icon and the "Complete Tag History" option. The __DABOM__ functions require the following attributes to be selected; *Tag*, *Event Date Time*, *Event Release Date Time*, *Event Site Code*, *Antenna*, and *Antenna Group Configuration*. Other attributes can be selected and they can appear in any order.  After selecting attributes, upload *ValidTags.txt* in the 'Tag Code - List or Text File' section and then run the report and save the output.  Next read the outputted observation file into R or use the example observation file, "chnk15_obs".
+After logging into [PTAGIS](http://PTAGIS.org), select the "Data" tab, "Advanced Reporting" and then the "Launch" button. Now, select the "New Query Builder2 Report" icon and the "Complete Tag History" option. The __DABOM__ functions require the following attributes to be selected; *Tag*, *Event Date Time*, *Event Release Date Time*, *Event Site Code*, *Antenna*, and *Antenna Group Configuration*. Other attributes can be selected and they can appear in any order.  After selecting attributes, upload *ValidTags.txt* in the 'Tag Code - List or Text File' section and then run the report and save the output.  Next read the outputted observation file into R.
 
 ```{r}
-data(chnk2015_obs)
-observations = chnk2015_obs
+observations = read_csv('../inst/extdata/LGR_Chinook_2014.csv')
 ```
 
 ### Through DART
@@ -266,20 +267,29 @@ proc_list = processCapHist_LGD(species = spp,
                                spawnYear = yr,
                                configuration = my_config,
                                parent_child,
-                               trap_path = NULL,
+                               trap_path = trap_path,
                                filter_by_PBT = T,
                                observations = observations,
                                truncate = T,
+                               site_df = site_df,
+                               step_num = 3,
                                save_file = T,
                                file_name = 'ProcessedCH.xlsx')
 ```
 
 # Summarise final spawning location and biological information
 
-`PITcleanr` provides a function to determine a fish's final spawning location, and combine it with lots of biological data from the trap database at Lower Granite, `summariseTagData`. It relies on a processed capture history file returned by the function `proc_list`. Internally, this relies on another function, `estimateSpawnLoc`, which determines the final spawning location of each tag, by finding the furthest upstream node a tag was observed at within it's valid observations.
+`PITcleanr` provides a function to determine a fish's final spawning location, and combine it with lots of biological data from the trap database at Lower Granite, `summariseTagData`. It relies on a processed capture history file returned by the function `proc_list`. Internally, this relies on another function, `estimateSpawnLoc`, which determines the final spawning location of each tag, by finding the furthest upstream node a tag was observed at within its' valid observations.
 
 ```{r}
-tag_summ = summariseTagData(capHist_proc = proc_list$ProcCapHist,
+capHist_proc = proc_list$ProcCapHist %>%
+  mutate(UserProcStatus = ifelse(UserProcStatus == '',
+                                 AutoProcStatus,
+                                 UserProcStatus)) %>%
+  mutate(UserProcStatus = as.logical(UserProcStatus)) %>%
+  filter(UserProcStatus)
+
+tag_summ = summariseTagData(capHist_proc = capHist_proc,
                             trap_data = proc_list$ValidTrapData)
 
 head(tag_summ)
