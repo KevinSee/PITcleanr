@@ -47,7 +47,7 @@ processCapHist_PRD = function(startDate = NULL,
   # pull out tag ID and trap date at Priest Rapids
   cat('Getting trap date.\n')
   valid_tag_df = observations %>%
-    filter(`Event Site Code Value` == 'PRDLD1') %>%
+    filter(`Event Site Code Value` %in% c('PRDLD1', 'PRD')) %>%
     mutate_at(vars(`Event Date Time Value`, `Event Release Date Time Value`),
               funs(lubridate::mdy_hms)) %>%
     mutate(ObsDate = if_else(!is.na(`Event Release Date Time Value`) &
@@ -223,7 +223,7 @@ processCapHist_PRD = function(startDate = NULL,
 
   # check if any tags have been dropped incorrectly along the way
   if(n_distinct(valid_obs$TagID) != n_distinct(observations$`Tag Code`)) {
-    stop('Error: some tags being dropped')
+    warning('Error: some tags being dropped')
   }
 
 
