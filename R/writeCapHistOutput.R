@@ -1,10 +1,10 @@
 #' @title Capture History Output
 #'
-#' @description This function combines the results from \code{writeFishPaths} and \code{writeSpwnPaths} functions and saves it as an excel file if desired.
+#' @description This function combines the results from \code{writeFishPaths} and \code{writeSpwnPaths} functions and saves it as a csv, excel or delimited file if desired.
 #'
 #' @inheritParams writeFishPaths
 #' @inheritParams writeSpwnPaths
-#' @param save_file Should output be written to an Excel file? Default value is \code{FALSE}.
+#' @param save_file Should output be written to an file? Default value is \code{FALSE}.
 #'
 #' @param file_name If \code{save_file == TRUE}, this is the file name (with possible extension) to be saved to.
 #'
@@ -22,8 +22,13 @@ writeCapHistOutput = function(valid_obs = NULL,
             !is.null(valid_paths),
             !is.null(node_order))
 
+  if( !(requireNamespace('WriteXLS', quietly = T) & grepl('xls', file_name)) ) {
+    stop("Package \"WriteXLS\" needed to save an Excel file. Please install it, or save as .csv file instead.",
+         call. = FALSE)
+  }
+
   if(is.null(file_name) & save_file) {
-    file_name = 'CapHistOutput.xlsx'
+    file_name = 'CapHistOutput.csv'
   }
 
   fish_paths = writeFishPaths(valid_obs,
