@@ -32,6 +32,10 @@ processCapHist_TUM = function(species = c('Chinook', 'Steelhead'),
   # construct valid paths
   valid_paths = getValidPaths(parent_child)
 
+  if(!c('Event Release Date Time Value') %in% names(observations)) {
+    observations$`Event Release Date Time Value` = NA
+  }
+
   # pull out tag ID and trap date at Tumwater
   valid_tag_df = observations %>%
     filter(`Event Site Code Value` %in% c('TUF', 'TUM', 'TUMFBY')) %>%
@@ -50,6 +54,14 @@ processCapHist_TUM = function(species = c('Chinook', 'Steelhead'),
     group_by(TagID = `Tag Code`) %>%
     summarise(TrapDate = min(ObsDate) - dminutes(1)) %>%
     ungroup()
+
+  # valid_tag_df = observations %>%
+  #   filter(`Event Site Code Value` %in% c('TUF', 'TUM', 'TUMFBY')) %>%
+  #   mutate_at(vars(`Event Date Time Value`),
+  #             funs(mdy_hm)) %>%
+  #   group_by(TagID = `Tag Code`) %>%
+  #   summarise(TrapDate = min(`Event Date Time Value`) - dminutes(1)) %>%
+  #   ungroup()
 
 
   # translate in nodes and simplify consecutive hits on the same node
@@ -75,7 +87,10 @@ processCapHist_TUM = function(species = c('Chinook', 'Steelhead'),
 
   return(list('ValidPaths' = valid_paths,
               'NodeOrder' = node_order,
-              # 'ValidTrapData' = trap_df,
+              # 'ValidTrapData' = valid_tag_df %>%
+              #   left_join(observations %>%
+              #               select(TagID = `Tag Code`,
+              #                      Origin = `Mark Rear Type Name`)),
               'ValidObs' = valid_obs,
               'ProcCapHist' = save_df))
 
