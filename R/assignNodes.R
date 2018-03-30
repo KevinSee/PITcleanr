@@ -61,7 +61,7 @@ assignNodes = function(valid_tag_df = NULL,
                 mutate(ObsDate = ifelse(!is.na(`Event Release Date Time Value`) &
                                           is.na(`Antenna ID`) &
                                           SiteType == 'MRR' &
-                                          SiteTypeName %in% c('Acclimation Pond', 'Hatchery', 'Hatchery Returns', 'Trap or Weir'),
+                                          SiteTypeName %in% c('Acclimation Pond', 'Hatchery', 'Hatchery Returns', 'Trap or Weir', 'Dam'),
                                         `Event Release Date Time Value`,
                                         `Event Date Time Value`)) %>%
                 select(TagID = `Tag Code`,
