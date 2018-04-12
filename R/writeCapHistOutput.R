@@ -22,9 +22,11 @@ writeCapHistOutput = function(valid_obs = NULL,
             !is.null(valid_paths),
             !is.null(node_order))
 
-  if( !(requireNamespace('WriteXLS', quietly = T) & grepl('xls', file_name)) ) {
-    stop("Package \"WriteXLS\" needed to save an Excel file. Please install it, or save as .csv file instead.",
-         call. = FALSE)
+  if(!is.null(file_name) ) {
+    if( !(require('WriteXLS', quietly = T)) & grepl('xls', file_name) ) {
+      stop("Package \"WriteXLS\" needed to save an Excel file. Please install it, or save as .csv file instead.",
+           call. = FALSE)
+    }
   }
 
   if(is.null(file_name) & save_file) {
