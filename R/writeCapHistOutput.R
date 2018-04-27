@@ -46,11 +46,13 @@ writeCapHistOutput = function(valid_obs = NULL,
     full_join(spwn_paths %>%
                        select(TagID, TrapDate, ObsDate:SiteID, BranchNum, Group, Node, SiteName, SiteDescription, NodeOrder:Migration)) %>%
     arrange(TrapDate, TagID, ObsDate) %>%
-    select(TagID, TrapDate, ObsDate, lastObsDate, BranchNum, Group, SiteID, Node,
-                  AutoProcStatus, UserProcStatus, ModelObs,
-                  NodeOrder:ValidPath, Migration,
-                  SiteDescription, UserComment) %>%
-    select(TagID, TrapDate, ObsDate, lastObsDate, BranchNum, Group, SiteID, Node, NodeOrder, Direction, Migration, AutoProcStatus, UserProcStatus, ModelObs, ValidPath, UserComment) %>%
+    # select(TagID, TrapDate, ObsDate, #lastObsDate,
+    #        BranchNum, Group, SiteID, Node,
+    #               AutoProcStatus, UserProcStatus, ModelObs,
+    #               NodeOrder:ValidPath, Migration,
+    #               SiteDescription, UserComment) %>%
+    select(TagID, TrapDate, ObsDate, lastObsDate,
+           BranchNum, Group, SiteID, Node, NodeOrder, Direction, Migration, AutoProcStatus, UserProcStatus, ModelObs, ValidPath, UserComment) %>%
     group_by(TagID) %>%
     mutate(UserProcStatus = ifelse(sum(!AutoProcStatus) > 0, '', UserProcStatus)) %>%
     # mutate(UserProcStatus = ifelse(sum(!ModelObs) > 0, '', UserProcStatus)) %>%
@@ -58,7 +60,7 @@ writeCapHistOutput = function(valid_obs = NULL,
 
   if(save_file) {
     if(grepl('\\.xls', file_name)) {
-      WriteXLS::WriteXLS('save_df',
+      WriteXLS::WriteXLS(c('save_df'),
                          file_name,
                          SheetNames = c('ProcCapHist'),
                          AdjWidth = T,
