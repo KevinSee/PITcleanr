@@ -60,7 +60,7 @@ writeCapHistOutput = function(valid_obs = NULL,
 
   if(save_file) {
     if(grepl('\\.xls', file_name)) {
-      WriteXLS::WriteXLS(c('save_df'),
+      WriteXLS::WriteXLS(save_df,
                          file_name,
                          SheetNames = c('ProcCapHist'),
                          AdjWidth = T,
@@ -75,7 +75,7 @@ writeCapHistOutput = function(valid_obs = NULL,
                 file_name)
     }
 
-    else {
+    if(grepl('\\.txt', file_name)) {
       write_delim(save_df,
                   file_name)
     }
