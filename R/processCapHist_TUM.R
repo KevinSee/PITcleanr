@@ -85,6 +85,14 @@ processCapHist_TUM = function(species = c('Chinook', 'Steelhead'),
                                save_file,
                                file_name)
 
+  # for Chinook, mark AutoProcStatus == F for any observation in the year after the trap date
+  if(species == 'Chinook') {
+    save_df = save_df %>%
+      mutate(AutoProcStatus = if_else(year(ObsDate) > year(TrapDate),
+                                      F,
+                                      AutoProcStatus))
+  }
+
   return(list('ValidPaths' = valid_paths,
               'NodeOrder' = node_order,
               # 'ValidTrapData' = valid_tag_df %>%
