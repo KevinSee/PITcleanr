@@ -1,71 +1,91 @@
 #' @title nodeEfficiency: Estimates node detection efficiency.
 #'
 #' @description Estimates detection efficiences at each node in a data frame returned from
-#' \code{nodeAssign}.
+#' \code{nodeAssign} and \code{writeCapHistOutput}.
 #'
-#' @param data a data frame containing observation histories processed by \code{nodeAssign}
+#' @param capHist_proc a data frame containing observation histories processed by \code{nodeAssign} and \code{writeCapHistOutput}
 #'
-#' @param node the desired node for a unique tag count.  Unique tags at the specified node are then
-#' searched for at all other nodes in the data frame
+#' @param node_order a data frame containing the output of \code{createNodeOrder}
 #'
-#' @param direction
+#' @param node a character string of the desired nodes for efficiency estimates.  Unique tags at the specified nodes are then
+#' searched for at all other nodes in the data frame in the designated upstream or downstream direction.
+#'
+#' @param direction designates if upstream nodes or downstream nodes should be used of efficiency recaptures; upstream is the default
 #'
 #' @author Ryan Kinzer
 #'
 #' @examples nodeEfficiency()
 #'
-#' @import dplyr
+#' @import dplyr, stingr, purrr
 #' @export
 #' @return NULL
-nodeEfficiency <- function(data, direction = c('Upstream', 'Downstream')){
+nodeEfficiency <- function(capHist_proc, node_order, node = NULL, direction = c('upstream', 'downstream')){
+
+  stopifnot(!is.null(capHist_proc),
+            !is.null(node_order))
 
   direction <- match.arg(direction)
 
-  nodes <- data %>%
-    select(Node, NodeOrder) %>%
-    distinct(Node, .keep_all = TRUE) %>%
-    arrange(NodeOrder) %>%
-    mutate(Unique_tags = as.integer(NA),
-           Marks = as.integer(NA),
-           Recaps = as.integer(NA))
+  if(is.null(node)) {
+    cat('If node is not supplied efficiency is calculated for all nodes in the dataset')
+    node = node_order %>%
+      select(Node) %>%
+      distinct() %>%
+      as.matrix() %>%
+      as.character()
+  }
 
-  for(i in 1:nrow(nodes)){
-    node_ <- nodes$Node[i] # change row to i
-    nodeord_ <- nodes$NodeOrder[i] # change row to i
+  node_list = as.list(node)
+  names(node_list) = node
 
-    unique <- data %>%
-      filter(Node == node_) %>%
-      select(TagID) %>%
-      n_distinct()
+  node_eff = node_list %>%
+    purrr::map_df(.id = 'Node',
+                  .f = function(x) {
 
-    if(direction == 'Upstream'){
+                    path <- node_order %>%
+                      filter(grepl(x, Path)) %>%
+                      mutate(n = nchar(Path)) %>%
+                      slice(which.max(n)) %>%
+                      pull(Path)
 
-      tmp <- data %>%
-        filter(NodeOrder > nodeord_) %>%
-        distinct(TagID)
-    }
+                    if(direction == 'upstream'){
+                      tmp_node_vec <- str_sub(path, start = str_locate(path, x)[,1], nchar(path))
+                    }
 
-    if(direction == 'Downstream'){
-      tmp <- data %>%
-        filter(NodeOrder < nodeord_) %>%
-        distinct(TagID)
-    }
+                    if(direction == 'downstream'){
+                      tmp_node_vec <- str_sub(path, 1, end = str_locate(path, x)[,2])
+                    }
 
-    tmp_full <- data %>%
-      filter(Node == node_) %>%
-      inner_join(tmp) %>%
-      distinct(TagID)
+                    node_vec <- str_split(tmp_node_vec, " ")[[1]]
 
-    nodes[i,3] <- unique
-    nodes[i,4] <- n_distinct(tmp)
-    nodes[i,5] <- n_distinct(tmp_full)
+                    marks <- capHist_proc %>%
+                      filter(Node %in% node_vec) %>%
+                      filter(Node != x) %>%
+                      distinct(TagID)
 
-  } # end iloop
+                    recaps <- capHist_proc %>%
+                      filter(Node == x) %>%
+                      distinct(TagID) %>%
+                      inner_join(marks, by = "TagID") %>%
+                      n_distinct()
 
-  df <- nodes
-  # %>%
-  #   mutate(d_hat = round(Recaps/Marks, digits = 2),
-  #          N_tags = round(Unique_tags/d_hat, digits = 0)
+                    # calculate node efficiency and estimate tags above that node
+                    capHist_proc %>%
+                      filter(Node %in% node_vec) %>%
+                      summarise(Unique_tags = n_distinct(TagID[Node == x]),
+                                Marks = n_distinct(TagID[Node != x]),
+                                Recaps = recaps)
+                  })
 
-  return(df)
+  node_eff <- node_eff %>%
+    filter(Unique_tags > 0 | Marks > 0) %>%
+    filter(Node != 'GRA') %>%
+    mutate(det_eff = Recaps/Marks,
+           se_eff = (1/Marks^2)*(Marks*det_eff)*(1-det_eff),
+           N_tags = Unique_tags/det_eff,
+           se_N = sqrt(((Marks+1)*(Unique_tags+1)*(Marks - Recaps) * (Unique_tags - Recaps))/ ((Recaps+1)^2 * (Recaps+2))),
+           lwr_N = N_tags - 1.96*se_N,
+           upr_N = N_tags + 1.96*se_N)
+
+  return(node_eff)
 }
