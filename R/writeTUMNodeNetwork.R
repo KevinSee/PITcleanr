@@ -23,8 +23,9 @@ writeTUMNodeNetwork = function() {
 
   bin_list[['Icicle']] = list('ICL' =
                                 list('ICL',
-                                     'LEAV',
-                                     'LNF',
+                                     'LNF' =
+                                       list('LNF',
+                                            'LEAV'),
                                      'ICM' =
                                        list('ICM',
                                             'ICU')))

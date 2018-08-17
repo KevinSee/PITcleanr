@@ -21,12 +21,15 @@ writeTUMNodeNetwork_noUWE = function() {
   bin_list = vector('list', length(bin_names))
   names(bin_list) = bin_names
 
-  bin_list[['Peshastin']] = list('PES')
+  bin_list[['Peshastin']] = list('PES' =
+                                   list('PES',
+                                        'PEU'))
 
   bin_list[['Icicle']] = list('ICL' =
                                 list('ICL',
-                                     'LEAV',
-                                     'LNF',
+                                     'LNF' =
+                                       list('LNF',
+                                            'LEAV'),
                                      'ICM' =
                                        list('ICM',
                                             'ICU')))
