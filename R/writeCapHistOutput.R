@@ -4,17 +4,19 @@
 #'
 #' @inheritParams writeFishPaths
 #' @inheritParams writeSpwnPaths
+#' @param last_obs_date Character string in the format "YYYYMMDD". If included, the output will suggest that observations after this date should be deleted.
 #' @param save_file Should output be written to an file? Default value is \code{FALSE}.
 #'
 #' @param file_name If \code{save_file == TRUE}, this is the file name (with possible extension) to be saved to.
 #'
 #' @author Kevin See
-#' @import dplyr readr WriteXLS
+#' @import dplyr readr WriteXLS lubridate
 #' @export
 
 writeCapHistOutput = function(valid_obs = NULL,
                               valid_paths = NULL,
                               node_order = NULL,
+                              last_obs_date = NULL,
                               save_file = F,
                               file_name = NULL) {
 
@@ -46,17 +48,17 @@ writeCapHistOutput = function(valid_obs = NULL,
     full_join(spwn_paths %>%
                        select(TagID, TrapDate, ObsDate:SiteID, BranchNum, Group, Node, SiteName, SiteDescription, NodeOrder:Migration)) %>%
     arrange(TrapDate, TagID, ObsDate) %>%
-    # select(TagID, TrapDate, ObsDate, #lastObsDate,
-    #        BranchNum, Group, SiteID, Node,
-    #               AutoProcStatus, UserProcStatus, ModelObs,
-    #               NodeOrder:ValidPath, Migration,
-    #               SiteDescription, UserComment) %>%
     select(TagID, TrapDate, ObsDate, lastObsDate,
            BranchNum, Group, SiteID, Node, NodeOrder, Direction, Migration, AutoProcStatus, UserProcStatus, ModelObs, ValidPath, UserComment) %>%
     group_by(TagID) %>%
     mutate(UserProcStatus = ifelse(sum(!AutoProcStatus) > 0, '', UserProcStatus)) %>%
     # mutate(UserProcStatus = ifelse(sum(!ModelObs) > 0, '', UserProcStatus)) %>%
     ungroup()
+
+  if(!is.null(last_obs_date)) {
+    save_df = save_df %>%
+      filter(ObsDate <= lubridate::ymd(last_obs_date))
+  }
 
   if(save_file) {
     if(grepl('\\.xls', file_name)) {
