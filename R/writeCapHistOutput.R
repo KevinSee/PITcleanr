@@ -5,6 +5,7 @@
 #' @inheritParams writeFishPaths
 #' @inheritParams writeSpwnPaths
 #' @param last_obs_date Character string in the format "YYYYMMDD". If included, the output will suggest that observations after this date should be deleted.
+#'
 #' @param save_file Should output be written to an file? Default value is \code{FALSE}.
 #'
 #' @param file_name If \code{save_file == TRUE}, this is the file name (with possible extension) to be saved to.
@@ -35,12 +36,12 @@ writeCapHistOutput = function(valid_obs = NULL,
     file_name = 'CapHistOutput.csv'
   }
 
-  fish_paths = writeFishPaths(valid_obs,
-                              valid_paths)
+  fish_paths = writeFishPaths(valid_obs = valid_obs,
+                              valid_paths = valid_paths)
 
-  spwn_paths = writeSpwnPaths(valid_obs,
-                              valid_paths,
-                              node_order)
+  spwn_paths = writeSpwnPaths(valid_obs = valid_obs,
+                              valid_paths = valid_paths,
+                              node_order = node_order)
 
 
   save_df = fish_paths %>%
@@ -57,7 +58,9 @@ writeCapHistOutput = function(valid_obs = NULL,
 
   if(!is.null(last_obs_date)) {
     save_df = save_df %>%
-      filter(ObsDate <= lubridate::ymd(last_obs_date))
+      mutate(AutoProcStatus = ifelse(ObsDate > lubridate::ymd(last_obs_date),
+                                     F,
+                                     AutoProcStatus))
   }
 
   if(save_file) {
