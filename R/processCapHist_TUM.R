@@ -18,6 +18,7 @@ processCapHist_TUM = function(species = c('Chinook', 'Steelhead'),
                               configuration = NULL,
                               parent_child = NULL,
                               observations = NULL,
+                              last_obs_date = NULL,
                               truncate = T,
                               save_file = F,
                               file_name = NULL) {
@@ -82,16 +83,9 @@ processCapHist_TUM = function(species = c('Chinook', 'Steelhead'),
   save_df = writeCapHistOutput(valid_obs,
                                valid_paths,
                                node_order,
+                               last_obs_date,
                                save_file,
                                file_name)
-
-  # for Chinook, mark AutoProcStatus == F for any observation in the year after the trap date
-  if(species == 'Chinook') {
-    save_df = save_df %>%
-      mutate(AutoProcStatus = if_else(year(ObsDate) > year(TrapDate),
-                                      F,
-                                      AutoProcStatus))
-  }
 
   return(list('ValidPaths' = valid_paths,
               'NodeOrder' = node_order,
