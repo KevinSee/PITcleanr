@@ -8,7 +8,7 @@
 #' @inheritParams assignNodes
 #' @inheritParams writeCapHistOutput
 #'
-#' @import dplyr
+#' @import dplyr lubridate
 #' @export
 #' @return NULL
 #' @examples processCapHist_TUM()

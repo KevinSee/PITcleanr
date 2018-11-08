@@ -11,7 +11,7 @@
 #' @inheritParams createNodeOrder
 #' @param filter_by_PBT Should fish identified as hatchery origin be filtered out of the sample, based on PBT results? Default value is \code{TRUE}.
 #'
-#' @import dplyr
+#' @import dplyr lubridate
 #' @export
 #' @return NULL
 #' @examples processCapHist_LGD()
