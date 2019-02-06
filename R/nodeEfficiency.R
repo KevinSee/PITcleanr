@@ -16,7 +16,7 @@
 #'
 #' @examples nodeEfficiency()
 #'
-#' @import dplyr, stingr, purrr
+#' @import dplyr stingr purrr
 #' @export
 #' @return NULL
 nodeEfficiency <- function(capHist_proc, node_order, node = NULL, direction = c('upstream', 'downstream')){
