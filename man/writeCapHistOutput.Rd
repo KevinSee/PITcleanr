@@ -5,7 +5,8 @@
 \title{Capture History Output}
 \usage{
 writeCapHistOutput(valid_obs = NULL, valid_paths = NULL,
-  node_order = NULL, save_file = F, file_name = NULL)
+  node_order = NULL, last_obs_date = NULL, save_file = F,
+  file_name = NULL)
 }
 \arguments{
 \item{valid_obs}{dataframe built by the function \code{assignNodes}.}
@@ -14,12 +15,14 @@ writeCapHistOutput(valid_obs = NULL, valid_paths = NULL,
 
 \item{node_order}{dataframe built by the function \code{createNodeOrder}.}
 
-\item{save_file}{Should output be written to an Excel file? Default value is \code{FALSE}.}
+\item{last_obs_date}{Character string in the format "YYYYMMDD". If included, the output will suggest that observations after this date should be deleted.}
+
+\item{save_file}{Should output be written to an file? Default value is \code{FALSE}.}
 
 \item{file_name}{If \code{save_file == TRUE}, this is the file name (with possible extension) to be saved to.}
 }
 \description{
-This function combines the results from \code{writeFishPaths} and \code{writeSpwnPaths} functions and saves it as an excel file if desired.
+This function combines the results from \code{writeFishPaths} and \code{writeSpwnPaths} functions and saves it as a csv, excel or delimited file if desired.
 }
 \author{
 Kevin See

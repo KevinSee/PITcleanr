@@ -4,19 +4,22 @@
 \alias{nodeEfficiency}
 \title{nodeEfficiency: Estimates node detection efficiency.}
 \usage{
-nodeEfficiency(data, direction = c("Upstream", "Downstream"))
+nodeEfficiency(capHist_proc, node_order, node = NULL,
+  direction = c("upstream", "downstream"))
 }
 \arguments{
-\item{data}{a data frame containing observation histories processed by \code{nodeAssign}}
+\item{capHist_proc}{a data frame containing observation histories processed by \code{nodeAssign} and \code{writeCapHistOutput}}
 
-\item{direction}{}
+\item{node_order}{a data frame containing the output of \code{createNodeOrder}}
 
-\item{node}{the desired node for a unique tag count.  Unique tags at the specified node are then
-searched for at all other nodes in the data frame}
+\item{node}{a character string of the desired nodes for efficiency estimates.  Unique tags at the specified nodes are then
+searched for at all other nodes in the data frame in the designated upstream or downstream direction.}
+
+\item{direction}{designates if upstream nodes or downstream nodes should be used of efficiency recaptures; upstream is the default}
 }
 \description{
 Estimates detection efficiences at each node in a data frame returned from
-\code{nodeAssign}.
+\code{nodeAssign} and \code{writeCapHistOutput}.
 }
 \examples{
 nodeEfficiency()
