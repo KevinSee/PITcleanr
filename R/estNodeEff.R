@@ -21,8 +21,6 @@ estNodeEff = function(capHist_proc = NULL,
   stopifnot(!is.null(capHist_proc),
             !is.null(node_order))
 
-  # if(is.null(node)) stop('Node must be supplied.')
-
   if(is.null(node)) {
     cat('If no node is supplied, calculated for all nodes')
     node = node_order %>%
@@ -43,6 +41,13 @@ estNodeEff = function(capHist_proc = NULL,
                     node_vec = node_order %>%
                       filter(grepl(paste0(x, ' '), Path) | Node == x) %>%
                       pull(Node)
+
+                    # # get a vector of nodes downstream of node
+                    # node_vec = node_order %>%
+                    #   filter(Node == x) %>%
+                    #   pull(Path) %>%
+                    #   str_split(' ') %>%
+                    #   unlist()
 
                     # if interested in an upstream array, use detections at downstream array as well to estimate efficiency
                     if(grepl('A0$', x)) {
