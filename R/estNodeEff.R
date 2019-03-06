@@ -42,9 +42,7 @@ estNodeEff = function(capHist_proc = NULL,
                     # get a vector of nodes upstream of node
                     node_vec = node_order %>%
                       filter(grepl(paste0(x, ' '), Path) | Node == x) %>%
-                      select(Node) %>%
-                      as.matrix() %>%
-                      as.vector()
+                      pull(Node)
 
                     # if interested in an upstream array, use detections at downstream array as well to estimate efficiency
                     if(grepl('A0$', x)) {
