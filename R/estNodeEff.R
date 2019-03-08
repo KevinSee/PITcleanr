@@ -55,12 +55,51 @@ estNodeEff = function(capHist_proc = NULL,
                     }
 
                     # calculate node efficiency and estimate tags above that node
-                    capHist_proc %>%
+                    capHistNode = capHist_proc %>%
                       filter(Node %in% node_vec) %>%
-                      summarise(n_tags_node = n_distinct(TagID[Node == x]),
-                                n_tags_tot = n_distinct(TagID),
-                                obsEff = n_tags_node / n_tags_tot,
-                                obsEff_se = sqrt((obsEff * (1 - obsEff)) / n_tags_tot))
+                      mutate(nodePos = if_else(Node == x, 'down', 'up'),
+                             seen = 1) %>%
+                      select(TagID, nodePos, seen) %>%
+                      distinct() %>%
+                      mutate(nodePos = factor(nodePos,
+                                              levels = c('down', 'up'))) %>%
+                      spread(nodePos, seen,
+                             fill = 0,
+                             drop = F) %>%
+                      mutate(ch = paste0(down, up)) %>%
+                      group_by(ch) %>%
+                      summarise(freq = n_distinct(TagID)) %>%
+                      ungroup() %>%
+                      summarise(M = sum(freq[ch == '10'], freq[ch == '11']),
+                                C = sum(freq[ch == '01'], freq[ch == '11']),
+                                R = sum(freq[ch == '11']))
+
+
+                    Nhat = FSA::mrClosed(M = capHistNode$M,
+                                         n = capHistNode$C,
+                                         m = capHistNode$R,
+                                         method = 'Petersen') %>%
+                      summary(incl.SE = T) %>%
+                      as_tibble()
+
+                    if(is.na(Nhat$N)) {
+                      Nhat = FSA::mrClosed(M = capHistNode$M,
+                                           n = capHistNode$C,
+                                           m = capHistNode$R,
+                                           method = 'Chapman') %>%
+                        summary(incl.SE = T) %>%
+                        as_tibble()
+                    }
+
+                    capHistNode %>%
+                      bind_cols(Nhat) %>%
+                      mutate(detEff = M / N,
+                             detEff_SE = M*SE / N^2) %>%
+                      rename(tagsAtNode = M,
+                             tagsAboveNode = C,
+                             tagsResighted = R,
+                             estTagsAtNode = N,
+                             estTags_SE = SE)
                   })
 
   return(node_eff)
