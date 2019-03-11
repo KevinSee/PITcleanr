@@ -4,9 +4,10 @@
 \alias{processCapHist_TUM}
 \title{Process capture histories for Tumwater}
 \usage{
-processCapHist_TUM(species = c("Chinook", "Steelhead"), spawnYear = NULL,
-  configuration = NULL, parent_child = NULL, observations = NULL,
-  last_obs_date = NULL, truncate = T, save_file = F, file_name = NULL)
+processCapHist_TUM(species = c("Chinook", "Steelhead"),
+  spawnYear = NULL, configuration = NULL, parent_child = NULL,
+  observations = NULL, last_obs_date = NULL, truncate = T,
+  save_file = F, file_name = NULL)
 }
 \arguments{
 \item{configuration}{is a data frame which assigns node names to unique SiteID, AntennaID, and site configuration ID combinations. It can be built with the function \code{buildConfig}.}

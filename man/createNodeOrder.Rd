@@ -4,8 +4,8 @@
 \alias{createNodeOrder}
 \title{Node Order}
 \usage{
-createNodeOrder(valid_paths = NULL, configuration = NULL, site_df = NULL,
-  step_num = 1)
+createNodeOrder(valid_paths = NULL, configuration = NULL,
+  site_df = NULL, step_num = 1)
 }
 \arguments{
 \item{valid_paths}{a dataframe created by the \code{getValidPaths} function.}
