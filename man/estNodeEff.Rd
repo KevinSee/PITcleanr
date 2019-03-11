@@ -14,7 +14,7 @@ estNodeEff(capHist_proc = NULL, node_order = NULL, node = NULL)
 \item{node}{character string of the node(s) of interest.}
 }
 \description{
-This function uses detections at a given node, and all detections upstream of that node to calculate detection efficiency at that node. It then uses the number of tags detected at that node and the detection efficiency to estimate the number of tags that have migrated upstream of that node.
+This function uses detections at a given node, and all detections upstream of that node to calculate detection efficiency at that node. It uses the Petersen estimator for the number of tags at that node (or the Chapman if no recaptures are available). The detection efficiency is then calcuated as the number of tags detected at that node, divided by the estimate of total tags at that node.
 }
 \examples{
 estNodeEff()

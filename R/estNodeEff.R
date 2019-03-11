@@ -1,6 +1,6 @@
 #' @title Node Efficiency
 #'
-#' @description This function uses detections at a given node, and all detections upstream of that node to calculate detection efficiency at that node. It then uses the number of tags detected at that node and the detection efficiency to estimate the number of tags that have migrated upstream of that node.
+#' @description This function uses detections at a given node, and all detections upstream of that node to calculate detection efficiency at that node. It uses the Petersen estimator for the number of tags at that node (or the Chapman if no recaptures are available). The detection efficiency is then calcuated as the number of tags detected at that node, divided by the estimate of total tags at that node.
 #'
 #' @param capHist_proc Dataframe returned by \code{processCapHist_*}, under the name \code{ProcCapHist}.
 #'
@@ -9,7 +9,7 @@
 #' @param node character string of the node(s) of interest.
 #'
 #' @author Kevin See
-#' @import dplyr
+#' @import dplyr tidyr
 #' @export
 #' @return NULL
 #' @examples estNodeEff()
@@ -24,10 +24,7 @@ estNodeEff = function(capHist_proc = NULL,
   if(is.null(node)) {
     cat('If no node is supplied, calculated for all nodes')
     node = node_order %>%
-      select(Node) %>%
-      distinct() %>%
-      as.matrix() %>%
-      as.character()
+      pull(Node)
   }
 
   node_list = as.list(node)
@@ -63,7 +60,7 @@ estNodeEff = function(capHist_proc = NULL,
                       distinct() %>%
                       mutate(nodePos = factor(nodePos,
                                               levels = c('down', 'up'))) %>%
-                      spread(nodePos, seen,
+                      tidyr::spread(nodePos, seen,
                              fill = 0,
                              drop = F) %>%
                       mutate(ch = paste0(down, up)) %>%
@@ -74,22 +71,18 @@ estNodeEff = function(capHist_proc = NULL,
                                 C = sum(freq[ch == '01'], freq[ch == '11']),
                                 R = sum(freq[ch == '11']))
 
-
-                    Nhat = FSA::mrClosed(M = capHistNode$M,
-                                         n = capHistNode$C,
-                                         m = capHistNode$R,
-                                         method = 'Petersen') %>%
-                      summary(incl.SE = T) %>%
-                      as_tibble()
+                    # Petersen estimate of abundance
+                    Nhat = tibble(N = (capHistNode$M * capHistNode$C) / capHistNode$R,
+                                  SE = sqrt(capHistNode$M^2 * capHistNode$C * (capHistNode$C - capHistNode$R) / (capHistNode$R^3)))
 
                     if(is.na(Nhat$N)) {
-                      Nhat = FSA::mrClosed(M = capHistNode$M,
-                                           n = capHistNode$C,
-                                           m = capHistNode$R,
-                                           method = 'Chapman') %>%
-                        summary(incl.SE = T) %>%
-                        as_tibble()
+                      Nhat = tibble(N = ((capHistNode$M + 1) * (capHistNode$C + 1)) / (capHistNode$R + 1) - 1,
+                                    SE = sqrt(((capHistNode$M + 1) * (capHistNode$C + 1) * (capHistNode$M - capHistNode$R) * (capHistNode$C - capHistNode$R)) / ((capHistNode$R + 1)^2 * (capHistNode$R + 2))))
                     }
+
+                    Nhat = Nhat %>%
+                      mutate(N = round(N),
+                             SE = round(SE, 1))
 
                     capHistNode %>%
                       bind_cols(Nhat) %>%
