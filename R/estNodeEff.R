@@ -8,6 +8,8 @@
 #'
 #' @param node character string of the node(s) of interest.
 #'
+#' @param method one of Petersen, Chapman or Bailey. Determines which formula to use when estimating tags past an array. Default is \code{Chapman}. If another method is selected, and fails (e.g. due to no recaptures), the \code{Chapman} estimator will be used.
+#'
 #' @author Kevin See
 #' @import dplyr tidyr
 #' @export
@@ -16,7 +18,8 @@
 
 estNodeEff = function(capHist_proc = NULL,
                       node_order = NULL,
-                      node = NULL) {
+                      node = NULL,
+                      method = c('Chapman', 'Petersen', 'Bailey')) {
 
   stopifnot(!is.null(capHist_proc),
             !is.null(node_order))
@@ -26,6 +29,10 @@ estNodeEff = function(capHist_proc = NULL,
     node = node_order %>%
       pull(Node)
   }
+
+  # get default method
+  method = match.arg(method)
+
 
   node_list = as.list(node)
   names(node_list) = node
@@ -61,8 +68,8 @@ estNodeEff = function(capHist_proc = NULL,
                       mutate(nodePos = factor(nodePos,
                                               levels = c('down', 'up'))) %>%
                       tidyr::spread(nodePos, seen,
-                             fill = 0,
-                             drop = F) %>%
+                                    fill = 0,
+                                    drop = F) %>%
                       mutate(ch = paste0(down, up)) %>%
                       group_by(ch) %>%
                       summarise(freq = n_distinct(TagID)) %>%
@@ -71,21 +78,35 @@ estNodeEff = function(capHist_proc = NULL,
                                 C = sum(freq[ch == '01'], freq[ch == '11']),
                                 R = sum(freq[ch == '11']))
 
-                    # Petersen estimate of abundance
-                    Nhat = tibble(N = (capHistNode$M * capHistNode$C) / capHistNode$R,
-                                  SE = sqrt(capHistNode$M^2 * capHistNode$C * (capHistNode$C - capHistNode$R) / (capHistNode$R^3)))
+                    # estimate number of tags using several estimators
+                    tagEst = list('Petersen' = capHistNode %>%
+                                    transmute(N = M * C / R,
+                                              SE = sqrt(M^2 * C * (C - R) / R^3)),
+                                  'Bailey' = capHistNode %>%
+                                    transmute(N = M * (C + 1) / (R + 1),
+                                              SE = sqrt(M^2 * (C + 1) * (C - R) / ((R + 1)^2 * (R + 2)))),
+                                  'Chapman' = capHistNode %>%
+                                    transmute(N = (M + 1) * (C + 1) / (R + 1) - 1,
+                                              SE = sqrt((M + 1) * (C + 1) * (M - R) * (C - R) / ((R + 1)^2 * (R + 2))))) %>%
+                      map_df(.id = 'estimator',
+                             .f = function(x) x %>%
+                               mutate_at(vars(N),
+                                         list(round)) %>%
+                               mutate_at(vars(SE),
+                                         list(round),
+                                         digits = 1))
+
+                    Nhat = tagEst %>%
+                      filter(estimator == method)
 
                     if(is.na(Nhat$N)) {
-                      Nhat = tibble(N = ((capHistNode$M + 1) * (capHistNode$C + 1)) / (capHistNode$R + 1) - 1,
-                                    SE = sqrt(((capHistNode$M + 1) * (capHistNode$C + 1) * (capHistNode$M - capHistNode$R) * (capHistNode$C - capHistNode$R)) / ((capHistNode$R + 1)^2 * (capHistNode$R + 2))))
+                      Nhat = tagEst %>%
+                        filter(estimator == 'Chapman')
                     }
-
-                    Nhat = Nhat %>%
-                      mutate(N = round(N),
-                             SE = round(SE, 1))
 
                     capHistNode %>%
                       bind_cols(Nhat) %>%
+                      select(-estimator) %>%
                       mutate(detEff = M / N,
                              detEff_SE = M*SE / N^2) %>%
                       rename(tagsAtNode = M,
