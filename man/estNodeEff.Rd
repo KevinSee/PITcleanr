@@ -4,7 +4,8 @@
 \alias{estNodeEff}
 \title{Node Efficiency}
 \usage{
-estNodeEff(capHist_proc = NULL, node_order = NULL, node = NULL)
+estNodeEff(capHist_proc = NULL, node_order = NULL, node = NULL,
+  method = c("Chapman", "Petersen", "Bailey"))
 }
 \arguments{
 \item{capHist_proc}{Dataframe returned by \code{processCapHist_*}, under the name \code{ProcCapHist}.}
@@ -12,9 +13,11 @@ estNodeEff(capHist_proc = NULL, node_order = NULL, node = NULL)
 \item{node_order}{Dataframe returned by \code{processCapHist_*}, under the name \code{NodeOrder}.}
 
 \item{node}{character string of the node(s) of interest.}
+
+\item{method}{one of Petersen, Chapman or Bailey. Determines which formula to use when estimating tags past an array. Default is \code{Chapman}. If another method is selected, and fails (e.g. due to no recaptures), the \code{Chapman} estimator will be used.}
 }
 \description{
-This function uses detections at a given node, and all detections upstream of that node to calculate detection efficiency at that node. It then uses the number of tags detected at that node and the detection efficiency to estimate the number of tags that have migrated upstream of that node.
+This function uses detections at a given node, and all detections upstream of that node to calculate detection efficiency at that node. It uses the Petersen estimator for the number of tags at that node (or the Chapman if no recaptures are available). The detection efficiency is then calcuated as the number of tags detected at that node, divided by the estimate of total tags at that node.
 }
 \examples{
 estNodeEff()

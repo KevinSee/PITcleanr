@@ -17,7 +17,7 @@ estNumTags(capHist_proc = NULL, node_order = NULL, node = NULL)
 This function uses detections at a given node, and all detections upstream of that node to calculate detection efficiency at that node. It then uses the number of tags detected at that node and the detection efficiency to estimate the number of tags that have migrated upstream of that node.
 }
 \examples{
-estNumTags()
+# estNumTags()
 }
 \author{
 Kevin See

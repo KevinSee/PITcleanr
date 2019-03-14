@@ -4,8 +4,8 @@
 \alias{assignNodes}
 \title{Assign Observation Nodes}
 \usage{
-assignNodes(valid_tag_df = NULL, observation = NULL, configuration = NULL,
-  parent_child_df = NULL, truncate = T)
+assignNodes(valid_tag_df = NULL, observation = NULL,
+  configuration = NULL, parent_child_df = NULL, truncate = T)
 }
 \arguments{
 \item{valid_tag_df}{is a data frame containing the PIT tag ID in a column called \code{TagID}, and the date that fish was caught at the trap, \code{TrapDate}.}

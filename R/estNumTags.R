@@ -12,7 +12,7 @@
 #' @import dplyr purrr
 #' @export
 #' @return NULL
-#' @examples estNumTags()
+#' @examples # estNumTags()
 
 estNumTags = function(capHist_proc = NULL,
                       node_order = NULL,
@@ -50,7 +50,7 @@ estNumTags = function(capHist_proc = NULL,
                     }
 
                     # calculate node efficiency and estimate tags above that node
-                    proc_ch %>%
+                    capHist_proc %>%
                       filter(Node %in% node_vec) %>%
                       summarise(n_tags_node = n_distinct(TagID[Node == x]),
                                 n_tags_tot = n_distinct(TagID),
