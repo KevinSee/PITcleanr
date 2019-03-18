@@ -64,11 +64,11 @@ filterLGRtrapDB = function(trap_path = NULL,
            LGDMarkAD == 'AI',                     # keep only adipose-intact records
            !is.na(LGDNumPIT))                     # remove any records with missing PIT tag code
 
-  # drop Fall Chinook
-  if(species == 'Chinook') {
-    valid_df = valid_df %>%
-      filter(grepl('5', SRR))
-  }
+  # # drop Fall Chinook
+  # if(species == 'Chinook') {
+  #   valid_df = valid_df %>%
+  #     filter(grepl('5', SRR))
+  # }
 
   # select only columns we're interested in
   valid_df = valid_df %>%
