@@ -46,7 +46,7 @@ createParentChildDf = function(sites_df,
     mutate(stepOrder = 1:n()) %>%
     ungroup() %>%
     left_join(configuration %>%
-                filter(!EndDate < lubridate::ymd(startDate) | is.na(EndDate)) %>%
+                filter(EndDate >= lubridate::ymd(startDate) | is.na(EndDate)) %>%
                 select(SiteID, Node, SiteType, matches('RKM')) %>%
                 distinct() %>%
                 bind_rows(anti_join(configuration %>%
@@ -101,7 +101,8 @@ createParentChildDf = function(sites_df,
     group_by(ChildNode) %>%
     filter(RKMTotal == max(RKMTotal)) %>%
     slice(1) %>%
-    ungroup()
+    ungroup() %>%
+    arrange(RKM, nodeOrder)
 
   return(parent_child)
 }
