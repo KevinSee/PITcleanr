@@ -41,8 +41,9 @@ writeLGRNodeNetwork = function() {
                                                   list('LC1', 'LC2')),
                                   'Lochsa' = list('LRL' =
                                                     list('LRL',
-                                                         'FISTRP')),
-                                  'SFClearwater' = list('SC1' =
+                                                         'LRU' =
+                                                           list('LRU', 'FISTRP'))),
+                                   'SFClearwater' = list('SC1' =
                                                           list('SC1',
                                                                'SC2' =
                                                                  list('SC2',
@@ -54,7 +55,9 @@ writeLGRNodeNetwork = function() {
                                   'ClearCreek' = list('CLC' =
                                                         list('CLC',
                                                              'KOOS')),
-                                  'Selway' = list('SW1'))
+                                  'Selway' = list('SW1' =
+                                                    list('SW1', 'SW2'))
+                                  )
 
   bin_list[['SW_Washington']] = list('Tucannon' =
                                        list('LTR' =
