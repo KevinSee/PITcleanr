@@ -98,8 +98,10 @@ writeLGRNodeNetwork = function() {
                                    list('WR1' =
                                           list('WR1',
                                                'BCANF',
-                                               'LOSTIW',
-                                               'WALH')),
+                                               'WR2' =
+                                                 list('WR2',
+                                                      'LOSTIW',
+                                                      'WALH'))),
                                  'LookingGlass' =
                                    list('LOOKGC',
                                         'LOOH'),
