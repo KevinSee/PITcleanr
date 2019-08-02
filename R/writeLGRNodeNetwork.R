@@ -90,10 +90,12 @@ writeLGRNodeNetwork = function() {
                                    list('UpperGrandeRonde' =
                                           list('UGR' =
                                                  list('UGR',
-                                                      'GRANDW',
                                                       'CCW' =
                                                         list('CCW',
-                                                             'CATHEW')))),
+                                                             'CATHEW'),
+                                                      'UGS' =
+                                                        list('UGS',
+                                                             'GRANDW')))),
                                  'Wallowa' =
                                    list('WR1' =
                                           list('WR1',
