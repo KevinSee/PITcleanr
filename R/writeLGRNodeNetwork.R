@@ -200,7 +200,8 @@ writeLGRNodeNetwork = function() {
                                                                    list('STL',
                                                                         'SAWT'),
                                                                  'SALEFT',
-                                                                 'PAHH'))),
+                                                                 'PAHH',
+                                                                 'RFL'))),
                               'BearValley' = list('BRC')
                               )
 
