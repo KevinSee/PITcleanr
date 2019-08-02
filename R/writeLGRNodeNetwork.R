@@ -102,7 +102,9 @@ writeLGRNodeNetwork = function() {
                                                'WALH')),
                                  'LookingGlass' =
                                    list('LOOKGC',
-                                        'LOOH'))
+                                        'LOOH'),
+                                 'Wenaha' = list('WEN')
+                                 )
 
   bin_list[['Imnaha']] = list('CowCreek' =
                                 list('COC'),
@@ -150,6 +152,7 @@ writeLGRNodeNetwork = function() {
                                 list('TAY' =
                                        list('TAY',
                                             'BIG2C')),
+                              'Panther' = list('PCA'),
                               'NFSalmon' =
                                 list('NFS'),
                               'CarmenCreek' =
@@ -193,7 +196,9 @@ writeLGRNodeNetwork = function() {
                                                                    list('STL',
                                                                         'SAWT'),
                                                                  'SALEFT',
-                                                                 'PAHH'))))
+                                                                 'PAHH'))),
+                              'BearValley' = list('BRC')
+                              )
 
   bin_all = list('GRA' =
                    list('GRA',
