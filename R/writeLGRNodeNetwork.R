@@ -151,7 +151,8 @@ writeLGRNodeNetwork = function() {
                                                    'STR'),
                                             'ESS' =
                                               list('ESS',
-                                                   'JOHNSC'))),
+                                                   'JOHNSC',
+                                                   'YPP'))),
                               'BigCreek' =
                                 list('TAY' =
                                        list('TAY',
