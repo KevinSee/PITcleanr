@@ -41,8 +41,9 @@ writeLGRNodeNetwork = function() {
                                                   list('LC1', 'LC2')),
                                   'Lochsa' = list('LRL' =
                                                     list('LRL',
-                                                         'FISTRP')),
-                                  'SFClearwater' = list('SC1' =
+                                                         'LRU' =
+                                                           list('LRU', 'FISTRP'))),
+                                   'SFClearwater' = list('SC1' =
                                                           list('SC1',
                                                                'SC2' =
                                                                  list('SC2',
@@ -54,7 +55,9 @@ writeLGRNodeNetwork = function() {
                                   'ClearCreek' = list('CLC' =
                                                         list('CLC',
                                                              'KOOS')),
-                                  'Selway' = list('SW1'))
+                                  'Selway' = list('SW1' =
+                                                    list('SW1', 'SW2'))
+                                  )
 
   bin_list[['SW_Washington']] = list('Tucannon' =
                                        list('LTR' =
@@ -87,19 +90,25 @@ writeLGRNodeNetwork = function() {
                                    list('UpperGrandeRonde' =
                                           list('UGR' =
                                                  list('UGR',
-                                                      'GRANDW',
                                                       'CCW' =
                                                         list('CCW',
-                                                             'CATHEW')))),
+                                                             'CATHEW'),
+                                                      'UGS' =
+                                                        list('UGS',
+                                                             'GRANDW')))),
                                  'Wallowa' =
                                    list('WR1' =
                                           list('WR1',
                                                'BCANF',
-                                               'LOSTIW',
-                                               'WALH')),
+                                               'WR2' =
+                                                 list('WR2',
+                                                      'LOSTIW',
+                                                      'WALH'))),
                                  'LookingGlass' =
                                    list('LOOKGC',
-                                        'LOOH'))
+                                        'LOOH'),
+                                 'Wenaha' = list('WEN')
+                                 )
 
   bin_list[['Imnaha']] = list('CowCreek' =
                                 list('COC'),
@@ -142,11 +151,13 @@ writeLGRNodeNetwork = function() {
                                                    'STR'),
                                             'ESS' =
                                               list('ESS',
-                                                   'JOHNSC'))),
+                                                   'JOHNSC',
+                                                   'YPP'))),
                               'BigCreek' =
                                 list('TAY' =
                                        list('TAY',
                                             'BIG2C')),
+                              'Panther' = list('PCA'),
                               'NFSalmon' =
                                 list('NFS'),
                               'CarmenCreek' =
@@ -190,7 +201,10 @@ writeLGRNodeNetwork = function() {
                                                                    list('STL',
                                                                         'SAWT'),
                                                                  'SALEFT',
-                                                                 'PAHH'))))
+                                                                 'PAHH',
+                                                                 'RFL'))),
+                              'BearValley' = list('BRC')
+                              )
 
   bin_all = list('GRA' =
                    list('GRA',
