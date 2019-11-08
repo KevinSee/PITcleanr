@@ -57,8 +57,12 @@ createParentChildDf = function(sites_df,
                                       distinct(),
                                     .,
                                     by = c('SiteID', 'Node'))) %>%
-                mutate(site = stringr::str_replace(Node, 'A0$', ''),
-                       site = stringr::str_replace(site, 'B0$', '')) %>%
+                mutate(site = if_else(stringr::str_length(Node) > 3,
+                                      stringr::str_remove(Node, 'A0$'),
+                                      Node),
+                       site = if_else(stringr::str_length(Node) > 3,
+                                      stringr::str_remove(site, 'B0$'),
+                                      site)) %>%
                 group_by(Node, site) %>%
                 filter(RKMTotal == min(RKMTotal)) %>%
                 ungroup(),
