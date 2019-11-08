@@ -6,7 +6,7 @@
 #'
 #' @param parentchild a dataframe containing at least two columns; 1: parent and 2: child for each observation point in the network.
 #'
-#' @import dplyr tidygraph
+#' @import dplyr tidygraph ggraph
 #' @export
 #' @return NULL
 #' @examples obsNetwork()
@@ -16,14 +16,14 @@ obsNetwork <- function(parentchild){
   stopifnot(!is.null(parentchild))
 
 nodes <- parentchild %>%
-  gather('loc_type','SiteID', parent, child) %>%
+  gather('loc_type','SiteID', ParentNode, ChildNode) %>%
   distinct(SiteID) %>%
   rowid_to_column('id')
 
 edges <- parentchild %>%
-  left_join(nodes, by = c('parent' = 'SiteID')) %>%
+  left_join(nodes, by = c('ParentNode' = 'SiteID')) %>%
   rename(from = id) %>%
-  left_join(nodes, by = c('child' = 'SiteID')) %>%
+  left_join(nodes, by = c('ChildNode' = 'SiteID')) %>%
   rename(to = id)
 
 routes_tidy <- tbl_graph(nodes = nodes, edges = edges, directed = TRUE)
@@ -51,7 +51,8 @@ colnames(network_descrip) = paste0('Step', 1:ncol(network_descrip))
 site_df = path_df %>%
   bind_cols(network_descrip %>%
               as_tibble()) %>%
-  mutate_at(vars(matches('^Step')), funs(as.character)) %>%
+  mutate_at(vars(matches('^Step')),
+            list(as.character)) %>%
   arrange(SiteID)
 
 return(site_df)
