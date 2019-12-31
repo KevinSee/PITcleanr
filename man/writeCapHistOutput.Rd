@@ -4,9 +4,14 @@
 \alias{writeCapHistOutput}
 \title{Capture History Output}
 \usage{
-writeCapHistOutput(valid_obs = NULL, valid_paths = NULL,
-  node_order = NULL, last_obs_date = NULL, save_file = F,
-  file_name = NULL)
+writeCapHistOutput(
+  valid_obs = NULL,
+  valid_paths = NULL,
+  node_order = NULL,
+  last_obs_date = NULL,
+  save_file = F,
+  file_name = NULL
+)
 }
 \arguments{
 \item{valid_obs}{dataframe built by the function \code{assignNodes}.}

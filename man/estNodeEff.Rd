@@ -4,8 +4,12 @@
 \alias{estNodeEff}
 \title{Node Efficiency}
 \usage{
-estNodeEff(capHist_proc = NULL, node_order = NULL, node = NULL,
-  method = c("Chapman", "Petersen", "Bailey"))
+estNodeEff(
+  capHist_proc = NULL,
+  node_order = NULL,
+  node = NULL,
+  method = c("Chapman", "Petersen", "Bailey")
+)
 }
 \arguments{
 \item{capHist_proc}{Dataframe returned by \code{processCapHist_*}, under the name \code{ProcCapHist}.}

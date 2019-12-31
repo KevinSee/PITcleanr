@@ -4,8 +4,11 @@
 \alias{defineRepGrps}
 \title{Define Report Groups}
 \usage{
-defineRepGrps(spp = c("Chinook", "Steelhead"), node_order = NULL,
-  root_site = "LGD")
+defineRepGrps(
+  spp = c("Chinook", "Steelhead"),
+  node_order = NULL,
+  root_site = "LGD"
+)
 }
 \arguments{
 \item{spp}{Species, either "Chinook" or "Steelhead"}

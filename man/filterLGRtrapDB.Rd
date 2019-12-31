@@ -4,9 +4,15 @@
 \alias{filterLGRtrapDB}
 \title{Read Lower Granite Trap Database}
 \usage{
-filterLGRtrapDB(trap_path = NULL, species = c("Chinook", "Steelhead"),
-  spawnYear = NULL, saveValidTagList = F, validTagFileNm = NULL,
-  saveCSV = F, validTagDataFileNm = NULL)
+filterLGRtrapDB(
+  trap_path = NULL,
+  species = c("Chinook", "Steelhead"),
+  spawnYear = NULL,
+  saveValidTagList = F,
+  validTagFileNm = NULL,
+  saveCSV = F,
+  validTagDataFileNm = NULL
+)
 }
 \arguments{
 \item{trap_path}{file path including name of file where .csv file of trap database is stored}

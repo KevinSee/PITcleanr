@@ -4,11 +4,21 @@
 \alias{processCapHist_LGD}
 \title{Process capture histories for Lower Granite}
 \usage{
-processCapHist_LGD(species = c("Chinook", "Steelhead"),
-  spawnYear = NULL, configuration = NULL, parent_child = NULL,
-  trap_path = NULL, filter_by_PBT = T, observations = NULL,
-  last_obs_date = NULL, truncate = T, site_df, step_num = 1,
-  save_file = F, file_name = NULL)
+processCapHist_LGD(
+  species = c("Chinook", "Steelhead"),
+  spawnYear = NULL,
+  configuration = NULL,
+  parent_child = NULL,
+  trap_path = NULL,
+  filter_by_PBT = T,
+  observations = NULL,
+  last_obs_date = NULL,
+  truncate = T,
+  site_df,
+  step_num = 1,
+  save_file = F,
+  file_name = NULL
+)
 }
 \arguments{
 \item{species}{either Chinook or Steelhead}

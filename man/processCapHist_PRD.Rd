@@ -4,10 +4,18 @@
 \alias{processCapHist_PRD}
 \title{Process capture histories for Priest Rapids}
 \usage{
-processCapHist_PRD(startDate = NULL, configuration = NULL,
-  parent_child = NULL, observations = NULL, last_obs_date = NULL,
-  truncate = T, site_df, step_num = 1, save_file = F,
-  file_name = NULL)
+processCapHist_PRD(
+  startDate = NULL,
+  configuration = NULL,
+  parent_child = NULL,
+  observations = NULL,
+  last_obs_date = NULL,
+  truncate = T,
+  site_df,
+  step_num = 1,
+  save_file = F,
+  file_name = NULL
+)
 }
 \arguments{
 \item{startDate}{observations that occurred before this date (YYYYMMDD format) will not be included.}

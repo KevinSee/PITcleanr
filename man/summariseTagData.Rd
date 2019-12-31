@@ -4,8 +4,12 @@
 \alias{summariseTagData}
 \title{Tag Summary}
 \usage{
-summariseTagData(capHist_proc = NULL, trap_data = NULL, saveCSV = F,
-  file_name = NULL)
+summariseTagData(
+  capHist_proc = NULL,
+  trap_data = NULL,
+  saveCSV = F,
+  file_name = NULL
+)
 }
 \arguments{
 \item{capHist_proc}{Dataframe returned by \code{processCapHist_LGD}, under the name \code{ProcCapHist}.}
