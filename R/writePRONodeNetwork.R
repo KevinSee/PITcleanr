@@ -7,7 +7,7 @@
 #'
 #' @import dplyr tibble stringr tidyr
 #' @export
-#' @return NULL
+#' @return tibble
 #' @examples writePRONodeNetwork()
 
 writePRONodeNetwork = function() {

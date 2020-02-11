@@ -6,6 +6,9 @@
 \usage{
 writePRONodeNetwork()
 }
+\value{
+tibble
+}
 \description{
 Create data.frame describing all the observation nodes in the Prosser dam version of DABOM, including how they are related to one another
 }
