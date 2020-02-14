@@ -11,46 +11,36 @@
 #' @examples writePRONodeNetwork()
 
 writePRONodeNetwork = function() {
-  bin_names = c('Status',
-                'Toppenish',
-                'Sunnyside',
-                'BelowProsser')
-  bin_list = vector('list', length(bin_names)) %>%
-    rlang::set_names()
-
-  bin_list[['Status']] = list('SAT')
-
-  bin_list[['Toppenish']] = list('TOP' =
-                                list('TOP',
-                                     'TP2',
-                                     'SM1',
-                                     'MD'))
-
-  bin_list[['Sunnyside']] = list('SUN' =
-                                   list("SUN",
-                                        "AH1",
-                                        "LNR" =
-                                          list("LNR",
-                                               "TTN"),
-                                        "WNS",
-                                        "ROZ" =
-                                          list("ROZ",
-                                               "TEAN",
-                                               "TAN",
-                                               "SWK",
-                                               "LMC" =
-                                                 list("LMC",
-                                                      "UMC"))))
-
-  bin_list[['BelowProsser']] = list('BelowJD1',
-                                       'JD1',
-                                       'MCN',
-                                       'ICH',
-                                       'PRA')
 
   bin_all = list('PRO' =
                    list('PRO',
-                        bin_list))
+                        'SAT',
+                        list('TOP' =
+                               list('TOP',
+                                    'TP2',
+                                    'SM1',
+                                    'MD')),
+                        list('SUN' =
+                               list("SUN",
+                                    "AH1",
+                                    "LNR" =
+                                      list("LNR",
+                                           "TTN"),
+                                    "WNS",
+                                    "ROZ" =
+                                      list("ROZ",
+                                           "TEAN",
+                                           "TAN",
+                                           "SWK",
+                                           "LMC" =
+                                             list("LMC",
+                                                  "UMC")))),
+                        'BelowJD1',
+                        'JD1',
+                        'MCN',
+                        'ICH',
+                        'PRA'))
+
 
   site_df_init = tibble(SiteID = unlist(bin_all),
                         path = names(unlist(bin_all))) %>%
@@ -65,12 +55,12 @@ writePRONodeNetwork = function() {
 
   network_descrip = stringr::str_split(site_df_init$path,
                                        '\\.',
-                                       simplify = T)
-  colnames(network_descrip) = paste0('Step', 1:ncol(network_descrip))
+                                       simplify = T) %>%
+    as_tibble() %>%
+    rlang::set_names(paste0('Step', 1:ncol(.)))
 
   site_df = site_df_init %>%
-    bind_cols(network_descrip %>%
-                as.data.frame()) %>%
+    bind_cols(network_descrip) %>%
     tidyr::gather(brk, upstrm_site, matches('Step')) %>%
     mutate(upstrm_site = ifelse(upstrm_site == '', NA, upstrm_site)) %>%
     tidyr::spread(brk, upstrm_site,
