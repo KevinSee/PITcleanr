@@ -107,10 +107,10 @@ processCapHist_PRO = function(start_date = NULL,
                                save_file,
                                file_name)
 
-  return(list('ValidPaths' = valid_paths,
+  return(list(#'ValidPaths' = valid_paths,
               'NodeOrder' = node_order,
               # 'ValidTrapData' = trap_df,
-              'ValidObs' = valid_obs,
+              # 'ValidObs' = valid_obs,
               'ProcCapHist' = save_df))
 
 }
