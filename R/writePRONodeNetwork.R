@@ -29,7 +29,7 @@ writePRONodeNetwork = function() {
                                     "WNS",
                                     "ROZ" =
                                       list("ROZ",
-                                           "TEAN",
+                                           "LMT",
                                            "TAN",
                                            "SWK",
                                            "LMC" =
