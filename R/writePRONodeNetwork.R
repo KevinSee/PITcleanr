@@ -26,7 +26,7 @@ writePRONodeNetwork = function() {
                                     "LNR" =
                                       list("LNR",
                                            "TTN"),
-                                    "WNS",
+                                    "LWC",
                                     "ROZ" =
                                       list("ROZ",
                                            "LMT",
@@ -41,16 +41,16 @@ writePRONodeNetwork = function() {
                         'ICH',
                         'PRA'))
 
-
-  site_df_init = tibble(SiteID = unlist(bin_all),
-                        path = names(unlist(bin_all))) %>%
-    mutate(path = stringr::str_replace(path,
-                                       '[[:digit:]]$',
-                                       '')) %>%
+  site_df_init = unlist(bin_all) %>%
+    tibble::enframe(name = 'path',
+            value = 'SiteID') %>%
+    dplyr::select(SiteID, path) %>%
+    mutate_at(vars(path),
+              list(~ str_remove_all(., '[[:digit:]]*$'))) %>%
     rowwise() %>%
-    mutate(path = ifelse(stringr::str_sub(path, start = -nchar(SiteID)) != SiteID,
-                         paste(path, SiteID, sep = '.'),
-                         path)) %>%
+    mutate(path = if_else(stringr::str_sub(path, start = -nchar(SiteID)) != SiteID,
+                          paste(path, SiteID, sep = '.'),
+                          path)) %>%
     ungroup()
 
   network_descrip = stringr::str_split(site_df_init$path,
