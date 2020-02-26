@@ -93,6 +93,12 @@ processCapHist_PRO = function(start_date = NULL,
     filter(TagID %in% onlyBelowJD1_tags |
              (!TagID %in% onlyBelowJD1_tags & Node != 'BelowJD1'))
 
+
+  if(!is.null(last_obs_date)) {
+    valid_obs = valid_obs %>%
+      filter(ObsDate <= lubridate::ymd(last_obs_date))
+  }
+
   # check if any tags have been dropped incorrectly along the way
   if(n_distinct(valid_obs$TagID) != n_distinct(observations$`Tag Code`)) {
     warning('Error: some tags being dropped')
@@ -103,7 +109,7 @@ processCapHist_PRO = function(start_date = NULL,
   save_df = writeCapHistOutput(valid_obs,
                                valid_paths,
                                node_order,
-                               last_obs_date,
+                               last_obs_date = NULL,
                                save_file,
                                file_name)
 
