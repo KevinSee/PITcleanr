@@ -46,7 +46,7 @@ writePRONodeNetwork = function() {
             value = 'SiteID') %>%
     dplyr::select(SiteID, path) %>%
     mutate_at(vars(path),
-              list(~ str_remove_all(., '[[:digit:]]*$'))) %>%
+              list(~ str_remove_all(., '[[:digit:]]+$'))) %>%
     rowwise() %>%
     mutate(path = if_else(stringr::str_sub(path, start = -nchar(SiteID)) != SiteID,
                           paste(path, SiteID, sep = '.'),
