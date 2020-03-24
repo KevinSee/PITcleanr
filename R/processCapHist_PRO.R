@@ -57,7 +57,7 @@ processCapHist_PRO = function(start_date = NULL,
   valid_tag_df = observations %>%
     filter(`Event Site Code Value` %in% tagging_site) %>%
     mutate_at(vars(`Event Date Time Value`, `Event Release Date Time Value`),
-              funs(lubridate::mdy_hms)) %>%
+              list(lubridate::mdy_hms)) %>%
     mutate(ObsDate = if_else(!is.na(`Event Release Date Time Value`) &
                                is.na(`Antenna ID`),
                              `Event Release Date Time Value`,
