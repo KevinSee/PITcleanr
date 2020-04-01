@@ -52,7 +52,7 @@ processCapHist_PRO = function(start_date = NULL,
                                'Toppenish',
                                'Sunnyside')))
 
-  # pull out tag ID and trap date at Priest Rapids
+  # pull out tag ID and trap date at Prosser
   cat('Getting trap date.\n')
   valid_tag_df = observations %>%
     filter(`Event Site Code Value` %in% tagging_site) %>%
