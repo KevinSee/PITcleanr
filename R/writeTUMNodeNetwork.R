@@ -11,63 +11,54 @@
 #' @examples writeTUMNodeNetwork()
 
 writeTUMNodeNetwork = function() {
-  bin_names = c('Peshastin',
-                'Icicle',
-                'Chiwaukum',
-                'Chiwawa',
-                'UpperWenatchee')
-  bin_list = vector('list', length(bin_names))
-  names(bin_list) = bin_names
-
-  bin_list[['Peshastin']] = list('PES')
-
-  bin_list[['Icicle']] = list('ICL' =
-                                list('ICL',
-                                     'LNF' =
-                                       list('LNF',
-                                            'LEAV'),
-                                     'ICM' =
-                                       list('ICM',
-                                            'ICU')))
-
-  bin_list[['Chiwaukum']] = list('CHW')
-
-  bin_list[['Chiwawa']] = list('CHL' =
-                                 list('CHL',
-                                      'CHU'))
-
-  bin_list[['UpperWenatchee']] = list('UWE' =
-                                        list('UWE',
-                                             'WTL',
-                                             'LWN',
-                                             'NAL' =
-                                               list('NAL',
-                                                    'NAU')))
-
 
   bin_all = list('TUM' =
                    list('TUM',
-                        bin_list))
+                        list('PES' =
+                               list('PES',
+                                    'PEU')),
+                        list('ICL' =
+                               list('ICL',
+                                    'LNF' =
+                                      list('LNF',
+                                           'LEAV'),
+                                    'ICM' =
+                                      list('ICM',
+                                           'ICU'))),
+                        'CHW',
+                        list('CHL' =
+                               list('CHL',
+                                    'CHU')),
+                        list('UWE' =
+                               list('UWE',
+                                    'WTL',
+                                    'LWN',
+                                    'NAL' =
+                                      list('NAL',
+                                           'NAU')))))
 
-  site_df_init = tibble(SiteID = unlist(bin_all),
-                        path = names(unlist(bin_all))) %>%
-    mutate(path = stringr::str_replace(path,
-                                       '[[:digit:]]$',
-                                       '')) %>%
+
+
+  site_df_init = unlist(bin_all) %>%
+    tibble::enframe(name = 'path',
+                    value = 'SiteID') %>%
+    dplyr::select(SiteID, path) %>%
+    mutate_at(vars(path),
+              list(~ str_remove_all(., '[[:digit:]]+$'))) %>%
     rowwise() %>%
-    mutate(path = ifelse(stringr::str_sub(path, start = -nchar(SiteID)) != SiteID,
-                         paste(path, SiteID, sep = '.'),
-                         path)) %>%
+    mutate(path = if_else(stringr::str_sub(path, start = -nchar(SiteID)) != SiteID,
+                          paste(path, SiteID, sep = '.'),
+                          path)) %>%
     ungroup()
 
   network_descrip = stringr::str_split(site_df_init$path,
                                        '\\.',
-                                       simplify = T)
-  colnames(network_descrip) = paste0('Step', 1:ncol(network_descrip))
+                                       simplify = T) %>%
+    as_tibble() %>%
+    rlang::set_names(paste0('Step', 1:ncol(.)))
 
   site_df = site_df_init %>%
-    bind_cols(network_descrip %>%
-                as.data.frame()) %>%
+    bind_cols(network_descrip) %>%
     tidyr::gather(brk, upstrm_site, matches('Step')) %>%
     mutate(upstrm_site = ifelse(upstrm_site == '', NA, upstrm_site)) %>%
     tidyr::spread(brk, upstrm_site,
@@ -75,7 +66,6 @@ writeTUMNodeNetwork = function() {
     mutate(SiteID = factor(SiteID,
                            levels = site_df_init$SiteID)) %>%
     arrange(SiteID)
-
 
   return(site_df)
 }
