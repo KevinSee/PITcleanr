@@ -61,6 +61,31 @@ processCapHist_PRD = function(startDate = NULL,
                                                    unit = 'days'))) %>%
     ungroup()
 
+  # if missing any tags, grab some
+  if(n_distinct(observations$`Tag Code`) > n_distinct(valid_tag_df$TagID)) {
+    alt_tag_df = observations %>%
+      select(TagID = `Tag Code`) %>%
+      distinct() %>%
+      anti_join(valid_tag_df) %>%
+      left_join(observations %>%
+                  rename(TagID = `Tag Code`)) %>%
+      filter(`Event Site Code Value` %in% c('PRA')) %>%
+      mutate_at(vars(`Event Date Time Value`, `Event Release Date Time Value`),
+                funs(lubridate::mdy_hms)) %>%
+      mutate(ObsDate = if_else(!is.na(`Event Release Date Time Value`) &
+                                 is.na(`Antenna ID`),
+                               `Event Release Date Time Value`,
+                               `Event Date Time Value`)) %>%
+      filter(ObsDate >= lubridate::ymd(startDate)) %>%
+      group_by(TagID) %>%
+      summarise(TrapDate = min(lubridate::floor_date(ObsDate,
+                                                     unit = 'days'))) %>%
+      ungroup()
+
+    valid_tag_df <- valid_tag_df %>%
+      bind_rows(alt_tag_df)
+  }
+
 
   # translate in nodes and simplify consecutive hits on the same node
   cat('Assigning nodes.\n')
