@@ -9,7 +9,8 @@ assignNodes(
   observation = NULL,
   configuration = NULL,
   parent_child_df = NULL,
-  truncate = T
+  truncate = T,
+  obs_input = c("ptagis", "dart")
 )
 }
 \arguments{

@@ -5,8 +5,8 @@
 \title{Process capture histories for Tumwater}
 \usage{
 processCapHist_TUM(
-  species = c("Chinook", "Steelhead"),
-  spawnYear = NULL,
+  start_date = NULL,
+  tagging_site = c("TUF", "TUM", "TUMFBY"),
   configuration = NULL,
   parent_child = NULL,
   observations = NULL,
