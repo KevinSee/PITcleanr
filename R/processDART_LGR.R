@@ -1,32 +1,50 @@
 #' @title Process tags observed at Lower Granite and any subsequent detections upstream.
 #'
-#' @description Using the raw import from DART's observation query, and the configuration files the function process the data into a PITcleanr capture history dataframe.
+#' @description Using the raw import from DART's observation query, and the configuration files the function process the data into a PITcleanr capture history dataframe. A list is returned that contains the raw DART query export and the cleaned capture history dataset.
+#'
+#' @param species Chinook, Coho, Steelhead and Sockeye
+#' @param spawnYear available years include spawn year 2010 to present
+#' @param configuration output from buildConfig function
+#' @param truncate should repeat observations at the same IPTDS node be removed from cleaned capture history dataset?
 #'
 #' @author Ryan N. Kinzer
 #'
-#'
-#' @import dplyr lubridate
+#' @import dplyr readr
 #' @export
 #' @return NULL
-#' @examples processDART_LGR()
-processDART_LGR <- function(species = c('Chinook', 'Steelhead'),
-                            spawnyear = NULL,
-                            observations = NULL,
+#' @examples
+#'
+#' my_config <- buildConfig()
+#' dart_obs <- processDART_LGR(species = 'Chinook',
+#'                            spawnYear = 2020,
+#'                            configuration = my_config,
+#'                            truncate = T)
+
+processDART_LGR <- function(species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
+                            spawnYear = NULL,
                             configuration = NULL,
                             truncate = T){
 
-  if(species == 'Chinook'){
-    spp_code = 1
-    start_date <- paste0(spawnyear,'0301')
+  species <- match.arg(species)
+
+  stopifnot(!is.null(spawnYear) |
+              !is.null(configuration))
+
+  tmp_df <- tibble(species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
+                   spp_code = 1:4)
+
+  spp_code <- tmp_df$spp_code[tmp_df$species == species]
+
+  if(species != 'Steelhead'){
+    start_date <- paste0(spawnYear,'0301')
   }
 
   if(species == 'Steelhead'){
-    spp_code = 3
-    start_date <- paste0(spawnyear-1,'0701')
+    start_date <- paste0(spawnYear-1,'0701')
   }
 
   # load data
-  dart_file <- paste0('http://www.cbr.washington.edu/dart/cs/data/nezperce/nptspawn_GRA_',spawnyear,'_',spp_code,'.csv')
+  dart_file <- paste0('http://www.cbr.washington.edu/dart/cs/data/nezperce/nptspawn_GRA_',spawnYear,'_',spp_code,'.csv')
 
   observations <- read_csv(dart_file)
 
@@ -69,5 +87,5 @@ processDART_LGR <- function(species = c('Chinook', 'Steelhead'),
                                  node_order,
                                  save_file = FALSE)
 
-  return(list(proc_ch, observations))
+  return(list('proc_ch' = proc_ch, 'dart_obs' = observations))
   }

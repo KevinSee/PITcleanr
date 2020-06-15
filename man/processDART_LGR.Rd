@@ -5,18 +5,31 @@
 \title{Process tags observed at Lower Granite and any subsequent detections upstream.}
 \usage{
 processDART_LGR(
-  species = c("Chinook", "Steelhead"),
-  spawnyear = NULL,
-  observations = NULL,
+  species = c("Chinook", "Coho", "Steelhead", "Sockeye"),
+  spawnYear = NULL,
   configuration = NULL,
   truncate = T
 )
 }
+\arguments{
+\item{species}{Chinook, Coho, Steelhead and Sockeye}
+
+\item{spawnYear}{available years include spawn year 2010 to present}
+
+\item{configuration}{output from buildConfig function}
+
+\item{truncate}{should repeat observations at the same IPTDS node be removed from cleaned capture history dataset?}
+}
 \description{
-Using the raw import from DART's observation query, and the configuration files the function process the data into a PITcleanr capture history dataframe.
+Using the raw import from DART's observation query, and the configuration files the function process the data into a PITcleanr capture history dataframe. A list is returned that contains the raw DART query export and the cleaned capture history dataset.
 }
 \examples{
-processDART_LGR()
+
+my_config <- buildConfig()
+dart_obs <- processDART_LGR(species = 'Chinook',
+                           spawnYear = 2020,
+                           configuration = my_config,
+                           truncate = T)
 }
 \author{
 Ryan N. Kinzer
