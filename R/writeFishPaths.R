@@ -103,7 +103,7 @@ writeFishPaths = function(valid_obs,
     left_join(proc_obs %>%
                        filter(AutoProcStatus == FALSE) %>%
                        distinct(TagID) %>%
-                       mutate(UserProcStatus = '')) %>%
+                       mutate(UserProcStatus = ''), by = 'TagID') %>%
     mutate(UserProcStatus = ifelse(is.na(UserProcStatus), TRUE, ''),
                   UserComment = '') %>%
     select(TagID, MinObsDate = ObsDate, Node, AutoProcStatus, UserProcStatus, UserComment)

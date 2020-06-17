@@ -98,7 +98,7 @@ writeSpwnPaths = function(valid_obs,
     select(TagID, maxUpDate = ObsDate)
 
   allObs <- allObs %>%
-    left_join(migObs) %>%
+    left_join(migObs, by = 'TagID') %>%
     mutate(Migration = ifelse(ObsDate <= maxUpDate, 'Upstream', 'Downstream'),
            ModelObs = ifelse(!ValidPath, '', ModelObs)) %>%
     select(-maxUpDate)

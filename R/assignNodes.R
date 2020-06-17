@@ -36,7 +36,8 @@ assignNodes = function(valid_tag_df = NULL,
                        observation = NULL,
                        configuration = NULL,
                        parent_child_df = NULL,
-                       truncate = T) {
+                       truncate = T,
+                       obs_input = c('ptagis','dart')) {
 
   stopifnot(!is.null(valid_tag_df) |
               !is.null(observation) |
@@ -47,32 +48,59 @@ assignNodes = function(valid_tag_df = NULL,
     configuration = buildConfig()
   }
 
-  if(!'Event Release Date Time Value' %in% names(observation)) {
-    observation$`Event Release Date Time Value` = NA
+  if(obs_input == 'ptagis'){
+
+    if(!'Event Release Date Time Value' %in% names(observation)) {
+      observation$`Event Release Date Time Value` = NA
+    }
+
+    obs_df <- valid_tag_df %>%
+      select(TagID, TrapDate) %>%
+      left_join(observation %>%
+                  left_join(configuration %>%
+                              select(SiteID, SiteType, SiteTypeName) %>%
+                              distinct(),
+                            by = c('Event Site Code Value' = 'SiteID')) %>%
+                  mutate(ObsDate = ifelse(!is.na(`Event Release Date Time Value`) &
+                                            is.na(`Antenna ID`) &
+                                            SiteType == 'MRR' &
+                                            SiteTypeName %in% c('Acclimation Pond', 'Hatchery', 'Hatchery Returns', 'Trap or Weir', 'Dam'),
+                                          `Event Release Date Time Value`,
+                                          `Event Date Time Value`)) %>%
+                  select(TagID = `Tag Code`,
+                         ObsDate,
+                         SiteID = `Event Site Code Value`,
+                         AntennaID = `Antenna ID`,
+                         ConfigID = `Antenna Group Configuration Value`) %>%
+                  mutate(ObsDate = lubridate::mdy_hms(ObsDate)),
+                by = c('TagID')) %>%
+      mutate(ValidDate = ifelse(ObsDate >= TrapDate, T, F)) %>%
+      filter(!is.na(SiteID))
   }
 
-  obs_df <- valid_tag_df %>%
-    select(TagID, TrapDate) %>%
-    left_join(observation %>%
-                left_join(configuration %>%
-                            select(SiteID, SiteType, SiteTypeName) %>%
-                            distinct(),
-                          by = c('Event Site Code Value' = 'SiteID')) %>%
-                mutate(ObsDate = ifelse(!is.na(`Event Release Date Time Value`) &
-                                          is.na(`Antenna ID`) &
-                                          SiteType == 'MRR' &
-                                          SiteTypeName %in% c('Acclimation Pond', 'Hatchery', 'Hatchery Returns', 'Trap or Weir', 'Dam'),
-                                        `Event Release Date Time Value`,
-                                        `Event Date Time Value`)) %>%
-                select(TagID = `Tag Code`,
-                       ObsDate,
-                       SiteID = `Event Site Code Value`,
-                       AntennaID = `Antenna ID`,
-                       ConfigID = `Antenna Group Configuration Value`) %>%
-                mutate(ObsDate = lubridate::mdy_hms(ObsDate)),
-              by = c('TagID')) %>%
-    mutate(ValidDate = ifelse(ObsDate >= TrapDate, T, F)) %>%
-    filter(!is.na(SiteID))
+  if(obs_input == 'dart'){
+
+    obs_df <- valid_tag_df %>%
+      right_join(observation %>%
+                   mutate(config = if_else(is.na(config),0,config),
+                          config = as.character(config),
+                          obs_site = if_else(is.na(obs_type), rel_site, obs_site),
+                          obs_time = if_else(is.na(obs_type), as_datetime(rel_date), obs_time)) %>%
+                   #count(obs_site) %>%
+                   left_join(configuration %>%
+                               select(obs_site = SiteID, SiteType, SiteTypeName) %>%
+                               distinct(obs_site, .keep_all = TRUE),
+                             by = 'obs_site') %>%
+                   select(TagID = tag_id,
+                          ObsDate = obs_time,
+                          SiteID = obs_site,
+                          AntennaID = coil_id,
+                          ConfigID = config),
+                 by = 'TagID') %>%
+      mutate(ValidDate = ifelse(ObsDate >= TrapDate, T, F)) %>%
+      filter(!is.na(SiteID)) %>%
+      ungroup()
+  }
 
   # which sites are not in the configuration file
   tmp_df <- obs_df %>%
@@ -80,7 +108,8 @@ assignNodes = function(valid_tag_df = NULL,
     distinct() %>%
     anti_join(configuration %>%
                 select(SiteID, AntennaID, ConfigID) %>%
-                distinct())
+                distinct(),
+              by = c("SiteID", "AntennaID", "ConfigID")) # removes joining message.
 
   if( nrow(tmp_df) > 0 ){
 

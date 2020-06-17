@@ -70,7 +70,7 @@ createNodeOrder = function(valid_paths = NULL,
                 group_by(NodeSite) %>%
                 filter(RKMTotal == min(RKMTotal[RKMTotal > 0])) %>%
                 slice(1) %>%
-                ungroup())
+                ungroup(), by = 'NodeSite')
 
   if(!is.null(site_df)) {
     init_brch = node_order %>%
@@ -79,7 +79,8 @@ createNodeOrder = function(valid_paths = NULL,
                   select(NodeSite = SiteID,
                          Group = paste0('Step', step_num)) %>%
                   mutate(Group = factor(Group,
-                                        levels = unique(Group)))) %>%
+                                        levels = unique(Group))),
+                by = 'NodeSite') %>%
       filter(!is.na(Group)) %>%
       mutate(Group = forcats::fct_reorder(Group, RKMTotal, min),
              Group = forcats::fct_drop(Group)) %>%
@@ -96,7 +97,8 @@ createNodeOrder = function(valid_paths = NULL,
     node_order = node_order %>%
       left_join(init_brch %>%
                   select(BranchNum,
-                         Group)) %>%
+                         Group),
+                by = 'BranchNum') %>%
       arrange(BranchNum, RKM) %>%
       filter(!(is.na(BranchNum) & NodeOrder != 1))
 
