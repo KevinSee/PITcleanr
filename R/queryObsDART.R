@@ -30,7 +30,7 @@ queryObsDART <- function(species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
   stopifnot(!is.null(spawnYear))
 
   spp_code = tibble(spp_nm = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
-                   spp_code = 1:4)  %>%
+                    spp_code = 1:4)  %>%
     filter(spp_nm == species) %>%
     pull(spp_code)
 
