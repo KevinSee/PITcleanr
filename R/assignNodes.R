@@ -27,6 +27,8 @@
 #'
 #' @param truncate logical, subsets observations to those with valid nodes, observations dates greater than trapping date at LGD and then to the minimum observation date of each set of observation events at a node, multiple observation events can occur at one node if the observations are split by detections at other nodes. Default is \code{TRUE}.
 #'
+#' @param obs_input does the input file come from PTAGIS or DART?
+#'
 #' @import dplyr lubridate
 #' @export
 #' @return NULL
@@ -42,6 +44,8 @@ assignNodes = function(valid_tag_df = NULL,
   stopifnot(!is.null(valid_tag_df) |
               !is.null(observation) |
               !is.null(parent_child_df))
+
+  obs_input = match.arg(obs_input)
 
   if(is.null(configuration)) {
     print('Building configuration file')

@@ -23,6 +23,8 @@ assignNodes(
 \item{parent_child_df}{is a data frame created by \code{createParentChildDf}.}
 
 \item{truncate}{logical, subsets observations to those with valid nodes, observations dates greater than trapping date at LGD and then to the minimum observation date of each set of observation events at a node, multiple observation events can occur at one node if the observations are split by detections at other nodes. Default is \code{TRUE}.}
+
+\item{obs_input}{does the input file come from PTAGIS or DART?}
 }
 \description{
 The function assigns PIT-tag observation node site names to each
