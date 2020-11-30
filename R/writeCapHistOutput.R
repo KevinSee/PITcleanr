@@ -59,9 +59,9 @@ writeCapHistOutput = function(valid_obs = NULL,
 
   if(!is.null(last_obs_date)) {
     save_df = save_df %>%
-      mutate(AutoProcStatus = ifelse(ObsDate > lubridate::ymd(last_obs_date),
-                                     F,
-                                     AutoProcStatus))
+      mutate_at(vars(AutoProcStatus, UserProcStatus),
+                list(~ if_else(ObsDate > lubridate::ymd(last_obs_date),
+                               F, .)))
   }
 
   if(save_file) {
