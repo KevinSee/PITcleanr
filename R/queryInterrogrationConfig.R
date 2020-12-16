@@ -46,8 +46,9 @@ queryInterrogationConfig = function(site = NULL) {
                  })
     }) %>%
     purrr::map_df(.f = identity) %>%
-    mutate_at(vars(startDate, endDate),
-              funs(lubridate::ymd_hms))
+    mutate(across(c(startDate,
+                    endDate),
+                  lubridate::ymd_hms))
 
   return(res)
 
