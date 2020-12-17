@@ -41,9 +41,11 @@ buildConfig = function() {
            ModelMainBranch = NA,
            Comment = NA,
            ArrayOrder = NA,
-           RKMTotal = as.integer(stringr::str_split(rkm, '\\.', simplify = T)) %>%
-             matrix(nrow = nrow(config_all)) %>%
-             rowSums(na.rm = T)) %>%
+           RKMTotal = stringr::str_split(rkm, "\\.")) %>%
+    mutate(RKMTotal = map_dbl(RKMTotal,
+                              .f = function(x) {
+                                sum(as.numeric(x))
+                              })) %>%
     select(SiteID = siteCode,
            ConfigID = configurationSequence,
            AntennaID = antennaID,

@@ -49,8 +49,9 @@ processCapHist_PRD = function(startDate = NULL,
   cat('Getting trap date.\n')
   valid_tag_df = observations %>%
     filter(`Event Site Code Value` %in% c('PRDLD1', 'PRD')) %>%
-    mutate_at(vars(`Event Date Time Value`, `Event Release Date Time Value`),
-              funs(lubridate::mdy_hms)) %>%
+    mutate(across(c(`Event Date Time Value`,
+                    `Event Release Date Time Value`),
+                  lubridate::mdy_hms)) %>%
     mutate(ObsDate = if_else(!is.na(`Event Release Date Time Value`) &
                                is.na(`Antenna ID`),
                              `Event Release Date Time Value`,
@@ -70,8 +71,9 @@ processCapHist_PRD = function(startDate = NULL,
       left_join(observations %>%
                   rename(TagID = `Tag Code`)) %>%
       filter(`Event Site Code Value` %in% c('PRA')) %>%
-      mutate_at(vars(`Event Date Time Value`, `Event Release Date Time Value`),
-                funs(lubridate::mdy_hms)) %>%
+      mutate(across(c(`Event Date Time Value`,
+                      `Event Release Date Time Value`),
+                    lubridate::mdy_hms)) %>%
       mutate(ObsDate = if_else(!is.na(`Event Release Date Time Value`) &
                                  is.na(`Antenna ID`),
                                `Event Release Date Time Value`,

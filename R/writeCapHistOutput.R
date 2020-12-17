@@ -11,7 +11,7 @@
 #' @param file_name If \code{save_file == TRUE}, this is the file name (with possible extension) to be saved to.
 #'
 #' @author Kevin See
-#' @import dplyr readr WriteXLS lubridate
+#' @import dplyr readr openxlsx lubridate
 #' @export
 
 writeCapHistOutput = function(valid_obs = NULL,
@@ -47,7 +47,8 @@ writeCapHistOutput = function(valid_obs = NULL,
   save_df = fish_paths %>%
     rename(ObsDate = MinObsDate) %>%
     full_join(spwn_paths %>%
-                       select(TagID, TrapDate, ObsDate:SiteID, BranchNum, Group, Node, SiteName, SiteDescription, NodeOrder:Migration), by = c('TagID', 'ObsDate', 'Node')) %>%
+                select(TagID, TrapDate, ObsDate:SiteID, BranchNum, Group, Node, SiteName, SiteDescription, NodeOrder:Migration),
+              by = c('TagID', 'ObsDate', 'Node')) %>%
     arrange(TrapDate, TagID, ObsDate) %>%
     select(TagID, TrapDate, ObsDate, lastObsDate,
            BranchNum, Group, SiteID, Node, NodeOrder, Direction, Migration, AutoProcStatus, UserProcStatus, ModelObs, ValidPath, UserComment) %>%
@@ -58,21 +59,50 @@ writeCapHistOutput = function(valid_obs = NULL,
 
   if(!is.null(last_obs_date)) {
     save_df = save_df %>%
-      mutate(AutoProcStatus = ifelse(ObsDate > lubridate::ymd(last_obs_date),
-                                     F,
-                                     AutoProcStatus))
+      mutate_at(vars(AutoProcStatus, UserProcStatus),
+                list(~ if_else(ObsDate > lubridate::ymd(last_obs_date),
+                               F, .)))
   }
 
   if(save_file) {
     if(grepl('\\.xls', file_name)) {
-      WriteXLS::WriteXLS(save_df,
-                         file_name,
-                         SheetNames = c('ProcCapHist'),
-                         AdjWidth = T,
-                         AutoFilter = T,
-                         BoldHeaderRow = T,
-                         FreezeCol = 1,
-                         FreezeRow = 1)
+      # WriteXLS::WriteXLS(save_df,
+      #                    file_name,
+      #                    SheetNames = c('ProcCapHist'),
+      #                    AdjWidth = T,
+      #                    AutoFilter = T,
+      #                    BoldHeaderRow = T,
+      #                    FreezeCol = 1,
+      #                    FreezeRow = 1)
+
+      hs <- openxlsx::createStyle(textDecoration = "BOLD")
+      sht_nm = 'ProcCapHist'
+      wb = openxlsx::createWorkbook()
+      openxlsx::addWorksheet(wb,
+                             sheetName = sht_nm)
+      openxlsx::writeData(wb,
+                          sheet = sht_nm,
+                          x = save_df,
+                          withFilter = T,
+                          headerStyle = hs)
+      openxlsx::freezePane(wb,
+                           sheet = sht_nm,
+                           firstRow = T,
+                           firstCol = T)
+      setColWidths(wb,
+                   sheet = sht_nm,
+                   cols=1:ncol(save_df),
+                   widths = "auto")
+      openxlsx::setColWidths(wb,
+                             sheet = sht_nm,
+                             cols = c(grep("TagID", names(save_df)),
+                                      grep("Date", names(save_df)),
+                                      grep('Comment', names(save_df))),
+                             widths = c(15, rep(20, sum(grepl("Date", names(save_df)))), 100))
+      openxlsx::saveWorkbook(wb,
+                             file = file_name,
+                             overwrite = T)
+
     }
 
     if(grepl('\\.csv', file_name)) {
