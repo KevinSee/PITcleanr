@@ -55,11 +55,7 @@ writePRDNodeNetwork = function() {
                                      'MAD',
                                      'ENA' =
                                        list('ENA',
-                                            'ENM' =
-                                              list('ENM',
-                                                   'ENS' =
-                                                     list('ENS',
-                                                          'ENF')))))
+                                            "ENF")))
 
   bin_list[['Methow']] = list('LMR' =
                                 list('LMR',
@@ -130,7 +126,7 @@ writePRDNodeNetwork = function() {
                                  list('RRF',
                                       'EBO',
                                       'Entiat' = bin_list[['Entiat']],
-                                      'WVT',
+                                      'WEH',
                                       'WEA' =
                                         list('WEA',
                                              'Methow' = bin_list[['Methow']],
@@ -164,8 +160,8 @@ writePRDNodeNetwork = function() {
   site_df = site_df_init %>%
     bind_cols(network_descrip %>%
                 as.data.frame()) %>%
-    mutate_at(vars(matches('^Step')),
-              funs(as.character)) %>%
+    mutate(across(matches('^Step'),
+              as.character)) %>%
     mutate(SiteID = factor(SiteID,
                            levels = unique(site_df_init$SiteID))) %>%
     arrange(SiteID)
