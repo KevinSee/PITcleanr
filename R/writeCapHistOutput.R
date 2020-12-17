@@ -12,6 +12,7 @@
 #'
 #' @author Kevin See
 #' @import dplyr readr openxlsx lubridate
+#' @importFrom tidyr replace_na
 #' @export
 
 writeCapHistOutput = function(valid_obs = NULL,
@@ -51,18 +52,27 @@ writeCapHistOutput = function(valid_obs = NULL,
               by = c('TagID', 'ObsDate', 'Node')) %>%
     arrange(TrapDate, TagID, ObsDate) %>%
     select(TagID, TrapDate, ObsDate, lastObsDate,
-           BranchNum, Group, SiteID, Node, NodeOrder, Direction, Migration, AutoProcStatus, UserProcStatus, ModelObs, ValidPath, UserComment) %>%
-    group_by(TagID) %>%
-    mutate(UserProcStatus = ifelse(sum(!AutoProcStatus) > 0, '', UserProcStatus)) %>%
-    # mutate(UserProcStatus = ifelse(sum(!ModelObs) > 0, '', UserProcStatus)) %>%
-    ungroup()
+           BranchNum, Group, SiteID, Node, NodeOrder, Direction, Migration, AutoProcStatus, UserProcStatus, ModelObs, ValidPath, UserComment) #%>%
+    # group_by(TagID) %>%
+    # mutate(UserProcStatus = ifelse(sum(!AutoProcStatus) > 0, '', UserProcStatus)) %>%
+    # # mutate(UserProcStatus = ifelse(sum(!ModelObs) > 0, '', UserProcStatus)) %>%
+    # ungroup()
 
   if(!is.null(last_obs_date)) {
     save_df = save_df %>%
+      # mutate(across(UserProcStatus,
+      #               as.logical)) %>%
       mutate_at(vars(AutoProcStatus, UserProcStatus),
                 list(~ if_else(ObsDate > lubridate::ymd(last_obs_date),
                                F, .)))
   }
+
+  # make all the NAs in UserProcStatus blanks, to encourage someone to fill them in
+  save_df = save_df %>%
+    mutate(across(UserProcStatus,
+                  tidyr::replace_na,
+                  replace = ''))
+
 
   if(save_file) {
     if(grepl('\\.xls', file_name)) {
