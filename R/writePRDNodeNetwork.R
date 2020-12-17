@@ -104,7 +104,9 @@ writePRDNodeNetwork = function() {
                                               'TON',
                                               'NMC',
                                               'OKI',
-                                              'OKC')))
+                                              'OKC' =
+                                                list("OKC",
+                                                     "OKV"))))
 
   bin_list[['BelowPriest']] = list('BelowJD1',
                                    'JD1',
