@@ -97,15 +97,18 @@ writeFishPaths = function(valid_obs,
 
   proc_obs <- alltagObs %>%
     mutate(AutoProcStatus = ifelse(InMainPath, TRUE,
-                                          ifelse(InExtendedPath, TRUE, FALSE)))
+                                   ifelse(InExtendedPath, TRUE, FALSE)))
 
   proc_obs <- proc_obs %>%
-    left_join(proc_obs %>%
-                       filter(AutoProcStatus == FALSE) %>%
-                       distinct(TagID) %>%
-                       mutate(UserProcStatus = ''), by = 'TagID') %>%
-    mutate(UserProcStatus = ifelse(is.na(UserProcStatus), TRUE, ''),
-                  UserComment = '') %>%
+    group_by(TagID) %>%
+    mutate(proc_issues = if_else(sum(!AutoProcStatus) > 0,
+                                 T, F)) %>%
+    rowwise() %>%
+    mutate(UserProcStatus = if_else(proc_issues,
+                                    NA,
+                                    AutoProcStatus)) %>%
+    mutate(UserComment = '') %>%
+    ungroup() %>%
     select(TagID, MinObsDate = ObsDate, Node, AutoProcStatus, UserProcStatus, UserComment)
 
   return(proc_obs)
