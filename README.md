@@ -1,37 +1,57 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # PITcleanr
+
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BiomarkABS/PITcleanr/master?urlpath=rstudio)
 
 ## Description
 
-The PITcleanr package was developed to help query the necessary data to fit a DABOM model (**D**am **A**dult **B**ranch **O**ccupancy **M**odel) in order to estimate adult escapement to various tributaries above a tagging location. A key assumption of a DABOM model is that fish travel along a single upstream route. Therefore, the model will fail if presented with detections by a single fish in multiple tributaries above a branching node. PITcleanr is designed to help clean the PIT tag detection data to identify non-linear upstream pathways and help the user determine which observations to keep. It also summarises final spawning location, and can be combined with biological data from the Lower Granite adult fish trap database for fish tagged there.
+`PITcleanr` is an R package for preparing PIT tag data for further
+analysis. It was originally conceived as a companion to the
+[DABOM](https://github.com/BiomarkABS/DABOM) package for estimating
+abundance of returning anadromous adult fish moving upstream.
+`PITcleanr` was designed to prepare the raw PIT tag observations from
+[PTAGIS](http://www.ptagis.org) for use in the DABOM package.
 
 ## Installation instructions
 
-`PITcleanr` requires several packages that are available through the `tidyverse` package. You can install all the necessary packages by using:
+To install `PITcleanr` you can use Hadley Wickham’s `devtools` package.
+To install and load the devtools package use:
 
-```{r}
-install.packages("tidyverse")
-```
-
-To install `PITcleanr` you can use Hadley Wickham's `devtools` package. To install and load the devtools package use:
-
-```{r}
+``` r
 install.packages("devtools")
 library(devtools)
 ```
 
-NOTE: To use devtools, you may also have to download and install Rtools (although you shouldn't). The latest version on Rtools can be found at https://cran.r-project.org/bin/windows/Rtools/
+NOTE: To use devtools, you may also have to download and install Rtools
+(although you shouldn’t). The latest version on Rtools can be found at
+<https://cran.r-project.org/bin/windows/Rtools/>
 
-Once devtools is successfully installed, use the following to install PITcleanr:
+You can download the compendium as a zip from from this URL:
+<https://github.com/BiomarkABS/PITcleanr/archive/master.zip>
 
-`devtools::install_github("KevinSee/PITcleanr", build_vignettes = TRUE)`
+Or you can install this compendium as an R package, DABOM, from GitHub
+with:
 
-Further instructions on how to use PITcleanr can be found in the package vignette, accessed by typing `browseVignettes(package = 'PITcleanr')`
+``` r
+# install.packages("devtools")
+remotes::install_github("BiomarkABS/PITcleanr", build_vignettes = TRUE)
+```
 
-## Authors
+### Licenses
 
-PITcleanr is a collaborative project, with the primary contributors being:
+**Text and figures :**
+[CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/)
 
-* Kevin See (Quantitative Consultants Inc.)
-* Ryan N. Kinzer (Nez Perce Tribe)
-* Rick Orme (Nez Perce Tribe)
-* Mike Ackerman (Quantitative Consultants Inc.)
+**Code :** See the [DESCRIPTION](DESCRIPTION) file
+
+**Data :** [CC-0](http://creativecommons.org/publicdomain/zero/1.0/)
+attribution requested in reuse
+
+### Contributions
+
+We welcome contributions from everyone. Before you get started, please
+see our [contributor guidelines](CONTRIBUTING.md). Please note that this
+project is released with a [Contributor Code of Conduct](CONDUCT.md). By
+participating in this project you agree to abide by its terms.
