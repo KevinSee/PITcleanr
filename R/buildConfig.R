@@ -14,25 +14,8 @@
 #'
 buildConfig = function() {
 
-  # get metadata for interrogation sites
-  print('Querying INT sites\' metadata')
-  int_meta = queryInterrogationMeta()
-  # get configuration details for interrogation sites
-  print('Querying INT sites\' configuration information')
-  int_config = queryInterrogationConfig()
+  config_all = queryPtagisMeta()
 
-  # get metadata for MRR sites
-  print('Querying MRR sites\' metadata')
-  mrr_meta = queryMRRMeta()
-
-  # put it all together
-  config_all = int_meta %>%
-    full_join(int_config) %>%
-    mutate(Type = 'INT') %>%
-    full_join(mrr_meta %>%
-                mutate(Type = 'MRR') %>%
-                mutate(configurationSequence = 0,
-                       antennaID = as.character(NA)))
 
   # clean things up a bit
   config = config_all %>%
@@ -40,12 +23,7 @@ buildConfig = function() {
            ValidNode = NA,
            ModelMainBranch = NA,
            Comment = NA,
-           ArrayOrder = NA,
-           RKMTotal = stringr::str_split(rkm, "\\.")) %>%
-    mutate(RKMTotal = map_dbl(RKMTotal,
-                              .f = function(x) {
-                                sum(as.numeric(x))
-                              })) %>%
+           ArrayOrder = NA) %>%
     select(SiteID = siteCode,
            ConfigID = configurationSequence,
            AntennaID = antennaID,
