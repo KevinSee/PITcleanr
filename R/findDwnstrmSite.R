@@ -21,6 +21,14 @@ findDwnstrmSite = function(site_id = NULL,
     dplyr::filter(SiteID == site_id) %>%
     dplyr::pull(Hydroseq)
 
+  init_sites = sites_joined %>%
+    filter(Hydroseq == init_hydseq) %>%
+    pull(SiteID)
+
+  if(length(init_sites) > 1) {
+    warning(paste("Sites", paste(init_sites, collapse = " and "), "have the same hydro sequence.\n"))
+  }
+
   dwn_hydseq = PITcleanr::findDwnstrmHydroseg(init_hydseq,
                                               flow_lines,
                                               sites_joined$Hydroseq)
