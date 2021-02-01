@@ -6,8 +6,9 @@
 #'
 #' @param sites_sf An `sf` class object containing points of all detection sites. Must contain a column named SiteID containing the site code of each site.
 #' @param root_site_code Site code for the starting detection site.
-#' @dwnstream_sites Does `sites_sf` contain sites that are downstream of `root_site_code`? If `TRUE`, then all flowlines within a boundary box of `sites_df` will be downloaded
-#' @dwn_min_stream_order_diff
+#' @param min_strm_order minimum stream order to query flowlines for. Default value is `0`.
+#' @param dwnstream_sites Does `sites_sf` contain sites that are downstream of `root_site_code`? If `TRUE`, then all flowlines within a boundary box of `sites_df` will be downloaded
+#' @param dwn_min_stream_order_diff
 #'
 #' @import dplyr sf nhdplusTools
 #' @importFrom magrittr %<>%
@@ -17,6 +18,7 @@
 
 queryFlowlines = function(sites_sf = NULL,
                           root_site_code = NULL,
+                          min_strm_order = 0,
                           dwnstrm_sites = FALSE,
                           dwn_min_stream_order_diff = NULL) {
 
@@ -37,6 +39,7 @@ queryFlowlines = function(sites_sf = NULL,
 
   # query flowlines from NHDPlus layer
   nhd_lst = nhdplusTools::plot_nhdplus(outlets = list(start_comid),
+                                       streamorder = min_strm_order,
                                        actually_plot = F)
 
   flowlines = nhd_lst$flowline %>%
@@ -53,7 +56,7 @@ queryFlowlines = function(sites_sf = NULL,
       nhd_lst_dwn = sites_sf %>%
         sf::st_bbox() %>%
         nhdplusTools::plot_nhdplus(bbox = .,
-                                   streamorder = max(0, (max(flowlines$StreamOrde) - dwn_min_stream_order_diff)),
+                                   streamorder = max(min_strm_order, (max(flowlines$StreamOrde) - dwn_min_stream_order_diff)),
                                    actually_plot = F)
 
     dwn_flowlines = nhd_lst_dwn$flowline %>%
