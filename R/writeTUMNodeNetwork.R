@@ -54,7 +54,7 @@ writeTUMNodeNetwork = function() {
   network_descrip = stringr::str_split(site_df_init$path,
                                        '\\.',
                                        simplify = T) %>%
-    as_tibble() %>%
+    as_tibble(.name_repair = "unique") %>%
     rlang::set_names(paste0('Step', 1:ncol(.)))
 
   site_df = site_df_init %>%
