@@ -6,9 +6,12 @@
 #'
 #' @param sites_sf An `sf` class object containing points of all detection sites. Must contain a column named SiteID containing the site code of each site.
 #' @param root_site_code Site code for the starting detection site.
+#' @dwnstream_sites Does `sites_sf` contain sites that are downstream of `root_site_code`? If `TRUE`, then all flowlines within a boundary box of `sites_df` will be downloaded
+#' @dwn_min_stream_order_diff
 #'
 #' @import dplyr sf nhdplusTools
 #' @importFrom magrittr %<>%
+#' @importFrom nngeo st_remove_holes
 #' @export
 #' @return sf
 
@@ -24,6 +27,9 @@ queryFlowlines = function(sites_sf = NULL,
     root_site_code = sites_sf$SiteID[1]
   }
 
+  # set minimum stream order for downstream flowlines
+  if(is.null(dwn_min_stream_order_diff)) dwn_min_stream_order_diff = 0
+
   # find the starting point (most downstream point)
   start_comid = sites_sf %>%
     dplyr::filter(SiteID == root_site_code) %>%
@@ -37,26 +43,27 @@ queryFlowlines = function(sites_sf = NULL,
     sf::st_zm() %>%
     sf::st_transform(crs = sf::st_crs(sites_sf))
 
+  # a list to return
+  # includes flowlines and polygon of basin
+  return_list = list(flowlines = flowlines,
+                         basin = nngeo::st_remove_holes(nhd_lst$basin))
+
   if(dwnstrm_sites) {
     # get flowlines for downstream sites based on bounding box of all sites
-    nhd_lst_dwn = sites_sf %>%
-      sf::st_bbox() %>%
-      nhdplusTools::plot_nhdplus(bbox = .,
-                                 actually_plot = F)
+      nhd_lst_dwn = sites_sf %>%
+        sf::st_bbox() %>%
+        nhdplusTools::plot_nhdplus(bbox = .,
+                                   streamorder = max(0, (max(flowlines$StreamOrde) - dwn_min_stream_order_diff)),
+                                   actually_plot = F)
 
     dwn_flowlines = nhd_lst_dwn$flowline %>%
       dplyr::filter(!COMID %in% flowlines$COMID) %>%
       sf::st_zm() %>%
       sf::st_transform(crs = sf::st_crs(sites_sf))
 
-    if(!is.null(dwn_min_stream_order_diff)) {
-      dwn_flowlines %<>%
-        dplyr::filter(StreamOrde >= (max(flowlines$StreamOrde) - dwn_min_stream_order_diff))
-    }
-
-    flowlines %<>%
-      rbind(dwn_flowlines)
+    return_list$dwn_flowlines = dwn_flowlines
   }
 
-  return(flowlines)
+  # return(flowlines)
+  return(return_list)
 }
