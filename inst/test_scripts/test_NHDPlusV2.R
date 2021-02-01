@@ -8,7 +8,6 @@
 # load needed libraries
 library(tidyverse)
 library(sf)
-# library(QRFcapacity)
 library(nhdplusTools)
 library(magrittr)
 # library(PITcleanr)
@@ -24,6 +23,7 @@ xtabs(~ Step3, model_sites)
 
 # model_sites = writeTUMNodeNetwork()
 # model_sites = writePRONodeNetwork()
+# model_sites = writePRDNodeNetwork()
 
 # create sf points of a subset of sites
 sub_sites = model_sites %>%
@@ -48,6 +48,8 @@ sub_sites = model_sites %>%
   st_transform(5070)
 
 # which site is furthest downstream?
+# root_site = sub_sites %>%
+#   slice(1)
 root_site = sub_sites %>%
   filter(SiteID == "USE")
 
@@ -55,9 +57,10 @@ root_site = sub_sites %>%
 # do you want flowlines downstream of root site? Set to TRUE if you have downstream sites
 dwn_flw = F
 nhd_list = queryFlowlines(sites_sf = sub_sites,
-                           root_site_code = root_site$SiteID,
-                           dwnstrm_sites = dwn_flw,
-                           dwn_min_stream_order = 2)
+                          root_site_code = root_site$SiteID,
+                          min_strm_order = 2,
+                          dwnstrm_sites = dwn_flw,
+                          dwn_min_stream_order = 8)
 
 
 flowlines = nhd_list$flowlines
@@ -131,8 +134,6 @@ parent_child_test = sites_NHDseg$SiteID %>%
          }) %>%
   select(ParentSite = downSite,
          ChildSite = SiteID) %>%
-  # mutate(ParentSite = replace_na(ParentSite,
-  #                                "TUM")) %>%
   left_join(all_meta %>%
               select(ParentSite = siteCode,
                      parent_rkm = rkm) %>%
