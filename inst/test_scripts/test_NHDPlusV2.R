@@ -29,7 +29,8 @@ xtabs(~ Step3, model_sites)
 sub_sites = model_sites %>%
   # filter(Step3 == "SFSalmon") %>%
   # filter(SiteID == "GRA" | Step3 == "SFSalmon") %>%
-  filter(SiteID == "GRA" | Step2 == "NE_Oregon") %>%
+  # filter(SiteID == "GRA" | Step2 == "NE_Oregon") %>%
+  filter(Step3 == "UpperSalmon") %>%
   select(SiteID) %>%
   left_join(all_meta %>%
               select(SiteID = siteCode,
@@ -48,15 +49,15 @@ sub_sites = model_sites %>%
 
 # which site is furthest downstream?
 root_site = sub_sites %>%
-  filter(SiteID == "UGR")
+  filter(SiteID == "USE")
 
 # download the NHDPlus v2 flowlines
 # do you want flowlines downstream of root site? Set to TRUE if you have downstream sites
-dwn_flw = T
+dwn_flw = F
 nhd_list = queryFlowlines(sites_sf = sub_sites,
                            root_site_code = root_site$SiteID,
                            dwnstrm_sites = dwn_flw,
-                           dwn_min_stream_order = 1)
+                           dwn_min_stream_order = 2)
 
 
 flowlines = nhd_list$flowlines
@@ -68,7 +69,7 @@ if(dwn_flw) {
 # join sites to nearest hydro sequence
 sites_NHDseg = st_join(sub_sites,
                        flowlines %>%
-                         select(Hydroseq),
+                         select(gnis_name, Hydroseq),
                        join = st_nearest_feature)
 
 
@@ -146,7 +147,9 @@ parent_child_test = sites_NHDseg$SiteID %>%
                      child_hydro = Hydroseq)) %>%
   filter(!(is.na(ParentSite) &
              ChildSite == root_site$SiteID)) %>%
-  arrange(child_hydro)
+  filter(!is.na(ParentSite)) %>%
+  arrange(parent_rkm,
+          child_hydro)
 # arrange(parent_rkm,
 #         child_rkm)
 
@@ -166,7 +169,7 @@ parent_child_test %>%
          ChildNode = ChildSite) %>%
   getValidPaths(root_site = root_site$SiteID)
 
-findDwnstrmSite("LAKEC",
+findDwnstrmSite("SAWT",
                 flowlines,
                 sites_NHDseg)
 
