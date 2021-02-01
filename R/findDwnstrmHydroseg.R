@@ -27,6 +27,6 @@ findDwnstrmHydroseg = function(hydro_id,
   if(hydro_dn %in% hydro_pause_ids) {
     return(hydro_dn)
   } else {
-    return(find_dwnstrm_hydroseg(hydro_dn, flow_lines, hydro_pause_ids))
+    return(findDwnstrmHydroseg(hydro_dn, flow_lines, hydro_pause_ids))
   }
 }
