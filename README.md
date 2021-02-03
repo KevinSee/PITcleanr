@@ -1,9 +1,12 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# PITcleanr
+# PITcleanr <a href='https://github.com/BiomarkABS/PITcleanr'><img src='man/figures/logo.png' align="right" height="139" /></a>
+
+<!-- badges: start -->
 
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BiomarkABS/PITcleanr/master?urlpath=rstudio)
+<!-- badges: end -->
 
 ## Description
 
