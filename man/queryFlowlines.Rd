@@ -7,6 +7,7 @@
 queryFlowlines(
   sites_sf = NULL,
   root_site_code = NULL,
+  min_strm_order = 0,
   dwnstrm_sites = FALSE,
   dwn_min_stream_order_diff = NULL
 )
@@ -15,6 +16,12 @@ queryFlowlines(
 \item{sites_sf}{An `sf` class object containing points of all detection sites. Must contain a column named SiteID containing the site code of each site.}
 
 \item{root_site_code}{Site code for the starting detection site.}
+
+\item{min_strm_order}{minimum stream order to query flowlines for. Default value is `0`.}
+
+\item{dwn_min_stream_order_diff}{}
+
+\item{dwnstream_sites}{Does `sites_sf` contain sites that are downstream of `root_site_code`? If `TRUE`, then all flowlines within a boundary box of `sites_df` will be downloaded}
 }
 \value{
 sf
