@@ -17,7 +17,8 @@
 #' different "slot" of detections. Default is 60.
 #' @param configuration is a data frame which assigns node names to unique SiteID, AntennaID, and
 #' site configuration ID combinations. One example can be built with the function `buildConfig`. If
-#' no configuration file is provided, nodes are considered sites by default.
+#' no configuration file is provided, nodes are considered sites by default. If nodes are assigned,
+#' the column name should be `node`.
 #'
 #' @inheritParams base::difftime
 #' @import dplyr lubridate
