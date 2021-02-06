@@ -40,12 +40,25 @@ compress = function(ptagis_file = NULL,
 
   units = match.arg(units)
 
-  observations = suppressMessages(read_csv(ptagis_file)) %>%
-    janitor::clean_names() %>%
-    mutate(across(c(event_date_time_value,
-                    event_release_date_time_value),
-                  lubridate::mdy_hms)) %>%
-    filter(event_type_name == "Observation") %>%
+  if(class(ptagis_file) == "character") {
+    observations = suppressMessages(read_csv(ptagis_file)) %>%
+      janitor::clean_names() %>%
+      mutate(across(c(event_date_time_value,
+                      event_release_date_time_value),
+                    lubridate::mdy_hms))
+  } else if(class(ptagis_file)[1] %in% c("tbl_df", "data.frame")) {
+    observations = ptagis_file %>%
+      as_tibble()
+  }
+
+  observations %<>%
+    filter(! event_type_name %in% c("Disown",
+                                    "Orphan")) %>%
+    # filter(event_type_name %in% c("Observation",
+    #                               "Mark Duplicate",
+    #                               "Recovery Duplicate",
+    #                               "Recapture Duplicate",
+    #                               "Passive Recapture")) %>%
     arrange(tag_code, event_date_time_value)
 
   if(!is.null(configuration)) {
@@ -70,8 +83,11 @@ compress = function(ptagis_file = NULL,
     group_by(tag_code) %>%
     mutate(prev_node = lag(node),
            prev_time = lag(event_date_time_value),
+           prev_type = lag(event_type_name),
            time_diff = as.numeric(difftime(event_date_time_value, prev_time, units = 'mins')),
-           new_slot = if_else(node != prev_node | is.na(prev_node) | time_diff > max_minutes,
+           new_slot = if_else(node != prev_node | is.na(prev_node) |
+                                prev_type != event_type_name | is.na(prev_type) |
+                                time_diff > max_minutes,
                              T, F)) %>%
     filter(new_slot) %>%
     mutate(slot = 1:n()) %>%
@@ -90,7 +106,8 @@ compress = function(ptagis_file = NULL,
     tidyr::fill(slot, .direction = "down") %>%
     group_by(tag_code,
              node,
-             slot) %>%
+             slot,
+             event_type_name) %>%
     summarise(n_dets = n(),
               min_det = min(event_date_time_value),
               max_det = max(event_date_time_value),
