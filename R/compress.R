@@ -12,12 +12,15 @@
 #' @author Kevin See
 #'
 #' @param ptagis_file is the path to the PTAGIS observation file downloaded as a csv from PTAGIS.
-#' This must be the output from a complete capture history query.
+#' This must be the output from a Complete Tag History query (part of the Advanced Reporting).
+#' This query should contain: Tag, Mark Species, Mark Rear Type, Event Type, Event Site Type,
+#' Event Site Code, Event Date Time, Antenna, Antenna Group Configuration,
+#' Event Release Site Code, and Event Release Date Time.
 #' @param max_minutes maximum number of minutes between detections of a tag before it's considered a
 #' different "slot" of detections. Default is 60.
 #' @param configuration is a data frame which assigns node names to unique SiteID, AntennaID, and
 #' site configuration ID combinations. One example can be built with the function `buildConfig`. If
-#' no configuration file is provided, nodes are considered sites by default. If nodes are assigned,
+#' no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
 #' the column name should be `node`.
 #'
 #' @inheritParams base::difftime
@@ -40,7 +43,7 @@ compress = function(ptagis_file = NULL,
 
   units = match.arg(units)
 
-  if(class(ptagis_file) == "character") {
+  if(class(ptagis_file)[1] == "character") {
     observations = suppressMessages(read_csv(ptagis_file)) %>%
       janitor::clean_names() %>%
       mutate(across(c(event_date_time_value,
@@ -51,14 +54,35 @@ compress = function(ptagis_file = NULL,
       as_tibble()
   }
 
+  # perform some QC checks
+  qc_list = qcTagHistory(observations)
+
+  # identify batches of fish where lots of replicated event times or release times
+  rel_time_batches = qc_list$rel_time_batches %>%
+    filter(event_rel_ratio < 1) %>%
+    select(mark_species_name,
+           year,
+           event_site_type_description,
+           event_type_name,
+           event_site_code_value) %>%
+    mutate(use_release_time = T)
+
+  # set event time to the release time for selected
   observations %<>%
-    filter(! event_type_name %in% c("Disown",
-                                    "Orphan")) %>%
-    # filter(event_type_name %in% c("Observation",
-    #                               "Mark Duplicate",
-    #                               "Recovery Duplicate",
-    #                               "Recapture Duplicate",
-    #                               "Passive Recapture")) %>%
+    mutate(year = year(event_date_time_value)) %>%
+    left_join(rel_time_batches) %>%
+    mutate(use_release_time = replace_na(F)) %>%
+    mutate(event_date_time_value = if_else(use_release_time & !is.na(event_release_date_time_value),
+                                           event_release_date_time_value,
+                                           event_date_time_value)) %>%
+    select(-year,
+           -use_release_time)
+
+  # filter out disowned and orphan tags, and
+  # put observations in correct order in time
+  observations %<>%
+    filter(! tag_code %in% unique(c(qc_list$disown_tags,
+                                  qc_list$orphan_tags))) %>%
     arrange(tag_code, event_date_time_value)
 
   if(!is.null(configuration)) {

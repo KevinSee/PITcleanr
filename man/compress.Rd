@@ -13,14 +13,18 @@ compress(
 }
 \arguments{
 \item{ptagis_file}{is the path to the PTAGIS observation file downloaded as a csv from PTAGIS.
-This must be the output from a complete capture history query.}
+This must be the output from a Complete Tag History query (part of the Advanced Reporting).
+This query should contain: Tag, Mark Species, Mark Rear Type, Event Type, Event Site Type,
+Event Site Code, Event Date Time, Antenna, Antenna Group Configuration,
+Event Release Site Code, and Event Release Date Time.}
 
 \item{max_minutes}{maximum number of minutes between detections of a tag before it's considered a
 different "slot" of detections. Default is 60.}
 
 \item{configuration}{is a data frame which assigns node names to unique SiteID, AntennaID, and
 site configuration ID combinations. One example can be built with the function `buildConfig`. If
-no configuration file is provided, nodes are considered sites by default.}
+no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
+the column name should be `node`.}
 
 \item{units}{character string.  Units in which the results are
     desired.  Can be abbreviated.}
