@@ -29,7 +29,7 @@ xtabs(~ Step3, model_sites)
 sub_sites = model_sites %>%
   # filter(Step3 == "SFSalmon") %>%
   # filter(SiteID == "GRA" | Step3 == "SFSalmon") %>%
-  # filter(SiteID == "GRA" | Step3 == "Potlatch") %>%
+  filter(SiteID == "GRA" | Step3 == "Potlatch") %>%
   # filter(SiteID == "GRA" | Step2 == "NE_Oregon") %>%
   # filter(Step3 == "UpperSalmon") %>%
   # filter(Step3 == "UpperSalmon" | SiteID == "GRA") %>%
@@ -96,6 +96,7 @@ ggplot() +
   geom_sf_label(data = sub_sites,
                 aes(label = SiteID)) +
   theme_bw() +
+  theme(axis.title = element_blank()) +
   labs(color = "Stream\nOrder")
 
 
@@ -127,6 +128,9 @@ parent_child_test = buildParentChild(sub_sites,
                                      flowlines,
                                      add_rkm = T)
 # make a few edits
+parent_child_test %<>%
+  filter(!is.na(parent))
+
 parent_child_test = editParentChild(parent_child_test,
                                     parent_locs = c("USI", "CEY"),
                                     child_locs = c("SAWT", "YANKFK"),
