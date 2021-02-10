@@ -4,12 +4,19 @@
 \alias{buildParentChild}
 \title{Build a Parent-Child table}
 \usage{
-buildParentChild(sites_sf = NULL, flowlines = NULL, add_rkm = F)
+buildParentChild(
+  sites_sf = NULL,
+  flowlines = NULL,
+  rm_na_parent = F,
+  add_rkm = F
+)
 }
 \arguments{
-\item{sites_sf}{an `sf` object containing the `SiteID` and location of all detection sites}
+\item{sites_sf}{an `sf` object containing the `SiteID` and location of all detection sites.}
 
 \item{flowlines}{output from `queryFlowlines()` function.}
+
+\item{rm_na_parent}{should rows with NA as the parent be automatically removed? Default is `FALSE`.}
 
 \item{add_rkm}{should the RKM of the parent and child be added, based on PTAGIS metadata?
 Default is `FALSE`.}

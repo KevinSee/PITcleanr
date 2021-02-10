@@ -5,8 +5,9 @@
 #' @author Kevin See
 #'
 #'
-#' @param sites_sf an `sf` object containing the `SiteID` and location of all detection sites
+#' @param sites_sf an `sf` object containing the `SiteID` and location of all detection sites.
 #' @param flowlines output from `queryFlowlines()` function.
+#' @param rm_na_parent should rows with NA as the parent be automatically removed? Default is `FALSE`.
 #' @param add_rkm should the RKM of the parent and child be added, based on PTAGIS metadata?
 #' Default is `FALSE`.
 #'
@@ -21,6 +22,7 @@
 
 buildParentChild = function(sites_sf = NULL,
                             flowlines = NULL,
+                            rm_na_parent = F,
                             add_rkm = F) {
 
   if(!identical(st_crs(sites_sf),
@@ -64,8 +66,8 @@ buildParentChild = function(sites_sf = NULL,
     arrange(parent_hydro,
             child_hydro)
 
-  if(sum(is.na(parent_child$parent)) > 0) {
-    cat(paste0("These child locations: ", parent_child$child[is.na(parent_child$parent)],
+  if(rm_na_parent & sum(is.na(parent_child$parent)) > 0) {
+    cat(paste0("These child locations: ", paste(parent_child$child[is.na(parent_child$parent)], collapse = ", "),
                ",\n had no parent location and were removed from the table.\n"))
     parent_child %<>%
       filter(!is.na(parent))
