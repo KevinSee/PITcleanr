@@ -17,7 +17,7 @@
 
 buildPaths = function(parent_child = NULL) {
 
-  stopifnot(!is.null(parent_child_df))
+  stopifnot(!is.null(parent_child))
 
   path_df = parent_child %>%
     pull(child) %>%
