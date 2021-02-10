@@ -1,0 +1,95 @@
+#' @title Build a Parent-Child table
+#'
+#' @description Build a parent-child table based on site locations and the flowlines from NHDPlusV2 layer.
+#'
+#' @author Kevin See
+#'
+#'
+#' @param sites_sf an `sf` object containing the `SiteID` and location of all detection sites
+#' @param flowlines output from `queryFlowlines()` function.
+#' @param add_rkm should the RKM of the parent and child be added, based on PTAGIS metadata?
+#' Default is `FALSE`.
+#'
+#'
+#' @import dplyr lubridate
+#' @importFrom stringr str_replace
+#' @importFrom magrittr %<>%
+#' @export
+#' @return NULL
+#' @examples createParentChildDf()
+
+
+buildParentChild = function(sites_sf = NULL,
+                            flowlines = NULL,
+                            add_rkm = F) {
+
+  if(!identical(st_crs(sites_sf),
+                st_crs(flowlines))) {
+    sites_sf %<>%
+      st_transform(st_crs(flowlines))
+  }
+
+  # find the closest hydrosegment on the flowline to each site
+  sites_NHDseg = st_join(sites_sf,
+                         flowlines %>%
+                           select(gnis_name, Hydroseq),
+                         join = st_nearest_feature)
+
+  parent_child = sites_NHDseg$SiteID %>%
+    as.list() %>%
+    rlang::set_names() %>%
+    map_df(.id = "SiteID",
+           .f = function(x) {
+             dwn_site = try(findDwnstrmSite(x,
+                                            flow_lines = flowlines,
+                                            sites_joined = sites_NHDseg))
+             if(class(dwn_site) == "try-error") {
+               dwn_site = NA_character_
+             }
+             tibble(downSite = dwn_site) %>%
+               return()
+           }) %>%
+    select(parent = downSite,
+           child = SiteID) %>%
+    left_join(sites_NHDseg %>%
+                st_drop_geometry() %>%
+                select(parent = SiteID,
+                       parent_hydro = Hydroseq),
+              by = "parent") %>%
+    left_join(sites_NHDseg %>%
+                st_drop_geometry() %>%
+                select(child = SiteID,
+                       child_hydro = Hydroseq),
+              by = "child") %>%
+    arrange(parent_hydro,
+            child_hydro)
+
+  if(sum(is.na(parent_child$parent)) > 0) {
+    cat(paste0("These child locations: ", parent_child$child[is.na(parent_child$parent)],
+               ",\n had no parent location and were removed from the table.\n"))
+    parent_child %<>%
+      filter(!is.na(parent))
+  }
+
+  if(add_rkm) {
+
+    cat("\n")
+    # query PTAGIS for RKMs
+    all_meta = queryPtagisMeta()
+
+    parent_child %<>%
+      left_join(all_meta %>%
+                  select(parent = siteCode,
+                         parent_rkm = rkm) %>%
+                  distinct(),
+                by = "parent") %>%
+      left_join(all_meta %>%
+                  select(child = siteCode,
+                         child_rkm = rkm) %>%
+                  distinct(),
+                by = "child")
+  }
+
+  return(parent_child)
+
+}

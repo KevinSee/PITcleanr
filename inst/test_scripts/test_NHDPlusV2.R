@@ -29,8 +29,10 @@ xtabs(~ Step3, model_sites)
 sub_sites = model_sites %>%
   # filter(Step3 == "SFSalmon") %>%
   # filter(SiteID == "GRA" | Step3 == "SFSalmon") %>%
+  filter(SiteID == "GRA" | Step3 == "Potlatch") %>%
   # filter(SiteID == "GRA" | Step2 == "NE_Oregon") %>%
-  filter(Step3 == "UpperSalmon") %>%
+  # filter(Step3 == "UpperSalmon") %>%
+  # filter(Step3 == "UpperSalmon" | SiteID == "GRA") %>%
   select(SiteID) %>%
   left_join(all_meta %>%
               select(SiteID = siteCode,
@@ -55,18 +57,19 @@ root_site = sub_sites %>%
 
 # download the NHDPlus v2 flowlines
 # do you want flowlines downstream of root site? Set to TRUE if you have downstream sites
-dwn_flw = F
+dwn_flw = T
 nhd_list = queryFlowlines(sites_sf = sub_sites,
                           root_site_code = root_site$SiteID,
                           min_strm_order = 2,
                           dwnstrm_sites = dwn_flw,
-                          dwn_min_stream_order = 8)
+                          dwn_min_stream_order_diff = 2)
 
 
 flowlines = nhd_list$flowlines
 if(dwn_flw) {
   flowlines %<>%
-  rbind(nhd_list$dwn_flowlines)
+  rbind(nhd_list$dwn_flowlines %>%
+          filter(StreamOrde >= 6))
 }
 
 # join sites to nearest hydro sequence
@@ -114,45 +117,29 @@ parent_child_df = createParentChildDf(model_sites %>%
                 str_remove,
                 "B0$")) %>%
   filter(ParentNode != ChildNode) %>%
-  rename(ParentSite = ParentNode,
-         ChildSite = ChildNode)
+  rename(parent = ParentNode,
+         child = ChildNode)
 
 # use new functions, and not the configuration file
-parent_child_test = sites_NHDseg$SiteID %>%
-  as.list() %>%
-  rlang::set_names() %>%
-  map_df(.id = "SiteID",
-         .f = function(x) {
-           dwn_site = try(findDwnstrmSite(x,
-                                          flow_lines = flowlines,
-                                          sites_joined = sites_NHDseg))
-           if(class(dwn_site) == "try-error") {
-             dwn_site = NA_character_
-           }
-           tibble(downSite = dwn_site) %>%
-             return()
-         }) %>%
-  select(ParentSite = downSite,
-         ChildSite = SiteID) %>%
-  left_join(all_meta %>%
-              select(ParentSite = siteCode,
-                     parent_rkm = rkm) %>%
-              distinct()) %>%
-  left_join(all_meta %>%
-              select(ChildSite = siteCode,
-                     child_rkm = rkm) %>%
-              distinct()) %>%
-  left_join(sites_NHDseg %>%
-              st_drop_geometry() %>%
-              select(ChildSite = SiteID,
-                     child_hydro = Hydroseq)) %>%
-  filter(!(is.na(ParentSite) &
-             ChildSite == root_site$SiteID)) %>%
-  filter(!is.na(ParentSite)) %>%
-  arrange(parent_rkm,
-          child_hydro)
-# arrange(parent_rkm,
-#         child_rkm)
+parent_child_test = buildParentChild(sub_sites,
+                                     flowlines,
+                                     add_rkm = T)
+# make a few edits
+parent_child_test = editParentChild(parent_child_test,
+                                    parent_locs = c("USI", "CEY"),
+                                    child_locs = c("SAWT", "YANKFK"),
+                                    new_parent_locs = c('STL', 'YFK'))
+
+
+parent_child_test = editParentChild(parent_child_test,
+                                    child_locs = c("PEU", "ICM", "ICU", 'LNF', 'LEAV'),
+                                    parent_locs = c("TUM", "TUM", "TUM", "TUM", "TUM"),
+                                    new_parent_locs = c('PES', 'ICL', 'ICM', "ICL", "LNF"))
+
+parent_child_test = editParentChild(parent_child_test,
+                                    child_locs = c("GRANDW", 'CATHEW', 'LOOKGC'),
+                                    parent_locs = c("UGR", "UGR", 'LOOH'),
+                                    new_parent_locs = c("UGS", "CCW", "GRA"))
 
 # compare with PITcleanr parent-child table
 parent_child_test
@@ -166,8 +153,8 @@ anti_join(parent_child_df,
 
 
 parent_child_test %>%
-  rename(ParentNode = ParentSite,
-         ChildNode = ChildSite) %>%
+  rename(ParentNode = parent,
+         ChildNode = child) %>%
   getValidPaths(root_site = root_site$SiteID)
 
 findDwnstrmSite("SAWT",
