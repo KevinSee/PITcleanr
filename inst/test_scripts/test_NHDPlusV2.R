@@ -29,7 +29,7 @@ xtabs(~ Step3, model_sites)
 sub_sites = model_sites %>%
   # filter(Step3 == "SFSalmon") %>%
   # filter(SiteID == "GRA" | Step3 == "SFSalmon") %>%
-  filter(SiteID == "GRA" | Step3 == "Potlatch") %>%
+  # filter(SiteID == "GRA" | Step3 == "Potlatch") %>%
   # filter(SiteID == "GRA" | Step2 == "NE_Oregon") %>%
   # filter(Step3 == "UpperSalmon") %>%
   # filter(Step3 == "UpperSalmon" | SiteID == "GRA") %>%
@@ -44,6 +44,9 @@ sub_sites = model_sites %>%
                      rkm) %>%
               distinct()) %>%
   filter(!is.na(latitude)) %>%
+  group_by(SiteID) %>%
+  slice(1) %>%
+  ungroup() %>%
   st_as_sf(coords = c("longitude",
                       "latitude"),
            crs = 4326) %>%
@@ -68,8 +71,7 @@ nhd_list = queryFlowlines(sites_sf = sub_sites,
 flowlines = nhd_list$flowlines
 if(dwn_flw) {
   flowlines %<>%
-  rbind(nhd_list$dwn_flowlines %>%
-          filter(StreamOrde >= 6))
+  rbind(nhd_list$dwn_flowlines)
 }
 
 # join sites to nearest hydro sequence
@@ -140,6 +142,13 @@ parent_child_test = editParentChild(parent_child_test,
                                     child_locs = c("GRANDW", 'CATHEW', 'LOOKGC'),
                                     parent_locs = c("UGR", "UGR", 'LOOH'),
                                     new_parent_locs = c("UGS", "CCW", "GRA"))
+
+parent_child_test = editParentChild(parent_child_test,
+                                    child_locs = c("MCN", "JD1", "ICH", "PRA"),
+                                    parent_locs = c(NA, NA, "MCN", "MCN"),
+                                    new_parent_locs = c("PRO", "PRO", "PRO", "PRO")) %>%
+  anti_join(tibble(parent = c("MCN"),
+                   child = c("PRA", "PRO", "ICH")))
 
 # compare with PITcleanr parent-child table
 parent_child_test
