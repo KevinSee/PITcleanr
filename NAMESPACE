@@ -2,6 +2,7 @@
 
 export(assignNodes)
 export(buildConfig)
+export(buildNodeOrder)
 export(buildParentChild)
 export(buildPaths)
 export(compress)
