@@ -46,9 +46,6 @@ addDirection = function(compress_obs = NULL,
               by = "node") %>%
     filter(!is.na(node_order)) %>%
     arrange(tag_code, slot) %>%
-    select(tag_code, start_date,
-           event_type_name, slot,
-           node, everything()) %>%
     group_by(tag_code) %>%
     mutate(lead_node_order = lead(node_order),
            lag_node_order = lag(node_order),
