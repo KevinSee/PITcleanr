@@ -6,7 +6,7 @@
 #'
 #' @param site_id
 #' @param flow_lines Site code for the starting detection site.
-#' @param sites_joined An `sf` class object containing points of all detection sites. Must contain a column named SiteID containing the site code of each site, and a column called Hydroseq containing the hydro sequence closest to each site.
+#' @param sites_joined An `sf` class object containing points of all detection sites. Must contain a column named `site_code` containing the site code of each site, and a column called Hydroseq containing the hydro sequence closest to each site.
 #'
 #' @inheritParams findDwnstrmHydroseg
 #' @import dplyr
@@ -18,12 +18,12 @@ findDwnstrmSite = function(site_id = NULL,
                            sites_joined = NULL) {
 
   init_hydseq = sites_joined %>%
-    dplyr::filter(SiteID == site_id) %>%
+    dplyr::filter(site_code == site_id) %>%
     dplyr::pull(Hydroseq)
 
   init_sites = sites_joined %>%
     filter(Hydroseq == init_hydseq) %>%
-    pull(SiteID)
+    pull(site_code)
 
   if(length(init_sites) > 1) {
     warning(paste("Sites", paste(init_sites, collapse = " and "), "have the same hydro sequence.\n"))
@@ -35,6 +35,6 @@ findDwnstrmSite = function(site_id = NULL,
 
   sites_joined %>%
     dplyr::filter(Hydroseq == dwn_hydseq) %>%
-    dplyr::pull(SiteID) %>%
+    dplyr::pull(site_code) %>%
     return()
 }

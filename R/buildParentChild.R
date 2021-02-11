@@ -5,7 +5,7 @@
 #' @author Kevin See
 #'
 #'
-#' @param sites_sf an `sf` object containing the `SiteID` and location of all detection sites.
+#' @param sites_sf an `sf` object containing the `site_code` and location of all detection sites.
 #' @param flowlines output from `queryFlowlines()` function.
 #' @param rm_na_parent should rows with NA as the parent be automatically removed? Default is `FALSE`.
 #' @param add_rkm should the RKM of the parent and child be added, based on PTAGIS metadata?
@@ -37,10 +37,10 @@ buildParentChild = function(sites_sf = NULL,
                            select(gnis_name, Hydroseq),
                          join = st_nearest_feature)
 
-  parent_child = sites_NHDseg$SiteID %>%
+  parent_child = sites_NHDseg$site_code %>%
     as.list() %>%
     rlang::set_names() %>%
-    map_df(.id = "SiteID",
+    map_df(.id = "site_code",
            .f = function(x) {
              dwn_site = try(findDwnstrmSite(x,
                                             flow_lines = flowlines,
@@ -52,15 +52,15 @@ buildParentChild = function(sites_sf = NULL,
                return()
            }) %>%
     select(parent = downSite,
-           child = SiteID) %>%
+           child = site_code) %>%
     left_join(sites_NHDseg %>%
                 st_drop_geometry() %>%
-                select(parent = SiteID,
+                select(parent = site_code,
                        parent_hydro = Hydroseq),
               by = "parent") %>%
     left_join(sites_NHDseg %>%
                 st_drop_geometry() %>%
-                select(child = SiteID,
+                select(child = site_code,
                        child_hydro = Hydroseq),
               by = "child") %>%
     arrange(parent_hydro,

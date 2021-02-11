@@ -12,7 +12,7 @@ buildParentChild(
 )
 }
 \arguments{
-\item{sites_sf}{an `sf` object containing the `SiteID` and location of all detection sites.}
+\item{sites_sf}{an `sf` object containing the `site_code` and location of all detection sites.}
 
 \item{flowlines}{output from `queryFlowlines()` function.}
 
