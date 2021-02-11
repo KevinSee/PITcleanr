@@ -38,9 +38,6 @@ and compresses them. This involves assigning nodes to the detection locations (e
 sites, arrays, antennas, etc.), and summarizing the first and last detection time on
 each node as well as how many detections were made during that slot. Slots can be
 defined to include a maximum number of minutes, or not.
-
-Currently this function only works for PIT tag detections coded as `Observation`
-in PTAGIS. Other detection types are filtered out.
 }
 \examples{
 compress()

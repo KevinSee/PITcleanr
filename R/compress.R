@@ -6,9 +6,6 @@
 #' each node as well as how many detections were made during that slot. Slots can be
 #' defined to include a maximum number of minutes, or not.
 #'
-#' Currently this function only works for PIT tag detections coded as `Observation`
-#' in PTAGIS. Other detection types are filtered out.
-#'
 #' @author Kevin See
 #'
 #' @param ptagis_file is the path to the PTAGIS observation file downloaded as a csv from PTAGIS.
