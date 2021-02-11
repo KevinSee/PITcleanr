@@ -55,8 +55,8 @@ qcTagHistory = function(ptagis_file = NULL) {
               rel_greq_event = sum(event_release_date_time_value >= event_date_time_value, na.rm = T),
               rel_ls_event = sum(event_release_date_time_value < event_date_time_value, na.rm = T),
               .groups = "drop") %>%
-    filter(n_release > 0,
-           n_release != n_events) %>%
+    filter(n_release > 0) %>%
+    # filter(n_release != n_events) %>%
     mutate(event_rel_ratio = n_events / n_release)
 
   list(disown_tags = disowned_tags,
