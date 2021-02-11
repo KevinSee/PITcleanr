@@ -25,6 +25,7 @@
 #' @importFrom janitor clean_names
 #' @importFrom readr read_csv
 #' @importFrom magrittr %<>%
+#' @importFrom tidyr replace_na
 #' @export
 #' @return a tibble
 #' @examples compress()
@@ -58,7 +59,9 @@ compress = function(ptagis_file = NULL,
 
   # identify batches of fish where lots of replicated event times or release times
   rel_time_batches = qc_list$rel_time_batches %>%
-    filter(event_rel_ratio < 1) %>%
+    filter(event_rel_ratio < 1 |
+             (event_rel_ratio == 1 &
+                rel_greq_event > rel_ls_event)) %>%
     select(mark_species_name,
            year,
            event_site_type_description,
@@ -70,7 +73,7 @@ compress = function(ptagis_file = NULL,
   observations %<>%
     mutate(year = year(event_date_time_value)) %>%
     left_join(rel_time_batches) %>%
-    mutate(use_release_time = replace_na(F)) %>%
+    tidyr::replace_na(replace = list(use_release_time = F)) %>%
     mutate(event_date_time_value = if_else(use_release_time & !is.na(event_release_date_time_value),
                                            event_release_date_time_value,
                                            event_date_time_value)) %>%
