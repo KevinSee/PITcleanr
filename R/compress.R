@@ -139,7 +139,11 @@ compress = function(ptagis_file = NULL,
               max_det = max(event_date_time_value),
               .groups = "drop") %>%
     arrange(tag_code, slot) %>%
-    mutate(duration = difftime(max_det, min_det, units = units))
+    mutate(duration = difftime(max_det, min_det, units = units)) %>%
+    group_by(tag_code) %>%
+    mutate(travel_time = difftime(min_det, lag(max_det),
+                                  units = units)) %>%
+    ungroup()
 
   return(compress_summ)
 }
