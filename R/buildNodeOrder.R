@@ -29,6 +29,18 @@ buildNodeOrder = function(parent_child = NULL) {
            node_order,
            path)
 
+  # add initial nodes
+  first_nodes = parent_child %>%
+    filter(parent != child) %>%
+    filter(! parent %in% child) %>%
+    pull(parent) %>%
+    unique()
+
+  node_order = tibble(node = first_nodes,
+         node_order = 1,
+         path = first_nodes) %>%
+    bind_rows(node_order)
+
   return(node_order)
 
 }
