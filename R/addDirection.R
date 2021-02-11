@@ -32,7 +32,8 @@ addDirection = function(compress_obs = NULL,
 
   # which observation locations are not in node_order?
   dropped_locs = compress_obs %>%
-    left_join(node_order) %>%
+    left_join(node_order,
+              by = "node") %>%
     filter(is.na(node_order)) %>%
     select(node) %>%
     distinct()
@@ -41,7 +42,8 @@ addDirection = function(compress_obs = NULL,
   # filter out observations at sites not included in the node order
   # determine direction of movement
   obs_direct = compress_obs %>%
-    left_join(node_order) %>%
+    left_join(node_order,
+              by = "node") %>%
     filter(!is.na(node_order)) %>%
     arrange(tag_code, slot) %>%
     select(tag_code, start_date,
