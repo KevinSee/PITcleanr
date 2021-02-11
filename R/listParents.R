@@ -23,6 +23,17 @@ listParents = function(loc_code = NULL,
     stop(paste(loc_code, 'not found in parent-child table.'))
   }
 
+  # make sure parent != child for every row
+  prob_rows = parent_child %>%
+    filter(parent == child)
+  if(nrow(prob_rows) > 0) {
+    cat(paste("These child locations were listed as their own parent:\n",
+              paste(prob_rows$parent, collapse = ", "),
+              "\nThese rows were removed.\n"))
+    parent_child = parent_child %>%
+      filter(parent != child)
+  }
+
   nxt_parent = parent_child %>%
     filter(child == loc_code) %>%
     pull(parent)

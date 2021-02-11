@@ -19,6 +19,17 @@ buildPaths = function(parent_child = NULL) {
 
   stopifnot(!is.null(parent_child))
 
+  # make sure parent != child for every row
+  prob_rows = parent_child %>%
+    filter(parent == child)
+  if(nrow(prob_rows) > 0) {
+    cat(paste("These child locations were listed as their own parent:\n",
+              paste(prob_rows$parent, collapse = ", "),
+              "\nThese rows were removed.\n"))
+    parent_child = parent_child %>%
+      filter(parent != child)
+  }
+
   path_df = parent_child %>%
     pull(child) %>%
     as.list() %>%
