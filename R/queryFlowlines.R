@@ -4,7 +4,7 @@
 #'
 #' @author Kevin See
 #'
-#' @param sites_sf An `sf` class object containing points of all detection sites. Must contain a column named SiteID containing the site code of each site.
+#' @param sites_sf An `sf` class object containing points of all detection sites. Must contain a column named `site_code` containing the site code of each site.
 #' @param root_site_code Site code for the starting detection site.
 #' @param min_strm_order minimum stream order to query flowlines for. Default value is `0`.
 #' @param dwnstream_sites Does `sites_sf` contain sites that are downstream of `root_site_code`? If `TRUE`, then all flowlines within a boundary box of `sites_df` will be downloaded
@@ -26,7 +26,7 @@ queryFlowlines = function(sites_sf = NULL,
 
   # if no root side code given, default to the first site code
   if(is.null(root_site_code)) {
-    root_site_code = sites_sf$SiteID[1]
+    root_site_code = sites_sf$site_code[1]
   }
 
   # set minimum stream order for downstream flowlines
@@ -34,7 +34,7 @@ queryFlowlines = function(sites_sf = NULL,
 
   # find the starting point (most downstream point)
   start_comid = sites_sf %>%
-    dplyr::filter(SiteID == root_site_code) %>%
+    dplyr::filter(site_code == root_site_code) %>%
     nhdplusTools::discover_nhdplus_id()
 
   # query flowlines from NHDPlus layer

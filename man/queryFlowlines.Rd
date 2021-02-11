@@ -13,7 +13,7 @@ queryFlowlines(
 )
 }
 \arguments{
-\item{sites_sf}{An `sf` class object containing points of all detection sites. Must contain a column named SiteID containing the site code of each site.}
+\item{sites_sf}{An `sf` class object containing points of all detection sites. Must contain a column named `site_code` containing the site code of each site.}
 
 \item{root_site_code}{Site code for the starting detection site.}
 
