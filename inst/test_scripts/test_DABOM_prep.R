@@ -396,13 +396,13 @@ sites_sf = writeLGRNodeNetwork() %>%
   select(site_code = SiteID) %>%
   left_join(all_meta %>%
               select(site_code = siteCode,
-                   site_name = siteName,
-                   site_type = siteType,
-                   type = Type,
-                   latitude,
-                   longitude,
-                   rkm,
-                   site_description = siteDescription) %>%
+                     site_name = siteName,
+                     site_type = siteType,
+                     type = Type,
+                     latitude,
+                     longitude,
+                     rkm,
+                     site_description = siteDescription) %>%
               distinct()) %>%
   filter(!is.na(latitude)) %>%
   st_as_sf(coords = c("longitude",
@@ -490,7 +490,7 @@ obs %>%
 # filter out observations at sites not included in the node order
 # determine direction of movement
 obs_direct = obs %>%
-# obs_direct = comp_obs %>%
+  # obs_direct = comp_obs %>%
   addDirection(parent_child_df %>%
                  select(parent, child))
 
@@ -524,7 +524,7 @@ obs_direct %>%
   select(-start_date,
          -path)
 
-test = obs_direct %>%
+proc_obs = obs_direct %>%
   group_by(tag_code) %>%
   nest() %>%
   mutate(proc = map(data,
@@ -537,7 +537,8 @@ test = obs_direct %>%
                       } else if(sum(x$direction %in% c("backward")) > 0 |
                                 sum(x$direction %in% c("unknown")) > 0) {
                         spwn_loc = x %>%
-                          filter(slot == max(slot[direction == "forward"]))
+                          filter(slot == max(slot[direction %in% c("forward",
+                                                                   "unknown")]))
 
                         dbl_nodes = x %>%
                           group_by(node) %>%
@@ -551,52 +552,73 @@ test = obs_direct %>%
                         if(nrow(dbl_nodes) > 0) {
 
                           x %>%
+                            # select(-c(duration:start_date)) %>%
                             left_join(dbl_nodes,
                                       by = "node") %>%
                             tidyr::fill(min_slot, max_slot,
                                         .direction = "updown") %>%
                             rowwise() %>%
-                            mutate(AutoProcStatus = if_else(grepl(node, spwn_loc$path) &
-                                                              (slot < min_slot | slot >= max_slot) &
-                                                              slot <= spwn_loc$slot,
+                            filter(slot < min_slot | slot >= max_slot) %>%
+                            mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
+                                                           T, F)) %>%
+                            filter(in_spawn_path) %>%
+                            filter(slot <= spwn_loc$slot) %>%
+                            group_by(node) %>%
+                            mutate(max_slot = max(slot),
+                                   max_min_det = max(min_det)) %>%
+                            ungroup() %>%
+                            mutate(AutoProcStatus = if_else(in_spawn_path &
+                                                              slot == max_slot,
                                                             T, F),
                                    UserProcStatus = NA) %>%
                             ungroup() %>%
-                            select(-c(duration:start_date))
-                          select(-c(n_node_dets:last_det)) %>%
+                            select(-c(in_spawn_path:max_slot)) %>%
+                            full_join(x,
+                                      by = c("node", "slot", "event_type_name", "n_dets", "min_det", "max_det", "duration", "travel_time", "start_date", "node_order", "path", "direction")) %>%
+                            tidyr::replace_na(list(AutoProcStatus = F)) %>%
+                            arrange(slot) %>%
+                            # select(-c(duration:start_date)) %>%
+                            select(any_of(names(x)),
+                                   ends_with("ProcStatus"))%>%
                             return()
                         } else {
                           x %>%
+                            # select(-c(duration:start_date)) %>%
                             rowwise() %>%
-                            mutate(AutoProcStatus = if_else(grepl(node, spwn_loc$path) &
-                                                              slot <= spwn_loc$slot,
+                            mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
+                                                           T, F)) %>%
+                            filter(in_spawn_path) %>%
+                            filter(slot <= spwn_loc$slot) %>%
+                            group_by(node) %>%
+                            mutate(max_slot = max(slot),
+                                   max_min_det = max(min_det)) %>%
+                            ungroup() %>%
+                            mutate(AutoProcStatus = if_else(in_spawn_path &
+                                                              slot == max_slot,
                                                             T, F),
                                    UserProcStatus = NA) %>%
                             ungroup() %>%
-                            # select(-c(duration:start_date))
+                            select(-c(in_spawn_path:max_slot)) %>%
+                            full_join(x,
+                                      by = c("node", "slot", "event_type_name", "n_dets", "min_det", "max_det", "duration", "travel_time", "start_date", "node_order", "path", "direction")) %>%
+                            tidyr::replace_na(list(AutoProcStatus = F)) %>%
+                            arrange(slot) %>%
+                            # select(-c(duration:start_date)) %>%
+                            select(any_of(names(x)),
+                                   ends_with("ProcStatus")) %>%
                             return()
                         }
-                        # } else if(sum(x$direction %in% c("unknown")) > 0) {
-                        #   spwn_loc = x %>%
-                        #     filter(slot == max(slot[direction == "forward"]))
-                        #
-                        #   x %>%
-                        #     rowwise() %>%
-                        #     mutate(AutoProcStatus = if_else(grepl(node, spwn_loc$path) &
-                        #                                       slot <= spwn_loc$slot,
-                        #                                     T, F),
-                        #            UserProcStatus = NA) %>%
-                        #     ungroup() %>%
-                        #     # select(-c(duration:start_date))
-                        #     return()
                       }
-                    }))
+                    })) %>%
+  select(-data) %>%
+  unnest(proc) %>%
+  ungroup()
 
 
 x = obs_direct %>%
   group_by(tag_code) %>%
-  filter(sum(direction == "unknown") > 0) %>%
-  # filter(sum(direction == "backward") > 0) %>%
+  # filter(sum(direction == "unknown") > 0) %>%
+  filter(sum(direction == "backward") > 0) %>%
   ungroup() %>%
   select(tag_code) %>%
   distinct() %>%
@@ -605,34 +627,34 @@ x = obs_direct %>%
   select(-tag_code)
 
 
-proc_obs = test %>%
-  select(-data) %>%
-  unnest(proc) %>%
-  ungroup()
-
 
 obs_direct %>%
   group_by(tag_code) %>%
-  filter(sum(direction == "unknown") > 0) %>%
-  # filter(sum(direction == "backward") > 0) %>%
+  # filter(sum(direction == "unknown") > 0) %>%
+  filter(sum(direction == "backward") > 0) %>%
   ungroup() %>%
   select(tag_code) %>%
   distinct() %>%
-  slice(1) %>%
+  slice(9) %>%
   left_join(proc_obs) %>%
-  select(-c(duration:start_date))
+  select(-c(duration:start_date),
+         -max_det,
+         -path) %>%
+  slice(1:12)
+  # filter(AutoProcStatus)
+  as.data.frame()
 
 
 obs_direct %>%
   group_by(tag_code) %>%
   summarise(strange_dir = if_else(sum(direction %in% c("backward", "unknown")) > 0,
+                                  T, F),
+            back_dir = if_else(sum(direction %in% c("backward")) > 0,
                                T, F),
-         back_dir = if_else(sum(direction %in% c("backward")) > 0,
-                            T, F),
-         unkwn_dir = if_else(sum(direction %in% c("unknown")) > 0,
-                             T, F),
-         no_prob = if_else(sum(direction %in% c("backward", "unknown")) == 0,
-                           T, F)) %>%
+            unkwn_dir = if_else(sum(direction %in% c("unknown")) > 0,
+                                T, F),
+            no_prob = if_else(sum(direction %in% c("backward", "unknown")) == 0,
+                              T, F)) %>%
   ungroup() %>%
   summarise(across(c(strange_dir:no_prob),
                    sum))
