@@ -23,7 +23,8 @@ findDwnstrmHydroseg = function(hydro_id,
 
   hydro_dn = flow_lines %>%
     dplyr::filter(Hydroseq == hydro_id) %>%
-    dplyr::pull(DnHydroseq)
+    dplyr::pull(DnHydroseq) %>%
+    unique()
   if(hydro_dn %in% hydro_pause_ids) {
     return(hydro_dn)
   } else {
