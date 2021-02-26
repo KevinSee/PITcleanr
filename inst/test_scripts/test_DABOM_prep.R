@@ -569,6 +569,10 @@ parent_child_nodes = addParentChildNodes(parent_child,
 
 buildPaths(parent_child_nodes)
 
+node_order = buildNodeOrder(parent_child_nodes)
+
+
+
 # plot the flowlines and the sites
 ggplot() +
   geom_sf(data = flowlines,
@@ -593,59 +597,7 @@ ggplot() +
 
 
 
-
-
-
-
-sites_df = writeTUMNodeNetwork_noUWE() %>%
-  filter(SiteID != "LEAV")
-parent_child %>%
-  full_join(sites_df %>%
-              select(child = SiteID,
-                     path))
-
-# build it from list of existing sites in LGR DABOM
-all_meta = queryPtagisMeta()
-sites_sf = writeLGRNodeNetwork() %>%
-  select(site_code = SiteID) %>%
-  left_join(all_meta %>%
-              select(site_code = siteCode,
-                     site_name = siteName,
-                     site_type = siteType,
-                     type = Type,
-                     latitude,
-                     longitude,
-                     rkm,
-                     site_description = siteDescription) %>%
-              distinct()) %>%
-  filter(!is.na(latitude)) %>%
-  st_as_sf(coords = c("longitude",
-                      "latitude"),
-           crs = 4326) %>%
-  st_transform(crs = 5070)
-
-# get the flowlines to snap those sites to
-dwn_flw = T
-nhd_list = queryFlowlines(sites_sf = sites_sf,
-                          root_site_code = "GRA",
-                          min_strm_order = 2,
-                          dwnstrm_sites = dwn_flw,
-                          dwn_min_stream_order_diff = 6)
-
-# pull out the flowlines
-flowlines = nhd_list$flowlines
-# add downstream flowlines if necessary
-if(dwn_flw) {
-  flowlines %<>%
-    rbind(nhd_list$dwn_flowlines)
-}
-
-
-
-parent_child = buildParentChild(sites_sf,
-                                flowlines,
-                                add_rkm = T)
-
+# test against old versions of parent-child table
 parent_child_df = createParentChildDf(writeLGRNodeNetwork(),
                                       configuration,
                                       startDate = "20140301") %>%
@@ -659,21 +611,19 @@ parent_child_df = createParentChildDf(writePRDNodeNetwork(),
   rename(parent = ParentNode,
          child = ChildNode)
 
+parent_child_df = createParentChildDf(writeTUMNodeNetwork_noUWE(),
+                                      configuration,
+                                      startDate = "20150701") %>%
+  rename(parent = ParentNode,
+         child = ChildNode)
 
-anti_join(parent_child,
+
+anti_join(parent_child_nodes,
           parent_child_df)
 
 anti_join(parent_child_df,
-          parent_child)
+          parent_child_nodes)
 
-parent_child_df %>%
-  filter(child == "GRA")
-
-
-obs %>%
-  filter(node %in% parent_child_df$child)
-
-node_order = buildNodeOrder(parent_child_df)
 
 # which observation locations are not in node_order?
 obs %>%
@@ -683,24 +633,44 @@ obs %>%
   janitor::adorn_pct_formatting() %>%
   arrange(n)
 
+obs %>%
+  left_join(node_order) %>%
+  filter(is.na(node_order)) %>%
+  select(tag_code,
+         unmodeled_node = node) %>%
+  distinct() %>%
+  left_join(obs %>%
+              filter(node != "TUM") %>%
+              left_join(node_order) %>%
+              filter(!is.na(node_order))) %>%
+  select(tag_code, unmodeled_node,
+         node) %>%
+  distinct() %>%
+  group_by(tag_code,
+           unmodeled_node) %>%
+  summarise(n_modeled_nodes = n_distinct(node[!is.na(node)]),
+            not_seen_elsewhere = if_else(sum(is.na(node)) > 0, T, F),
+            .groups = 'drop') %>%
+  # filter(n_modeled_nodes == 0)
+  janitor::tabyl(unmodeled_node, not_seen_elsewhere)
+
 # filter out observations at sites not included in the node order
 # determine direction of movement
 obs_direct = obs %>%
-  # obs_direct = comp_obs %>%
-  addDirection(parent_child_df %>%
+  addDirection(parent_child_nodes %>%
                  select(parent, child))
 
 obs_direct %>%
+  janitor::tabyl(direction)
+
+obs_direct %>%
   filter(direction == "unknown") %>%
+  # filter(direction == "no movement",
+  #        node != "TUM") %>%
   select(tag_code) %>%
   distinct() %>%
-  slice(2) %>%
+  slice(5) %>%
   left_join(obs_direct) %>%
-  # rowwise() %>%
-  # filter(!grepl(lag_node, path)) %>%
-  # filter(tag_code == "384.3B239B64C9") %>%
-  # filter(tag_code == "384.3B23AB9CF7") %>%
-  # filter(tag_code == "384.3B23AB9246") %>%
   select(tag_code,
          event_type_name,
          matches("node"),
@@ -708,17 +678,6 @@ obs_direct %>%
          min_det,
          path)
 
-obs_direct %>%
-  group_by(tag_code) %>%
-  filter(sum(direction == "unknown") > 0) %>%
-  # filter(sum(direction == "backward") > 0) %>%
-  ungroup() %>%
-  select(tag_code) %>%
-  distinct() %>%
-  slice(7) %>%
-  left_join(obs_direct) %>%
-  select(-start_date,
-         -path)
 
 proc_obs = obs_direct %>%
   group_by(tag_code) %>%
