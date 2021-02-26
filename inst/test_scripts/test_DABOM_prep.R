@@ -1,7 +1,7 @@
 # Author: Kevin See
 # Purpose: Test new functions for processing PTAGIS data for DABOM
 # Created: 2/10/2021
-# Last Modified: 2/10/2021
+# Last Modified: 2/25/2021
 # Notes:
 
 #-----------------------------------------------------------------
@@ -17,6 +17,9 @@ devtools::load_all()
 # download all the metadata for all sites from PTAGIS
 org_config = buildConfig()
 
+#-----------------------------------------------------------------
+# Lower Granite
+#-----------------------------------------------------------------
 # make a few change
 configuration = org_config %>%
   mutate(Node = ifelse(SiteID %in% c('VC2', 'VC1', 'LTR', 'MTR', 'UTR'),
@@ -100,8 +103,9 @@ configuration = org_config %>%
                        Node)) %>%
   distinct()
 
-
-# for Priest Rapid version
+#-----------------------------------------------------------------
+# Priest Rapids
+#-----------------------------------------------------------------
 # customize some nodes based on DABOM framework
 configuration = org_config %>%
   # manually add site for Colockum Creek (not in PTAGIS)
@@ -319,9 +323,53 @@ configuration = org_config %>%
 
 
 #-----------------------------------------------------------------
+# Tumwater
+#-----------------------------------------------------------------
+# customize some nodes based on DABOM framework
+configuration = org_config %>%
+  mutate(Node = ifelse(SiteID %in% c('LNF', 'LEAV'),
+                       'LNF',
+                       Node),
+         Node = ifelse(SiteID %in% c('TUF', 'TUMFBY', 'TUM'),
+                       'TUM',
+                       Node),
+         Node = ifelse(SiteID == 'CHIWAC',
+                       'CHWA0',
+                       Node),
+         Node = ifelse(SiteID == 'CHIWAR',
+                       'CHLA0',
+                       Node),
+         Node = ifelse(SiteID == 'CHIW',
+                       'CHLA0',
+                       Node),
+         Node = ifelse(SiteID == 'CHIKAC',
+                       'CHUA0',
+                       Node),
+         Node = ifelse(SiteID == 'WHITER',
+                       'WTLA0',
+                       Node),
+         Node = ifelse(SiteID == 'LWENAT',
+                       'LWNA0',
+                       Node),
+         Node = ifelse(Node == 'ICL',
+                       'ICLB0',
+                       Node),
+         Node = ifelse(SiteID == 'NASONC',
+                       'NALA0',
+                       Node),
+         Node = if_else(SiteID %in% c("LWE",
+                                      "RRF",
+                                      "WEA"),
+                        "LWE",
+                        Node)) %>%
+  distinct()
+
+
+#-----------------------------------------------------------------
 # read in observations
-ptagis_file = 'inst/extdata/LGR_Chinook_2014.csv'
-ptagis_file = 'inst/extdata/UC_Sthd_2015_CTH.csv'
+# ptagis_file = 'inst/extdata/LGR_Chinook_2014.csv'
+# ptagis_file = 'inst/extdata/UC_Sthd_2015_CTH.csv'
+ptagis_file = 'inst/extdata/TUM_Chinook_2015.csv'
 
 comp_obs = compress(ptagis_file = ptagis_file,
                     #max_minutes = 5,
@@ -330,26 +378,30 @@ comp_obs = compress(ptagis_file = ptagis_file,
                     units = "hours")
 
 comp_obs %>%
-  filter(node == "PRA",
+  filter(node == "TUM",
          event_type_name %in% c("Mark", "Recapture")) %>%
   summarise(n_tags = n_distinct(tag_code)) %>%
   pull(n_tags)
 
 n_distinct(comp_obs$tag_code)
 
-# find trap data at Lower Granite, and remove detections prior to that
+# determine trap date, and remove detections prior to that
+# root_site = "GRA"
+# root_site = "PRA"
+root_site = "TUM"
+
 obs = comp_obs %>%
   left_join(comp_obs %>%
-              filter(node == "PRA",
+              filter(node == root_site,
                      event_type_name %in% c("Mark", "Recapture")) %>%
               group_by(tag_code) %>%
               filter(max_det == max(max_det)) %>%
               summarise(start_date = max_det,
                         .groups = "drop"),
             by = "tag_code") %>%
-  filter(min_det >= start_date) %>%
-  filter(!(node == "PRA" &
-             event_type_name == "Observation"))
+  filter(min_det >= start_date)# %>%
+  # filter(!(node == root_site &
+  #            event_type_name == "Observation"))
 
 obs_site_codes = obs %>%
   select(node) %>%
@@ -359,14 +411,114 @@ obs_site_codes = obs %>%
                      site_code = SiteID) %>%
               distinct())
 
+# add a couple other sites
+obs_site_codes %<>%
+  bind_rows(tibble(site_code = c("PEU",
+                                 "ICU")) %>%
+              left_join(configuration %>%
+                          select(node = Node,
+                                 site_code = SiteID) %>%
+                          distinct()))
+
+
+
 #-----------------------------------------------------------------
 # build parent child table
 # which sites do we care about for this exercise?
+# based on which ones are in the PTAGIS file
 sites_sf = extractSites(ptagis_file,
-                        as_sf = T)
-
-sites_sf %<>%
+                        as_sf = T) %>%
   filter(site_code %in% unique(obs_site_codes$site_code))
+
+# add a few other sites from other years
+sites_sf %<>%
+  bind_rows(obs_site_codes %>%
+              anti_join(sites_sf) %>%
+              select(site_code) %>%
+              distinct() %>%
+              left_join(configuration %>%
+                          rename(site_code = SiteID)) %>%
+              group_by(site_code) %>%
+              filter(ConfigID == max(ConfigID)) %>%
+              ungroup() %>%
+              select(site_code,
+                     site_name = SiteName,
+                     site_type = SiteTypeName,
+                     type = SiteType,
+                     rkm = RKM,
+                     site_description = SiteDescription,
+                     Latitude, Longitude) %>%
+              distinct() %>%
+              st_as_sf(coords = c("Longitude",
+                                  "Latitude"),
+                       crs = 4326) %>%
+              st_transform(crs = st_crs(sites_sf)))
+
+
+# for sites that are assigned to another node, delete those sites
+sites_sf %<>%
+  left_join(obs_site_codes %>%
+              mutate(node_site = str_remove(node, "A0$"),
+                     node_site = str_remove(node_site, "B0$")) %>%
+              select(-node) %>%
+              distinct() %>%
+              group_by(node_site) %>%
+              mutate(n_sites = n_distinct(site_code),
+                     node_site_name = if_else(node_site == site_code,
+                                              T, F))) %>%
+  filter(node_site_name) %>%
+  select(all_of(names(sites_sf)))
+  # filter(! node_site %in% sites_sf$site_code)
+
+
+
+# which MRR sites have only a single site assigned to them?
+single_site = sites_sf %>%
+  filter(type == "MRR") %>%
+  st_drop_geometry() %>%
+  select(site_code) %>%
+  left_join(obs_site_codes) %>%
+  left_join(obs_site_codes %>%
+              group_by(node) %>%
+              summarize(n_sites = n_distinct(site_code),
+                        .groups = "drop")) %>%
+  filter(n_sites == 1)
+
+# get some info about those sites
+configuration %>%
+  select(site_code = SiteID,
+         SiteType,
+         SiteName,
+         SiteDescription) %>%
+  inner_join(single_site) %>%
+  distinct() %>%
+  left_join(obs %>%
+              filter(node %in% single_site$node) %>%
+              group_by(node) %>%
+              summarise(n_tags = n_distinct(tag_code),
+                        .groups = "drop"))
+
+# drop these sites/nodes for various reasons
+sites_sf %<>%
+  anti_join(single_site %>%
+              select(site_code))
+
+# download the NHDPlus v2 flowlines
+# do you want flowlines downstream of root site? Set to TRUE if you have downstream sites
+dwn_flw = T
+nhd_list = queryFlowlines(sites_sf = sites_sf,
+                          root_site_code = root_site,
+                          min_strm_order = 1,
+                          dwnstrm_sites = dwn_flw,
+                          dwn_min_stream_order_diff = 2)
+
+
+flowlines = nhd_list$flowlines
+if(dwn_flw) {
+  flowlines %<>%
+    rbind(nhd_list$dwn_flowlines)
+}
+
 
 # join sites to nearest hydro sequence
 sites_NHDseg = st_join(sites_sf,
@@ -374,23 +526,85 @@ sites_NHDseg = st_join(sites_sf,
                          select(gnis_name, Hydroseq),
                        join = st_nearest_feature)
 
-# which sites were joined to the same hydrosequence?
-sites_sf %<>%
-  anti_join(sites_NHDseg %>%
-              filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
-              arrange(Hydroseq, rkm) %>%
-              as_tibble() %>%
-              select(site_code)) %>%
-  rbind(sites_NHDseg %>%
-          filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
-          arrange(Hydroseq, rkm) %>%
-          group_by(Hydroseq) %>%
-          slice(1) %>%
-          ungroup %>%
-          select(any_of(names(sites_sf))))
+# sites_NHDseg %<>%
+#   mutate(Hydroseq = if_else(site_code %in% c("LWE", 'RRF', 'WEA'),
+#                             Hydroseq[site_code == "LWE"],
+#                             Hydroseq))
+
+# # which sites were joined to the same hydrosequence?
+# sites_sf %<>%
+#   anti_join(sites_NHDseg %>%
+#               filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
+#               arrange(Hydroseq, rkm) %>%
+#               as_tibble() %>%
+#               select(site_code)) %>%
+#   rbind(sites_NHDseg %>%
+#           filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
+#           arrange(Hydroseq, rkm) %>%
+#           group_by(Hydroseq) %>%
+#           slice(1) %>%
+#           ungroup %>%
+#           select(any_of(names(sites_sf))))
+
+# if(root_site == "TUM") {
+#   sites_sf %<>%
+#     mutate(site_code = recode(site_code,
+#                               "TUF" = "TUM"))
+# }
 
 
-# build it from list of exisiting sites in LGR DABOM
+# use new functions, and not the configuration file
+parent_child = sites_sf %>%
+  filter(! site_code %in% c("UWE", "LWE")) %>%
+  buildParentChild(flowlines,
+                   add_rkm = T) %>%
+  editParentChild(child_locs = c("ICM", "PES", 'ICL', 'LWE', "PES"),
+                  parent_locs = c("LNF", "LWE", "LWE", NA, NA),
+                  new_parent_locs = c("ICL", "TUM", 'TUM', "TUM", "TUM"),
+                  switch_parent_child = list(c("ICL", 'TUM'))) %>%
+  filter(!(child == "ICL" & parent == "LWE"))
+
+parent_child_nodes = addParentChildNodes(parent_child,
+                                         configuration)
+
+buildPaths(parent_child_nodes)
+
+# plot the flowlines and the sites
+ggplot() +
+  geom_sf(data = flowlines,
+          aes(color = as.factor(StreamOrde),
+              size = StreamOrde)) +
+  scale_color_viridis_d(direction = -1,
+                        option = "D",
+                        end = 0.8) +
+  scale_size_continuous(range = c(0.2, 1.2)) +
+  geom_sf(data = nhd_list$basin,
+          fill = NA,
+          lwd = 2) +
+  geom_sf(data = sites_sf,
+          size = 4,
+          color = "black") +
+  geom_sf_label(data = sites_sf,
+                aes(label = site_code)) +
+  theme_bw() +
+  theme(axis.title = element_blank()) +
+  labs(color = "Stream\nOrder")
+
+
+
+
+
+
+
+
+sites_df = writeTUMNodeNetwork_noUWE() %>%
+  filter(SiteID != "LEAV")
+parent_child %>%
+  full_join(sites_df %>%
+              select(child = SiteID,
+                     path))
+
+# build it from list of existing sites in LGR DABOM
 all_meta = queryPtagisMeta()
 sites_sf = writeLGRNodeNetwork() %>%
   select(site_code = SiteID) %>%
@@ -425,24 +639,6 @@ if(dwn_flw) {
   flowlines %<>%
     rbind(nhd_list$dwn_flowlines)
 }
-
-# plot the flowlines and the sites
-ggplot() +
-  geom_sf(data = flowlines,
-          aes(color = as.factor(StreamOrde))) +
-  scale_color_viridis_d(direction = -1,
-                        end = 0.7) +
-  geom_sf(data = nhd_list$basin,
-          fill = NA,
-          lwd = 2) +
-  geom_sf(data = sites_sf,
-          size = 4,
-          color = "black") +
-  geom_sf_label(data = sites_sf,
-                aes(label = site_code)) +
-  theme_bw() +
-  theme(axis.title = element_blank()) +
-  labs(color = "Stream\nOrder")
 
 
 
