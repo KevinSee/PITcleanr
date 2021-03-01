@@ -179,6 +179,9 @@ configuration = org_config %>%
          Node = if_else(SiteID == 'EBO',
                         'RRF',
                         Node),
+         Node = if_else(SiteID == 'RRJ',
+                        'RRF',
+                        Node),
          Node = if_else(SiteID == 'EHL' & ConfigID == 100 & AntennaID == '02',
                         'EHLB0',
                         Node),
@@ -249,6 +252,9 @@ configuration = org_config %>%
          Node = if_else(SiteID == 'OKC' & ConfigID == 100,
                         'OKCB0',
                         Node),
+         Node = if_else(SiteID == 'OMK' & ConfigID == 100,
+                        'OMKB0',
+                        Node),
          # combine some sites above OKV into the upstream array at OKV
          Node = if_else(SiteID %in% c("OKS", "OKW"),
                         "OKVA0",
@@ -298,7 +304,7 @@ configuration = org_config %>%
                         'JD1A0',
                         Node),
          Node = if_else(SiteID != 'JD1' & as.integer(stringr::str_split(RKM, '\\.', simplify = T)[,1]) < 351,
-                        'BelowJD1',
+                        'JDA',
                         Node)) %>%
   distinct() %>%
   # correct a couple RKM values
@@ -367,9 +373,18 @@ configuration = org_config %>%
 
 #-----------------------------------------------------------------
 # read in observations
-# ptagis_file = 'inst/extdata/LGR_Chinook_2014.csv'
-# ptagis_file = 'inst/extdata/UC_Sthd_2015_CTH.csv'
-ptagis_file = 'inst/extdata/TUM_Chinook_2015.csv'
+# root_site = "GRA"
+# root_site = "PRA"
+root_site = "TUM"
+
+if(root_site == "GRA") {
+  ptagis_file = 'inst/extdata/LGR_Chinook_2014.csv'
+} else if(root_site == "PRA") {
+  ptagis_file = 'inst/extdata/UC_Sthd_2015_CTH.csv'
+} else if(root_site == 'TUM') {
+  ptagis_file = 'inst/extdata/TUM_Chinook_2015.csv'
+}
+
 
 comp_obs = compress(ptagis_file = ptagis_file,
                     #max_minutes = 5,
@@ -378,7 +393,7 @@ comp_obs = compress(ptagis_file = ptagis_file,
                     units = "hours")
 
 comp_obs %>%
-  filter(node == "TUM",
+  filter(node == root_site,
          event_type_name %in% c("Mark", "Recapture")) %>%
   summarise(n_tags = n_distinct(tag_code)) %>%
   pull(n_tags)
@@ -386,10 +401,6 @@ comp_obs %>%
 n_distinct(comp_obs$tag_code)
 
 # determine trap date, and remove detections prior to that
-# root_site = "GRA"
-# root_site = "PRA"
-root_site = "TUM"
-
 obs = comp_obs %>%
   left_join(comp_obs %>%
               filter(node == root_site,
@@ -412,13 +423,29 @@ obs_site_codes = obs %>%
               distinct())
 
 # add a couple other sites
-obs_site_codes %<>%
-  bind_rows(tibble(site_code = c("PEU",
-                                 "ICU")) %>%
-              left_join(configuration %>%
-                          select(node = Node,
-                                 site_code = SiteID) %>%
-                          distinct()))
+if(root_site == "TUM") {
+  obs_site_codes %<>%
+    bind_rows(tibble(site_code = c("PEU",
+                                   "ICU")) %>%
+                left_join(configuration %>%
+                            select(node = Node,
+                                   site_code = SiteID) %>%
+                            distinct()))
+}
+
+if(root_site == "PRA") {
+  obs_site_codes %<>%
+    bind_rows(configuration %>%
+                filter(SiteID %in% c("HST",
+                                     "RSH") |
+                         Node %in% c("JD1A0",
+                                     "HSTA0",
+                                     "ICHA0")) %>%
+                select(node = Node,
+                       site_code = SiteID) %>%
+                distinct())
+}
+
 
 
 
@@ -449,10 +476,17 @@ sites_sf %<>%
                      site_description = SiteDescription,
                      Latitude, Longitude) %>%
               distinct() %>%
+              filter(!is.na(Latitude)) %>%
               st_as_sf(coords = c("Longitude",
                                   "Latitude"),
                        crs = 4326) %>%
               st_transform(crs = st_crs(sites_sf)))
+
+if(root_site == "PRA") {
+  sites_sf %<>%
+    filter(!(site_code == "PRO" & type == "MRR"))
+}
+
 
 
 # for sites that are assigned to another node, delete those sites
@@ -484,6 +518,17 @@ single_site = sites_sf %>%
                         .groups = "drop")) %>%
   filter(n_sites == 1)
 
+# look at sites that may have a legitimate DABOM node
+single_site %>%
+  filter(grepl("A0$", node) |
+           grepl("B0$", node))
+
+if(root_site == "PRA") {
+  single_site %<>%
+    filter(! site_code %in% c("PRO", "METH"))
+}
+
+
 # get some info about those sites
 configuration %>%
   select(site_code = SiteID,
@@ -496,7 +541,8 @@ configuration %>%
               filter(node %in% single_site$node) %>%
               group_by(node) %>%
               summarise(n_tags = n_distinct(tag_code),
-                        .groups = "drop"))
+                        .groups = "drop")) %>%
+  arrange(desc(n_tags))
 
 # drop these sites/nodes for various reasons
 sites_sf %<>%
@@ -508,9 +554,9 @@ sites_sf %<>%
 dwn_flw = T
 nhd_list = queryFlowlines(sites_sf = sites_sf,
                           root_site_code = root_site,
-                          min_strm_order = 1,
+                          min_strm_order = 2,
                           dwnstrm_sites = dwn_flw,
-                          dwn_min_stream_order_diff = 2)
+                          dwn_min_stream_order_diff = 4)
 
 
 flowlines = nhd_list$flowlines
@@ -520,11 +566,38 @@ if(dwn_flw) {
 }
 
 
+# plot the flowlines and the sites
+ggplot() +
+  geom_sf(data = flowlines,
+          aes(color = as.factor(StreamOrde),
+              size = StreamOrde)) +
+  scale_color_viridis_d(direction = -1,
+                        option = "D",
+                        end = 0.8) +
+  scale_size_continuous(range = c(0.2, 1.2)) +
+  geom_sf(data = nhd_list$basin,
+          fill = NA,
+          lwd = 2) +
+  geom_sf(data = sites_sf,
+          size = 4,
+          color = "black") +
+  geom_sf_label(data = sites_sf,
+                aes(label = site_code)) +
+  theme_bw() +
+  theme(axis.title = element_blank()) +
+  labs(color = "Stream\nOrder")
+
+
+
 # join sites to nearest hydro sequence
 sites_NHDseg = st_join(sites_sf,
                        flowlines %>%
                          select(gnis_name, Hydroseq),
                        join = st_nearest_feature)
+
+sites_NHDseg %>%
+  filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
+  arrange(Hydroseq, site_code)
 
 # sites_NHDseg %<>%
 #   mutate(Hydroseq = if_else(site_code %in% c("LWE", 'RRF', 'WEA'),
@@ -554,48 +627,115 @@ sites_NHDseg = st_join(sites_sf,
 
 
 # use new functions, and not the configuration file
-parent_child = sites_sf %>%
-  filter(! site_code %in% c("UWE", "LWE")) %>%
-  buildParentChild(flowlines,
-                   add_rkm = T) %>%
-  editParentChild(child_locs = c("ICM", "PES", 'ICL', 'LWE', "PES"),
-                  parent_locs = c("LNF", "LWE", "LWE", NA, NA),
-                  new_parent_locs = c("ICL", "TUM", 'TUM', "TUM", "TUM"),
-                  switch_parent_child = list(c("ICL", 'TUM'))) %>%
-  filter(!(child == "ICL" & parent == "LWE"))
+if(root_site == 'TUM') {
+  parent_child = sites_sf %>%
+    filter(! site_code %in% c("UWE", "LWE")) %>%
+    buildParentChild(flowlines,
+                     add_rkm = T) %>%
+    editParentChild(child_locs = c("ICM", "PES", 'ICL', 'LWE', "PES"),
+                    parent_locs = c("LNF", "LWE", "LWE", NA, NA),
+                    new_parent_locs = c("ICL", "TUM", 'TUM', "TUM", "TUM"),
+                    switch_parent_child = list(c("ICL", 'TUM'))) %>%
+    filter(!(child == "ICL" & parent == "LWE"))
+}
+
+if(root_site == 'PRA') {
+  parent_child = sites_sf %>%
+    filter(! site_code %in% c("MC1", "MC2", "MCJ",
+                              "FDD",
+                              "MWC",
+                              "LMT",
+                              "NFT",
+                              "UMT",
+                              "YHC",
+                              # "PRH",
+                              "HN1", "HN3",
+                              "HSM", "HSU",
+                              "LOR",
+                              "EWC",
+                              "LBT",
+                              "LTP")) %>%
+    buildParentChild(flowlines,
+                     rm_na_parent = T) %>%
+    editParentChild(child_locs = c("WEA",
+                                   'ICH', 'JD1', 'PRO', 'TMF', 'PRV', 'RSH',
+                                   'PRH',
+                                   'PRA',
+                                   "ENL"),
+                    parent_locs = c("RIA",
+                                    rep('JDA', 6),
+                                    "RSH",
+                                    'RSH',
+                                    'RIA'),
+                    new_parent_locs = c("RRF",
+                                        rep('PRA', 6),
+                                        "PRA",
+                                        'JDA',
+                                        'RRF'),
+                    switch_parent_child = list(c("JDA", "PRA"),
+                                               c("RSH", "PRA"))) %>%
+    # because PRH and PRA are on the same hydrosequence, need to remove this row
+    filter(!(parent == 'PRH' & child == "RIA"))
+}
+
+parent_child %>%
+  filter(child %in% child[duplicated(child)])
+
+parent_child %>%
+  inner_join(parent_child %>%
+               select(child = parent,
+                      parent = child))
+
+parent_child %>%
+  # filter(parent == "RRF")
+  # filter(child == "WCT")
+  filter(child == "JDA")
+
+buildPaths(parent_child)
+
+sites_df = writePRDNodeNetwork() %>%
+  mutate(across(c(SiteID, Step3),
+                recode,
+                "BelowJD1" = "JDA"),
+         path = str_replace(path, "BelowJD1", "JDA"))
+sites_sf %>%
+  filter(as.numeric(str_sub(rkm, 0, 3)) < 639) %>%
+  anti_join(sites_df %>%
+              filter(Step2 == "BelowPriest") %>%
+              select(site_code = SiteID))
+
+sites_df %>%
+  filter(Step2 == "BelowPriest",
+         Step4 == '') %>%
+  select(site_code = SiteID) %>%
+  anti_join(parent_child %>%
+              filter(parent == 'PRA') %>%
+              rename(site_code = child))
+
+parent_child %>%
+  filter(parent == 'PRA') %>%
+  rename(site_code = child) %>%
+  anti_join(sites_df %>%
+              filter(Step2 == "BelowPriest",
+                     Step4 == '') %>%
+              select(site_code = SiteID))
+
 
 parent_child_nodes = addParentChildNodes(parent_child,
                                          configuration)
 
+
+parent_child %>%
+  select(child) %>%
+  left_join(configuration %>%
+              select(child = SiteID,
+                     Node) %>%
+              distinct())
+
+
 buildPaths(parent_child_nodes)
 
 node_order = buildNodeOrder(parent_child_nodes)
-
-
-
-# plot the flowlines and the sites
-ggplot() +
-  geom_sf(data = flowlines,
-          aes(color = as.factor(StreamOrde),
-              size = StreamOrde)) +
-  scale_color_viridis_d(direction = -1,
-                        option = "D",
-                        end = 0.8) +
-  scale_size_continuous(range = c(0.2, 1.2)) +
-  geom_sf(data = nhd_list$basin,
-          fill = NA,
-          lwd = 2) +
-  geom_sf(data = sites_sf,
-          size = 4,
-          color = "black") +
-  geom_sf_label(data = sites_sf,
-                aes(label = site_code)) +
-  theme_bw() +
-  theme(axis.title = element_blank()) +
-  labs(color = "Stream\nOrder")
-
-
-
 
 # test against old versions of parent-child table
 parent_child_df = createParentChildDf(writeLGRNodeNetwork(),
