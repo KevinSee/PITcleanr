@@ -18,7 +18,7 @@ buildConfig = function() {
 
 
   # clean things up a bit
-  config = config_all %>%
+  configuration = config_all %>%
     mutate(Node = NA,
            ValidNode = NA,
            ModelMainBranch = NA,
@@ -63,5 +63,17 @@ buildConfig = function() {
                          Node),
            Node = ifelse(is.na(Node), SiteID, Node))
 
-  return(config)
+  # for any site that has some nodes with "A0", "B0", but some configurations with a single node, make that node "B0"
+  configuration = configuration %>%
+    group_by(SiteID) %>%
+    mutate(node_site = sum(Node == SiteID),
+           node_site_b0 = sum(Node == paste0(SiteID, "B0"))) %>%
+    ungroup() %>%
+    mutate(Node = if_else(node_site > 0 & node_site_b0 > 0,
+                          paste0(SiteID, 'B0'),
+                          Node)) %>%
+    select(-node_site,
+           -node_site_b0)
+
+  return(configuration)
 }
