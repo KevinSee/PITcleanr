@@ -410,9 +410,10 @@ obs = comp_obs %>%
               summarise(start_date = max_det,
                         .groups = "drop"),
             by = "tag_code") %>%
-  filter(min_det >= start_date)# %>%
-  # filter(!(node == root_site &
-  #            event_type_name == "Observation"))
+  filter(min_det >= start_date) %>%
+  group_by(tag_code) %>%
+  mutate(slot = slot - min(slot) + 1) %>%
+  ungroup()
 
 obs_site_codes = obs %>%
   select(node) %>%
@@ -585,7 +586,8 @@ ggplot() +
                 aes(label = site_code)) +
   theme_bw() +
   theme(axis.title = element_blank()) +
-  labs(color = "Stream\nOrder")
+  labs(color = "Stream\nOrder",
+       size = "Stream\nOrder")
 
 
 
@@ -599,10 +601,6 @@ sites_NHDseg %>%
   filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
   arrange(Hydroseq, site_code)
 
-# sites_NHDseg %<>%
-#   mutate(Hydroseq = if_else(site_code %in% c("LWE", 'RRF', 'WEA'),
-#                             Hydroseq[site_code == "LWE"],
-#                             Hydroseq))
 
 # # which sites were joined to the same hydrosequence?
 # sites_sf %<>%
@@ -681,17 +679,31 @@ if(root_site == 'PRA') {
 parent_child %>%
   filter(child %in% child[duplicated(child)])
 
+# any parent-child combo's that are also child-parent combo's?
 parent_child %>%
   inner_join(parent_child %>%
                select(child = parent,
                       parent = child))
 
 parent_child %>%
-  # filter(parent == "RRF")
+  filter(parent == "TUM")
   # filter(child == "WCT")
-  filter(child == "JDA")
+  # filter(child == "TUM")
 
 buildPaths(parent_child)
+
+
+if(root_site == "TUM") {
+  sites_df = writeTUMNodeNetwork_noUWE()
+}
+
+sites_df %>%
+  select(child = SiteID) %>%
+  anti_join(parent_child)
+parent_child %>%
+  anti_join(sites_df %>%
+              select(child = SiteID))
+
 
 sites_df = writePRDNodeNetwork() %>%
   mutate(across(c(SiteID, Step3),
@@ -720,7 +732,7 @@ parent_child %>%
                      Step4 == '') %>%
               select(site_code = SiteID))
 
-
+# add nodes to the parent child table
 parent_child_nodes = addParentChildNodes(parent_child,
                                          configuration)
 
@@ -738,25 +750,25 @@ buildPaths(parent_child_nodes)
 node_order = buildNodeOrder(parent_child_nodes)
 
 # test against old versions of parent-child table
-parent_child_df = createParentChildDf(writeLGRNodeNetwork(),
-                                      configuration,
-                                      startDate = "20140301") %>%
-  rename(parent = ParentNode,
-         child = ChildNode)
-
-
-parent_child_df = createParentChildDf(writePRDNodeNetwork(),
-                                      configuration,
-                                      startDate = "20140701") %>%
-  rename(parent = ParentNode,
-         child = ChildNode)
-
-parent_child_df = createParentChildDf(writeTUMNodeNetwork_noUWE(),
-                                      configuration,
-                                      startDate = "20150701") %>%
-  rename(parent = ParentNode,
-         child = ChildNode)
-
+if(root_site == "GRA") {
+  parent_child_df = createParentChildDf(writeLGRNodeNetwork(),
+                                        configuration,
+                                        startDate = "20140301") %>%
+    rename(parent = ParentNode,
+           child = ChildNode)
+} else if(root_site == "PRA") {
+  parent_child_df = createParentChildDf(writePRDNodeNetwork(),
+                                        configuration,
+                                        startDate = "20140701") %>%
+    rename(parent = ParentNode,
+           child = ChildNode)
+} else if(root_site == 'TUM') {
+  parent_child_df = createParentChildDf(writeTUMNodeNetwork_noUWE(),
+                                        configuration,
+                                        startDate = "20150701") %>%
+    rename(parent = ParentNode,
+           child = ChildNode)
+}
 
 anti_join(parent_child_nodes,
           parent_child_df)
@@ -764,7 +776,7 @@ anti_join(parent_child_nodes,
 anti_join(parent_child_df,
           parent_child_nodes)
 
-
+#--------------------------------------------------------
 # which observation locations are not in node_order?
 obs %>%
   left_join(node_order) %>%
@@ -809,7 +821,7 @@ obs_direct %>%
   #        node != "TUM") %>%
   select(tag_code) %>%
   distinct() %>%
-  slice(5) %>%
+  slice(2) %>%
   left_join(obs_direct) %>%
   select(tag_code,
          event_type_name,
@@ -835,74 +847,87 @@ proc_obs = obs_direct %>%
                           filter(slot == max(slot[direction %in% c("forward",
                                                                    "unknown")]))
 
-                        dbl_nodes = x %>%
+                        x %>%
                           group_by(node) %>%
-                          summarise(n_node_dets = n_distinct(slot),
-                                    min_slot = min(slot),
-                                    max_slot = max(slot),
-                                    last_det = max(min_det),
-                                    .groups = "drop") %>%
-                          filter(n_node_dets > 1)
+                          mutate(max_slot = max(slot[slot <= spwn_loc$slot])) %>%
+                          rowwise() %>%
+                          mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
+                                                         T, F)) %>%
+                          select(-travel_time, -start_date) %>%
+                          mutate(AutoProcStatus = if_else(in_spawn_path & slot == max_slot,
+                                                          T, F),
+                                 UserProcStatus = NA) %>%
+                          select(-max_slot, - in_spawn_path) %>%
+                          return()
 
-                        if(nrow(dbl_nodes) > 0) {
-
-                          x %>%
-                            # select(-c(duration:start_date)) %>%
-                            left_join(dbl_nodes,
-                                      by = "node") %>%
-                            tidyr::fill(min_slot, max_slot,
-                                        .direction = "updown") %>%
-                            rowwise() %>%
-                            filter(slot < min_slot | slot >= max_slot) %>%
-                            mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
-                                                           T, F)) %>%
-                            filter(in_spawn_path) %>%
-                            filter(slot <= spwn_loc$slot) %>%
-                            group_by(node) %>%
-                            mutate(max_slot = max(slot),
-                                   max_min_det = max(min_det)) %>%
-                            ungroup() %>%
-                            mutate(AutoProcStatus = if_else(in_spawn_path &
-                                                              slot == max_slot,
-                                                            T, F),
-                                   UserProcStatus = NA) %>%
-                            ungroup() %>%
-                            select(-c(in_spawn_path:max_slot)) %>%
-                            full_join(x,
-                                      by = c("node", "slot", "event_type_name", "n_dets", "min_det", "max_det", "duration", "travel_time", "start_date", "node_order", "path", "direction")) %>%
-                            tidyr::replace_na(list(AutoProcStatus = F)) %>%
-                            arrange(slot) %>%
-                            # select(-c(duration:start_date)) %>%
-                            select(any_of(names(x)),
-                                   ends_with("ProcStatus"))%>%
-                            return()
-                        } else {
-                          x %>%
-                            # select(-c(duration:start_date)) %>%
-                            rowwise() %>%
-                            mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
-                                                           T, F)) %>%
-                            filter(in_spawn_path) %>%
-                            filter(slot <= spwn_loc$slot) %>%
-                            group_by(node) %>%
-                            mutate(max_slot = max(slot),
-                                   max_min_det = max(min_det)) %>%
-                            ungroup() %>%
-                            mutate(AutoProcStatus = if_else(in_spawn_path &
-                                                              slot == max_slot,
-                                                            T, F),
-                                   UserProcStatus = NA) %>%
-                            ungroup() %>%
-                            select(-c(in_spawn_path:max_slot)) %>%
-                            full_join(x,
-                                      by = c("node", "slot", "event_type_name", "n_dets", "min_det", "max_det", "duration", "travel_time", "start_date", "node_order", "path", "direction")) %>%
-                            tidyr::replace_na(list(AutoProcStatus = F)) %>%
-                            arrange(slot) %>%
-                            # select(-c(duration:start_date)) %>%
-                            select(any_of(names(x)),
-                                   ends_with("ProcStatus")) %>%
-                            return()
-                        }
+                        # dbl_nodes = x %>%
+                        #   group_by(node) %>%
+                        #   summarize(n_node_dets = n_distinct(slot),
+                        #             min_slot = min(slot),
+                        #             max_slot = max(slot),
+                        #             last_det = max(min_det),
+                        #             .groups = "drop") %>%
+                        #   filter(n_node_dets > 1)
+                        #
+                        # if(nrow(dbl_nodes) > 0) {
+                        #
+                        #   x %>%
+                        #     # select(-c(duration:start_date)) %>%
+                        #     left_join(dbl_nodes,
+                        #               by = "node") %>%
+                        #     tidyr::fill(min_slot, max_slot,
+                        #                 .direction = "updown") %>%
+                        #     rowwise() %>%
+                        #     filter(slot < min_slot | slot >= max_slot) %>%
+                        #     mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
+                        #                                    T, F)) %>%
+                        #     filter(in_spawn_path) %>%
+                        #     filter(slot <= spwn_loc$slot) %>%
+                        #     group_by(node) %>%
+                        #     mutate(max_slot = max(slot),
+                        #            max_min_det = max(min_det)) %>%
+                        #     ungroup() %>%
+                        #     mutate(AutoProcStatus = if_else(in_spawn_path &
+                        #                                       slot == max_slot,
+                        #                                     T, F),
+                        #            UserProcStatus = NA) %>%
+                        #     ungroup() %>%
+                        #     select(-c(in_spawn_path:max_slot)) %>%
+                        #     full_join(x,
+                        #               by = c("node", "slot", "event_type_name", "n_dets", "min_det", "max_det", "duration", "travel_time", "start_date", "node_order", "path", "direction")) %>%
+                        #     tidyr::replace_na(list(AutoProcStatus = F)) %>%
+                        #     arrange(slot) %>%
+                        #     # select(-c(duration:start_date)) %>%
+                        #     select(any_of(names(x)),
+                        #            ends_with("ProcStatus")) %>%
+                        #     return()
+                        # } else {
+                        #   x %>%
+                        #     # select(-c(duration:start_date)) %>%
+                        #     rowwise() %>%
+                        #     mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
+                        #                                    T, F)) %>%
+                        #     filter(in_spawn_path) %>%
+                        #     filter(slot <= spwn_loc$slot) %>%
+                        #     group_by(node) %>%
+                        #     mutate(max_slot = max(slot),
+                        #            max_min_det = max(min_det)) %>%
+                        #     ungroup() %>%
+                        #     mutate(AutoProcStatus = if_else(in_spawn_path &
+                        #                                       slot == max_slot,
+                        #                                     T, F),
+                        #            UserProcStatus = NA) %>%
+                        #     ungroup() %>%
+                        #     select(-c(in_spawn_path:max_slot)) %>%
+                        #     full_join(x,
+                        #               by = c("node", "slot", "event_type_name", "n_dets", "min_det", "max_det", "duration", "travel_time", "start_date", "node_order", "path", "direction")) %>%
+                        #     tidyr::replace_na(list(AutoProcStatus = F)) %>%
+                        #     arrange(slot) %>%
+                        #     # select(-c(duration:start_date)) %>%
+                        #     select(any_of(names(x)),
+                        #            ends_with("ProcStatus")) %>%
+                        #     return()
+                        # }
                       }
                     })) %>%
   select(-data) %>%
@@ -953,3 +978,31 @@ obs_direct %>%
   ungroup() %>%
   summarise(across(c(strange_dir:no_prob),
                    sum))
+
+
+
+# compare with former functions
+parent_child_df
+
+# get raw observations from PTAGIS
+# These come from running a saved query on the list of tags to be used
+observations = read_csv(ptagis_file)
+
+# add some padding to the antenna codes if needed
+observations %<>%
+  mutate(`Antenna ID` = if_else(nchar(`Antenna ID`) == 1,
+                                stringr::str_pad(`Antenna ID`, 2,
+                                                 side = "left",
+                                                 pad = "0"),
+                                `Antenna ID`))
+
+# process those observations with PITcleanr, using Tumwater-specific function
+proc_list = processCapHist_TUM(start_date = "20150701",
+                               configuration = configuration,
+                               parent_child = parent_child_df %>%
+                                 rename(ParentNode = parent,
+                                        ChildNode = child),
+                               observations = observations,
+                               last_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0930"),
+                               truncate = T,
+                               save_file = F)
