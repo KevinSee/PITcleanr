@@ -46,6 +46,13 @@ addParentChildNodes = function(parent_child = NULL,
     tidyr::pivot_wider(names_from = "node_num",
                        values_from = "node")
 
+  if("node_3" %in% names(node_wide)) {
+    node_wide %>%
+      filter(!is.na(node_3)) %>%
+      pull(site_code) %>%
+      paste(paste(., collapse = " and "), "have 3 nodes, causing errors.\n Consider updating configuration file.\n")
+  }
+
   pc_nodes = parent_child %>%
     left_join(node_wide %>%
                 rename(n_parent_nodes = n_nodes),
@@ -54,9 +61,9 @@ addParentChildNodes = function(parent_child = NULL,
                 rename(n_child_nodes = n_nodes),
               by = c("child" = "site_code")) %>%
     group_by(parent, child) %>%
-    tidyr::nest(node_wide = -any_of(names(parent_child))) %>%
+    tidyr::nest(node_info = -any_of(names(parent_child))) %>%
     ungroup() %>%
-    mutate(pc = map(node_wide,
+    mutate(pc = map(node_info,
                     .f = function(x) {
                       if(x$n_parent_nodes == 1) {
                         pc_new = x %>%
