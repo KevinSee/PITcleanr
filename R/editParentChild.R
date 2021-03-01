@@ -47,7 +47,10 @@ editParentChild = function(parent_child = NULL,
                 select(starts_with("child")) %>%
                 rlang::set_names(str_replace,
                                  pattern = "child",
-                                 replacement = "parent"),
+                                 replacement = "parent") %>%
+                bind_rows(parent_child %>%
+                            select(starts_with("parent"))) %>%
+                distinct(),
               by = "parent") %>%
     select(all_of(names(parent_child))) %>%
     bind_rows(anti_join(parent_child,
