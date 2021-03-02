@@ -20,12 +20,16 @@ addParentChildNodes = function(parent_child = NULL,
             !is.null(my_config))
 
   # get the nodes for all site codes in the parent-child table
-  node_long = my_config %>%
-    filter(SiteID %in% union(parent_child$child,
-                             parent_child$parent)) %>%
-    select(site_code = SiteID,
-           node = Node,
-           rkm = RKM) %>%
+  node_long = tibble(site_code = union(parent_child$child,
+                                       parent_child$parent)) %>%
+    left_join(my_config %>%
+                select(node = Node) %>%
+                distinct() %>%
+                mutate(site_code = if_else((grepl("A0$", node) | grepl("B0$", node)) &
+                                             nchar(node) == 5,
+                                           str_sub(node, 1, 3),
+                                           node)),
+              by = "site_code") %>%
     distinct() %>%
     arrange(site_code, desc(node)) %>%
     group_by(site_code) %>%
@@ -33,18 +37,23 @@ addParentChildNodes = function(parent_child = NULL,
     mutate(node_num = paste("node", 1:n(), sep = "_")) %>%
     ungroup() %>%
     left_join(parent_child %>%
-                select(site_code = child,
-                       hydro = child_hydro) %>%
+                select(matches("child")) %>%
+                rename(site_code = child) %>%
+                rlang::set_names(nm = str_remove,
+                                 pattern = "child_") %>%
                 bind_rows(parent_child %>%
-                            select(site_code = parent,
-                                   hydro = parent_hydro) %>%
-                            distinct()) %>%
-                distinct()) %>%
-    select(site_code, hydro, rkm, everything())
+                            select(matches("parent")) %>%
+                            distinct() %>%
+                            rename(site_code = parent) %>%
+                            rlang::set_names(nm = str_remove,
+                                             pattern = "parent_")) %>%
+                distinct(),
+              by = "site_code")
 
   node_wide = node_long %>%
     tidyr::pivot_wider(names_from = "node_num",
                        values_from = "node")
+
 
   if("node_3" %in% names(node_wide)) {
     node_wide %>%
@@ -99,7 +108,9 @@ addParentChildNodes = function(parent_child = NULL,
     left_join(node_long %>%
                 select(child = node,
                        child_hydro = hydro),
-              by = "child")
+              by = "child") %>%
+    arrange(parent_hydro,
+            child_hydro)
 
   if(sum(grepl("rkm", names(parent_child))) > 0) {
     pc_nodes %<>%
