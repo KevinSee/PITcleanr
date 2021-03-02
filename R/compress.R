@@ -72,7 +72,12 @@ compress = function(ptagis_file = NULL,
   # set event time to the release time for selected
   observations %<>%
     mutate(year = year(event_date_time_value)) %>%
-    left_join(rel_time_batches) %>%
+    left_join(rel_time_batches,
+              by = c("mark_species_name",
+                     "event_type_name",
+                     "event_site_type_description",
+                     "event_site_code_value",
+                     "year")) %>%
     tidyr::replace_na(replace = list(use_release_time = F)) %>%
     mutate(event_date_time_value = if_else(use_release_time & !is.na(event_release_date_time_value),
                                            event_release_date_time_value,
