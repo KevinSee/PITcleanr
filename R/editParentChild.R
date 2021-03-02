@@ -34,6 +34,21 @@ editParentChild = function(parent_child = NULL,
   stopifnot(length(parent_locs) == length(child_locs),
             length(child_locs) == length(new_parent_locs))
 
+  # pull out some info from original parent/child table
+  pc_old = parent_child
+  pc_meta =  pc_old %>%
+    select(starts_with("parent")) %>%
+    rename(site_code = parent) %>%
+    rlang::set_names(nm  = str_remove,
+                     "parent_") %>%
+    bind_rows(pc_old %>%
+                select(starts_with("child")) %>%
+                rename(site_code = child) %>%
+                rlang::set_names(nm  = str_remove,
+                                 "child_")) %>%
+    distinct()
+
+  # switch old and new parents
   if(!is.null(parent_locs)) {
   parent_child %<>%
     inner_join(tibble(parent = parent_locs,
@@ -55,11 +70,10 @@ editParentChild = function(parent_child = NULL,
     select(all_of(names(parent_child))) %>%
     bind_rows(anti_join(parent_child,
                         .,
-                        by = c("child"))) %>%
-    arrange(parent_hydro,
-            child_hydro)
+                        by = c("child")))
   }
 
+  # switch some parent/child pairs
   if(!is.null(switch_parent_child)) {
     switch_df = switch_parent_child %>%
       map_df(.f = function(x) {
@@ -67,7 +81,7 @@ editParentChild = function(parent_child = NULL,
                child = x[2])
       })
 
-    parent_child %>%
+    parent_child = parent_child %>%
       anti_join(switch_df,
                 by = c("parent", "child")) %>%
       bind_rows(parent_child %>%
@@ -76,31 +90,25 @@ editParentChild = function(parent_child = NULL,
                   rename(parent = child,
                          child = parent,
                          parent_hydro = child_hydro,
-                         child_hydro = parent_hydro)) -> parent_child
-
+                         child_hydro = parent_hydro) %>%
+                  select(all_of(names(parent_child))))
   }
 
-  # fix the parent and child hyrdo sequences
-  if(sum(is.na(parent_child$parent_hydro)) > 0) {
-    parent_child %<>%
-      filter(is.na(parent_hydro)) %>%
-      select(-starts_with("parent_")) %>%
-      left_join(parent_child %>%
-                  filter(!is.na(parent_hydro)) %>%
-                  select(starts_with("parent")) %>%
-                  distinct(),
-                by = "parent") %>%
-      select(all_of(names(parent_child))) %>%
-      bind_rows(anti_join(parent_child,
-                          .,
-                          by = c("parent", "child"))) %>%
-      arrange(parent_hydro,
-              child_hydro) %>%
-      distinct()
-  }
-
+  # fix the parent and child hyrdo sequences (and other meta-data)
   parent_child %<>%
-    distinct()
+    select(parent, child) %>%
+    left_join(pc_meta %>%
+                rlang::set_names(nm =  ~ paste("parent", ., sep = "_")) %>%
+                rename(parent = parent_site_code),
+              by = "parent") %>%
+    left_join(pc_meta %>%
+                rlang::set_names(nm =  ~ paste("child", ., sep = "_")) %>%
+                rename(child = child_site_code),
+              by = "child") %>%
+    select(any_of(names(pc_old))) %>%
+    distinct() %>%
+    arrange(parent_hydro,
+            child_hydro)
 
   # issue a warning is a child location now has more than one parent
   if(sum(duplicated(parent_child$child)) > 0) {
