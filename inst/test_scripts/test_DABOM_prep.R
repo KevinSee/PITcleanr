@@ -373,16 +373,23 @@ configuration = org_config %>%
 
 #-----------------------------------------------------------------
 # read in observations
-# root_site = "GRA"
+root_site = "GRA"
 # root_site = "PRA"
-root_site = "TUM"
+# root_site = "TUM"
 
 if(root_site == "GRA") {
   ptagis_file = 'inst/extdata/LGR_Chinook_2014.csv'
+  sites_df = writeLGRNodeNetwork()
 } else if(root_site == "PRA") {
   ptagis_file = 'inst/extdata/UC_Sthd_2015_CTH.csv'
+  sites_df = writePRDNodeNetwork() %>%
+    mutate(across(c(SiteID, Step3),
+                  recode,
+                  "BelowJD1" = "JDA"),
+           path = str_replace(path, "BelowJD1", "JDA"))
 } else if(root_site == 'TUM') {
   ptagis_file = 'inst/extdata/TUM_Chinook_2015.csv'
+  sites_df = writeTUMNodeNetwork_noUWE()
 }
 
 
@@ -447,7 +454,19 @@ if(root_site == "PRA") {
                 distinct())
 }
 
-
+if(root_site == "GRA") {
+  obs_site_codes %<>%
+    # mutate(obs_sites = T) %>%
+    full_join(configuration %>%
+                filter(EndDate >= min(obs$start_date) |
+                         is.na(EndDate)) %>%
+                filter(SiteID %in% sites_df$SiteID) %>%
+                select(node = Node,
+                       site_code = SiteID) %>%
+                distinct()) %>%
+    bind_rows(tibble(node = "JUL",
+                     site_code = "JUL"))
+}
 
 
 #-----------------------------------------------------------------
@@ -524,9 +543,20 @@ single_site %>%
   filter(grepl("A0$", node) |
            grepl("B0$", node))
 
+single_site %>%
+  left_join(sites_df %>%
+              select(site_code = SiteID,
+                     path)) %>%
+  filter(!is.na(path))
+  xtabs(~ is.na(path), .)
+
 if(root_site == "PRA") {
   single_site %<>%
     filter(! site_code %in% c("PRO", "METH"))
+} else if(root_site == 'GRA') {
+  single_site %<>%
+    anti_join(sites_df %>%
+                select(site_code = SiteID))
 }
 
 
@@ -635,9 +665,7 @@ if(root_site == 'TUM') {
                     new_parent_locs = c("ICL", "TUM", 'TUM', "TUM", "TUM"),
                     switch_parent_child = list(c("ICL", 'TUM'))) %>%
     filter(!(child == "ICL" & parent == "LWE"))
-}
-
-if(root_site == 'PRA') {
+} else if(root_site == 'PRA') {
   parent_child = sites_sf %>%
     filter(! site_code %in% c("MC1", "MC2", "MCJ",
                               "FDD",
@@ -674,7 +702,57 @@ if(root_site == 'PRA') {
                                                c("RSH", "PRA"))) %>%
     # because PRH and PRA are on the same hydrosequence, need to remove this row
     filter(!(parent == 'PRH' & child == "RIA"))
+} else if(root_site == 'GRA') {
+  parent_child = sites_sf %>%
+    filter(! site_code %in% c("RRF", "PRA", 'PRO',
+                              "JD1", "MJ1", 'TMF',
+                              "MC1", "MC2",
+                              "ICH", "LMA", "LMJ",
+                              "GOA", "GOJ",
+                              "GRJ",
+                              "DWL")) %>%
+    buildParentChild(flowlines,
+                     rm_na_parent = F,
+                     add_rkm = T) %>%
+    editParentChild(parent_locs = c("GRA",
+                                    "UGR", "UGR",
+                                    "IR3", 'IR3',
+                                    NA, NA,
+                                    rep("KEN", 3),
+                                    rep("LLS", 3),
+                                    rep("LBS", 3),
+                                    'ACM', 'ACB', 'ASOTIC', 'ASOTIC'),
+                    child_locs = c("KOOS",
+                                   "GRANDW", "CATHEW",
+                                   'IMNAHW', 'IML',
+                                   "LTR", "PENAWC",
+                                   "LRW", "HYC", "AGC",
+                                   "LBS", "LB8", "LCL",
+                                   "BTL", "CAC", 'HEC',
+                                   'ACB', 'ASOTIC', 'AFC', 'CCA'),
+                    new_parent_locs = c("CLC",
+                                        "UGS", "CCW",
+                                        'IML', 'IR4',
+                                        "GRA", "GRA",
+                                        rep("LLR", 3),
+                                        rep("LRW", 3),
+                                        rep("LRW", 3),
+                                        'ASOTIC', 'ACM', 'ACB', 'ACB'),
+                    switch_parent_child = list(c("PENAWC", "GRA"))) %>%
+    filter(!(child == 'IR5' & parent %in% c("IR4", "IML")))
 }
+
+parent_child %>%
+  # filter(child %in% c("CATHEW", "CCW")) %>%
+  # filter(child %in% c("IMNAHW", "IML", 'IR4', 'IR5')) %>%
+  # filter(child %in% c("GRANDW", "UGS")) %>%
+  # filter(child %in% c("CLC", "KOOS")) %>%
+  filter(parent %in% c("ACB", 'ASOTIC') |
+           child %in% c("ACB", 'ASOTIC')) %>%
+  left_join(sites_df %>%
+              select(child = SiteID,
+                     path))
+
 
 parent_child %>%
   filter(child %in% child[duplicated(child)])
@@ -685,19 +763,50 @@ parent_child %>%
                select(child = parent,
                       parent = child))
 
+sites_df %>%
+  select(SiteID,
+         path) %>%
+  left_join(configuration %>%
+              select(SiteID,
+                     Node) %>%
+              distinct()) %>%
+  rename(child = SiteID) %>%
+  anti_join(parent_child) %>%
+  left_join(parent_child_nodes %>%
+              mutate(in_pc_tab = T) %>%
+              select(Node = child,
+                     in_pc_tab))
+
 parent_child %>%
-  filter(parent == "TUM")
+  filter(! child %in% sites_df$SiteID)
+
+sites_df %>%
+  filter(SiteID != "GRA",
+         Step5 == '') %>%
+  select(child = SiteID,
+         path) %>%
+  anti_join(parent_child)
+
+parent_child %>%
+  filter(parent == "GRA") %>%
+  anti_join(sites_df %>%
+              filter(SiteID != "GRA",
+                     Step5 == '') %>%
+              select(child = SiteID,
+                     path))
+
+
+parent_child %>%
+  # filter(parent == "PENAWC")
   # filter(child == "WCT")
-  # filter(child == "TUM")
+  filter(parent == "GRA")
 
 buildPaths(parent_child)
 
 
-if(root_site == "TUM") {
-  sites_df = writeTUMNodeNetwork_noUWE()
-}
 
 sites_df %>%
+  filter(Step2 != '') %>%
   select(child = SiteID) %>%
   anti_join(parent_child)
 parent_child %>%
@@ -705,11 +814,6 @@ parent_child %>%
               select(child = SiteID))
 
 
-sites_df = writePRDNodeNetwork() %>%
-  mutate(across(c(SiteID, Step3),
-                recode,
-                "BelowJD1" = "JDA"),
-         path = str_replace(path, "BelowJD1", "JDA"))
 sites_sf %>%
   filter(as.numeric(str_sub(rkm, 0, 3)) < 639) %>%
   anti_join(sites_df %>%
@@ -776,6 +880,15 @@ anti_join(parent_child_nodes,
 anti_join(parent_child_df,
           parent_child_nodes)
 
+anti_join(parent_child_nodes,
+          parent_child_df) %>%
+  select(new_parent = parent,
+         child) %>%
+  left_join(parent_child_df %>%
+              select(old_parent = parent,
+                     child))
+
+
 #--------------------------------------------------------
 # which observation locations are not in node_order?
 obs %>%
@@ -792,7 +905,7 @@ obs %>%
          unmodeled_node = node) %>%
   distinct() %>%
   left_join(obs %>%
-              filter(node != "TUM") %>%
+              filter(node != root_site) %>%
               left_join(node_order) %>%
               filter(!is.na(node_order))) %>%
   select(tag_code, unmodeled_node,
@@ -821,7 +934,7 @@ obs_direct %>%
   #        node != "TUM") %>%
   select(tag_code) %>%
   distinct() %>%
-  slice(2) %>%
+  slice(3) %>%
   left_join(obs_direct) %>%
   select(tag_code,
          event_type_name,
@@ -853,7 +966,7 @@ proc_obs = obs_direct %>%
                           rowwise() %>%
                           mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
                                                          T, F)) %>%
-                          select(-travel_time, -start_date) %>%
+                          # select(-travel_time, -start_date) %>%
                           mutate(AutoProcStatus = if_else(in_spawn_path & slot == max_slot,
                                                           T, F),
                                  UserProcStatus = NA) %>%
@@ -997,7 +1110,7 @@ observations %<>%
                                 `Antenna ID`))
 
 # process those observations with PITcleanr, using Tumwater-specific function
-proc_list = processCapHist_TUM(start_date = "20150701",
+proc_list = processCapHist_TUM(start_date = "20150501",
                                configuration = configuration,
                                parent_child = parent_child_df %>%
                                  rename(ParentNode = parent,
@@ -1006,3 +1119,44 @@ proc_list = processCapHist_TUM(start_date = "20150701",
                                last_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0930"),
                                truncate = T,
                                save_file = F)
+
+load('../DabomTumwaterChnk/analysis/data/derived_data/PITcleanr/TUM_Chinook_2015.rda')
+
+identical(sort(unique(proc_list$ProcCapHist$TagID)),
+          sort(unique(proc_obs$tag_code)))
+
+
+
+proc_list$ProcCapHist %>%
+  select(tag_code = TagID,
+         TrapDate,
+         node = Node,
+         SiteID,
+         min_det = ObsDate,
+         max_det = lastObsDate,
+         AutoProcStatus) %>%
+  full_join(proc_obs %>%
+              mutate(across(start_date,
+                            floor_date,
+                            unit = "days")),
+            by = c('tag_code','node',
+                   "min_det", "max_det")) %>%
+  filter(tag_code %in% union(sort(unique(proc_list$ProcCapHist$TagID)),
+                             sort(unique(proc_obs$tag_code)))) %>%
+  # filter(is.na(slot)) %>%
+  # janitor::tabyl(SiteID)
+  # filter(is.na(SiteID)) %>%
+  # select(tag_code) %>%
+  # distinct() %>%
+  # slice(3) %>%
+  # left_join(proc_list$ProcCapHist %>%
+  #             rename(tag_code = TagID))
+  filter(TrapDate != start_date) %>%
+  select(tag_code,
+         TrapDate,
+         start_date) %>%
+  distinct() %>%
+  left_join(comp_obs %>%
+              filter(node == 'TUM') %>%
+              select(tag_code, event_type_name, min_det, max_det))
+  select(-duration, -travel_time)
