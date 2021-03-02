@@ -69,9 +69,11 @@ buildConfig = function() {
     mutate(node_site = sum(Node == SiteID),
            node_site_b0 = sum(Node == paste0(SiteID, "B0"))) %>%
     ungroup() %>%
-    mutate(Node = if_else(node_site > 0 & node_site_b0 > 0,
+    rowwise() %>%
+    mutate(Node = if_else(node_site > 0 & node_site_b0 > 0 & !(grepl("A0$", Node) | grepl("B0$", Node)),
                           paste0(SiteID, 'B0'),
                           Node)) %>%
+    ungroup() %>%
     select(-node_site,
            -node_site_b0)
 
