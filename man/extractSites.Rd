@@ -27,9 +27,6 @@ The function takes complete capture histories downloaded from PTAGIS
 and extracts all the detection sites from them. It matches those sites with
 information from PTAGIS metadata, being sure to pull the metadata from the
 correct configuration file.
-
-Currently this function only works for PIT tag detections coded as `Observation`
-in PTAGIS. Other detection types are filtered out.
 }
 \examples{
 compress()
