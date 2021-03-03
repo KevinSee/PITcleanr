@@ -720,7 +720,9 @@ if(root_site == 'TUM') {
                               "EWC",
                               "LBT",
                               "LTP",
-                              "BBP", "BCP")) %>%
+                              "BBP", "BCP",
+                              "MRT", "HSL",
+                              "ENM", 'ENS', 'TY4', '3D4')) %>%
     buildParentChild(flowlines,
                      rm_na_parent = T) %>%
     editParentChild(child_locs = c("WEA",
@@ -877,6 +879,7 @@ parent_child %>%
   # filter(child == "WCT")
   filter(parent == "PRA")
 
+# look at paths to each location
 buildPaths(parent_child)
 
 # add nodes to the parent child table
@@ -899,9 +902,10 @@ sites_df %>%
                      in_pc_tab))
 
 
-
+# look at paths to each node
 buildPaths(parent_child_nodes)
 
+# build a node order
 node_order = buildNodeOrder(parent_child_nodes)
 
 # test against old versions of parent-child table
