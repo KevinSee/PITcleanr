@@ -117,7 +117,7 @@ editParentChild = function(parent_child = NULL,
 
     dup_child %>%
       group_by(child) %>%
-      summarise(message = paste(child, "has multiple parents:", paste(parent, collapse = ","))) %>%
+      summarise(message = paste(child, "has multiple parents:", paste(parent, collapse = ","), "\n")) %>%
       distinct() %>%
       pull(message) %>%
       warning()
