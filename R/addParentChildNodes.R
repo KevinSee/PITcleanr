@@ -25,10 +25,14 @@ addParentChildNodes = function(parent_child = NULL,
     left_join(my_config %>%
                 select(node = Node) %>%
                 distinct() %>%
-                mutate(site_code = if_else((grepl("A0$", node) | grepl("B0$", node)) &
-                                             nchar(node) == 5,
-                                           str_sub(node, 1, 3),
-                                           node)),
+                mutate(site_code = if_else(grepl("B0$", node) &
+                                             nchar(node) >= 5,
+                                           str_remove(node, "B0"),
+                                           node),
+                       site_code = if_else(grepl("A0$", site_code) &
+                                             nchar(site_code) >= 5,
+                                           str_remove(site_code, "A0"),
+                                           site_code)),
               by = "site_code") %>%
     distinct() %>%
     arrange(site_code, desc(node)) %>%
@@ -49,6 +53,14 @@ addParentChildNodes = function(parent_child = NULL,
                                              pattern = "parent_")) %>%
                 distinct(),
               by = "site_code")
+
+  if(sum(is.na(node_long$node)) > 0) {
+    node_long %>%
+      filter(is.na(node)) %>%
+      mutate(message = paste(site_code, "has a node that is NA.\n")) %>%
+      pull(message) %>%
+      warning()
+  }
 
   node_wide = node_long %>%
     tidyr::pivot_wider(names_from = "node_num",
