@@ -1,7 +1,7 @@
 # Author: Kevin See
 # Purpose: Test new functions for processing PTAGIS data for DABOM
 # Created: 2/10/2021
-# Last Modified: 2/25/2021
+# Last Modified: 3/3/2021
 # Notes:
 
 #-----------------------------------------------------------------
@@ -20,8 +20,8 @@ org_config = buildConfig()
 #-----------------------------------------------------------------
 # designate a starting point
 # root_site = "GRA"
-root_site = "PRA"
-# root_site = "TUM"
+# root_site = "PRA"
+root_site = "TUM"
 
 #-----------------------------------------------------------------
 # Lower Granite
@@ -418,6 +418,55 @@ comp_obs = compress(ptagis_file = ptagis_file,
                     configuration = configuration,
                     units = "hours")
 
+# # get detections by site, not node
+# obs_site = compress(ptagis_file = ptagis_file,
+#                     #max_minutes = 5,
+#                     max_minutes = NA,
+#                     units = "hours") %>%
+#   left_join(comp_obs %>%
+#               filter(node == root_site,
+#                      event_type_name %in% c("Mark", "Recapture")) %>%
+#               group_by(tag_code) %>%
+#               filter(max_det == max(max_det)) %>%
+#               summarise(start_date = max_det,
+#                         .groups = "drop"),
+#             by = "tag_code") %>%
+#   filter(min_det >= start_date) %>%
+#   group_by(tag_code) %>%
+#   mutate(slot = slot - min(slot) + 1) %>%
+#   ungroup()
+#
+# obs %>%
+#   left_join(configuration %>%
+#               select(SiteID, node = Node) %>%
+#               distinct() %>%
+#               group_by(node) %>%
+#               summarise(n_sites = n_distinct(SiteID),
+#                         site_list = list(unique(SiteID)),
+#                         .groups = "drop")) %>%
+#   filter(n_sites > 1,
+#          node != root_site)
+#
+# test = obs %>%
+#   mutate(time_interval = interval(min_det, max_det)) %>%
+#   select(tag_code, node, slot, time_interval) %>%
+#   left_join(obs_site %>%
+#               mutate(site_interval = interval(min_det, max_det)) %>%
+#               select(tag_code, node, slot, site_interval) %>%
+#               nest(site_intvl = -tag_code)) %>%
+#   nest(intvl_data = c(time_interval, site_intvl)) %>%
+#   mutate(site_list = map(.x = intvl_data,
+#                           .f = function(x) {
+#                             x %>%
+#                               unnest(site_intvl) %>%
+#                               mutate(ovrlp = int_overlaps(site_interval,
+#                                                           time_interval)) %>%
+#                               filter(ovrlp) %>%
+#                               pull(node)
+#                           })) %>%
+#   ungroup()
+
+
 # how many tags have a Mark or Recapture at the root_site?
 comp_obs %>%
   filter(node == root_site,
@@ -443,6 +492,8 @@ obs = comp_obs %>%
   mutate(slot = slot - min(slot) + 1) %>%
   ungroup()
 
+n_distinct(obs$tag_code)
+
 # pull out the site codes and nodes for all observations
 obs_site_codes = obs %>%
   select(node) %>%
@@ -452,50 +503,15 @@ obs_site_codes = obs %>%
                      site_code = SiteID) %>%
               distinct())
 
-# add a couple other sites
-if(root_site == "TUM") {
-  obs_site_codes %<>%
-    bind_rows(tibble(site_code = c("PEU",
-                                   "ICU")) %>%
-                left_join(configuration %>%
-                            select(node = Node,
-                                   site_code = SiteID) %>%
-                            distinct()))
-} else if(root_site == "PRA") {
-  # obs_site_codes %<>%
-  #   bind_rows(configuration %>%
-  #               filter(SiteID %in% c("HST",
-  #                                    "RSH",
-  #                                    "CLK") |
-  #                        Node %in% c("JD1A0",
-  #                                    "HSTA0",
-  #                                    "ICHA0")) %>%
-  #               select(node = Node,
-  #                      site_code = SiteID) %>%
-  #               distinct())
-
-  obs_site_codes %<>%
-    full_join(configuration %>%
-                filter(EndDate >= min(obs$start_date) |
-                         is.na(EndDate)) %>%
-                filter(SiteID %in% sites_df$SiteID) %>%
-                select(node = Node,
-                       site_code = SiteID) %>%
-                distinct())
-} else if(root_site == "GRA") {
-  obs_site_codes %<>%
-    # mutate(obs_sites = T) %>%
-    full_join(configuration %>%
-                filter(EndDate >= min(obs$start_date) |
-                         is.na(EndDate)) %>%
-                filter(SiteID %in% sites_df$SiteID) %>%
-                select(node = Node,
-                       site_code = SiteID) %>%
-                distinct()) %>%
-    bind_rows(tibble(node = "JUL",
-                     site_code = "JUL"))
-}
-
+# add a couple other sites (based on sites_df)
+obs_site_codes %<>%
+  full_join(configuration %>%
+              filter(EndDate >= min(obs$start_date) |
+                       is.na(EndDate)) %>%
+              filter(SiteID %in% sites_df$SiteID) %>%
+              select(node = Node,
+                     site_code = SiteID) %>%
+              distinct())
 
 #-----------------------------------------------------------------
 # which sites do we care about for this exercise?
@@ -652,18 +668,17 @@ ggplot() +
                         end = 0.8) +
   scale_size_continuous(range = c(0.2, 1.2),
                         guide = 'none') +
-  # geom_sf(data = nhd_list$basin,
+  geom_sf(data = nhd_list$basin,
+          fill = NA,
+          lwd = 2) +
+  # this cuts out parts of the basin upstream of upstrm_loc
+  # geom_sf(data = flowlines %>%
+  #           filter(!Hydroseq %in% nhd_list$dwn_flowlines$Hydroseq) %>%
+  #           summarise(bndry = 'basin') %>%
+  #           select(bndry) %>%
+  #           st_convex_hull(),
   #         fill = NA,
   #         lwd = 2) +
-  # this cuts out parts of the basin upstream of upstrm_loc
-  geom_sf(data = flowlines %>%
-            filter(!Hydroseq %in% nhd_list$dwn_flowlines$Hydroseq) %>%
-            summarise(bndry = 'basin') %>%
-            select(bndry) %>%
-            st_convex_hull(),
-          fill = NA,
-          # color = 'darkgray',
-          lwd = 2) +
   geom_sf(data = sites_sf,
           size = 4,
           color = "black") +
@@ -675,8 +690,7 @@ ggplot() +
                 color = "red") +
   theme_bw() +
   theme(axis.title = element_blank()) +
-  labs(color = "Stream\nOrder",
-       size = "Stream\nOrder")
+  labs(color = "Stream\nOrder")
 
 # join sites to nearest hydro sequence
 sites_NHDseg = st_join(sites_sf,
@@ -902,12 +916,6 @@ sites_df %>%
                      in_pc_tab))
 
 
-# look at paths to each node
-buildPaths(parent_child_nodes)
-
-# build a node order
-node_order = buildNodeOrder(parent_child_nodes)
-
 # test against old versions of parent-child table
 if(root_site == "GRA") {
   parent_child_df = createParentChildDf(sites_df,
@@ -945,6 +953,9 @@ anti_join(parent_child_nodes,
 
 
 #--------------------------------------------------------
+# build a node order, with paths to each node
+node_order = buildNodeOrder(parent_child_nodes)
+
 # which observation locations are not in node_order?
 obs %>%
   left_join(node_order) %>%
@@ -998,109 +1009,31 @@ obs_direct %>%
          min_det,
          path)
 
+if(root_site == "TUM") {
+  max_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0930")
+}
+proc_obs = filterDetections(obs,
+                            parent_child_nodes,
+                            max_obs_date)
 
-proc_obs = obs_direct %>%
-  group_by(tag_code) %>%
-  nest() %>%
-  mutate(proc = map(data,
-                    .f = function(x) {
-                      if(sum(x$direction %in% c("backward", "unknown")) == 0) {
-                        x %>%
-                          mutate(AutoProcStatus = T,
-                                 UserProcStatus = T) %>%
-                          return()
-                      } else if(sum(x$direction %in% c("backward")) > 0 |
-                                sum(x$direction %in% c("unknown")) > 0) {
-                        spwn_loc = x %>%
-                          filter(slot == max(slot[direction %in% c("forward",
-                                                                   "unknown")]))
+proc_obs %>%
+  summarise(n_tags = n_distinct(tag_code),
+            n_weird_tags = n_distinct(tag_code[is.na(UserKeepObs)])) %>%
+  mutate(prop_weird = n_weird_tags / n_tags)
 
-                        x %>%
-                          group_by(node) %>%
-                          mutate(max_slot = max(slot[slot <= spwn_loc$slot])) %>%
-                          rowwise() %>%
-                          mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
-                                                         T, F)) %>%
-                          # select(-travel_time, -start_date) %>%
-                          mutate(AutoProcStatus = if_else(in_spawn_path & slot == max_slot,
-                                                          T, F),
-                                 UserProcStatus = NA) %>%
-                          select(-max_slot, - in_spawn_path) %>%
-                          return()
-
-                        # dbl_nodes = x %>%
-                        #   group_by(node) %>%
-                        #   summarize(n_node_dets = n_distinct(slot),
-                        #             min_slot = min(slot),
-                        #             max_slot = max(slot),
-                        #             last_det = max(min_det),
-                        #             .groups = "drop") %>%
-                        #   filter(n_node_dets > 1)
-                        #
-                        # if(nrow(dbl_nodes) > 0) {
-                        #
-                        #   x %>%
-                        #     # select(-c(duration:start_date)) %>%
-                        #     left_join(dbl_nodes,
-                        #               by = "node") %>%
-                        #     tidyr::fill(min_slot, max_slot,
-                        #                 .direction = "updown") %>%
-                        #     rowwise() %>%
-                        #     filter(slot < min_slot | slot >= max_slot) %>%
-                        #     mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
-                        #                                    T, F)) %>%
-                        #     filter(in_spawn_path) %>%
-                        #     filter(slot <= spwn_loc$slot) %>%
-                        #     group_by(node) %>%
-                        #     mutate(max_slot = max(slot),
-                        #            max_min_det = max(min_det)) %>%
-                        #     ungroup() %>%
-                        #     mutate(AutoProcStatus = if_else(in_spawn_path &
-                        #                                       slot == max_slot,
-                        #                                     T, F),
-                        #            UserProcStatus = NA) %>%
-                        #     ungroup() %>%
-                        #     select(-c(in_spawn_path:max_slot)) %>%
-                        #     full_join(x,
-                        #               by = c("node", "slot", "event_type_name", "n_dets", "min_det", "max_det", "duration", "travel_time", "start_date", "node_order", "path", "direction")) %>%
-                        #     tidyr::replace_na(list(AutoProcStatus = F)) %>%
-                        #     arrange(slot) %>%
-                        #     # select(-c(duration:start_date)) %>%
-                        #     select(any_of(names(x)),
-                        #            ends_with("ProcStatus")) %>%
-                        #     return()
-                        # } else {
-                        #   x %>%
-                        #     # select(-c(duration:start_date)) %>%
-                        #     rowwise() %>%
-                        #     mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
-                        #                                    T, F)) %>%
-                        #     filter(in_spawn_path) %>%
-                        #     filter(slot <= spwn_loc$slot) %>%
-                        #     group_by(node) %>%
-                        #     mutate(max_slot = max(slot),
-                        #            max_min_det = max(min_det)) %>%
-                        #     ungroup() %>%
-                        #     mutate(AutoProcStatus = if_else(in_spawn_path &
-                        #                                       slot == max_slot,
-                        #                                     T, F),
-                        #            UserProcStatus = NA) %>%
-                        #     ungroup() %>%
-                        #     select(-c(in_spawn_path:max_slot)) %>%
-                        #     full_join(x,
-                        #               by = c("node", "slot", "event_type_name", "n_dets", "min_det", "max_det", "duration", "travel_time", "start_date", "node_order", "path", "direction")) %>%
-                        #     tidyr::replace_na(list(AutoProcStatus = F)) %>%
-                        #     arrange(slot) %>%
-                        #     # select(-c(duration:start_date)) %>%
-                        #     select(any_of(names(x)),
-                        #            ends_with("ProcStatus")) %>%
-                        #     return()
-                        # }
-                      }
-                    })) %>%
-  select(-data) %>%
-  unnest(proc) %>%
-  ungroup()
+proc_obs %>%
+  filter(is.na(UserKeepObs)) %>%
+  filter(direction == 'unknown') %>%
+  # filter(grepl('WTL', node)) %>%
+  select(tag_code) %>%
+  distinct() %>%
+  slice_sample(n = 1) %>%
+  # slice(119) %>%
+  left_join(proc_obs) %>%
+  select(-(duration:start_date),
+         -UserKeepObs) %>%
+  select(-max_det) %>%
+  as.data.frame()
 
 
 x = obs_direct %>%
@@ -1179,7 +1112,13 @@ load('../DabomTumwaterChnk/analysis/data/derived_data/PITcleanr/TUM_Chinook_2015
 
 identical(sort(unique(proc_list$ProcCapHist$TagID)),
           sort(unique(proc_obs$tag_code)))
-
+proc_list$ProcCapHist %>%
+  anti_join(proc_obs %>%
+              select(tag_code) %>%
+              distinct(),
+            by = c('TagID' = 'tag_code')) %>%
+  select(TagID) %>%
+  distinct()
 
 
 proc_list$ProcCapHist %>%
@@ -1196,6 +1135,20 @@ proc_list$ProcCapHist %>%
                             unit = "days")),
             by = c('tag_code','node',
                    "min_det", "max_det")) %>%
+  filter(tag_code == "3DD.00773DCA1C") %>%
+  as.data.frame()
+
+  filter(!is.na(slot)) %>%
+  filter(AutoProcStatus != AutoKeepObs,
+         AutoKeepObs) %>%
+  group_by(tag_code) %>%
+  summarize(n_new = sum(is.na(UserKeepObs)),
+            n_old = sum(!AutoProcStatus))
+  xtabs(~ is.na(UserKeepObs) + UserProcStatus, .)
+  select(tag_code) %>%
+  distinct() %>%
+  left_join(proc_obs)
+
   filter(tag_code %in% union(sort(unique(proc_list$ProcCapHist$TagID)),
                              sort(unique(proc_obs$tag_code)))) %>%
   # filter(is.na(slot)) %>%
