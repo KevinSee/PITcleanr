@@ -9,11 +9,7 @@
 #' @param compress_obs The result of `compress()`.
 #' @inheritParams buildPaths
 #'
-#' @import dplyr lubridate
-#' @importFrom janitor clean_names
-#' @importFrom readr read_csv
-#' @importFrom magrittr %<>%
-#' @importFrom tidyr replace_na
+#' @import dplyr
 #' @export
 #' @return a tibble
 #' @examples addDirection()
@@ -35,9 +31,13 @@ addDirection = function(compress_obs = NULL,
     left_join(node_order,
               by = "node") %>%
     filter(is.na(node_order)) %>%
-    select(node) %>%
-    distinct()
+    pull(node) %>%
+    unique()
 
+  paste("Detections from the following nodes were dropped,
+        because they were not in the parent-child table:\n",
+        paste(dropped_locs, collapse = ", "), "\n") %>%
+    warning()
 
   # filter out observations at sites not included in the node order
   # determine direction of movement
