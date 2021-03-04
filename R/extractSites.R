@@ -72,13 +72,17 @@ extractSites = function(ptagis_file = NULL,
     return(obs_site)
   } else {
 
-    filter(obs_site,
-           is.na(latitude)) %>%
-      pull(site_code) %>%
-      paste(collapse = ',') %>%
-      paste("These sites don't have a latitude, and are excluded from results:\n",
-            ., "\n") %>%
-      cat()
+    no_lat_sites =
+      filter(obs_site,
+             is.na(latitude)) %>%
+      pull(site_code)
+    if(length(no_lat_sites) > 0) {
+      no_lat_sites %>%
+        paste(collapse = ',') %>%
+        paste("These sites don't have a latitude, and are excluded from results:\n",
+              ., "\n") %>%
+        warning()
+    }
 
     obs_site %>%
       filter(!is.na(latitude)) %>%
