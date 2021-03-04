@@ -1108,18 +1108,8 @@ proc_list = processCapHist_TUM(start_date = "20150501",
                                truncate = T,
                                save_file = F)
 
-load('../DabomTumwaterChnk/analysis/data/derived_data/PITcleanr/TUM_Chinook_2015.rda')
-
 identical(sort(unique(proc_list$ProcCapHist$TagID)),
           sort(unique(proc_obs$tag_code)))
-proc_list$ProcCapHist %>%
-  anti_join(proc_obs %>%
-              select(tag_code) %>%
-              distinct(),
-            by = c('TagID' = 'tag_code')) %>%
-  select(TagID) %>%
-  distinct()
-
 
 proc_list$ProcCapHist %>%
   select(tag_code = TagID,
@@ -1135,12 +1125,13 @@ proc_list$ProcCapHist %>%
                             unit = "days")),
             by = c('tag_code','node',
                    "min_det", "max_det")) %>%
-  filter(tag_code == "3DD.00773DCA1C") %>%
+  filter(tag_code == "3DD.00773DBC00") %>%
   as.data.frame()
-
+  #
   filter(!is.na(slot)) %>%
   filter(AutoProcStatus != AutoKeepObs,
          AutoKeepObs) %>%
+  select(tag_code)
   group_by(tag_code) %>%
   summarize(n_new = sum(is.na(UserKeepObs)),
             n_old = sum(!AutoProcStatus))
