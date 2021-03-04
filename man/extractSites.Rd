@@ -16,7 +16,7 @@ Event Release Site Code, and Event Release Date Time.}
 \item{as_sf}{Should the results be returned as an `sf` object (`TRUE`), or a tibble
 (`FALSE`, and the default)?}
 
-\item{if}{`as_sf = TRUE`, what CRS should the resulting `sf` object be
+\item{crs}{if `as_sf = TRUE`, what CRS should the resulting `sf` object be
 transformed to? Default is 5070.}
 }
 \value{

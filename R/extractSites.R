@@ -10,7 +10,7 @@
 #' @inheritParams compress
 #' @param as_sf Should the results be returned as an `sf` object (`TRUE`), or a tibble
 #' (`FALSE`, and the default)?
-#' @param if `as_sf = TRUE`, what CRS should the resulting `sf` object be
+#' @param crs if `as_sf = TRUE`, what CRS should the resulting `sf` object be
 #' transformed to? Default is 5070.
 #'
 #' @import dplyr lubridate
