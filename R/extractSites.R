@@ -12,6 +12,8 @@
 #' (`FALSE`, and the default)?
 #' @param crs if `as_sf = TRUE`, what CRS should the resulting `sf` object be
 #' transformed to? Default is 5070.
+#' @param min_date character in the format `YYYYMMDD` that describes a minimum detection date.
+#' If supplied, sites with detections prior to this date will be excluded from the results.
 #'
 #' @import dplyr lubridate
 #' @importFrom janitor clean_names
@@ -23,7 +25,8 @@
 
 extractSites = function(ptagis_file = NULL,
                         as_sf = F,
-                        crs = 5070) {
+                        crs = 5070,
+                        min_date = NULL) {
 
   stopifnot(!is.null(ptagis_file))
 
@@ -42,6 +45,11 @@ extractSites = function(ptagis_file = NULL,
       as_tibble()
   } else {
     stop("Trouble reading in ptagis_file.\n")
+  }
+
+  if(!is.null(min_date)) {
+    observations %<>%
+      filter(event_date_time_value >= lubridate::ymd(min_date))
   }
 
   # pull out all observation sites, and attach some metadata
