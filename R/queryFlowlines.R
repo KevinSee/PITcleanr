@@ -52,7 +52,9 @@ queryFlowlines = function(sites_sf = NULL,
   # a list to return
   # includes flowlines and polygon of basin
   return_list = list(flowlines = flowlines,
-                         basin = nngeo::st_remove_holes(nhd_lst$basin))
+                         basin = nngeo::st_remove_holes(nhd_lst$basin) %>%
+                       sf::st_zm() %>%
+                       sf::st_transform(crs = sf::st_crs(sites_sf)))
 
   if(dwnstrm_sites) {
     cat("Calculating furthest mainstem point downstream \n")
