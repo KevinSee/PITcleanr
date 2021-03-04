@@ -16,7 +16,7 @@
 queryInterrogationConfig = function(site = NULL) {
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/KevinSee/PITcleanr')
+  ua = httr::user_agent('https://github.com/BiomarkABS/PITcleanr')
 
   # compose url with query
   url_req = 'http://api.ptagis.org/interrogationsites'
