@@ -48,22 +48,22 @@ extractSites = function(ptagis_file = NULL,
   obs_site = observations %>%
     select(site_code = event_site_code_value,
            antenna_id,
-           antenna_group_configuration_value) %>%
+           configuration_sequence = antenna_group_configuration_value) %>%
     distinct() %>%
     left_join(all_meta %>%
-                select(site_code = siteCode,
-                       site_name = siteName,
-                       site_type = siteType,
-                       type = Type,
-                       antenna_group_configuration_value = configurationSequence,
-                       antenna_id = antennaID,
-                       antenna_group_name = antennaGroupName,
+                select(site_code,
+                       site_name,
+                       site_type,
+                       type,
+                       configuration_sequence,
+                       antenna_id,
+                       antenna_group_name,
                        latitude,
                        longitude,
                        rkm,
-                       site_description = siteDescription)) %>%
+                       site_description)) %>%
     select(-antenna_id,
-           -antenna_group_configuration_value,
+           -configuration_sequence,
            -antenna_group_name) %>%
     distinct()
 

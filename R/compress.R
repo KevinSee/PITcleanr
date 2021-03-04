@@ -95,10 +95,10 @@ compress = function(ptagis_file = NULL,
   if(!is.null(configuration)) {
     observations %<>%
       left_join(configuration %>%
-                  select(event_site_code_value = SiteID,
-                         antenna_group_configuration_value = ConfigID,
-                         antenna_id = AntennaID,
-                         node = Node),
+                  select(event_site_code_value = site_code,
+                         antenna_group_configuration_value = config_id,
+                         antenna_id,
+                         node),
                 by = c("event_site_code_value",
                        "antenna_group_configuration_value",
                        "antenna_id")) %>%
