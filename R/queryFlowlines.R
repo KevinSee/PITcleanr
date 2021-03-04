@@ -22,6 +22,8 @@ queryFlowlines = function(sites_sf = NULL,
                           dwnstrm_sites = FALSE,
                           dwn_min_stream_order_diff = NULL) {
 
+  requireNamespace("nhdplusTools", quietly = TRUE)
+
   stopifnot(!is.null(sites_sf))
 
   # if no root side code given, default to the first site code
