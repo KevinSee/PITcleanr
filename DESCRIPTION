@@ -5,7 +5,7 @@ Authors@R: person("Kevin", "See", email = "Kevin.See@merck.com", role = c("aut",
 Maintainer: Kevin See <Kevin.See@merck.com>
 Description: This package takes a complete tag history file from PTAGIS and cleans it, compresses it and makes it ready for summaries or analyses.
 Depends: 
-    R (>= 4.2.0),
+    R (>= 4.0.2),
 License: CC BY 4.0
 Imports:
     dplyr (>= 1.0.2),
