@@ -1,0 +1,217 @@
+---
+title: "Importing, Cleaning, and Compressing PIT Tag Data"
+author: Mike Ackerman, Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Prep_PIT_data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+
+```
+
+# Introduction
+
+This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data in order to either summarize detections or prepare the data for further analysis. `PITcleanr` can help import complete tag histories from [PTAGIS](https://ptagis.org/), build a configuration file to help assign each detection to a "node", and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table of locations, and assign directionality of movement between each detection site. For analyses that focus on one-way directional movement (e.g. straightforward CJS models), `PITcleanr` can help determine which detections fail to meet that one-way assumption and should be examined more closely, and which detections can be kept. 
+
+# Installation
+
+To install `PITcleanr` you can use Hadley Wickham's `devtools` package. To install and load the `PITcleanr` package (and all the packages it relies on) use:
+
+```{r gh-installation, eval = FALSE}
+# install.packages("devtools")
+remotes::install_github("BiomarkABS/PITcleanr", build_vignettes = TRUE)
+```
+
+It should be noted that many of the various queries in `PITcleanr` require a connection to the internet.
+
+One function in `PITcleanr` allows the user to make a plot of how the detection sites or nodes are related to each other. To use 
+this function, one will need the `ggraph` and `tidygraph` packages. `tidygraph` is included with `ggraph`, so a user only needs to install `ggraph`.
+
+```{r other-packages}
+install.packages("ggraph")
+```
+
+Once `PITcleanr` is installed, it can be loaded into R session. In this vignette, we will also use many functions from the `dplyr` package, so we load that as well:
+
+```{r load-package}
+library(PITcleanr)
+library(dplyr)
+```
+
+
+# Querying Data from PTAGIS
+
+`PITcleanr` starts with a complete capture history query from [PTAGIS](https://ptagis.org/) for a select group of tags. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query. PTAGIS is the regional database for fish marked with PIT tags by fisheries management agencies and research organizations in the Columbia River Basin. From the homepage, go to the [Advanced Reporting](https://www.ptagis.org/data/advanced-reporting) page, which can also be found under the Data tab on the homepage. To access Advanced Reporting, the user will need a free account from PTAGIS, and to be logged in. Once on the Advanced Reporting page, select "Launch" and create a custom query by selecting "Create Query Builder2 Report", and choosing the "Complete Tag History" query type.  
+
+There are several query indices on the left side of the query builder, but for the purposes of `PITcleanr` only need a few are needed. First, under "1 Select Attributes" the following fields are required to work with `PITcleanr`:
+
+* Tag
+* Mark Species
+* Mark Rear Type
+* Event Type
+* Event Site Code
+* Event Date Time
+* Antenna
+* Antenna Group Configuration
+* Event Release Date Time
+* Event Release Site Code
+
+Other fields may be included as well, but the ones listed above must be added. Any additional fields will just be included as extra columns in the query output.
+
+The only other required index is "2 Select Metrics", but that can remain as the default, "CTH Count", which provides one record for each event recorded per tag.
+
+Set up a filter for specific tags by next navigating to the "28 Tag Code - List or Text File" on the left. And then, after selecting "Tag" under "Attributes:", click on "Import file...". Simply upload the .txt file prepared earlier containing tag codes of interest. Under "Report Message Name:" near the bottom, name the query something appropriate, such as "PTAGIS_2018_19", and select "Run Report". Once the query has successfully completed, export the output as a .csv file (e.g. "PTAGIS_2018_19.csv") using the default settings:
+
+* Export: Whole report
+* CSV file format
+* Export Report Title: unchecked
+* Export filter details: unchecked
+* Remove extra column: Yes
+
+```{r, echo = F}
+ptagis_file = "../inst/extdata/TUM_Chinook_2015.csv"
+```
+
+
+# Compress Detections
+
+The complete tag history query will provide a record for every detection of each tag code in the tag list. This may include multiple detections on the same antenna, or same site within a short period of time. `PITcleanr` can help compress that data into an initial summary using the function `compress()`. At a minimum. this function requires the complete tag history file downloaded from PTAGIS. 
+
+```{r, eval = F}
+comp_obs = compress(ptagis_file)
+```
+
+The output consists of a tibble containing columns for tag_code, node, detection slot, type of event, number of detections within that slot, the first and last detection within that slot, the duration of that slot (maximum - minimum detection time) and the travel time between the previous slot and that one. Each slot is defined as all detections on a particular node before the tag is detected on a different node. Therefore, if a tag moves from node A to B and back to A, there will be three slots in the compressed data. The nodes are the user-defined groupings of detection infrastructure. By default, each site code from PTAGIS is considered a node. However, the user may construct their own groupings, perhaps by array, groups of arrays, groups of sites, or even antenna, depending on the spatial scale desired. To utilize this kind of grouping, a configuraton file must be supplied to the `compress()` function.
+
+## Configuration File
+
+The configuration file contains all the information from PTAGIS to map a particular detection record to a "node". This mapping must include the site code, the antenna code and the antenna configuration, all of which appear in the PTAGIS query defined above. `PITcleanr` provides a function to query all the metadata associated with PTAGIS sites.
+
+```{r}
+ptagis_meta = queryPtagisMeta()
+ptagis_meta
+```
+
+The default operation of `compress()` maps each site code to a node. `PITcleanr` also includes a function that maps each array at a site onto a node. The upstream arrays are labeled with the site code plus `A0` and the downstream arrays are assigned `B0`. For sites with three arrays, the middle array is grouped with the upstream array. For sites with four arrays, the upper two arrays are mapped to `A0` and the lower two arrays are mapped to `B0`. However, the user can start with the `ptagis_meta` file and construct this mapping any way they choose. This type of configuration file can be included in the `compress()` function to assign each detection to it's associated node.
+
+```{r}
+array_configuration = buildConfig()
+comp_obs = compress(ptagis_file,
+                    configuration = array_configuration)
+```
+
+For some purposes, this may be enough, and the user can take the compressed data, `comp_obs`, and summarize it as needed, or perform whatever analyses they would like. In other cases, if directionality of movement is required, `PITcleanr` provides additional functionality.
+
+# Mapping Detection Sites
+
+```{r}
+sites_sf = extractSites(ptagis_file,
+                        as_sf = T,
+                        min_date = "20150501")
+
+nhd_list = queryFlowlines(sites_sf = sites_sf,
+                          root_site_code = "TUM",
+                          min_strm_order = 2,
+                          dwnstrm_sites = F,
+                          dwn_min_stream_order_diff = 4)
+
+basin_sites = st_join(sites_sf,
+                      nhd_list$basin %>%
+                        mutate(in_basin = T),
+                      join = st_within) %>%
+  filter(in_basin) %>%
+  select(-in_basin)
+
+# plot the flowlines and the sites
+ggplot() +
+  geom_sf(data = nhd_list$flowlines,
+          aes(color = as.factor(StreamOrde),
+              size = StreamOrde)) +
+  scale_color_viridis_d(direction = -1,
+                        option = "D",
+                        end = 0.8) +
+  scale_size_continuous(range = c(0.2, 1.2),
+                        guide = 'none') +
+  geom_sf(data = nhd_list$basin,
+          fill = NA,
+          lwd = 2) +
+  geom_sf(data = basin_sites,
+          size = 4,
+          color = "black") +
+  geom_sf_label(data = basin_sites,
+                aes(label = site_code)) +
+  theme_bw() +
+  theme(axis.title = element_blank()) +
+  labs(color = "Stream\nOrder")
+
+```
+
+
+
+
+
+## Process Raw Observations
+
+`PITcleanr` contains a single function, `processCapHist_LGD` that processes the raw observations and returns several key pieces of information. First, it constructs a table of all the pathways a fish might take that are "valid" in DABOM, meaning they reflect continual upstream movement along a single branch of the stream network (using an internal function, `getValidPaths`). Next, it uses the trap database to determine the trap date of each tag. The next step is to assign each observation to an appropriate node from the DABOM model, as defined in the configuration file, using an internal function, `assignNodes()`. It requires the complete tag histories, the dataframe of valid tags and their trap date, the site configuration dataframe, and the parent-child dataframe to filter out observations from sites not contained in the DABOM version. If `truncate` is set to `TRUE` (the default), the `assignNodes()` function will filter out observations that occurred prior to the trap date, and remove consecutive observations at the same node to simplify the file. 
+
+Finally, the processing function determines whether each observation should be considered valid for `DABOM`. It does this by determining the final node a fish was observed at, and querying the valid path dataframe for all the downstream sites that may be encountered on the way to that node. It also proposes an extended path of the first set of nodes upstream of the final node, and acknowledges that observations along that extended path may also be valid (e.g. a fish swims a particular route upstream, spawns and then swims partway downstream, past a node or two. The most upstream node should be considered a valid observation, and the likely spawning location.).
+
+It returns a dataframe with a row for each observed node, showing the tag code, the site code, the model node, the minimum observed date-time, and two columns called "AutoProcStatus" and "UserProcStatus". There are additional columns as well, called:
+
+* `NodeOrder`: how many nodes would a tag cross, including the one identified in that row, to reach the current node? This is regardless of whether a tag was observed at those nodes.
+* `Direction`: based on previously observed node, is the tag moving upstream or downstream? If this is `NA`, the current node is not along a valid path containing the previous node.
+* `ValidPath`: Taken together, do all the observed nodes for a particular tag fall along a single valid path? 
+* `ModelObs`: Marked `TRUE` for all observed nodes, in sequence by observation, that initially constitute a valid path. Does not assume that the final observation is along the true valid path.
+* `SiteDescription`: The site description of the site, as provided by PTAGIS.
+
+"AutoProcStatus" is `PITcleanr`'s best attempt to determine which observations should be kept (and which should be deleted) before bringing the data into DABOM. "UserProcStatus"" is there for the user to change things. Any tag that has at least one flagged observation ("AutoProcStatus" == `FALSE`) will have all of the observations labeled as blanks in the "UserProcStatus" column. This allows the user to filter initially on the rows with `UserProcStatus == ''`, and see all the observations for each flagged tag. The user can then determine which observations should be included as "valid" by marking the UserProcStatus as `TRUE`, or which ones should be deleted by marking the UserProcStatus as `FALSE`, guided by the suggestions in the AutoProcStatus column, information contained in the other columns, and by the user's knowledge of fish behavior and the system in question. The *UserComment* field is meant to record reasons why certain observations are deleted.
+
+We imagine the workflow to involve initially filtering on all the blank UserProcStatus rows. Then, for each tag, determine whether each observation should be kept (mark *UserProcStatus* == `TRUE`) or discarded (mark *UserProcStatus* == 'FALSE`) based on suggestions from the *AutoProcStatus*, *ValidPaths* and *ModelObs* fields. For any observation destined to be discarded, a reason should be provided in the *UserComment* for re-producibility. When no blank *UserProcStatus* rows remain, save the file. It is now ready for importation into DABOM.
+
+
+```{r}
+proc_list = processCapHist_LGD(species = spp,
+                               spawnYear = yr,
+                               configuration = my_config,
+                               parent_child,
+                               trap_path = trap_path,
+                               filter_by_PBT = T,
+                               observations = observations,
+                               truncate = T,
+                               site_df = site_df,
+                               step_num = 3,
+                               save_file = T,
+                               file_name = 'ProcessedCH.xlsx')
+```
+
+# Summarise final spawning location and biological information
+
+`PITcleanr` provides a function to determine a fish's final spawning location, and combine it with lots of biological data from the trap database at Lower Granite, `summariseTagData`. It relies on a processed capture history file returned by the function `proc_list`. Internally, this relies on another function, `estimateSpawnLoc`, which determines the final spawning location of each tag, by finding the furthest upstream node a tag was observed at within its' valid observations.
+
+```{r}
+capHist_proc = proc_list$ProcCapHist %>%
+  mutate(UserProcStatus = ifelse(UserProcStatus == '',
+                                 AutoProcStatus,
+                                 UserProcStatus)) %>%
+  mutate(UserProcStatus = as.logical(UserProcStatus)) %>%
+  filter(UserProcStatus)
+
+tag_summ = summariseTagData(capHist_proc = capHist_proc,
+                            trap_data = proc_list$ValidTrapData)
+
+head(tag_summ)
+```
+
