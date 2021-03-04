@@ -29,85 +29,85 @@ root_site = "TUM"
 # make a few change
 if(root_site == "GRA") {
   configuration = org_config %>%
-    mutate(Node = ifelse(SiteID %in% c('VC2', 'VC1', 'LTR', 'MTR', 'UTR'),
-                         SiteID,
-                         Node),
-           Node = ifelse(SiteID == 'SC2',
+    mutate(node = ifelse(site_code %in% c('VC2', 'VC1', 'LTR', 'MTR', 'UTR'),
+                         site_code,
+                         node),
+           node = ifelse(site_code == 'SC2',
                          'SC2B0',
-                         Node),
-           Node = ifelse(SiteID %in% c('CROTRP',
+                         node),
+           node = ifelse(site_code %in% c('CROTRP',
                                        'CRT',
                                        'REDTRP',
                                        'REDR',
                                        'RRT'),
                          'SC2A0',
-                         Node),
-           Node = ifelse(Node == 'ACB',
+                         node),
+           node = ifelse(node == 'ACB',
                          'ACBB0',
-                         Node),
-           Node = ifelse(Node == 'CCA',
+                         node),
+           node = ifelse(node == 'CCA',
                          'CCAB0',
-                         Node),
-           Node = ifelse(SiteID == 'AFC',
-                         ifelse(grepl('MAINSTEM', AntennaGroup),
+                         node),
+           node = ifelse(site_code == 'AFC',
+                         ifelse(grepl('MAINSTEM', antenna_group),
                                 'AFCB0',
                                 'AFCA0'),
-                         Node),
-           Node = ifelse(SiteID == 'HBC',
+                         node),
+           node = ifelse(site_code == 'HBC',
                          'HYCA0',
-                         Node),
-           Node = ifelse(SiteID %in% c('TUCH', 'TFH'),
+                         node),
+           node = ifelse(site_code %in% c('TUCH', 'TFH'),
                          'TUCH',
-                         Node),
-           Node = ifelse(SiteID == 'MCCA',
+                         node),
+           node = ifelse(site_code == 'MCCA',
                          'STR',
-                         Node),
-           Node = ifelse(SiteID == 'CARMEC',
+                         node),
+           node = ifelse(site_code == 'CARMEC',
                          'CRCA0',
-                         Node),
-           Node = ifelse(SiteID == 'BIG2C',
+                         node),
+           node = ifelse(site_code == 'BIG2C',
                          'TAYA0',
-                         Node),
-           Node = ifelse(SiteID == 'WIMPYC',
+                         node),
+           node = ifelse(site_code == 'WIMPYC',
                          'WPCA0',
-                         Node),
-           Node = ifelse(SiteID == 'IML' & ConfigID == 130 & AntennaID == '09',
+                         node),
+           node = ifelse(site_code == 'IML' & config_id == 130 & antenna_id == '09',
                          'IMLA0',
-                         Node),
-           Node = str_replace(Node, '^BTC', 'BTL'),
-           Node = ifelse(SiteID %in% c('YANKFK', 'CEY'),
+                         node),
+           node = str_replace(node, '^BTC', 'BTL'),
+           node = ifelse(site_code %in% c('YANKFK', 'CEY'),
                          'YFKA0',
-                         Node),
-           Node = ifelse(SiteID == 'SAWT',
+                         node),
+           node = ifelse(site_code == 'SAWT',
                          'STL',
-                         Node),
-           Node = ifelse(SiteID == 'LOOH',
+                         node),
+           node = ifelse(site_code == 'LOOH',
                          'LOOKGC',
-                         Node),
-           Node = ifelse(SiteID == 'RPDTRP',
+                         node),
+           node = ifelse(site_code == 'RPDTRP',
                          'RAPH',
-                         Node),
-           Node = ifelse(SiteID == 'CHARLC',
+                         node),
+           node = ifelse(site_code == 'CHARLC',
                          'CCAB0',
-                         Node),
-           Node = ifelse(Node == 'KEN',
+                         node),
+           node = ifelse(node == 'KEN',
                          'KENB0',
-                         Node),
-           Node = ifelse(Node == 'HYC',
+                         node),
+           node = ifelse(node == 'HYC',
                          'HYCB0',
-                         Node),
-           Node = ifelse(Node == 'YFK',
+                         node),
+           node = ifelse(node == 'YFK',
                          'YFKB0',
-                         Node),
-           Node = ifelse(Node == 'LLR',
+                         node),
+           node = ifelse(node == 'LLR',
                          'LLRB0',
-                         Node),
-           Node = ifelse(Node == 'LRW',
+                         node),
+           node = ifelse(node == 'LRW',
                          'LRWB0',
-                         Node),
-           Node = ifelse(SiteID == '18M',
-                         str_replace(Node, '18M', 'HEC'),
-                         Node)) %>%
+                         node),
+           node = ifelse(site_code == '18M',
+                         str_replace(node, '18M', 'HEC'),
+                         node)) %>%
     distinct()
 }
 
@@ -118,235 +118,234 @@ if(root_site == "GRA") {
 if(root_site == "PRA") {
   configuration = org_config %>%
     # manually add site for Colockum Creek (not in PTAGIS)
-    bind_rows(tibble(SiteID = 'CLK',
-                     ConfigID = 100,
-                     AntennaID = 'A1',
-                     Node = 'CLK',
-                     ValidNode = T,
+    bind_rows(tibble(site_code = 'CLK',
+                     config_id = 100,
+                     antenna_id = 'A1',
+                     node = 'CLK',
                      # making these up
-                     StartDate = as.POSIXct(lubridate::ymd('20100101')),
-                     SiteType = 'INT',
-                     SiteName = 'Colockum Creek',
-                     AntennaGroup = 'Single Colockum Ck',
-                     SiteDescription = 'Temporary single antenna.',
-                     SiteTypeName = 'Instream Remote Detection System',
-                     RKM = '740.001',
-                     RKMTotal = 741,
+                     start_date = as.POSIXct(lubridate::ymd('20100101')),
+                     site_type = 'INT',
+                     site_name = 'Colockum Creek',
+                     antenna_group = 'Single Colockum Ck',
+                     site_description = 'Temporary single antenna.',
+                     site_type_name = 'Instream Remote Detection System',
+                     rkm = '740.001',
+                     rkm_total = 741,
                      # this puts CLK upstream of RIA
-                     Latitude = 47.3707357269787,
-                     Longitude = -120.25617371760839)) %>%
+                     latitude = 47.3707357269787,
+                     longitude = -120.25617371760839)) %>%
                      # this puts CLK on Colockum Creek, but between PRA and RIA
-                     # Latitude = 47.29722788926544,
-                     # Longitude = -120.10577913008702)) %>%
-    filter(!(SiteID == 'WAN' & SiteType == 'MRR'),
-           !(SiteID == 'TMF' & SiteType == 'MRR'),
-           !(SiteID == 'PRO' & SiteType == 'MRR')) %>%
-    mutate(Node = if_else(SiteID %in% c('RIA', 'RRF', 'WEA', 'PRV'),
-                          SiteID,
-                          Node)) %>%
-    mutate(Node = if_else(SiteID == 'PRDLD1',
+                     # latitude = 47.29722788926544,
+                     # longitude = -120.10577913008702)) %>%
+    filter(!(site_code == 'WAN' & site_type == 'MRR'),
+           !(site_code == 'TMF' & site_type == 'MRR'),
+           !(site_code == 'PRO' & site_type == 'MRR')) %>%
+    mutate(node = if_else(site_code %in% c('RIA', 'RRF', 'WEA', 'PRV'),
+                          site_code,
+                          node)) %>%
+    mutate(node = if_else(site_code == 'PRDLD1',
                           'PRA',
-                          Node)) %>%
-    mutate(Node = if_else(Node == "LWE",
+                          node)) %>%
+    mutate(node = if_else(node == "LWE",
                           'LWEB0',
-                          Node),
-           Node = if_else(SiteID %in% c('TUF', 'TUMFBY', 'TUM'),
+                          node),
+           node = if_else(site_code %in% c('TUF', 'TUMFBY', 'TUM'),
                           'TUM',
-                          Node),
-           Node = if_else(SiteID == 'LNF' & AntennaID %in% c('01', '02'),
+                          node),
+           node = if_else(site_code == 'LNF' & antenna_id %in% c('01', '02'),
                           'LNFA0',
-                          Node),
-           Node = if_else(SiteID == 'LNF' & AntennaID %in% c('03', '04'),
+                          node),
+           node = if_else(site_code == 'LNF' & antenna_id %in% c('03', '04'),
                           'LNFB0',
-                          Node),
-           Node = if_else(SiteID == 'LEAV',
+                          node),
+           node = if_else(site_code == 'LEAV',
                           'LNFA0',
-                          Node),
-           Node = if_else(SiteID == 'ICL' & ConfigID == 100,
+                          node),
+           node = if_else(site_code == 'ICL' & config_id == 100,
                           'ICLB0',
-                          Node),
-           Node = if_else(SiteID == 'CHIWAC',
+                          node),
+           node = if_else(site_code == 'CHIWAC',
                           'CHWA0',
-                          Node),
-           Node = if_else(SiteID == 'CHIWAR',
+                          node),
+           node = if_else(site_code == 'CHIWAR',
                           'CHLA0',
-                          Node),
-           Node = if_else(SiteID == 'CHIKAC',
+                          node),
+           node = if_else(site_code == 'CHIKAC',
                           'CHUA0',
-                          Node),
-           Node = if_else(SiteID == 'WHITER',
+                          node),
+           node = if_else(site_code == 'WHITER',
                           'WTLA0',
-                          Node),
-           Node = if_else(SiteID == 'LWENAT',
+                          node),
+           node = if_else(site_code == 'LWENAT',
                           'LWNA0',
-                          Node),
-           Node = if_else(SiteID == 'NASONC',
+                          node),
+           node = if_else(site_code == 'NASONC',
                           'NALA0',
-                          Node),
+                          node),
            # any fish seen at Dryden dam should also be seen at LWE
-           Node = if_else(SiteID == 'DRY',
+           node = if_else(site_code == 'DRY',
                           'LWEA0',
-                          Node),
+                          node),
            # any fish seen at Chiwawa acclimation pond gets moved to CHL
-           Node = if_else(SiteID == 'CHP',
+           node = if_else(site_code == 'CHP',
                           'CHLA0',
-                          Node),
-           Node = if_else(SiteID == 'EBO',
+                          node),
+           node = if_else(site_code == 'EBO',
                           'RRF',
-                          Node),
-           Node = if_else(SiteID == 'RRJ',
+                          node),
+           node = if_else(site_code == 'RRJ',
                           'RRF',
-                          Node),
-           Node = if_else(SiteID == 'EHL' & ConfigID == 100 & AntennaID == '02',
+                          node),
+           node = if_else(site_code == 'EHL' & config_id == 100 & antenna_id == '02',
                           'EHLB0',
-                          Node),
-           Node = if_else(SiteID == 'EHL' & ConfigID == 100 & AntennaID == '01',
+                          node),
+           node = if_else(site_code == 'EHL' & config_id == 100 & antenna_id == '01',
                           'EHLA0',
-                          Node),
-           Node = if_else(SiteID == 'EHL' & ConfigID == 110 & AntennaID == '03',
+                          node),
+           node = if_else(site_code == 'EHL' & config_id == 110 & antenna_id == '03',
                           'EHLB0',
-                          Node),
-           Node = if_else(SiteID == 'EHL' & ConfigID == 110 & AntennaID %in% c('01', '02'),
+                          node),
+           node = if_else(site_code == 'EHL' & config_id == 110 & antenna_id %in% c('01', '02'),
                           'EHLA0',
-                          Node),
-           Node = if_else(SiteID == "WEH" & AntennaID == "A2",
+                          node),
+           node = if_else(site_code == "WEH" & antenna_id == "A2",
                           "WEHB0",
-                          Node),
-           Node = if_else(SiteID == "WEH" & AntennaID != "A2",
+                          node),
+           node = if_else(site_code == "WEH" & antenna_id != "A2",
                           "WEHA0",
-                          Node),
-           Node = if_else(Node == "LMR",
+                          node),
+           node = if_else(node == "LMR",
                           'LMRB0',
-                          Node),
-           Node = if_else(SiteID == 'LBC' & ConfigID == 100,
+                          node),
+           node = if_else(site_code == 'LBC' & config_id == 100,
                           'LBCB0',
-                          Node),
-           Node = if_else(SiteID == 'MRC',
+                          node),
+           node = if_else(site_code == 'MRC',
                           'MRCB0',
-                          Node),
-           Node = if_else(SiteID %in% c('SSC', '18N', 'MHB', 'M3R', 'MWF'),
+                          node),
+           node = if_else(site_code %in% c('SSC', '18N', 'MHB', 'M3R', 'MWF'),
                           'MRCA0',
-                          Node),
-           Node = if_else(SiteID == 'MSH' & AntennaID %in% c('02', '03'),
+                          node),
+           node = if_else(site_code == 'MSH' & antenna_id %in% c('02', '03'),
                           'MSHB0',
-                          Node),
-           Node = if_else(SiteID == 'MSH' & AntennaID %in% c('01'),
+                          node),
+           node = if_else(site_code == 'MSH' & antenna_id %in% c('01'),
                           'MSHA0',
-                          Node),
-           Node = if_else(SiteID == 'MSH' & AntennaID == '00',
+                          node),
+           node = if_else(site_code == 'MSH' & antenna_id == '00',
                           'METHB0',
-                          Node),
-           Node = if_else(SiteID == 'METH',
+                          node),
+           node = if_else(site_code == 'METH',
                           'METHA0',
-                          Node),
-           Node = if_else(SiteID == 'LLC' & ConfigID == 100,
-                          if_else(AntennaID == 'D3',
+                          node),
+           node = if_else(site_code == 'LLC' & config_id == 100,
+                          if_else(antenna_id == 'D3',
                                   'LLCB0',
                                   'LLCA0'),
-                          Node),
-           Node = if_else(Node == "SCP",
+                          node),
+           node = if_else(node == "SCP",
                           'SCPB0',
-                          Node),
-           # Node = if_else(Node == "OMK",
+                          node),
+           # node = if_else(node == "OMK",
            #               'OMKB0',
-           #               Node),
-           # Node = if_else(SiteID %in% c('OBF', 'OMF'),
+           #               node),
+           # node = if_else(site_code %in% c('OBF', 'OMF'),
            #               'OMKA0',
-           #               Node),
-           Node = if_else(SiteID == "OMF",
+           #               node),
+           node = if_else(site_code == "OMF",
                           "OBF",
-                          Node),
-           Node = if_else(SiteID == 'ZSL',
-                          if_else(grepl('Weir 3', AntennaGroup, ignore.case = T),
+                          node),
+           node = if_else(site_code == 'ZSL',
+                          if_else(grepl('Weir 3', antenna_group, ignore.case = T),
                                   'ZSLB0',
                                   'ZSLA0'),
-                          Node),
-           Node = if_else(SiteID == 'SA1' & ConfigID == 110,
+                          node),
+           node = if_else(site_code == 'SA1' & config_id == 110,
                           'SA1B0',
-                          Node),
-           Node = if_else(SiteID == 'OKC' & ConfigID == 100,
+                          node),
+           node = if_else(site_code == 'OKC' & config_id == 100,
                           'OKCB0',
-                          Node),
-           Node = if_else(SiteID == 'OMK' & ConfigID == 100,
+                          node),
+           node = if_else(site_code == 'OMK' & config_id == 100,
                           'OMKB0',
-                          Node),
+                          node),
            # combine some sites above OKV into the upstream array at OKV
-           Node = if_else(SiteID %in% c("OKS", "OKW"),
+           node = if_else(site_code %in% c("OKS", "OKW"),
                           "OKVA0",
-                          Node),
-           Node = if_else(SiteID == 'RCT' & ConfigID == 100,
+                          node),
+           node = if_else(site_code == 'RCT' & config_id == 100,
                           'RCTB0',
-                          Node),
-           Node = if_else(SiteID == 'BPC' & ConfigID == 100,
-                          if_else(AntennaID %in% c('C3'),
+                          node),
+           node = if_else(site_code == 'BPC' & config_id == 100,
+                          if_else(antenna_id %in% c('C3'),
                                   'BPCB0',
                                   'BPCA0'),
-                          Node),
-           Node = if_else(SiteID == 'PRH' & AntennaID %in% c('F1', 'F2', 'F3', 'F4'),
+                          node),
+           node = if_else(site_code == 'PRH' & antenna_id %in% c('F1', 'F2', 'F3', 'F4'),
                           'PRHB0',
-                          Node),
-           Node = if_else((SiteID == 'PRH' & AntennaID %in% c('F5', 'F6', '01', '02')) | SiteID %in% c('DDM', 'DM', 'UM', 'UUM', 'UP'),
+                          node),
+           node = if_else((site_code == 'PRH' & antenna_id %in% c('F5', 'F6', '01', '02')) | site_code %in% c('DDM', 'DM', 'UM', 'UUM', 'UP'),
                           'PRHA0',
-                          Node),
-           Node = if_else(SiteID == 'PRO' & SiteType == 'INT',
+                          node),
+           node = if_else(site_code == 'PRO' & site_type == 'INT',
                           'PROB0',
-                          Node),
+                          node),
            # grab all sites upstream of Prosser dam, and assign them to PROA0
-           # Node = if_else(SiteID %in% c('CHANDL', 'SAT', 'TOP', 'SM1', 'TP2', 'SUN', 'AH1', 'LNR', 'TTN', 'WNS', 'ROZ', 'TEAN', 'LMC', 'UMC', 'TAN', 'SWK', "LMT", 'UMT') | SiteID == 'PRO' & SiteType == 'MRR',
+           # node = if_else(site_code %in% c('CHANDL', 'SAT', 'TOP', 'SM1', 'TP2', 'SUN', 'AH1', 'LNR', 'TTN', 'WNS', 'ROZ', 'TEAN', 'LMC', 'UMC', 'TAN', 'SWK', "LMT", 'UMT') | site_code == 'PRO' & site_type == 'MRR',
            #                'PROA0',
-           #                Node),
-           Node = if_else(SiteID != "PRO" &
-                            as.integer(stringr::str_split(RKM, '\\.', simplify = T)[,1]) == 539 &
-                            as.integer(stringr::str_split(RKM, '\\.', simplify = T)[,2]) > 76,
+           #                node),
+           node = if_else(site_code != "PRO" &
+                            as.integer(stringr::str_split(rkm, '\\.', simplify = T)[,1]) == 539 &
+                            as.integer(stringr::str_split(rkm, '\\.', simplify = T)[,2]) > 76,
                           "PROA0",
-                          Node),
-           Node = if_else(SiteID == 'ICH',
+                          node),
+           node = if_else(site_code == 'ICH',
                           'ICHB0',
-                          Node),
-           Node = if_else(grepl('522\\.', RKM) & RKMTotal > 538,
+                          node),
+           node = if_else(grepl('522\\.', rkm) & rkm_total > 538,
                           'ICHA0',
-                          Node),
-           Node = if_else(SiteID == 'MDR',
+                          node),
+           node = if_else(site_code == 'MDR',
                           'MDRB0',
-                          Node),
-           Node = if_else(SiteID %in% c('LWD', 'BGM', 'NBA', 'MCD'),
+                          node),
+           node = if_else(site_code %in% c('LWD', 'BGM', 'NBA', 'MCD'),
                           'MDRA0',
-                          Node),
-           Node = if_else(SiteID == 'HST',
+                          node),
+           node = if_else(site_code == 'HST',
                           'HSTB0',
-                          Node),
-           Node = if_else(SiteID %in% c('BBT', 'COP', 'PAT'),
+                          node),
+           node = if_else(site_code %in% c('BBT', 'COP', 'PAT'),
                           'HSTA0',
-                          Node),
-           Node = if_else(SiteID == 'JD1',
+                          node),
+           node = if_else(site_code == 'JD1',
                           'JD1B0',
-                          Node),
-           Node = if_else(SiteID %in% c('30M', 'BR0', 'JDM', 'SJ1', 'SJ2', 'MJ1'),
+                          node),
+           node = if_else(site_code %in% c('30M', 'BR0', 'JDM', 'SJ1', 'SJ2', 'MJ1'),
                           'JD1A0',
-                          Node),
-           Node = if_else(SiteID != 'JD1' & as.integer(stringr::str_split(RKM, '\\.', simplify = T)[,1]) < 351,
+                          node),
+           node = if_else(site_code != 'JD1' & as.integer(stringr::str_split(rkm, '\\.', simplify = T)[,1]) < 351,
                           'JDA',
-                          Node)) %>%
+                          node)) %>%
     distinct() %>%
-    # correct a couple RKM values
-    mutate(RKM = if_else(SiteID == 'SA1',
+    # correct a couple rkm values
+    mutate(rkm = if_else(site_code == 'SA1',
                          '858.041.003',
-                         RKM),
-           RKMTotal = if_else(SiteID == 'SA1',
+                         rkm),
+           rkm_total = if_else(site_code == 'SA1',
                               902,
-                              RKMTotal)) %>%
-    mutate(RKM = if_else(SiteID == 'TON',
+                              rkm_total)) %>%
+    mutate(rkm = if_else(site_code == 'TON',
                          '858.133.001',
-                         RKM),
-           RKMTotal = if_else(SiteID == 'TON',
+                         rkm),
+           rkm_total = if_else(site_code == 'TON',
                               992,
-                              RKMTotal)) %>%
-    mutate(RKM = if_else(grepl('WVT', Node),
+                              rkm_total)) %>%
+    mutate(rkm = if_else(grepl('WVT', node),
                          '829.001',
-                         RKM),
-           RKMTotal = if_else(grepl('WVT', Node),
+                         rkm),
+           rkm_total = if_else(grepl('WVT', node),
                               830,
-                              RKMTotal))
+                              rkm_total))
 }
 
 #-----------------------------------------------------------------
@@ -355,41 +354,41 @@ if(root_site == "PRA") {
 # customize some nodes based on DABOM framework
 if(root_site == 'TUM') {
   configuration = org_config %>%
-    mutate(Node = ifelse(SiteID %in% c('LNF', 'LEAV'),
+    mutate(node = ifelse(site_code %in% c('LNF', 'LEAV'),
                          'LNF',
-                         Node),
-           Node = ifelse(SiteID %in% c('TUF', 'TUMFBY', 'TUM'),
+                         node),
+           node = ifelse(site_code %in% c('TUF', 'TUMFBY', 'TUM'),
                          'TUM',
-                         Node),
-           Node = ifelse(SiteID == 'CHIWAC',
+                         node),
+           node = ifelse(site_code == 'CHIWAC',
                          'CHWA0',
-                         Node),
-           Node = ifelse(SiteID == 'CHIWAR',
+                         node),
+           node = ifelse(site_code == 'CHIWAR',
                          'CHLA0',
-                         Node),
-           Node = ifelse(SiteID == 'CHIW',
+                         node),
+           node = ifelse(site_code == 'CHIW',
                          'CHLA0',
-                         Node),
-           Node = ifelse(SiteID == 'CHIKAC',
+                         node),
+           node = ifelse(site_code == 'CHIKAC',
                          'CHUA0',
-                         Node),
-           Node = ifelse(SiteID == 'WHITER',
+                         node),
+           node = ifelse(site_code == 'WHITER',
                          'WTLA0',
-                         Node),
-           Node = ifelse(SiteID == 'LWENAT',
+                         node),
+           node = ifelse(site_code == 'LWENAT',
                          'LWNA0',
-                         Node),
-           Node = ifelse(Node == 'ICL',
+                         node),
+           node = ifelse(node == 'ICL',
                          'ICLB0',
-                         Node),
-           Node = ifelse(SiteID == 'NASONC',
+                         node),
+           node = ifelse(site_code == 'NASONC',
                          'NALA0',
-                         Node),
-           Node = if_else(SiteID %in% c("LWE",
+                         node),
+           node = if_else(site_code %in% c("LWE",
                                         "RRF",
                                         "WEA"),
                           "LWE",
-                          Node)) %>%
+                          node)) %>%
     distinct()
 }
 
@@ -398,17 +397,17 @@ if(root_site == 'TUM') {
 
 if(root_site == "GRA") {
   ptagis_file = 'inst/extdata/LGR_Chinook_2014.csv'
-  sites_df = writeLGRNodeNetwork()
+  sites_df = writeLGRnodeNetwork()
 } else if(root_site == "PRA") {
   ptagis_file = 'inst/extdata/UC_Sthd_2015.csv'
-  sites_df = writePRDNodeNetwork() %>%
-    mutate(across(c(SiteID, Step3),
+  sites_df = writePRDnodeNetwork() %>%
+    mutate(across(c(site_code, Step3),
                   recode,
                   "BelowJD1" = "JDA"),
            path = str_replace(path, "BelowJD1", "JDA"))
 } else if(root_site == 'TUM') {
   ptagis_file = 'inst/extdata/TUM_Chinook_2015.csv'
-  sites_df = writeTUMNodeNetwork_noUWE()
+  sites_df = writeTUMnodeNetwork_noUWE()
 }
 
 
@@ -438,11 +437,11 @@ comp_obs = compress(ptagis_file = ptagis_file,
 #
 # obs %>%
 #   left_join(configuration %>%
-#               select(SiteID, node = Node) %>%
+#               select(site_code, node = node) %>%
 #               distinct() %>%
 #               group_by(node) %>%
-#               summarise(n_sites = n_distinct(SiteID),
-#                         site_list = list(unique(SiteID)),
+#               summarise(n_sites = n_distinct(site_code),
+#                         site_list = list(unique(site_code)),
 #                         .groups = "drop")) %>%
 #   filter(n_sites > 1,
 #          node != root_site)
@@ -499,18 +498,18 @@ obs_site_codes = obs %>%
   select(node) %>%
   distinct() %>%
   left_join(configuration %>%
-              select(node = Node,
-                     site_code = SiteID) %>%
+              select(node = node,
+                     site_code = site_code) %>%
               distinct())
 
 # add a couple other sites (based on sites_df)
 obs_site_codes %<>%
   full_join(configuration %>%
-              filter(EndDate >= min(obs$start_date) |
-                       is.na(EndDate)) %>%
-              filter(SiteID %in% sites_df$SiteID) %>%
-              select(node = Node,
-                     site_code = SiteID) %>%
+              filter(end_date >= min(obs$start_date) |
+                       is.na(end_date)) %>%
+              filter(site_code %in% sites_df$site_code) %>%
+              select(node = node,
+                     site_code = site_code) %>%
               distinct())
 
 #-----------------------------------------------------------------
@@ -526,20 +525,19 @@ sites_sf %<>%
               anti_join(sites_sf) %>%
               select(site_code) %>%
               distinct() %>%
-              left_join(configuration %>%
-                          rename(site_code = SiteID)) %>%
+              left_join(configuration) %>%
               group_by(site_code) %>%
-              filter(ConfigID == max(ConfigID)) %>%
+              filter(config_id == max(config_id)) %>%
               ungroup() %>%
               select(site_code,
-                     site_name = SiteName,
-                     site_type = SiteTypeName,
-                     type = SiteType,
-                     rkm = RKM,
-                     site_description = SiteDescription,
-                     Latitude, Longitude) %>%
+                     site_name,
+                     site_type = site_type_name,
+                     type = site_type,
+                     rkm,
+                     site_description = site_description,
+                     latitude, longitude) %>%
               distinct() %>%
-              filter(!is.na(Latitude)) %>%
+              filter(!is.na(latitude)) %>%
               st_as_sf(coords = c("Longitude",
                                   "Latitude"),
                        crs = 4326) %>%
@@ -585,22 +583,22 @@ single_site %>%
 
 single_site %>%
   left_join(sites_df %>%
-              select(site_code = SiteID,
+              select(site_code = site_code,
                      path)) %>%
   filter(!is.na(path))
   # xtabs(~ is.na(path), .)
 
 single_site %<>%
   anti_join(sites_df %>%
-              select(site_code = SiteID))
+              select(site_code = site_code))
 
 
 # get some info about those sites
 configuration %>%
-  select(site_code = SiteID,
-         SiteType,
-         SiteName,
-         SiteDescription) %>%
+  select(site_code,
+         site_type,
+         site_name,
+         site_description) %>%
   inner_join(single_site) %>%
   distinct() %>%
   left_join(obs %>%
@@ -856,13 +854,13 @@ ques_locs = sites_df %>%
   # filter(grepl("Entiat", path)) %>%
   # filter(grepl('Methow', path)) %>%
   filter(grepl('Wenatchee', path)) %>%
-  pull(SiteID)
+  pull(site_code)
 
 parent_child %>%
   filter(parent %in% ques_locs |
            child %in% ques_locs) %>%
   left_join(sites_df %>%
-              select(child = SiteID,
+              select(child = site_code,
                      path))
 
 parent_child %>%
@@ -870,7 +868,7 @@ parent_child %>%
            child %in% ques_locs) %>%
   buildPaths() %>%
   left_join(sites_df %>%
-              select(end_loc = SiteID,
+              select(end_loc = site_code,
                      org_path = path))
 
 # no child should appear more than once (i.e. each child only has one parent)
@@ -886,7 +884,7 @@ parent_child %>%
 # any sites in the parent/child table that aren't in original sites_df?
 parent_child %>%
   anti_join(sites_df %>%
-              select(child = SiteID))
+              select(child = site_code))
 
 parent_child %>%
   # filter(parent == "PENAWC")
@@ -897,22 +895,22 @@ parent_child %>%
 buildPaths(parent_child)
 
 # add nodes to the parent child table
-parent_child_nodes = addParentChildNodes(parent_child,
+parent_child_nodes = addParentChildnodes(parent_child,
                                          configuration)
 
 
 sites_df %>%
-  select(SiteID,
+  select(site_code,
          path) %>%
   left_join(configuration %>%
-              select(SiteID,
-                     Node) %>%
+              select(site_code,
+                     node) %>%
               distinct()) %>%
-  rename(child = SiteID) %>%
+  rename(child = site_code) %>%
   anti_join(parent_child) %>%
   left_join(parent_child_nodes %>%
               mutate(in_pc_tab = T) %>%
-              select(Node = child,
+              select(node = child,
                      in_pc_tab))
 
 
@@ -921,20 +919,20 @@ if(root_site == "GRA") {
   parent_child_df = createParentChildDf(sites_df,
                                         configuration,
                                         startDate = "20140301") %>%
-    rename(parent = ParentNode,
-           child = ChildNode)
+    rename(parent = Parentnode,
+           child = Childnode)
 } else if(root_site == "PRA") {
   parent_child_df = createParentChildDf(sites_df,
                                         configuration,
                                         startDate = "20140701") %>%
-    rename(parent = ParentNode,
-           child = ChildNode)
+    rename(parent = Parentnode,
+           child = Childnode)
 } else if(root_site == 'TUM') {
   parent_child_df = createParentChildDf(sites_df,
                                         configuration,
                                         startDate = "20150701") %>%
-    rename(parent = ParentNode,
-           child = ChildNode)
+    rename(parent = Parentnode,
+           child = Childnode)
 }
 
 anti_join(parent_child_nodes,
@@ -954,7 +952,7 @@ anti_join(parent_child_nodes,
 
 #--------------------------------------------------------
 # build a node order, with paths to each node
-node_order = buildNodeOrder(parent_child_nodes)
+node_order = buildnodeOrder(parent_child_nodes)
 
 # which observation locations are not in node_order?
 obs %>%
@@ -1101,8 +1099,8 @@ observations %<>%
 proc_list = processCapHist_TUM(start_date = "20150501",
                                configuration = configuration,
                                parent_child = parent_child_df %>%
-                                 rename(ParentNode = parent,
-                                        ChildNode = child),
+                                 rename(Parentnode = parent,
+                                        Childnode = child),
                                observations = observations,
                                last_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0930"),
                                truncate = T,
@@ -1114,8 +1112,8 @@ identical(sort(unique(proc_list$ProcCapHist$TagID)),
 proc_list$ProcCapHist %>%
   select(tag_code = TagID,
          TrapDate,
-         node = Node,
-         SiteID,
+         node = node,
+         site_code,
          min_det = ObsDate,
          max_det = lastObsDate,
          AutoProcStatus) %>%
@@ -1143,8 +1141,8 @@ proc_list$ProcCapHist %>%
   filter(tag_code %in% union(sort(unique(proc_list$ProcCapHist$TagID)),
                              sort(unique(proc_obs$tag_code)))) %>%
   # filter(is.na(slot)) %>%
-  # janitor::tabyl(SiteID)
-  # filter(is.na(SiteID)) %>%
+  # janitor::tabyl(site_code)
+  # filter(is.na(site_code)) %>%
   # select(tag_code) %>%
   # distinct() %>%
   # slice(3) %>%
