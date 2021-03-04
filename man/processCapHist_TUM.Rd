@@ -12,6 +12,7 @@ processCapHist_TUM(
   observations = NULL,
   last_obs_date = NULL,
   truncate = T,
+  site_df = NULL,
   save_file = F,
   file_name = NULL
 )
