@@ -4,7 +4,14 @@
 \alias{extractSites}
 \title{Extract Sites}
 \usage{
-extractSites(ptagis_file = NULL, as_sf = F, crs = 5070)
+extractSites(
+  ptagis_file = NULL,
+  as_sf = F,
+  crs = 5070,
+  min_date = NULL,
+  max_date = NULL,
+  configuration = NULL
+)
 }
 \arguments{
 \item{ptagis_file}{is the path to the PTAGIS observation file downloaded as a csv from PTAGIS.
@@ -18,6 +25,17 @@ Event Release Site Code, and Event Release Date Time.}
 
 \item{crs}{if `as_sf = TRUE`, what CRS should the resulting `sf` object be
 transformed to? Default is 5070.}
+
+\item{min_date}{character in the format `YYYYMMDD` that describes a minimum detection date.
+If supplied, sites with detections prior to this date will be excluded from the results.}
+
+\item{max_date}{character in the format `YYYYMMDD` that describes a maximum detection date.
+If supplied, sites with detections after this date will be excluded from the results.}
+
+\item{configuration}{is a data frame which assigns node names to unique SiteID, AntennaID, and
+site configuration ID combinations. One example can be built with the function `buildConfig`. If
+no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
+the column name should be `node`.}
 }
 \value{
 a tibble

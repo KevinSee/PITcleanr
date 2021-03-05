@@ -9,22 +9,23 @@
 \usage{
 editParentChild(
   parent_child = NULL,
-  parent_locs = NULL,
-  child_locs = NULL,
-  new_parent_locs = NULL,
+  fix_list = NULL,
   switch_parent_child = NULL
 )
 }
 \arguments{
 \item{parent_child}{dataframe produced by `buildParentChild()`.}
 
-\item{parent_locs}{vector of parent locations to be changed, which must match length of `child_locs` and `new_parent_locs`.}
+\item{fix_list}{a list of vectors to be changed. Each vector must be length 3,
+where the first two elements contain the parent and child locations to be edited,
+and the third element is the new parent location.}
 
-\item{child_locs}{vector of child locations whose parents need to change, which must match length of `parent_locs` and `new_parent_locs`.}
-
-\item{new_parent_locs}{vector of revised parent locations, which must match length of `parent_locs` and `child_locs`.}
-
-\item{switch_parent_child}{list of vectors to switch parent/child designations, where each vector consists of a current parent location and a child location, in that order. This is primarily intended to help with sites downstream of a tagging/marking location. Adding a parent/child pair here will not fix parent/child relationships with upstream or downstream locations of the parent/child pair (use the `parent_locs`, `child_locs` and `new_parent_locs` for that).}
+\item{switch_parent_child}{list of vectors to switch parent/child designations, where
+each vector consists of a current parent location and a child location, in that order.
+This is primarily intended to help with sites downstream of a tagging/marking location.
+Adding a parent/child pair here will not fix parent/child relationships with upstream or
+downstream locations of the parent/child pair (use the `parent_locs`, `child_locs` and
+`new_parent_locs` for that).}
 }
 \description{
 Allow the user to easily make manual changes to a parent child table.

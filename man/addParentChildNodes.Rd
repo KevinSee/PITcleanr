@@ -4,12 +4,12 @@
 \alias{addParentChildNodes}
 \title{Add Nodes to Parent-Child Table}
 \usage{
-addParentChildNodes(parent_child = NULL, my_config = NULL)
+addParentChildNodes(parent_child = NULL, configuration = NULL)
 }
 \arguments{
 \item{parent_child}{dataframe produced by `buildParentChild()`.}
 
-\item{my_config}{a my_configuration dataframe, such as one built by `buildmy_config()`.}
+\item{configuration}{a configuration dataframe, such as one built by `buildmy_config()`.}
 }
 \description{
 When some sites in the parent-child table have multiple nodes, this function
