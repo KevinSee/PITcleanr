@@ -4,7 +4,7 @@
 \alias{buildNodeOrder}
 \title{Build Node Order}
 \usage{
-buildNodeOrder(parent_child = NULL)
+buildNodeOrder(parent_child = NULL, direction = "u")
 }
 \arguments{
 \item{parent_child}{data frame with at least `parent` and `child` columns.

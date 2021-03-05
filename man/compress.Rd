@@ -6,7 +6,7 @@
 \usage{
 compress(
   ptagis_file = NULL,
-  max_minutes = 60,
+  max_minutes = NA,
   configuration = NULL,
   units = c("mins", "auto", "secs", "hours", "days", "weeks")
 )
@@ -19,7 +19,8 @@ Event Site Code, Event Date Time, Antenna, Antenna Group Configuration,
 Event Release Site Code, and Event Release Date Time.}
 
 \item{max_minutes}{maximum number of minutes between detections of a tag before it's considered a
-different "slot" of detections. Default is 60.}
+different "slot" of detections. Default is `NA`, which means a new slot is only defined by
+detections on a new node.}
 
 \item{configuration}{is a data frame which assigns node names to unique SiteID, AntennaID, and
 site configuration ID combinations. One example can be built with the function `buildConfig`. If
