@@ -7,7 +7,7 @@
 #' @author Kevin See
 #'
 #' @param parent_child dataframe produced by `buildParentChild()`.
-#' @param my_config a my_configuration dataframe, such as one built by `buildmy_config()`.
+#' @param configuration a configuration dataframe, such as one built by `buildmy_config()`.
 #'
 #' @import dplyr tidyr
 #' @importFrom magrittr %<>%
@@ -15,14 +15,14 @@
 #' @examples addParentChildNodes()
 
 addParentChildNodes = function(parent_child = NULL,
-                               my_config = NULL) {
+                               configuration = NULL) {
   stopifnot(!is.null(parent_child),
-            !is.null(my_config))
+            !is.null(configuration))
 
   # get the nodes for all site codes in the parent-child table
   node_long = tibble(site_code = union(parent_child$child,
                                        parent_child$parent)) %>%
-    left_join(my_config %>%
+    left_join(configuration %>%
                 select(node = Node) %>%
                 distinct() %>%
                 mutate(site_code = if_else(grepl("B0$", node) &
