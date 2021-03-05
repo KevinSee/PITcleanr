@@ -1,6 +1,6 @@
 ---
 title: "Importing, Cleaning, and Compressing PIT Tag Data"
-author: Mike Ackerman, Kevin See
+author: Kevin See
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
@@ -96,6 +96,12 @@ comp_obs = compress(ptagis_file)
 
 The output consists of a tibble containing columns for tag_code, node, detection slot, type of event, number of detections within that slot, the first and last detection within that slot, the duration of that slot (maximum - minimum detection time) and the travel time between the previous slot and that one. Each slot is defined as all detections on a particular node before the tag is detected on a different node. Therefore, if a tag moves from node A to B and back to A, there will be three slots in the compressed data. The nodes are the user-defined groupings of detection infrastructure. By default, each site code from PTAGIS is considered a node. However, the user may construct their own groupings, perhaps by array, groups of arrays, groups of sites, or even antenna, depending on the spatial scale desired. To utilize this kind of grouping, a configuraton file must be supplied to the `compress()` function.
 
+`PITcleanr` can help perform some basic quality control on the PTAGIS detections as well. The `qcTagHistory()` function returns a list including a vector of tags listed as "DISOWN" by PTAGIS, another vector of tags listed as "ORPHAN" (which may indicate a mark file has not been uploaded), and a dataframe of release batches. This dataframe is used by `compress` to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination. 
+
+```{r}
+qcTagHistory(ptagis_file)
+```
+
 ## Configuration File
 
 The configuration file contains all the information from PTAGIS to map a particular detection record to a "node". This mapping must include the site code, the antenna code and the antenna configuration, all of which appear in the PTAGIS query defined above. `PITcleanr` provides a function to query all the metadata associated with PTAGIS sites.
@@ -109,35 +115,83 @@ The default operation of `compress()` maps each site code to a node. `PITcleanr`
 
 ```{r}
 array_configuration = buildConfig()
+
+# customize some pieces
+configuration = array_configuration %>%
+  mutate(node = ifelse(site_code %in% c('LNF', 'LEAV'),
+                         'LNF',
+                         node),
+           node = ifelse(site_code %in% c('TUF', 'TUMFBY', 'TUM'),
+                         'TUM',
+                         node),
+           node = ifelse(site_code == 'CHIWAC',
+                         'CHWA0',
+                         node),
+           node = ifelse(site_code %in% c('CHIWAR', 'CHIWAT'),
+                         'CHLA0',
+                         node),
+           node = ifelse(site_code == 'CHIW',
+                         'CHLA0',
+                         node),
+           node = ifelse(site_code == 'CHIKAC',
+                         'CHUA0',
+                         node),
+         node = ifelse(site_code == 'NASONC',
+                         'NALA0',
+                         node),
+           node = ifelse(site_code == 'WHITER',
+                         'WTLA0',
+                         node),
+           node = ifelse(site_code == 'LWENAT',
+                         'LWNA0',
+                         node),
+           node = ifelse(node == 'ICL',
+                         'ICLB0',
+                         node)) %>%
+    distinct()
+
 comp_obs = compress(ptagis_file,
-                    configuration = array_configuration)
+                    configuration = configuration)
 ```
 
 For some purposes, this may be enough, and the user can take the compressed data, `comp_obs`, and summarize it as needed, or perform whatever analyses they would like. In other cases, if directionality of movement is required, `PITcleanr` provides additional functionality.
 
 # Mapping Detection Sites
 
-```{r}
+It can often be helpful to examine a plot of various detection locations, and those locations can be used to determine which locations are upstream or downstream relative to other locations. To accomplish this, `PITcleanr` contains a few different functions:
+
+* `extractSites()` will pull out all the site codes of detections within a file downloaded from PTAGIS. These can be filtered by a minimum and/or maximum detection date, and returned as either a tibble, or an `sf` spatial object.
+* `queryFlowlines()` downloads an NHDPlus v2 stream layer from USGS using the suggested `nhdplusTools` R package. It requires the output of `extractSites()` as an `sf` object, and a site code identified as the "root" site. It starts from the site identified by site code `root_site_code`, and downloads all upstream flowlines from there, with a minimum stream order set by `min_strm_order`. If flowlines downstream of the `root_site_code` site are required, set the argument `dwnstrm_sites = TRUE`, and the user can also control the maximum stream order of the downstream flowlines by setting the `dwn_min_stream_order_diff` argument. This number corresponds to the difference between the stream order of the `root_site_code` site and the maximum stream order desired in the downstream flowlines. For example, if the `root_site_code` is located on a stream order of 6, and `dwn_min_stream_order_diff = 2`, only downstream flowlines of at least 6-2 = **4** will be downloaded. The extent of the downstream flowlines is constrained by the `sites_sf` object. The `queryFlowlines()` function returns a list consisting of:
+  * `flowlines`: the flowlines upstream of the `root_site_code`
+  * `basin`: the polygon containing the upstream flowlines
+  * `dwn_flowlines`: the flowlines downstream of the `root_site_code`, if `dwnstrm_sites = T`
+
+
+```{r map-flowlines}
 sites_sf = extractSites(ptagis_file,
                         as_sf = T,
-                        min_date = "20150501")
+                        min_date = "20150501",
+                        configuration = configuration)
+# focus on sites within Wenatchee subbasin
+sites_sf = sites_sf %>%
+  filter(grepl("754.", rkm),
+         # remove a few sites we don't care about
+         !site_code %in% c("LWE", "ICICLC"))
 
 nhd_list = queryFlowlines(sites_sf = sites_sf,
                           root_site_code = "TUM",
                           min_strm_order = 2,
-                          dwnstrm_sites = F,
-                          dwn_min_stream_order_diff = 4)
+                          dwnstrm_sites = T,
+                          dwn_min_stream_order_diff = 2)
 
-basin_sites = st_join(sites_sf,
-                      nhd_list$basin %>%
-                        mutate(in_basin = T),
-                      join = st_within) %>%
-  filter(in_basin) %>%
-  select(-in_basin)
+# compile the upstream and downstream flowlines
+flowlines = nhd_list$flowlines %>%
+    rbind(nhd_list$dwn_flowlines)
 
 # plot the flowlines and the sites
+library(ggplot2)
 ggplot() +
-  geom_sf(data = nhd_list$flowlines,
+  geom_sf(data = flowlines,
           aes(color = as.factor(StreamOrde),
               size = StreamOrde)) +
   scale_color_viridis_d(direction = -1,
@@ -148,10 +202,10 @@ ggplot() +
   geom_sf(data = nhd_list$basin,
           fill = NA,
           lwd = 2) +
-  geom_sf(data = basin_sites,
+  geom_sf(data = sites_sf,
           size = 4,
           color = "black") +
-  geom_sf_label(data = basin_sites,
+  geom_sf_label(data = sites_sf,
                 aes(label = site_code)) +
   theme_bw() +
   theme(axis.title = element_blank()) +
@@ -159,59 +213,66 @@ ggplot() +
 
 ```
 
+# Parent-Child Table
 
+When dealing with detections of individual tags, the user often is interested in which nodes are connected to which other nodes by the stream network. One way to capture this information is through the construction of a parent-child table, where each row consists of a parent node, and a child node that is connected directly to that parent node. By default, `PITcleanr` assigns parent-child relationships as moving in an upstream direction, so a single parent may have mutiple child sites upstream, if the stream network branches upstream of it. However, a child should only have a single parent, as we are assuming a lack of looped connections in our stream network. If the user is interested in a downstream parent-child relationship, the `parent` and `child` designations in the table can be manually switched.
 
+`PITcleanr` constructs this relationship by joining a spatial (`sf`) point object of sites with the flowlines queried via `queryFlowlines()`. The NHDPlus layer that is returned contains a unique identifier, or hydrosequence, for every segment, as well as the identifier of the hydrosequence immediately upstream and downstream. Using this information, `PITcleanr` can identify the next downstream site from every known location (using the `findDwnstrmSite()` function), and thus construct the parent child table through the `buildParentChild()` function. By default, `buildParentChild()` returns a tibble identifying every parent-child pair, as well as the hydrosequence joined to the parent and child location. If the argument `add_rkm` is set to `TRUE`, `PITcleanr` will query the PTAGIS metadata again, and attach the river kilometer (or rkm) for each parent and child location. 
 
-
-## Process Raw Observations
-
-`PITcleanr` contains a single function, `processCapHist_LGD` that processes the raw observations and returns several key pieces of information. First, it constructs a table of all the pathways a fish might take that are "valid" in DABOM, meaning they reflect continual upstream movement along a single branch of the stream network (using an internal function, `getValidPaths`). Next, it uses the trap database to determine the trap date of each tag. The next step is to assign each observation to an appropriate node from the DABOM model, as defined in the configuration file, using an internal function, `assignNodes()`. It requires the complete tag histories, the dataframe of valid tags and their trap date, the site configuration dataframe, and the parent-child dataframe to filter out observations from sites not contained in the DABOM version. If `truncate` is set to `TRUE` (the default), the `assignNodes()` function will filter out observations that occurred prior to the trap date, and remove consecutive observations at the same node to simplify the file. 
-
-Finally, the processing function determines whether each observation should be considered valid for `DABOM`. It does this by determining the final node a fish was observed at, and querying the valid path dataframe for all the downstream sites that may be encountered on the way to that node. It also proposes an extended path of the first set of nodes upstream of the final node, and acknowledges that observations along that extended path may also be valid (e.g. a fish swims a particular route upstream, spawns and then swims partway downstream, past a node or two. The most upstream node should be considered a valid observation, and the likely spawning location.).
-
-It returns a dataframe with a row for each observed node, showing the tag code, the site code, the model node, the minimum observed date-time, and two columns called "AutoProcStatus" and "UserProcStatus". There are additional columns as well, called:
-
-* `NodeOrder`: how many nodes would a tag cross, including the one identified in that row, to reach the current node? This is regardless of whether a tag was observed at those nodes.
-* `Direction`: based on previously observed node, is the tag moving upstream or downstream? If this is `NA`, the current node is not along a valid path containing the previous node.
-* `ValidPath`: Taken together, do all the observed nodes for a particular tag fall along a single valid path? 
-* `ModelObs`: Marked `TRUE` for all observed nodes, in sequence by observation, that initially constitute a valid path. Does not assume that the final observation is along the true valid path.
-* `SiteDescription`: The site description of the site, as provided by PTAGIS.
-
-"AutoProcStatus" is `PITcleanr`'s best attempt to determine which observations should be kept (and which should be deleted) before bringing the data into DABOM. "UserProcStatus"" is there for the user to change things. Any tag that has at least one flagged observation ("AutoProcStatus" == `FALSE`) will have all of the observations labeled as blanks in the "UserProcStatus" column. This allows the user to filter initially on the rows with `UserProcStatus == ''`, and see all the observations for each flagged tag. The user can then determine which observations should be included as "valid" by marking the UserProcStatus as `TRUE`, or which ones should be deleted by marking the UserProcStatus as `FALSE`, guided by the suggestions in the AutoProcStatus column, information contained in the other columns, and by the user's knowledge of fish behavior and the system in question. The *UserComment* field is meant to record reasons why certain observations are deleted.
-
-We imagine the workflow to involve initially filtering on all the blank UserProcStatus rows. Then, for each tag, determine whether each observation should be kept (mark *UserProcStatus* == `TRUE`) or discarded (mark *UserProcStatus* == 'FALSE`) based on suggestions from the *AutoProcStatus*, *ValidPaths* and *ModelObs* fields. For any observation destined to be discarded, a reason should be provided in the *UserComment* for re-producibility. When no blank *UserProcStatus* rows remain, save the file. It is now ready for importation into DABOM.
-
-
-```{r}
-proc_list = processCapHist_LGD(species = spp,
-                               spawnYear = yr,
-                               configuration = my_config,
-                               parent_child,
-                               trap_path = trap_path,
-                               filter_by_PBT = T,
-                               observations = observations,
-                               truncate = T,
-                               site_df = site_df,
-                               step_num = 3,
-                               save_file = T,
-                               file_name = 'ProcessedCH.xlsx')
+```{r parent-child-table}
+parent_child = buildParentChild(sites_sf,
+                                flowlines)
+parent_child
 ```
 
-# Summarise final spawning location and biological information
+After initially building a parent-child table, there is usually some editing that needs to happen. This is necessary for a variety of reasons. Perhaps the latitude and longitude of a site was not correct, and it was placed on the wrong hydrosequence of the flowlines. Maybe the flowlines layer from the USGS is incorrect around a particular area, causing the parent-child relationships to be incorrect. Perhaps a site that is located at the mouth of a tributary was joined to the mainstem hydrosequence of the flowline, instead of the tributary, causing problems for sites upstream and downstream of that site. For these reasons (or any others), `PITcleanr` provides a function to edit the parent-child table, `editParentChild()`. It requires a list the length of rows to be fixed (`fix_list`). Each element of this list is a vector of length 3, where the first two elements contain the parent and child locations to be edited, and the third element is the new parent location. As each child contains a single parent in the table, this is enough information to uniquely target individual rows of the parent-child table. 
+The user can also switch parent-child pairs, making the parent the child and vice versa, using the `switch_parent_child` argument. This is primarily intended to fix relationships between a root site and the initial downstream sites. If by default the parent child table is build assuming upstream movement, but the user would like to incorporate downstream movement from the root site to a location downstream, this argument will be useful. However, it will not "fix" associated parent-child relationships with the locations in the `switch_parent_child` list; those must be fixed through the `fix_list` argument. 
 
-`PITcleanr` provides a function to determine a fish's final spawning location, and combine it with lots of biological data from the trap database at Lower Granite, `summariseTagData`. It relies on a processed capture history file returned by the function `proc_list`. Internally, this relies on another function, `estimateSpawnLoc`, which determines the final spawning location of each tag, by finding the furthest upstream node a tag was observed at within its' valid observations.
+In the example below, the original parent-child table had some problems with 2 sites downstream of the root site, TUM. In addition, the flowlines are not accurate near the confluence of Icicle Creek and the mainstem Wenatchee river, which has thrown off some of the relationships between ICL and surrounding sites. We would like to make TUM the parent of both ICL and PES, and ICL should be the parent of ICM, not LNF. In addition, ICL was placed on the mainstem river due to a mistake in the flowlines, and therefore listed as a parent of TUM, so we'd like to switch that. All of these corrections are implemented below in the `editParentChild()` function.
+
+```{r edit-pc-table}
+parent_child = editParentChild(parent_child,
+                               fix_list = list(c(NA, "ICL", "TUM"),
+                                               c(NA, "PES", "TUM"),
+                                               c("LNF", 'ICM', 'ICL')),
+                               switch_parent_child = list(c("ICL", 'TUM')))
+parent_child
+```
+
+If the configuration file contains multiple nodes for some sites (e.g. a node for each array at a site), then the parent child table can be expanded to accommodate these nodes. `addParentChildNodes()` assumes that the parent child table is arranged so that children are upstream of parents, and nodes designated as `A0` are upstream of those designated `B0`. Currently, it can only handle up to two nodes at each site.
 
 ```{r}
-capHist_proc = proc_list$ProcCapHist %>%
-  mutate(UserProcStatus = ifelse(UserProcStatus == '',
-                                 AutoProcStatus,
-                                 UserProcStatus)) %>%
-  mutate(UserProcStatus = as.logical(UserProcStatus)) %>%
-  filter(UserProcStatus)
+parent_child_nodes = addParentChildNodes(parent_child,
+                                         configuration)
+```
 
-tag_summ = summariseTagData(capHist_proc = capHist_proc,
-                            trap_data = proc_list$ValidTrapData)
 
-head(tag_summ)
+## Movement Paths & Node Order
+
+```{r, eval = F}
+buildPaths(parent_child)
+buildNodeOrder(parent_child)
+plotNodes(parent_child)
+```
+
+# Add Direction
+
+```{r, eval = F}
+# determine trap date, and remove detections prior to that
+obs_direct = comp_obs %>%
+  left_join(comp_obs %>%
+              filter(node == root_site,
+                     event_type_name %in% c("Mark", "Recapture")) %>%
+              group_by(tag_code) %>%
+              filter(max_det == max(max_det)) %>%
+              summarise(start_date = max_det,
+                        .groups = "drop"),
+            by = "tag_code") %>%
+  filter(min_det >= start_date) %>%
+  group_by(tag_code) %>%
+  mutate(slot = slot - min(slot) + 1) %>%
+  ungroup() %>%
+  addDirection(parent_child = parent_child_nodes)
+obs_direct
 ```
 
