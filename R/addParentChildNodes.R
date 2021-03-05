@@ -12,6 +12,7 @@
 #' @import dplyr tidyr
 #' @importFrom magrittr %<>%
 #' @return NULL
+#' @export
 #' @examples addParentChildNodes()
 
 addParentChildNodes = function(parent_child = NULL,
