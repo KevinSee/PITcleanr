@@ -6,14 +6,19 @@
 #'
 #'
 #' @param parent_child dataframe produced by `buildParentChild()`.
-#' @param parent_locs vector of parent locations to be changed, which must match length of `child_locs` and `new_parent_locs`.
-#' @param child_locs vector of child locations whose parents need to change, which must match length of `parent_locs` and `new_parent_locs`.
-#' @param new_parent_locs vector of revised parent locations, which must match length of `parent_locs` and `child_locs`.
-#' @param switch_parent_child list of vectors to switch parent/child designations, where each vector consists of a current parent location and a child location, in that order. This is primarily intended to help with sites downstream of a tagging/marking location. Adding a parent/child pair here will not fix parent/child relationships with upstream or downstream locations of the parent/child pair (use the `parent_locs`, `child_locs` and `new_parent_locs` for that).
+#' @param fix_list a list of vectors to be changed. Each vector must be length 3,
+#' where the first two elements contain the parent and child locations to be edited,
+#' and the third element is the new parent location.
+#' @param switch_parent_child list of vectors to switch parent/child designations, where
+#' each vector consists of a current parent location and a child location, in that order.
+#' This is primarily intended to help with sites downstream of a tagging/marking location.
+#' Adding a parent/child pair here will not fix parent/child relationships with upstream or
+#' downstream locations of the parent/child pair (use the `parent_locs`, `child_locs` and
+#' `new_parent_locs` for that).
 #'
 #' @source \url{http://www.ptagis.org}
 #'
-#' @import dplyr
+#' @import dplyr purrr
 #' @importFrom stringr str_replace
 #' @importFrom rlang set_names
 #' @importFrom magrittr %<>%
@@ -23,16 +28,12 @@
 
 
 editParentChild = function(parent_child = NULL,
-                           parent_locs = NULL,
-                           child_locs = NULL,
-                           new_parent_locs = NULL,
+                           fix_list = NULL,
                            switch_parent_child = NULL) {
 
   stopifnot(!is.null(parent_child))
-  stopifnot((is.null(parent_locs) & is.null(child_locs) & is.null(new_parent_locs)) |
-              !(is.null(parent_locs) & is.null(child_locs) & is.null(new_parent_locs)))
-  stopifnot(length(parent_locs) == length(child_locs),
-            length(child_locs) == length(new_parent_locs))
+  stopifnot(sum(map_dbl(fix_list, length) != 3) == 0)
+
 
   # pull out some info from original parent/child table
   pc_old = parent_child
@@ -49,11 +50,14 @@ editParentChild = function(parent_child = NULL,
     distinct()
 
   # switch old and new parents
-  if(!is.null(parent_locs)) {
+  if(!is.null(fix_list)) {
   parent_child %<>%
-    inner_join(tibble(parent = parent_locs,
-                      child = child_locs,
-                      new_parent = new_parent_locs),
+    inner_join(fix_list %>%
+                 purrr::map_df(.f = function(x) {
+                   tibble::tibble(parent = x[1],
+                          child = x[2],
+                          new_parent = x[3])
+                 }),
                by = c("parent", "child")) %>%
     mutate(parent = new_parent) %>%
     select(-starts_with("parent_"),
