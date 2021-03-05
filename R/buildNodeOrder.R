@@ -39,7 +39,8 @@ buildNodeOrder = function(parent_child = NULL) {
   node_order = tibble(node = first_nodes,
          node_order = 1,
          path = first_nodes) %>%
-    bind_rows(node_order)
+    bind_rows(node_order) %>%
+    arrange(path)
 
   return(node_order)
 
