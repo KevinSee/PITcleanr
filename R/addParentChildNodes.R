@@ -23,7 +23,7 @@ addParentChildNodes = function(parent_child = NULL,
   node_long = tibble(site_code = union(parent_child$child,
                                        parent_child$parent)) %>%
     left_join(configuration %>%
-                select(node = Node) %>%
+                select(node) %>%
                 distinct() %>%
                 mutate(site_code = if_else(grepl("B0$", node) &
                                              nchar(node) >= 5,
