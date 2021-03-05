@@ -30,34 +30,24 @@ plotNodes = function(parent_child = NULL,
   # build table of nodes
   nodes = parent_child %>%
     select(starts_with("parent")) %>%
-    rename(node = parent) %>%
+    rename(label = parent) %>%
     rlang::set_names(nm  = str_remove,
                      "parent_") %>%
     bind_rows(parent_child %>%
                 select(starts_with("child")) %>%
-                rename(node = child) %>%
+                rename(label = child) %>%
                 rlang::set_names(nm  = str_remove,
                                  "child_")) %>%
     distinct() %>%
-    mutate(index = 1:n()) %>%
-    select(index, label = node, everything())
+    tibble::rowid_to_column('index')
 
   # build table of edges (connecting nodes)
-  edges = parent_child %>%
-    filter(parent != child) %>%
-    select(from = parent,
-           to = child) %>%
-    distinct() %>%
-    mutate(edge_num = 1:n()) %>%
-    tidyr::pivot_longer(cols = -edge_num,
-                        names_to = "direction",
-                        values_to = "label") %>%
-    left_join(nodes %>%
-                select(index, label)) %>%
-    select(-label) %>%
-    tidyr::pivot_wider(names_from = "direction",
-                       values_from = "index") %>%
-    select(-edge_num)
+  edges <- parent_child %>%
+    left_join(nodes, by = c('parent' = 'label')) %>%
+    rename(from = index) %>%
+    left_join(nodes, by = c('child' = 'label')) %>%
+    rename(to = index) %>%
+    select(from, to)
 
   # one graph with all sites
   node_graph = tidygraph::tbl_graph(nodes = nodes,
