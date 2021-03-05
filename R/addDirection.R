@@ -20,7 +20,7 @@ addDirection = function(compress_obs = NULL,
   stopifnot(!is.null(compress_obs),
             !is.null(parent_child))
 
-  node_order = try(buildNodeOrder(parent_child))
+  node_order = try(buildNodeOrder(parent_child = parent_child))
 
   if(class(node_order)[1] == "try-error") {
     stop("Something went wrong building the node order")
