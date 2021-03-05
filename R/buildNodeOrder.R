@@ -15,9 +15,11 @@
 #' to that final location.
 #' @examples buildNodeOrder()
 
-buildNodeOrder = function(parent_child = NULL) {
+buildNodeOrder = function(parent_child = NULL,
+                          direction = 'u') {
 
-  paths_df = buildPaths(parent_child)
+  paths_df = buildPaths(parent_child = parent_child,
+                        direction = direction)
 
   node_order = paths_df %>%
     mutate(node_order = map_dbl(path,

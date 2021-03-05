@@ -27,31 +27,7 @@ plotNodes = function(parent_child = NULL,
   requireNamespace("tidygraph", quietly = TRUE)
   requireNamespace("ggraph", quietly = TRUE)
 
-  # build table of nodes
-  nodes = parent_child %>%
-    select(starts_with("parent")) %>%
-    rename(label = parent) %>%
-    rlang::set_names(nm  = str_remove,
-                     "parent_") %>%
-    bind_rows(parent_child %>%
-                select(starts_with("child")) %>%
-                rename(label = child) %>%
-                rlang::set_names(nm  = str_remove,
-                                 "child_")) %>%
-    distinct() %>%
-    tibble::rowid_to_column('index')
-
-  # build table of edges (connecting nodes)
-  edges <- parent_child %>%
-    left_join(nodes, by = c('parent' = 'label')) %>%
-    rename(from = index) %>%
-    left_join(nodes, by = c('child' = 'label')) %>%
-    rename(to = index) %>%
-    select(from, to)
-
-  # one graph with all sites
-  node_graph = tidygraph::tbl_graph(nodes = nodes,
-                                    edges = edges)
+  node_graph = buildNodeGraph(parent_child)
 
   # create ggraph plot
   node_p = node_graph %>%
