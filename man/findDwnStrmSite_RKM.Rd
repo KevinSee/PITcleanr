@@ -14,14 +14,16 @@ findDwnStrmSite_RKM(
 \arguments{
 \item{site}{character value of site code}
 
-\item{configurationFile}{data.frame with column called SiteID with site codes, a column called RKM with the river mask codes, and a column called SiteType with values of either \code{INT} for interrogation sites or \code{MMR} for mark/recapture/recovery sites}
+\item{configurationFile}{data.frame with column called SiteID with site codes, a column called RKM with the river mask codes,
+and a column called SiteType with values of either \code{INT} for interrogation sites or \code{MMR} for mark/recapture/recovery sites}
 
 \item{include.MMR.sites}{\code{TRUE/FALSE} should MMR sites be included. Default is \code{FALSE}}
 
 \item{rootSite}{character value of the site code for the root site for which the path should be traced from}
 }
 \description{
-For a given site, uses the configuration file to determine which site is encountered next moving downstream.
+For a given site, uses the configuration file to determine which site is encountered next moving downstream,
+using the report river kilometer (RKM) from the configuration file.
 }
 \author{
 Kevin See

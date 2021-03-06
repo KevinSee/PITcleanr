@@ -116,6 +116,8 @@ ptagis_meta
 
 The default operation of `compress()` maps each site code to a node. `PITcleanr` also includes a function that maps each array at a site onto a node. The upstream arrays are labeled with the site code plus `A0` and the downstream arrays are assigned `B0`. For sites with three arrays, the middle array is grouped with the upstream array. For sites with four arrays, the upper two arrays are mapped to `A0` and the lower two arrays are mapped to `B0`. However, the user can start with the `ptagis_meta` file and construct this mapping any way they choose. This type of configuration file can be included in the `compress()` function to assign each detection to it's associated node.
 
+In the example below, several sites are consolidated into a single node (e.g. LNF, TUM), and some mark-recovery-recapture sites are merged with upstream array nodes
+
 ```{r}
 array_configuration = buildConfig()
 
@@ -147,9 +149,6 @@ configuration = array_configuration %>%
                          node),
            node = ifelse(site_code == 'LWENAT',
                          'LWNA0',
-                         node),
-           node = ifelse(node == 'ICL',
-                         'ICLB0',
                          node)) %>%
     distinct()
 
@@ -182,6 +181,7 @@ sites_sf = sites_sf %>%
          # remove a few sites we don't care about
          !site_code %in% c("LWE", "ICICLC"))
 
+# query the flowlines
 nhd_list = queryFlowlines(sites_sf = sites_sf,
                           root_site_code = "TUM",
                           min_strm_order = 2,
@@ -288,14 +288,9 @@ obs_direct = comp_obs %>%
   mutate(slot = slot - min(slot) + 1) %>%
   ungroup() %>%
   addDirection(parent_child = parent_child_nodes)
+
 obs_direct %>%
   filter(tag_code == "3D9.1C2DE4B17E") %>%
-  # group_by(tag_code, direction) %>%
-  # summarise(n_dets = n()) %>%
-  # pivot_wider(names_from = "direction",
-  #             values_from = "n_dets") %>%
-  # filter(!is.na(backward),
-  #        !is.na(unknown))
   select(tag_code, node, slot, min_det, direction)
 ```
 

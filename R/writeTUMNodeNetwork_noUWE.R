@@ -6,7 +6,6 @@
 #'
 #'
 #' @import dplyr tibble stringr
-#' @export
 #' @return NULL
 #' @examples writeTUMNodeNetwork_noUWE()
 

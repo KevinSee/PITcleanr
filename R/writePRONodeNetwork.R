@@ -6,7 +6,6 @@
 #'
 #'
 #' @import dplyr tibble stringr tidyr
-#' @export
 #' @return tibble
 #' @examples writePRONodeNetwork()
 

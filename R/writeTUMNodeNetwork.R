@@ -6,7 +6,6 @@
 #'
 #'
 #' @import dplyr tibble stringr tidyr
-#' @export
 #' @return NULL
 #' @examples writeTUMNodeNetwork()
 
