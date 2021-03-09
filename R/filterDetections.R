@@ -9,7 +9,7 @@
 #' @inheritParams addDirection
 #' @param max_obs_date Character string in the format "YYYYMMDD". If included, the output will suggest that observations after this date should be deleted.
 #'
-#' @import dplyr tidyr lubridate
+#' @import dplyr tidyr lubridate purrr
 #' @export
 #' @return a tibble
 #' @examples filterDetections()
@@ -34,38 +34,39 @@ filterDetections = function(compress_obs = NULL,
   keep_obs = obs_direct %>%
     group_by(tag_code) %>%
     tidyr::nest() %>%
-    mutate(proc = map(data,
-                      .f = function(x) {
-                        if(sum(x$direction %in% c("backward", "unknown")) == 0) {
-                          x %>%
-                            mutate(AutoKeepObs = if_else(min_det <= lubridate::ymd(max_obs_date),
-                                                         T, F),
-                                   UserKeepObs = if_else(min_det <= lubridate::ymd(max_obs_date),
-                                                         T, F)) %>%
-                            return()
-                        } else if(sum(x$direction %in% c("backward")) > 0 |
-                                  sum(x$direction %in% c("unknown")) > 0) {
-                          spwn_loc = x %>%
-                            filter(slot == max(slot[direction %in% c("forward",
-                                                                     "unknown") &
-                                                      min_det <= lubridate::ymd(max_obs_date)]))
+    mutate(proc = purrr::map(data,
+                             .f = function(x) {
+                               if(sum(x$direction %in% c("backward", "unknown")) == 0) {
+                                 x %>%
+                                   mutate(auto_keep_obs = if_else(min_det <= lubridate::ymd(max_obs_date),
+                                                                T, F),
+                                          user_keep_obs = if_else(min_det <= lubridate::ymd(max_obs_date),
+                                                                T, F)) %>%
+                                   return()
+                               } else {
+                                 spwn_loc = x %>%
+                                   filter(slot == max(slot[direction %in% c("start",
+                                                                            "forward",
+                                                                            "unknown") &
+                                                             min_det <= lubridate::ymd(max_obs_date)]))
 
-                          x %>%
-                            group_by(node) %>%
-                            mutate(max_slot = max(slot[slot <= spwn_loc$slot])) %>%
-                            rowwise() %>%
-                            mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
-                                                           T, F)) %>%
-                            # select(-travel_time, -start_date) %>%
-                            mutate(AutoKeepObs = if_else((in_spawn_path & slot == max_slot) | direction == "start",
-                                                         T, F),
-                                   UserKeepObs = NA) %>%
-                            select(-max_slot, - in_spawn_path) %>%
-                            return()
-                        }
-                      })) %>%
+                                 x %>%
+                                   group_by(node) %>%
+                                   mutate(max_slot = max(1, slot[slot <= spwn_loc$slot])) %>%
+                                   ungroup() %>%
+                                   rowwise() %>%
+                                   mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
+                                                                  T, F)) %>%
+                                   # select(-travel_time, -start_date) %>%
+                                   mutate(auto_keep_obs = if_else((in_spawn_path & slot == max_slot) | direction == "start",
+                                                                T, F),
+                                          user_keep_obs = NA) %>%
+                                   select(-max_slot, - in_spawn_path) %>%
+                                   return()
+                               }
+                             })) %>%
     select(-data) %>%
-    unnest(proc) %>%
+    tidyr::unnest(proc) %>%
     ungroup()
 
   return(keep_obs)
