@@ -12,16 +12,19 @@ estNodeEff(
 )
 }
 \arguments{
-\item{capHist_proc}{Dataframe returned by \code{processCapHist_*}, under the name \code{ProcCapHist}.}
+\item{node_order}{Dataframe returned by `buildNodeOrder()`}
 
-\item{node_order}{Dataframe returned by \code{processCapHist_*}, under the name \code{NodeOrder}.}
+\item{node}{character string of the node(s) of interest. If not supplied, efficiencies will be calculated for every node in `node_order`.}
 
-\item{node}{character string of the node(s) of interest.}
+\item{method}{one of `Chapman`, `Petersen`, or `Bailey.` Determines which formula to use when estimating tags past an array. Default is `Chapman`. If another method is selected, and fails (e.g. due to no recaptures), the `Chapman` estimator will be used.}
 
-\item{method}{one of Petersen, Chapman or Bailey. Determines which formula to use when estimating tags past an array. Default is \code{Chapman}. If another method is selected, and fails (e.g. due to no recaptures), the \code{Chapman} estimator will be used.}
+\item{cap_hist}{Dataframe returned by `compress()`; must have columns named `tag_code` and `node`. More appropriate would be the output of `filterDetections()` or `prepWrapper()`, which is then filterd by either `auto_keep_obs` or `user_keep_obs`.}
+}
+\value{
+a tibble
 }
 \description{
-This function uses detections at a given node, and all detections upstream of that node to calculate detection efficiency at that node. It uses the Petersen estimator for the number of tags at that node (or the Chapman if no recaptures are available). The detection efficiency is then calcuated as the number of tags detected at that node, divided by the estimate of total tags at that node.
+This function uses detections at a given node, and all detections upstream of that node to calculate detection efficiency at that node. It uses the Chapman, Petersen, or Bailey estimator for the number of tags at that node (the Chapman estimator is used if no recaptures are available). The detection efficiency is then calculated as the number of tags detected at that node, divided by the estimate of total tags at that node.
 }
 \examples{
 estNodeEff()
