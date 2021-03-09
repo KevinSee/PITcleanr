@@ -1,0 +1,209 @@
+---
+title: "Preparing Data for DABOM"
+author: Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Preparing Data for DABOM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+
+```
+
+# Introduction
+
+One purpose of the `PITcleanr` package is to prepare and help clean PIT tag observations for the Dam Adult Branch Occupancy Model ([DABOM](https://github.com/BiomarkABS/DABOM)). DABOM estimates upstream movement probabilities across a branching stream network. One of the major assumptions in that model is that fish are making a one-way trip upstream, meaning they aren't moving into one tributary, turning around and moving into another. In reality, such movements certainly happen, but the detections must be "cleaned" before running the model, meaning if a tag is detected in multiple branches, someone must decide which branch represents their spawning trajectory, and the detections from the other branches are deleted. `PITcleanr` can help identify which tags have detections in multiple branches, and provide a suggestion for which detections to retain.
+
+In this vignette, we will also use many functions from the `dplyr` package, so we load that as well:
+
+```{r load-package}
+library(PITcleanr)
+library(dplyr)
+```
+
+# Data Preperation
+
+The following section is a summary of what is contained in the `PIT_Prep_data` vignette. For more details, please see that vignette.
+
+```{r, eval = F}
+vignette("Prep_PIT_data",
+         package = "PITcleanr")
+```
+
+## Querying Data from PTAGIS
+
+`PITcleanr` starts with a complete capture history query from [PTAGIS](https://ptagis.org/) for a select group of tags. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query. PTAGIS is the regional database for fish marked with PIT tags by fisheries management agencies and research organizations in the Columbia River Basin. From the homepage, go to the [Advanced Reporting](https://www.ptagis.org/data/advanced-reporting) page, which can also be found under the Data tab on the homepage. To access Advanced Reporting, the user will need a free account from PTAGIS, and to be logged in. Once on the Advanced Reporting page, select "Launch" and create a custom query by selecting "Create Query Builder2 Report", and choosing the "Complete Tag History" query type.  
+
+There are several query indices on the left side of the query builder, but for the purposes of `PITcleanr` only need a few are needed. First, under "1 Select Attributes" the following fields are required to work with `PITcleanr`:
+
+* Tag
+* Mark Species
+* Mark Rear Type
+* Event Type
+* Event Site Code
+* Event Date Time
+* Antenna
+* Antenna Group Configuration
+* Event Release Date Time
+* Event Release Site Code
+
+Other fields may be included as well, but the ones listed above must be added. Any additional fields will just be included as extra columns in the query output.
+
+The only other required index is "2 Select Metrics", but that can remain as the default, "CTH Count", which provides one record for each event recorded per tag.
+
+Set up a filter for specific tags by next navigating to the "28 Tag Code - List or Text File" on the left. And then, after selecting "Tag" under "Attributes:", click on "Import file...". Simply upload the .txt file prepared earlier containing tag codes of interest. Under "Report Message Name:" near the bottom, name the query something appropriate, such as "PTAGIS_2018_19", and select "Run Report". Once the query has successfully completed, export the output as a .csv file (e.g. "PTAGIS_2018_19.csv") using the default settings:
+
+* Export: Whole report
+* CSV file format
+* Export Report Title: unchecked
+* Export filter details: unchecked
+* Remove extra column: Yes
+
+## Compressing Data
+
+Detections from PTAGIS can be linked to specific detection "nodes", which the user can define. For DABOM, nodes usually correspond to an upper or lower array at a detection site, labeled with the site code and either `A0` or `B0` respectively. These nodes are defined in a configuration file.
+
+In preparing data for DABOM, it is probably a good idea to filter the detections from PTAGIS so each tag starts at the same site (i.e. filter detections prior to that date). 
+
+```{r, echo = F}
+ptagis_file = "../inst/extdata/TUM_Chinook_2015.csv"
+
+array_configuration = buildConfig()
+
+# customize some pieces
+configuration = array_configuration %>%
+  mutate(node = ifelse(site_code %in% c('LNF', 'LEAV'),
+                         'LNF',
+                         node),
+           node = ifelse(site_code %in% c('TUF', 'TUMFBY', 'TUM'),
+                         'TUM',
+                         node),
+           node = ifelse(site_code == 'CHIWAC',
+                         'CHWA0',
+                         node),
+           node = ifelse(site_code %in% c('CHIWAR', 'CHIWAT'),
+                         'CHLA0',
+                         node),
+           node = ifelse(site_code == 'CHIW',
+                         'CHLA0',
+                         node),
+           node = ifelse(site_code == 'CHIKAC',
+                         'CHUA0',
+                         node),
+         node = ifelse(site_code == 'NASONC',
+                         'NALA0',
+                         node),
+           node = ifelse(site_code == 'WHITER',
+                         'WTLA0',
+                         node),
+           node = ifelse(site_code == 'LWENAT',
+                         'LWNA0',
+                         node)) %>%
+    distinct()
+```
+
+```{r compress-detections}
+comp_obs = compress(ptagis_file,
+                    configuration = configuration)
+
+# find the date each tag was captured at site TUM, and filter detections prior to that
+obs = comp_obs %>%
+  left_join(comp_obs %>%
+              filter(node == "TUM",
+                     event_type_name %in% c("Mark", "Recapture")) %>%
+              group_by(tag_code) %>%
+              filter(max_det == max(max_det)) %>%
+              summarise(start_date = max_det,
+                        .groups = "drop"),
+            by = "tag_code") %>%
+  filter(min_det >= start_date) %>%
+  group_by(tag_code) %>%
+  mutate(slot = slot - min(slot) + 1) %>%
+  ungroup()
+```
+
+## Build Parent-Child Table
+
+A parent-child table describes the closest downstream detection location (parent) for each detection location (child). If a tag is seen at a child location, it must have moved past the parent location. `PITcleanr` constructs parent-child tables assuming an upstream movement, which is appropriate for DABOM. The package will also augment the parent-child table of detection sites with detection nodes, based on the configuration file. Here is an example of a parent-child table.
+
+```{r parent-child-table, echo = F}
+sites_sf = extractSites(ptagis_file,
+                        as_sf = T,
+                        min_date = "20150501",
+                        configuration = configuration)
+# focus on sites within Wenatchee subbasin
+sites_sf = sites_sf %>%
+  filter(grepl("754.", rkm),
+         # remove a few sites we don't care about
+         !site_code %in% c("LWE", "ICICLC"))
+
+# query the flowlines
+nhd_list = queryFlowlines(sites_sf = sites_sf,
+                          root_site_code = "TUM",
+                          min_strm_order = 2,
+                          dwnstrm_sites = T,
+                          dwn_min_stream_order_diff = 2)
+
+# compile the upstream and downstream flowlines
+flowlines = nhd_list$flowlines %>%
+    rbind(nhd_list$dwn_flowlines)
+
+parent_child = sites_sf %>%
+  filter(! site_code %in% c("UWE", "LWE")) %>%
+  buildParentChild(flowlines) %>%
+  editParentChild(fix_list = list(c(NA, "ICL", "TUM"),
+                                  c(NA, "PES", "TUM"),
+                                  c("LNF", 'ICM', 'ICL')),
+                  switch_parent_child = list(c("ICL", 'TUM')))
+
+parent_child_nodes = addParentChildNodes(parent_child,
+                                         configuration)
+```
+
+```{r}
+parent_child_nodes
+```
+
+# DABOM Filtering
+
+
+Based on the parent-child table, and the order of detection nodes through time, `PITcleanr` can assign a direction of movement to each observation, using the function `addDirection`. If the compressed detections have been filtered so they all start at the tagging location, then those initial observations will be labeled with direction "start". Subsequently, "forward" indicates upstream movement, and "backward" indicates downstream movement. A direction of "unknown" indicates the tag has shifted to a different branch in the stream network.
+
+The function `filterDetections` incorporates those directions and adds two columns to indicate whether each detection should be retained for DABOM. For tags with straightforward detections (i.e. all detections appear to have one-way directional movement), the added columns `auto_keep_obs` and `user_keep_obs` will be marked `TRUE`. For tags with less straightforward movement patterns, `PITcleanr` assumes that the last detection with movement noted as "forward" or "unknown" (or "start") is the spawning location, and attempts to mark the `auto_keep_obs` column as `TRUE` for the last detections along that movement path. For these tags, `filterDetections` returns `NA`'s in the `user_keep_obs` column. 
+
+`filterDetections` also allows the user to input a maximum observed date (`max_obs_date`), which will mark all detections after that date as invalid (`auto_proc_obs` will be `FALSE`). This may be useful for steelhead to filter out kelting detections, or for Chinook when ghost tags from carcasses or that were expelled during spawning may be observed.
+
+```{r}
+prepped_df = filterDetections(compress_obs = obs,
+                              parent_child = parent_child_nodes,
+                              max_obs_date = "20150930")
+```
+
+```{r}
+prepped_df %>%
+  filter(is.na(user_keep_obs)) %>%
+  filter(tag_code == "3D9.1C2DE4B17E") %>%
+  select(tag_code:node, 
+         min_det,
+         node_order:auto_keep_obs)
+```
+
+The next step would be for a user to filter the prepared data for all rows with `user_keep_obs == NA`, and then fill in the `user_keep_obs` column by hand for each node. These decisions could be guided by the `auto_keep_obs` column (`PITcleanr`'s best guess), but could also be informed by the date of detections and the user's biological knowledge of the system. Before sending the data along to DABOM, all the missing `user_keep_obs` rows should be filled out. 
+
+```{r}
+prep_df = prepWrapper(compress_obs = comp_obs,
+                      parent_child = parent_child_nodes,
+                      max_obs_date = "20150930")
+```
+
