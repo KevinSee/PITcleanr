@@ -81,12 +81,12 @@ buildParentChild = function(sites_sf = NULL,
 
     parent_child %<>%
       left_join(all_meta %>%
-                  select(parent = siteCode,
+                  select(parent = site_code,
                          parent_rkm = rkm) %>%
                   distinct(),
                 by = "parent") %>%
       left_join(all_meta %>%
-                  select(child = siteCode,
+                  select(child = site_code,
                          child_rkm = rkm) %>%
                   distinct(),
                 by = "child")
