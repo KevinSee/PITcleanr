@@ -4,19 +4,19 @@ author: Kevin See
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Preparing Data for DABOM}
+%\VignetteIndexEntry{Preparing Data for DABOM}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
----
-
-```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+  ---
+  
+  ```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
 # knitr options
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  warning = FALSE,
-  message = FALSE,
-  echo = TRUE,
-  comment = "#>"
+collapse = TRUE,
+warning = FALSE,
+message = FALSE,
+echo = TRUE,
+comment = "#>"
 )
 
 ```
@@ -84,33 +84,33 @@ array_configuration = buildConfig()
 # customize some pieces
 configuration = array_configuration %>%
   mutate(node = ifelse(site_code %in% c('LNF', 'LEAV'),
-                         'LNF',
-                         node),
-           node = ifelse(site_code %in% c('TUF', 'TUMFBY', 'TUM'),
-                         'TUM',
-                         node),
-           node = ifelse(site_code == 'CHIWAC',
-                         'CHWA0',
-                         node),
-           node = ifelse(site_code %in% c('CHIWAR', 'CHIWAT'),
-                         'CHLA0',
-                         node),
-           node = ifelse(site_code == 'CHIW',
-                         'CHLA0',
-                         node),
-           node = ifelse(site_code == 'CHIKAC',
-                         'CHUA0',
-                         node),
+                       'LNF',
+                       node),
+         node = ifelse(site_code %in% c('TUF', 'TUMFBY', 'TUM'),
+                       'TUM',
+                       node),
+         node = ifelse(site_code == 'CHIWAC',
+                       'CHWA0',
+                       node),
+         node = ifelse(site_code %in% c('CHIWAR', 'CHIWAT'),
+                       'CHLA0',
+                       node),
+         node = ifelse(site_code == 'CHIW',
+                       'CHLA0',
+                       node),
+         node = ifelse(site_code == 'CHIKAC',
+                       'CHUA0',
+                       node),
          node = ifelse(site_code == 'NASONC',
-                         'NALA0',
-                         node),
-           node = ifelse(site_code == 'WHITER',
-                         'WTLA0',
-                         node),
-           node = ifelse(site_code == 'LWENAT',
-                         'LWNA0',
-                         node)) %>%
-    distinct()
+                       'NALA0',
+                       node),
+         node = ifelse(site_code == 'WHITER',
+                       'WTLA0',
+                       node),
+         node = ifelse(site_code == 'LWENAT',
+                       'LWNA0',
+                       node)) %>%
+  distinct()
 ```
 
 ```{r compress-detections}
@@ -157,7 +157,7 @@ nhd_list = queryFlowlines(sites_sf = sites_sf,
 
 # compile the upstream and downstream flowlines
 flowlines = nhd_list$flowlines %>%
-    rbind(nhd_list$dwn_flowlines)
+  rbind(nhd_list$dwn_flowlines)
 
 parent_child = sites_sf %>%
   filter(! site_code %in% c("UWE", "LWE")) %>%
@@ -201,9 +201,19 @@ prepped_df %>%
 
 The next step would be for a user to filter the prepared data for all rows with `user_keep_obs == NA`, and then fill in the `user_keep_obs` column by hand for each node. These decisions could be guided by the `auto_keep_obs` column (`PITcleanr`'s best guess), but could also be informed by the date of detections and the user's biological knowledge of the system. Before sending the data along to DABOM, all the missing `user_keep_obs` rows should be filled out. 
 
-```{r}
-prep_df = prepWrapper(compress_obs = comp_obs,
-                      parent_child = parent_child_nodes,
-                      max_obs_date = "20150930")
+# Wrapper Function
+
+`PITcleanr includes a wrapper function that starts with the initial compressed observations and the user-defined parent-child table, and performs several steps:
+
+* Adds a start date corresponding to the date when a tag was marked or recaptured at the starting node (`start_node`)
+* Runs the `filterDetections()` function
+* If desired, saves the output as a csv or Excel file, to make it easier to examine tag histories with less than straightforward detection paths
+
+If a user has a parent-child table built from a previous year, or by hand, this function makes it very easy to prepare a new year's worth data for DABOM.
+
+```{r, eval = F}
+prepped_df = prepWrapper(compress_obs = comp_obs,
+                         parent_child = parent_child_nodes,
+                         max_obs_date = "20150930")
 ```
 
