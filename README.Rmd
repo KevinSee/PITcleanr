@@ -41,7 +41,9 @@ Or you can install this compendium as an R package, DABOM, from GitHub with:
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("devtools")
-remotes::install_github("BiomarkABS/PITcleanr", build_vignettes = TRUE)
+remotes::install_github("BiomarkABS/PITcleanr", 
+                        dependencies = TRUE,
+                        build_vignettes = TRUE)
 ```
 
 ### Licenses
