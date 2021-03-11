@@ -9,7 +9,7 @@
 #' @inheritParams addDirection
 #' @param max_obs_date Character string in the format "YYYYMMDD". If included, the output will suggest that observations after this date should be deleted.
 #'
-#' @import dplyr tidyr lubridate purrr
+#' @import dplyr tidyr lubridate purrr progress
 #' @export
 #' @return a tibble
 #' @examples filterDetections()
@@ -30,12 +30,18 @@ filterDetections = function(compress_obs = NULL,
       as.character()
   }
 
+  # pb <- progress::progress_bar$new(format = "[:bar] :current/:total (:percent)",
+  #                                  total = n_distinct(obs_direct$tag_code))
+
+  pb = dplyr::progress_estimated(n = n_distinct(obs_direct$tag_code))
 
   keep_obs = obs_direct %>%
     group_by(tag_code) %>%
     tidyr::nest() %>%
     mutate(proc = purrr::map(data,
                              .f = function(x) {
+                               pb$tick()$print()
+
                                if(sum(x$direction %in% c("backward", "unknown")) == 0) {
                                  x %>%
                                    mutate(auto_keep_obs = if_else(min_det <= lubridate::ymd(max_obs_date),
@@ -49,6 +55,13 @@ filterDetections = function(compress_obs = NULL,
                                                                             "forward",
                                                                             "unknown") &
                                                              min_det <= lubridate::ymd(max_obs_date)]))
+
+                                 # see if tag was seen further upstream but along the same path
+                                 spwn_loc = x %>%
+                                   filter(grepl(spwn_loc$node, path)) %>%
+                                   filter(node_order == max(node_order)) %>%
+                                   filter(slot == max(slot))
+
 
                                  x %>%
                                    group_by(node) %>%
