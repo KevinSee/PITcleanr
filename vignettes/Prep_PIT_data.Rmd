@@ -32,13 +32,15 @@ To install `PITcleanr` you can use Hadley Wickham's `devtools` package. To insta
 
 ```{r gh-installation, eval = FALSE}
 # install.packages("devtools")
-remotes::install_github("BiomarkABS/PITcleanr", build_vignettes = TRUE)
+remotes::install_github("BiomarkABS/PITcleanr", 
+                        build_vignettes = TRUE,
+                        dependencies = TRUE)
 ```
 
 It should be noted that many of the various queries in `PITcleanr` require a connection to the internet.
 
 One function in `PITcleanr` allows the user to make a plot of how the detection sites or nodes are related to each other. To use 
-this function, one will need the `ggraph` and `tidygraph` packages. `tidygraph` is included with `ggraph`, so a user only needs to install `ggraph`.
+this function, one will need the `ggraph` and `tidygraph` packages. `tidygraph` is included with `ggraph`, so a user only needs to install `ggraph`. If the argument `dependencies` is set to `TRUE` in the code above, it will be installed automatically. Otherwise, run the following:
 
 ```{r other-packages, eval = F}
 install.packages("ggraph")
@@ -82,7 +84,12 @@ Set up a filter for specific tags by next navigating to the "28 Tag Code - List 
 * Remove extra column: Yes
 
 ```{r, echo = F}
-ptagis_file = "../inst/extdata/TUM_Chinook_2015.csv"
+# ptagis_file = "../inst/extdata/TUM_Chinook_2015.csv"
+ptagis_file = system.file("extdata", 
+                          "TUM_Chinook_2015.csv", 
+                          package = "PITcleanr",
+                          mustWork = TRUE)
+
 ```
 
 
@@ -90,7 +97,7 @@ ptagis_file = "../inst/extdata/TUM_Chinook_2015.csv"
 
 The complete tag history query will provide a record for every detection of each tag code in the tag list. This may include multiple detections on the same antenna, or same site within a short period of time. `PITcleanr` can help compress that data into an initial summary using the function `compress()`. At a minimum. this function requires the complete tag history file downloaded from PTAGIS. 
 
-```{r, eval = F}
+```{r, eval = T}
 comp_obs = compress(ptagis_file)
 comp_obs
 ```
