@@ -113,7 +113,10 @@ addParentChildNodes = function(parent_child = NULL,
     tidyr::unnest(cols = pc) %>%
     select(parent,
            child) %>%
-    distinct() %>%
+    distinct()
+
+  if(sum(grepl("hydro", names(parent_child))) > 0) {
+  pc_nodes %<>%
     left_join(node_long %>%
                 select(parent = node,
                        parent_hydro = hydro),
@@ -124,6 +127,7 @@ addParentChildNodes = function(parent_child = NULL,
               by = "child") %>%
     arrange(parent_hydro,
             child_hydro)
+  }
 
   if(sum(grepl("rkm", names(parent_child))) > 0) {
     pc_nodes %<>%
