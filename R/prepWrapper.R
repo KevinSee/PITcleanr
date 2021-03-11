@@ -64,6 +64,8 @@ prepWrapper = function(compress_obs = NULL,
 
 
   if(save_file) {
+    if(is.null(file_name)) file_name = "PITcleanr_output.xlsx"
+
     stopifnot(grepl("csv$", file_name) | grepl("xlsx$", file_name) | grepl("xls$", file_name))
 
     if(grepl("xlsx$", file_name) | grepl("xls$", file_name)) {
