@@ -30,17 +30,17 @@ filterDetections = function(compress_obs = NULL,
       as.character()
   }
 
-  # pb <- progress::progress_bar$new(format = "[:bar] :current/:total (:percent)",
-  #                                  total = n_distinct(obs_direct$tag_code))
-
-  pb = dplyr::progress_estimated(n = n_distinct(obs_direct$tag_code))
+  # to add a progress bar for the following map function
+  pb <- progress::progress_bar$new(format = "[:bar] :current/:total (:percent) remaining: :eta",
+                                   total = n_distinct(obs_direct$tag_code),
+                                   show_after = 2)
 
   keep_obs = obs_direct %>%
     group_by(tag_code) %>%
     tidyr::nest() %>%
     mutate(proc = purrr::map(data,
                              .f = function(x) {
-                               pb$tick()$print()
+                               pb$tick()
 
                                if(sum(x$direction %in% c("backward", "unknown")) == 0) {
                                  x %>%
