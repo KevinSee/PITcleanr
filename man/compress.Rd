@@ -8,7 +8,8 @@ compress(
   ptagis_file = NULL,
   max_minutes = NA,
   configuration = NULL,
-  units = c("mins", "auto", "secs", "hours", "days", "weeks")
+  units = c("mins", "auto", "secs", "hours", "days", "weeks"),
+  ignore_event_vs_release = FALSE
 )
 }
 \arguments{
@@ -29,6 +30,10 @@ the column name should be `node`.}
 
 \item{units}{character string.  Units in which the results are
     desired.  Can be abbreviated.}
+
+\item{ignore_event_vs_release}{Should the function attempt to choose whether to use the event time value
+or the event release time value for different release batches? Default is `FALSE`. If set to `TRUE`,
+the event time value will be used}
 }
 \value{
 a tibble

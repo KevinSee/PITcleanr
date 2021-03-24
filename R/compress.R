@@ -20,6 +20,9 @@
 #' site configuration ID combinations. One example can be built with the function `buildConfig`. If
 #' no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
 #' the column name should be `node`.
+#' @param ignore_event_vs_release Should the function attempt to choose whether to use the event time value
+#'  or the event release time value for different release batches? Default is `FALSE`. If set to `TRUE`,
+#'  the event time value will be used
 #'
 #' @inheritParams base::difftime
 #' @import dplyr lubridate
@@ -36,7 +39,8 @@ compress = function(ptagis_file = NULL,
                     configuration = NULL,
                     units = c("mins",
                               "auto", "secs", "hours",
-                              "days", "weeks")) {
+                              "days", "weeks"),
+                    ignore_event_vs_release = FALSE) {
 
   stopifnot(!is.null(ptagis_file))
 
@@ -44,10 +48,29 @@ compress = function(ptagis_file = NULL,
 
   if(class(ptagis_file)[1] == "character") {
     observations = suppressMessages(read_csv(ptagis_file)) %>%
-      janitor::clean_names() %>%
-      mutate(across(c(event_date_time_value,
-                      event_release_date_time_value),
-                    lubridate::mdy_hms))
+      janitor::clean_names()
+
+    # determine format of event date time value
+    n_colons = observations %>%
+      mutate(event_time = str_split(event_date_time_value, " ", simplify = T)[,2],
+             n_colon = str_count(event_time, "\\:")) %>%
+      pull(n_colon) %>%
+      max()
+
+    if(n_colons == 2) {
+      observations %<>%
+        mutate(across(c(event_date_time_value,
+                        event_release_date_time_value),
+                      lubridate::mdy_hms))
+    } else if(n_colons == 1) {
+      observations %<>%
+        mutate(across(c(event_date_time_value,
+                        event_release_date_time_value),
+                      lubridate::mdy_hm))
+    } else {
+      warning("Event Date Time Value has strange format.")
+    }
+
   } else if(class(ptagis_file)[1] %in% c("spec_tbl_df", "tbl_df", "tbl", "data.frame")) {
     observations = ptagis_file %>%
       as_tibble()
@@ -58,6 +81,7 @@ compress = function(ptagis_file = NULL,
   # perform some QC checks
   qc_list = qcTagHistory(observations)
 
+  if(!ignore_event_vs_release) {
   # identify batches of fish where lots of replicated event times or release times
   rel_time_batches = qc_list$rel_time_batches %>%
     filter(event_rel_ratio < 1 |
@@ -85,6 +109,7 @@ compress = function(ptagis_file = NULL,
                                            event_date_time_value)) %>%
     select(-year,
            -use_release_time)
+  }
 
   # filter out disowned and orphan tags, and
   # put observations in correct order in time
