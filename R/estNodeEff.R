@@ -78,6 +78,12 @@ estNodeEff = function(capHist_proc = NULL,
                         tibble::add_column(up = 0)
                     }
 
+                    if(!("down" %in% names(det_hist_summ))) {
+                      det_hist_summ = det_hist_summ %>%
+                        tibble::add_column(down = 0,
+                                           .before = "up")
+                    }
+
                     cap_hist_node = det_hist_summ %>%
                       summarise(M = n_distinct(tag_code[down == 1]),
                                 C = n_distinct(tag_code[up == 1]),
