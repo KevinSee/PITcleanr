@@ -42,7 +42,7 @@ queryPtagisMeta = function() {
     dplyr::mutate(RKMTotal = stringr::str_split(rkm, "\\.")) %>%
     dplyr::mutate(RKMTotal = purrr::map_dbl(RKMTotal,
                                             .f = function(x) {
-                                              sum(as.numeric(x))
+                                              sum(as.numeric(x), na.rm = T)
                                             })) %>%
     janitor::clean_names(case = "snake")
 
