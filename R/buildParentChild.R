@@ -92,6 +92,16 @@ buildParentChild = function(sites_sf = NULL,
                 by = "child")
   }
 
+  if(sum(duplicated(parent_child$child)) > 0) {
+    dup_childs = parent_child %>%
+      filter(child %in% child[duplicated(child)]) %>%
+      pull(child) %>%
+      unique() %>%
+      paste(collapse = ", ")
+
+      cat(paste("The following site codes appear more than once in the child columm:\n", dup_childs))
+  }
+
   return(parent_child)
 
 }
