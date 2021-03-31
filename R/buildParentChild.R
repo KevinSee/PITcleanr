@@ -99,7 +99,7 @@ buildParentChild = function(sites_sf = NULL,
       unique() %>%
       paste(collapse = ", ")
 
-      cat(paste("The following site codes appear more than once in the child columm:\n", dup_childs))
+      cat(paste("The following site codes appear more than once in the child columm:\n", dup_childs, "\n"))
   }
 
   return(parent_child)
