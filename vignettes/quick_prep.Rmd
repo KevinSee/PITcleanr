@@ -170,7 +170,7 @@ prepped_df = prepWrapper(compress_obs = comp_obs,
 
 The user can even save that output directly to an Excel workbook or csv file by setting `save_file = TRUE` and defining a file path and name in the `file_name` argument.
 
-```{r}
+```{r, eval = F}
 prepped_df = prepWrapper(compress_obs = comp_obs,
                          parent_child = parent_child,
                          max_obs_date = "20150930",
