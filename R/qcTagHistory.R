@@ -50,7 +50,7 @@ qcTagHistory = function(ptagis_file = NULL,
 
 
   rel_time_batches = observations %>%
-    mutate(year = year(event_date_time_value)) %>%
+    mutate(year = lubridate::year(event_date_time_value)) %>%
     group_by(mark_species_name,
              year,
              event_site_type_description,
@@ -67,7 +67,7 @@ qcTagHistory = function(ptagis_file = NULL,
     mutate(event_rel_ratio = n_events / n_release)
 
   result_list = c(result_list,
-                  rel_time_batches = rel_time_batches)
+                  list(rel_time_batches = rel_time_batches))
   }
 
   return(result_list)
