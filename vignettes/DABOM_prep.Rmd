@@ -77,7 +77,11 @@ Detections from PTAGIS can be linked to specific detection "nodes", which the us
 In preparing data for DABOM, it is probably a good idea to filter the detections from PTAGIS so each tag starts at the same site (i.e. filter detections prior to that date). 
 
 ```{r, echo = F}
-ptagis_file = "../inst/extdata/TUM_Chinook_2015.csv"
+# find file with PTAGIS observations
+ptagis_file = system.file("extdata", 
+                          "TUM_Chinook_2015.csv", 
+                          package = "PITcleanr",
+                          mustWork = TRUE)
 
 array_configuration = buildConfig()
 
