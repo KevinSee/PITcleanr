@@ -11,7 +11,6 @@
 #'
 #' @author Greg Kliewer, Ryan Kinzer, Kevin See
 #' @import dplyr stringr
-#' @export
 #' @return NULL
 #' @examples writeFishPaths()
 
