@@ -1,15 +1,14 @@
 ---
 title: "Preparing Data for DABOM"
-author: Kevin See
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+author: "Kevin See"
 output: rmarkdown::html_vignette
 vignette: >
-%\VignetteIndexEntry{Preparing Data for DABOM}
+  %\VignetteIndexEntry{quick_prep}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  ---
+---
   
-  ```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
 # knitr options
 knitr::opts_chunk$set(
 collapse = TRUE,
