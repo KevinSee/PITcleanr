@@ -397,17 +397,20 @@ if(root_site == 'TUM') {
 
 if(root_site == "GRA") {
   ptagis_file = 'inst/extdata/LGR_Chinook_2014.csv'
-  sites_df = writeLGRnodeNetwork()
+  sites_df = writeOldNetworks()$LowerGranite %>%
+    rename(site_code = SiteID)
 } else if(root_site == "PRA") {
   ptagis_file = 'inst/extdata/UC_Sthd_2015.csv'
-  sites_df = writePRDnodeNetwork() %>%
+  sites_df = writeOldNetworks()$PriestRapids
     mutate(across(c(site_code, Step3),
                   recode,
                   "BelowJD1" = "JDA"),
-           path = str_replace(path, "BelowJD1", "JDA"))
+           path = str_replace(path, "BelowJD1", "JDA")) %>%
+      rename(site_code = SiteID)
 } else if(root_site == 'TUM') {
   ptagis_file = 'inst/extdata/TUM_Chinook_2015.csv'
-  sites_df = writeTUMnodeNetwork_noUWE()
+  sites_df = writeOldNetworks()$Tumwater_noUWE %>%
+    rename(site_code = SiteID)
 }
 
 
@@ -715,9 +718,11 @@ if(root_site == 'TUM') {
     filter(! site_code %in% c("UWE", "LWE")) %>%
     buildParentChild(flowlines,
                      add_rkm = T) %>%
-    editParentChild(child_locs = c("ICM", "PES", 'ICL', 'LWE', "PES"),
-                    parent_locs = c("LNF", "LWE", "LWE", NA, NA),
-                    new_parent_locs = c("ICL", "TUM", 'TUM', "TUM", "TUM"),
+    editParentChild(fix_list = list(c("LNF", "ICM", "ICL"),
+                                    c("LWE", "PES", "TUM"),
+                                    c("LWE", "ICL", "TUM"),
+                                    c(NA, "LWE", "TUM"),
+                                    c(NA, "PES", "TUM")),
                     switch_parent_child = list(c("ICL", 'TUM'))) %>%
     filter(!(child == "ICL" & parent == "LWE"))
 } else if(root_site == 'PRA') {
@@ -895,7 +900,7 @@ parent_child %>%
 buildPaths(parent_child)
 
 # add nodes to the parent child table
-parent_child_nodes = addParentChildnodes(parent_child,
+parent_child_nodes = addParentChildNodes(parent_child,
                                          configuration)
 
 
@@ -952,7 +957,7 @@ anti_join(parent_child_nodes,
 
 #--------------------------------------------------------
 # build a node order, with paths to each node
-node_order = buildnodeOrder(parent_child_nodes)
+node_order = buildNodeOrder(parent_child_nodes)
 
 # which observation locations are not in node_order?
 obs %>%
@@ -1013,6 +1018,13 @@ if(root_site == "TUM") {
 proc_obs = filterDetections(obs,
                             parent_child_nodes,
                             max_obs_date)
+
+proc_obs %>%
+  mutate(user_keep_obs = auto_keep_obs) %>%
+  estimateSpawnLoc() %>%
+  slice(11:30)
+
+ptagis_file
 
 proc_obs %>%
   summarise(n_tags = n_distinct(tag_code),
