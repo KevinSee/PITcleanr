@@ -3,7 +3,7 @@ title: "Preparing Data for DABOM"
 author: "Kevin See"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{quick_prep}
+  %\VignetteIndexEntry{DABOM_prep}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
