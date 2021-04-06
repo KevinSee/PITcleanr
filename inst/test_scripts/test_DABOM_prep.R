@@ -1,7 +1,7 @@
 # Author: Kevin See
 # Purpose: Test new functions for processing PTAGIS data for DABOM
 # Created: 2/10/2021
-# Last Modified: 3/3/2021
+# Last Modified: 4/6/2021
 # Notes:
 
 #-----------------------------------------------------------------
@@ -20,8 +20,8 @@ org_config = buildConfig()
 #-----------------------------------------------------------------
 # designate a starting point
 # root_site = "GRA"
-# root_site = "PRA"
-root_site = "TUM"
+root_site = "PRA"
+# root_site = "TUM"
 
 #-----------------------------------------------------------------
 # Lower Granite
@@ -396,19 +396,28 @@ if(root_site == 'TUM') {
 # read in observations
 
 if(root_site == "GRA") {
-  ptagis_file = 'inst/extdata/LGR_Chinook_2014.csv'
+  ptagis_file = system.file("extdata",
+                            'LGR_Chinook_2014.csv',
+                            package = "PITcleanr",
+                            mustWork = TRUE)
   sites_df = writeOldNetworks()$LowerGranite %>%
     rename(site_code = SiteID)
 } else if(root_site == "PRA") {
-  ptagis_file = 'inst/extdata/UC_Sthd_2015.csv'
-  sites_df = writeOldNetworks()$PriestRapids
-    mutate(across(c(site_code, Step3),
+  ptagis_file = system.file("extdata",
+                            'UC_Sthd_2015.csv',
+                            package = "PITcleanr",
+                            mustWork = TRUE)
+  sites_df = writeOldNetworks()$PriestRapids %>%
+    mutate(across(c(SiteID, Step3),
                   recode,
                   "BelowJD1" = "JDA"),
            path = str_replace(path, "BelowJD1", "JDA")) %>%
       rename(site_code = SiteID)
 } else if(root_site == 'TUM') {
-  ptagis_file = 'inst/extdata/TUM_Chinook_2015.csv'
+  ptagis_file = system.file("extdata",
+                            "TUM_Chinook_2015.csv",
+                            package = "PITcleanr",
+                            mustWork = TRUE)
   sites_df = writeOldNetworks()$Tumwater_noUWE %>%
     rename(site_code = SiteID)
 }
@@ -419,54 +428,6 @@ comp_obs = compress(ptagis_file = ptagis_file,
                     max_minutes = NA,
                     configuration = configuration,
                     units = "hours")
-
-# # get detections by site, not node
-# obs_site = compress(ptagis_file = ptagis_file,
-#                     #max_minutes = 5,
-#                     max_minutes = NA,
-#                     units = "hours") %>%
-#   left_join(comp_obs %>%
-#               filter(node == root_site,
-#                      event_type_name %in% c("Mark", "Recapture")) %>%
-#               group_by(tag_code) %>%
-#               filter(max_det == max(max_det)) %>%
-#               summarise(start_date = max_det,
-#                         .groups = "drop"),
-#             by = "tag_code") %>%
-#   filter(min_det >= start_date) %>%
-#   group_by(tag_code) %>%
-#   mutate(slot = slot - min(slot) + 1) %>%
-#   ungroup()
-#
-# obs %>%
-#   left_join(configuration %>%
-#               select(site_code, node = node) %>%
-#               distinct() %>%
-#               group_by(node) %>%
-#               summarise(n_sites = n_distinct(site_code),
-#                         site_list = list(unique(site_code)),
-#                         .groups = "drop")) %>%
-#   filter(n_sites > 1,
-#          node != root_site)
-#
-# test = obs %>%
-#   mutate(time_interval = interval(min_det, max_det)) %>%
-#   select(tag_code, node, slot, time_interval) %>%
-#   left_join(obs_site %>%
-#               mutate(site_interval = interval(min_det, max_det)) %>%
-#               select(tag_code, node, slot, site_interval) %>%
-#               nest(site_intvl = -tag_code)) %>%
-#   nest(intvl_data = c(time_interval, site_intvl)) %>%
-#   mutate(site_list = map(.x = intvl_data,
-#                           .f = function(x) {
-#                             x %>%
-#                               unnest(site_intvl) %>%
-#                               mutate(ovrlp = int_overlaps(site_interval,
-#                                                           time_interval)) %>%
-#                               filter(ovrlp) %>%
-#                               pull(node)
-#                           })) %>%
-#   ungroup()
 
 
 # how many tags have a Mark or Recapture at the root_site?
@@ -541,11 +502,12 @@ sites_sf %<>%
                      latitude, longitude) %>%
               distinct() %>%
               filter(!is.na(latitude)) %>%
-              st_as_sf(coords = c("Longitude",
-                                  "Latitude"),
+              st_as_sf(coords = c("longitude",
+                                  "latitude"),
                        crs = 4326) %>%
               st_transform(crs = st_crs(sites_sf)))
 
+# drop an MRR site with the same code as an INT site
 if(root_site == "PRA") {
   sites_sf %<>%
     filter(!(site_code == "PRO" & type == "MRR"))
@@ -591,9 +553,10 @@ single_site %>%
   filter(!is.na(path))
   # xtabs(~ is.na(path), .)
 
+# drop sites that are in the sites_df
 single_site %<>%
   anti_join(sites_df %>%
-              select(site_code = site_code))
+              select(site_code))
 
 
 # get some info about those sites
@@ -669,17 +632,17 @@ ggplot() +
                         end = 0.8) +
   scale_size_continuous(range = c(0.2, 1.2),
                         guide = 'none') +
-  geom_sf(data = nhd_list$basin,
-          fill = NA,
-          lwd = 2) +
-  # this cuts out parts of the basin upstream of upstrm_loc
-  # geom_sf(data = flowlines %>%
-  #           filter(!Hydroseq %in% nhd_list$dwn_flowlines$Hydroseq) %>%
-  #           summarise(bndry = 'basin') %>%
-  #           select(bndry) %>%
-  #           st_convex_hull(),
+  # geom_sf(data = nhd_list$basin,
   #         fill = NA,
   #         lwd = 2) +
+  # this cuts out parts of the basin upstream of upstrm_loc
+  geom_sf(data = flowlines %>%
+            filter(!Hydroseq %in% nhd_list$dwn_flowlines$Hydroseq) %>%
+            summarise(bndry = 'basin') %>%
+            select(bndry) %>%
+            st_convex_hull(),
+          fill = NA,
+          lwd = 2) +
   geom_sf(data = sites_sf,
           size = 4,
           color = "black") +
@@ -693,22 +656,22 @@ ggplot() +
   theme(axis.title = element_blank()) +
   labs(color = "Stream\nOrder")
 
-# join sites to nearest hydro sequence
-sites_NHDseg = st_join(sites_sf,
-                       flowlines %>%
-                         select(gnis_name, Hydroseq),
-                       join = st_nearest_feature)
-
-# which sites were joined to the same hydrosequence?
-sites_NHDseg %>%
-  filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
-  arrange(Hydroseq, rkm, site_code)
-
-sites_NHDseg %>%
-  filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
-  arrange(Hydroseq, rkm) %>%
-  st_drop_geometry() %>%
-  split(list(.$Hydroseq))
+# # join sites to nearest hydro sequence
+# sites_NHDseg = st_join(sites_sf,
+#                        flowlines %>%
+#                          select(gnis_name, Hydroseq),
+#                        join = st_nearest_feature)
+#
+# # which sites were joined to the same hydrosequence?
+# sites_NHDseg %>%
+#   filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
+#   arrange(Hydroseq, rkm, site_code)
+#
+# sites_NHDseg %>%
+#   filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
+#   arrange(Hydroseq, rkm) %>%
+#   st_drop_geometry() %>%
+#   split(list(.$Hydroseq))
 
 #-----------------------------------------------------------------
 # build parent child table
@@ -741,67 +704,40 @@ if(root_site == 'TUM') {
                               "MRT", "HSL",
                               "ENM", 'ENS', 'TY4', '3D4')) %>%
     buildParentChild(flowlines,
-                     rm_na_parent = T) %>%
-    editParentChild(child_locs = c("WEA",
-                                   'ICH', 'JD1', 'PRO', 'TMF', 'PRV', 'RSH',
-                                   'PRH',
-                                   'PRA',
-                                   "ENL",
-                                   'ENA', 'MAD',
-                                   'ENF',
-                                   'METH',
-                                   'MRW',
-                                   'OKC',
-                                   'OKV',
-                                   'WHS', 'BPC', 'ANT', 'TNK', "AEN",
-                                   'ZSL',
-                                   'WEH',
-                                   'SCP', 'CRW',
-                                   'MSH',
-                                   'TUM',
-                                   'ICM'),
-                    parent_locs = c("RIA",
-                                    rep('JDA', 6),
-                                    "RSH",
-                                    'RSH',
-                                    'RIA',
-                                    rep("EHL", 2),
-                                    '3D4',
-                                    'SCP',
-                                    'MSH',
-                                    'WHS',
-                                    'ZSL',
-                                    rep("JOH", 5),
-                                    'WHS',
-                                    'RIA',
-                                    rep('MRT', 2),
-                                    'SCP',
-                                    'ICL',
-                                    'LNF'),
-                    new_parent_locs = c("RRF",
-                                        rep('PRA', 6),
-                                        "PRA",
-                                        'JDA',
-                                        'RRF',
-                                        rep("ENL", 2),
-                                        'ENA',
-                                        'MSH',
-                                        'MRC',
-                                        'ZSL',
-                                        'OKC',
-                                        rep('OKL', 5),
-                                        'OKL',
-                                        'RRF',
-                                        rep('MRC', 2),
-                                        'MRC',
-                                        'LWE',
-                                        'ICL'),
-                    switch_parent_child = list(c("JDA", "PRA"),
-                                               c("RSH", "PRA"))) %>%
-    # because PRH and PRA are on the same hydrosequence, need to remove this row
-    filter(!(parent == 'PRH' & child %in% c("RIA", "CLK")),
-           !(parent == "METH" & child == "MRW"),
-           !(parent == 'WEH'))
+                     # rm_na_parent = T,
+                     add_rkm = T) %>%
+    editParentChild(fix_list = list(c("JDA", 'ICH', "PRA"),
+                                    c("JDA", 'RSH', "PRA"),
+                                    c("JDA", 'JD1', "PRA"),
+                                    c("JDA", 'PRO', "PRA"),
+                                    c("JDA", 'TMF', "PRA"),
+                                    c("JDA", 'PRV', "PRA"),
+                                    c(NA, "JDA", 'PRA'),
+                                    c("RSH", 'PRH', 'PRA'),
+                                    c("ICL", 'TUM', "LWE"),
+                                    c("LNF", 'ICM', "ICL"),
+                                    c("RIA", 'ENL', 'RRF'),
+                                    c("RIA", "WEA", 'RRF'),
+                                    c("EHL", 'ENA', 'ENL'),
+                                    c("EHL", 'MAD', 'ENL'),
+                                    c("WEH", 'RIA', 'RRF'),
+                                    c("METH", "MRW", "MRC"),
+                                    c("SCP", "METH", "MSH"),
+                                    c("SCP", 'MSH', 'MRC'),
+                                    c("WHS", "OKC", "ZSL"),
+                                    c("WHS", "ZSL", "OKL"),
+                                    c("ZSL", 'OKV', 'OKC'),
+                                    c("JOH", 'WHS', 'OKL'),
+                                    c("JOH", 'BPC', 'OKL'),
+                                    c("JOH", 'ANT', 'OKL'),
+                                    c("JOH", 'TNK', 'OKL'),
+                                    c("JOH", 'AEN', 'OKL')),
+                    switch_parent_child = list(c("RSH", "PRA"))) %>%
+    filter(!parent %in% c("WEH", "PRH"))
+  if("child_rkm" %in% names(parent_child)) {
+    parent_child %<>%
+      filter(!(child == "WAN" & child_rkm == "669"))
+  }
 } else if(root_site == 'GRA') {
   parent_child = sites_sf %>%
     filter(! site_code %in% c("RRF", "PRA", 'PRO',
@@ -857,8 +793,8 @@ ques_locs = c("JDA")
 ques_locs = sites_df %>%
   # filter(grepl("Okanogan", path)) %>%
   # filter(grepl("Entiat", path)) %>%
-  # filter(grepl('Methow', path)) %>%
-  filter(grepl('Wenatchee', path)) %>%
+  filter(grepl('Methow', path)) %>%
+  # filter(grepl('Wenatchee', path)) %>%
   pull(site_code)
 
 parent_child %>%
@@ -896,6 +832,7 @@ parent_child %>%
   # filter(child == "WCT")
   filter(parent == "PRA")
 
+
 # look at paths to each location
 buildPaths(parent_child)
 
@@ -922,19 +859,38 @@ sites_df %>%
 # test against old versions of parent-child table
 if(root_site == "GRA") {
   parent_child_df = createParentChildDf(sites_df,
-                                        configuration,
+                                        configuration %>%
+                                          janitor::clean_names(case = "big_camel") %>%
+                                          rename(SiteID = SiteCode,
+                                                 ConfigID = ConfigId,
+                                                 AntennaID = AntennaId,
+                                                 RKM = Rkm,
+                                                 RKMTotal = RkmTotal),
                                         startDate = "20140301") %>%
     rename(parent = Parentnode,
            child = Childnode)
 } else if(root_site == "PRA") {
-  parent_child_df = createParentChildDf(sites_df,
-                                        configuration,
+  parent_child_df = createParentChildDf(sites_df %>%
+                                          rename(SiteID = site_code),
+                                        configuration %>%
+                                          janitor::clean_names(case = "big_camel") %>%
+                                          rename(SiteID = SiteCode,
+                                                 ConfigID = ConfigId,
+                                                 AntennaID = AntennaId,
+                                                 RKM = Rkm,
+                                                 RKMTotal = RkmTotal),
                                         startDate = "20140701") %>%
-    rename(parent = Parentnode,
-           child = Childnode)
+    rename(parent = ParentNode,
+           child = ChildNode)
 } else if(root_site == 'TUM') {
   parent_child_df = createParentChildDf(sites_df,
-                                        configuration,
+                                        configuration %>%
+                                          janitor::clean_names(case = "big_camel") %>%
+                                          rename(SiteID = SiteCode,
+                                                 ConfigID = ConfigId,
+                                                 AntennaID = AntennaId,
+                                                 RKM = Rkm,
+                                                 RKMTotal = RkmTotal),
                                         startDate = "20150701") %>%
     rename(parent = Parentnode,
            child = Childnode)
