@@ -718,9 +718,9 @@ if(root_site == 'TUM') {
                                     c("LNF", 'ICM', "ICL"),
                                     c("RIA", 'ENL', 'RRF'),
                                     c("RIA", "WEA", 'RRF'),
+                                    c("RIA", "WEH", 'RRF'),
                                     c("EHL", 'ENA', 'ENL'),
                                     c("EHL", 'MAD', 'ENL'),
-                                    c("WEH", 'RIA', 'RRF'),
                                     c("METH", "MRW", "MRC"),
                                     c("SCP", "METH", "MSH"),
                                     c("SCP", 'MSH', 'MRC'),
@@ -970,6 +970,8 @@ obs_direct %>%
 
 if(root_site == "TUM") {
   max_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0930")
+} else if(root_site == "PRA") {
+  max_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0630")
 }
 proc_obs = filterDetections(obs,
                             parent_child_nodes,
@@ -977,18 +979,18 @@ proc_obs = filterDetections(obs,
 
 proc_obs %>%
   mutate(user_keep_obs = auto_keep_obs) %>%
-  estimateSpawnLoc() %>%
+  estimateSpawnLoc(spawn_site = T,
+                   ptagis_file = ptagis_file) %>%
   slice(11:30)
-
-ptagis_file
 
 proc_obs %>%
   summarise(n_tags = n_distinct(tag_code),
-            n_weird_tags = n_distinct(tag_code[is.na(UserKeepObs)])) %>%
+            n_weird_tags = n_distinct(tag_code[is.na(user_keep_obs)])) %>%
   mutate(prop_weird = n_weird_tags / n_tags)
 
+# look at examples of "weird" capture histories
 proc_obs %>%
-  filter(is.na(UserKeepObs)) %>%
+  filter(is.na(user_keep_obs)) %>%
   filter(direction == 'unknown') %>%
   # filter(grepl('WTL', node)) %>%
   select(tag_code) %>%
@@ -997,11 +999,13 @@ proc_obs %>%
   # slice(119) %>%
   left_join(proc_obs) %>%
   select(-(duration:start_date),
-         -UserKeepObs) %>%
+         -user_keep_obs) %>%
   select(-max_det) %>%
   as.data.frame()
 
-
+#------------------------------------------------------
+#------------------------------------------------------
+#------------------------------------------------------
 x = obs_direct %>%
   group_by(tag_code) %>%
   # filter(sum(direction == "unknown") > 0) %>%
