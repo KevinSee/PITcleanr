@@ -475,6 +475,15 @@ obs_site_codes %<>%
               select(any_of(names(obs_site_codes))) %>%
               distinct())
 
+if(root_site == "GRA") {
+  obs_site_codes %<>%
+    full_join(configuration %>%
+                filter(site_code %in% "JUL") %>%
+                select(any_of(names(obs_site_codes))) %>%
+                distinct())
+
+}
+
 #-----------------------------------------------------------------
 # which sites do we care about for this exercise?
 # based on which ones are in the PTAGIS file
@@ -749,51 +758,47 @@ if(root_site == 'TUM') {
     buildParentChild(flowlines,
                      rm_na_parent = F,
                      add_rkm = T) %>%
-    editParentChild(parent_locs = c("GRA",
-                                    "UGR", "UGR",
-                                    "IR3", 'IR3',
-                                    NA, NA,
-                                    rep("KEN", 3),
-                                    rep("LLS", 3),
-                                    rep("LBS", 3),
-                                    'ACM', 'ACB', 'ASOTIC', 'ASOTIC'),
-                    child_locs = c("KOOS",
-                                   "GRANDW", "CATHEW",
-                                   'IMNAHW', 'IML',
-                                   "LTR", "PENAWC",
-                                   "LRW", "HYC", "AGC",
-                                   "LBS", "LB8", "LCL",
-                                   "BTL", "CAC", 'HEC',
-                                   'ACB', 'ASOTIC', 'AFC', 'CCA'),
-                    new_parent_locs = c("CLC",
-                                        "UGS", "CCW",
-                                        'IML', 'IR4',
-                                        "GRA", "GRA",
-                                        rep("LLR", 3),
-                                        rep("LRW", 3),
-                                        rep("LRW", 3),
-                                        'ASOTIC', 'ACM', 'ACB', 'ACB'),
-                    switch_parent_child = list(c("PENAWC", "GRA"))) %>%
-    filter(!(child == 'IR5' & parent %in% c("IR4", "IML")))
+    editParentChild(fix_list = list(c("IR4", "IR5", "IMNAHW"),
+                                    c("IML", "IR5", "IMNAHW"),
+                                    c("IR3", "IMNAHW", "IML"),
+                                    c("IR3", "IML", "IR4"),
+                                    c("GRA", "KOOS", "CLC"),
+                                    c("UGR", "GRANDW", "UGS"),
+                                    c("UGR", "CATHEW", "CCW"),
+                                    c(NA, "LTR", "GRA"),
+                                    c(NA, "PENAWC", "GRA"),
+                                    c(NA, "ALMOTC", "GRA"),
+                                    c("KEN", "LRW", "LLR"),
+                                    c("KEN", "HYC", "LLR"),
+                                    c("KEN", "AGC", "LLR"),
+                                    c("LLS", "LBS", "LRW"),
+                                    c("LLS", "LB8", "LRW"),
+                                    c("LLS", "LCL", "LRW"),
+                                    c("LBS", "BTL", "LRW"),
+                                    c("LBS", "CAC", "LRW"),
+                                    c("LBS", "HEC", "LRW"),
+                                    c("ACM", "ACB", "ASOTIC"),
+                                    c("ACB", "ASOTIC", "ACM"),
+                                    c("ASOTIC", "AFC", "ACB"),
+                                    c("ASOTIC", "CCA", "ACB"))) %>%
+    filter(!(is.na(parent) & child == "GRA"))
 }
 
-ques_locs = c("CATHEW", "CCW")
-ques_locs = c("IMNAHW", "IML", 'IR4', 'IR5')
-ques_locs = c("GRANDW", "UGS")
 ques_locs = c("CLC", "KOOS")
 ques_locs = c("ACB", 'ASOTIC')
-ques_locs = c("PRA", 'PRH')
-ques_locs = c("WEA", 'WEH')
-ques_locs = c("MSH", 'METH')
-ques_locs = c("RIA", "RRF", 'WEA')
-ques_locs = c("CLK")
-ques_locs = c("PRO")
-ques_locs = c("JDA")
 ques_locs = sites_df %>%
   # filter(grepl("Okanogan", path)) %>%
   # filter(grepl("Entiat", path)) %>%
   filter(grepl('Methow', path)) %>%
   # filter(grepl('Wenatchee', path)) %>%
+  pull(site_code)
+
+ques_locs = sites_df %>%
+  # filter(Step3 == "Potlatch") %>%
+  # filter(Step3 == "Lapwai") %>%
+  # filter(Step2 == "Imnaha") %>%
+  # filter(Step3 == "GrandeRonde") %>%
+  filter(Step3 == "Asotin") %>%
   pull(site_code)
 
 parent_child %>%
@@ -829,7 +834,9 @@ parent_child %>%
 parent_child %>%
   # filter(parent == "PENAWC")
   # filter(child == "WCT")
-  filter(parent == "PRA")
+  # filter(parent == "PRA")
+  filter(parent == "GRA")
+
 
 
 # look at paths to each location
@@ -857,7 +864,8 @@ sites_df %>%
 
 # test against old versions of parent-child table
 if(root_site == "GRA") {
-  parent_child_df = createParentChildDf(sites_df,
+  parent_child_df = createParentChildDf(sites_df %>%
+                                          rename(SiteID = site_code),
                                         configuration %>%
                                           janitor::clean_names(case = "big_camel") %>%
                                           rename(SiteID = SiteCode,
@@ -866,8 +874,8 @@ if(root_site == "GRA") {
                                                  RKM = Rkm,
                                                  RKMTotal = RkmTotal),
                                         startDate = "20140301") %>%
-    rename(parent = Parentnode,
-           child = Childnode)
+    rename(parent = ParentNode,
+           child = ChildNode)
 } else if(root_site == "PRA") {
   parent_child_df = createParentChildDf(sites_df %>%
                                           rename(SiteID = site_code),
@@ -882,7 +890,8 @@ if(root_site == "GRA") {
     rename(parent = ParentNode,
            child = ChildNode)
 } else if(root_site == 'TUM') {
-  parent_child_df = createParentChildDf(sites_df,
+  parent_child_df = createParentChildDf(sites_df %>%
+                                          rename(SiteID = site_code),
                                         configuration %>%
                                           janitor::clean_names(case = "big_camel") %>%
                                           rename(SiteID = SiteCode,
@@ -891,8 +900,8 @@ if(root_site == "GRA") {
                                                  RKM = Rkm,
                                                  RKMTotal = RkmTotal),
                                         startDate = "20150701") %>%
-    rename(parent = Parentnode,
-           child = Childnode)
+    rename(parent = ParentNode,
+           child = ChildNode)
 }
 
 anti_join(parent_child_nodes,
@@ -971,6 +980,8 @@ if(root_site == "TUM") {
   max_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0930")
 } else if(root_site == "PRA") {
   max_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0630")
+} else if(root_site == "GRA") {
+  max_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0930")
 }
 proc_obs = filterDetections(obs,
                             parent_child_nodes,
@@ -981,6 +992,25 @@ proc_obs %>%
   estimateSpawnLoc(spawn_site = T,
                    ptagis_file = ptagis_file) %>%
   slice(11:30)
+
+if(root_site == "GRA") {
+  bio_file = system.file("extdata",
+                         'Chnk2014_TrapDatabase.csv',
+                         package = "PITcleanr",
+                         mustWork = TRUE)
+  bio_df = read_csv(bio_file) %>%
+    rename(tag_code = LGDNumPIT) %>%
+    group_by(tag_code) %>%
+    slice(1) %>%
+    ungroup() %>%
+    filter(tag_code %in% unique(proc_obs$tag_code))
+  proc_obs %>%
+    mutate(user_keep_obs = auto_keep_obs) %>%
+    filter(user_keep_obs) %>%
+    summarizeTagData(bio_data = bio_df,
+                     spawn_site = T,
+                     ptagis_file = ptagis_file)
+}
 
 proc_obs %>%
   summarise(n_tags = n_distinct(tag_code),
