@@ -18,7 +18,7 @@ defineRepGrps(
 \item{root_site}{initial tagging site. Currently only defined for \code{LGD} (Lower Granite dam)}
 }
 \description{
-Define which detection sites fall into which report groups, and what the lowest array is. These reporting gropus differ by species.
+Define which detection sites fall into which report groups, and what the lowest array is. These reporting groups differ by species.
 }
 \examples{
 defineRepGrps()

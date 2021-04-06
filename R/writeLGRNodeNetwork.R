@@ -6,7 +6,6 @@
 #'
 #'
 #' @import dplyr stringr
-#' @export
 #' @return NULL
 #' @examples writeLGRNodeNetwork()
 

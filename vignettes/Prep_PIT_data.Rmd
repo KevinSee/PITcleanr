@@ -1,0 +1,303 @@
+---
+title: "Importing, Cleaning, and Compressing PIT Tag Data"
+author: Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Prep_PIT_data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+
+```
+
+# Introduction
+
+This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data in order to either summarize detections or prepare the data for further analysis. `PITcleanr` can help import complete tag histories from [PTAGIS](https://ptagis.org/), build a configuration file to help assign each detection to a "node", and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table of locations, and assign directionality of movement between each detection site. For analyses that focus on one-way directional movement (e.g. straightforward CJS models), `PITcleanr` can help determine which detections fail to meet that one-way assumption and should be examined more closely, and which detections can be kept. 
+
+# Installation
+
+To install `PITcleanr` you can use Hadley Wickham's `devtools` package. To install and load the `PITcleanr` package (and all the packages it relies on) use:
+
+```{r gh-installation, eval = FALSE}
+# install.packages("devtools")
+remotes::install_github("BiomarkABS/PITcleanr", 
+                        build_vignettes = TRUE,
+                        dependencies = TRUE)
+```
+
+It should be noted that many of the various queries in `PITcleanr` require a connection to the internet.
+
+One function in `PITcleanr` allows the user to make a plot of how the detection sites or nodes are related to each other. To use 
+this function, one will need the `ggraph` and `tidygraph` packages. `tidygraph` is included with `ggraph`, so a user only needs to install `ggraph`. If the argument `dependencies` is set to `TRUE` in the code above, it will be installed automatically. Otherwise, run the following:
+
+```{r other-packages, eval = F}
+install.packages("ggraph")
+```
+
+Once `PITcleanr` is installed, it can be loaded into R session. In this vignette, we will also use many functions from the `dplyr` package, so we load that as well:
+
+```{r load-package}
+library(PITcleanr)
+library(dplyr)
+```
+
+
+# Querying Data from PTAGIS
+
+`PITcleanr` starts with a complete capture history query from [PTAGIS](https://ptagis.org/) for a select group of tags. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query. PTAGIS is the regional database for fish marked with PIT tags by fisheries management agencies and research organizations in the Columbia River Basin. From the homepage, go to the [Advanced Reporting](https://www.ptagis.org/data/advanced-reporting) page, which can also be found under the Data tab on the homepage. To access Advanced Reporting, the user will need a free account from PTAGIS, and to be logged in. Once on the Advanced Reporting page, select "Launch" and create a custom query by selecting "Create Query Builder2 Report", and choosing the "Complete Tag History" query type.  
+
+There are several query indices on the left side of the query builder, but for the purposes of `PITcleanr` only need a few are needed. First, under "1 Select Attributes" the following fields are required to work with `PITcleanr`:
+
+* Tag
+* Mark Species
+* Mark Rear Type
+* Event Type
+* Event Site Code
+* Event Date Time
+* Antenna
+* Antenna Group Configuration
+* Event Release Date Time
+* Event Release Site Code
+
+Other fields may be included as well, but the ones listed above must be added. Any additional fields will just be included as extra columns in the query output.
+
+The only other required index is "2 Select Metrics", but that can remain as the default, "CTH Count", which provides one record for each event recorded per tag.
+
+Set up a filter for specific tags by next navigating to the "28 Tag Code - List or Text File" on the left. And then, after selecting "Tag" under "Attributes:", click on "Import file...". Simply upload the .txt file prepared earlier containing tag codes of interest. Under "Report Message Name:" near the bottom, name the query something appropriate, such as "PTAGIS_2018_19", and select "Run Report". Once the query has successfully completed, export the output as a .csv file (e.g. "PTAGIS_2018_19.csv") using the default settings:
+
+* Export: Whole report
+* CSV file format
+* Export Report Title: unchecked
+* Export filter details: unchecked
+* Remove extra column: Yes
+
+```{r, echo = F}
+# ptagis_file = "../inst/extdata/TUM_Chinook_2015.csv"
+ptagis_file = system.file("extdata", 
+                          "TUM_Chinook_2015.csv", 
+                          package = "PITcleanr",
+                          mustWork = TRUE)
+
+```
+
+
+# Compress Detections
+
+The complete tag history query will provide a record for every detection of each tag code in the tag list. This may include multiple detections on the same antenna, or same site within a short period of time. `PITcleanr` can help compress that data into an initial summary using the function `compress()`. At a minimum. this function requires the complete tag history file downloaded from PTAGIS. 
+
+```{r, eval = T}
+comp_obs = compress(ptagis_file)
+comp_obs
+```
+
+The output consists of a tibble containing columns for tag_code, node, detection slot, type of event, number of detections within that slot, the first and last detection within that slot, the duration of that slot (maximum - minimum detection time) and the travel time between the previous slot and that one. Each slot is defined as all detections on a particular node before the tag is detected on a different node. The user can define a maximum number of minutes between detections before a new slot should be defined by supplying a `max_minutes` argument to `compress`. The units of the duration and travel time columns can also be defined by the `units` argument. The default is minutes (`mins`).
+
+Therefore, if a tag moves from node A to B and back to A, there will be three slots in the compressed data. The nodes are the user-defined groupings of detection infrastructure. By default, each site code from PTAGIS is considered a node. However, the user may construct their own groupings, perhaps by array, groups of arrays, groups of sites, or even antenna, depending on the spatial scale desired. To utilize this kind of grouping, a configuration file must be supplied to the `compress()` function.
+
+`PITcleanr` can help perform some basic quality control on the PTAGIS detections as well. The `qcTagHistory()` function returns a list including a vector of tags listed as "DISOWN" by PTAGIS, another vector of tags listed as "ORPHAN" (which may indicate a mark file has not been uploaded), and a dataframe of release batches. This dataframe is used by `compress` to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination. 
+
+```{r}
+qcTagHistory(ptagis_file)
+```
+
+## Configuration File
+
+The configuration file contains all the information from PTAGIS to map a particular detection record to a "node". This mapping must include the site code, the antenna code and the antenna configuration, all of which appear in the PTAGIS query defined above. `PITcleanr` provides a function to query all the metadata associated with PTAGIS sites.
+
+```{r}
+ptagis_meta = queryPtagisMeta()
+ptagis_meta
+```
+
+The default operation of `compress()` maps each site code to a node. `PITcleanr` also includes a function that maps each array at a site onto a node. The upstream arrays are labeled with the site code plus `A0` and the downstream arrays are assigned `B0`. For sites with three arrays, the middle array is grouped with the upstream array. For sites with four arrays, the upper two arrays are mapped to `A0` and the lower two arrays are mapped to `B0`. However, the user can start with the `ptagis_meta` file and construct this mapping any way they choose. This type of configuration file can be included in the `compress()` function to assign each detection to it's associated node.
+
+In the example below, several sites are consolidated into a single node (e.g. LNF, TUM), and some mark-recovery-recapture sites are merged with upstream array nodes
+
+```{r}
+array_configuration = buildConfig()
+
+# customize some pieces
+configuration = array_configuration %>%
+  mutate(node = ifelse(site_code %in% c('LNF', 'LEAV'),
+                         'LNF',
+                         node),
+           node = ifelse(site_code %in% c('TUF', 'TUMFBY', 'TUM'),
+                         'TUM',
+                         node),
+           node = ifelse(site_code == 'CHIWAC',
+                         'CHWA0',
+                         node),
+           node = ifelse(site_code %in% c('CHIWAR', 'CHIWAT'),
+                         'CHLA0',
+                         node),
+           node = ifelse(site_code == 'CHIW',
+                         'CHLA0',
+                         node),
+           node = ifelse(site_code == 'CHIKAC',
+                         'CHUA0',
+                         node),
+         node = ifelse(site_code == 'NASONC',
+                         'NALA0',
+                         node),
+           node = ifelse(site_code == 'WHITER',
+                         'WTLA0',
+                         node),
+           node = ifelse(site_code == 'LWENAT',
+                         'LWNA0',
+                         node)) %>%
+    distinct()
+
+comp_obs = compress(ptagis_file,
+                    configuration = configuration)
+comp_obs
+```
+
+For some purposes, this may be enough, and the user can take the compressed data, `comp_obs`, and summarize it as needed, or perform whatever analyses they would like. In other cases, if directionality of movement is required, `PITcleanr` provides additional functionality.
+
+# Mapping Detection Sites
+
+It can often be helpful to examine a plot of various detection locations, and those locations can be used to determine which locations are upstream or downstream relative to other locations. To accomplish this, `PITcleanr` contains a few different functions:
+
+* `extractSites()` will pull out all the site codes of detections within a file downloaded from PTAGIS. These can be filtered by a minimum and/or maximum detection date, and returned as either a tibble, or an `sf` spatial object.
+* `queryFlowlines()` downloads an NHDPlus v2 stream layer from USGS using the suggested `nhdplusTools` R package. It requires the output of `extractSites()` as an `sf` object, and a site code identified as the "root" site. It starts from the site identified by site code `root_site_code`, and downloads all upstream flowlines from there, with a minimum stream order set by `min_strm_order`. If flowlines downstream of the `root_site_code` site are required, set the argument `dwnstrm_sites = TRUE`, and the user can also control the maximum stream order of the downstream flowlines by setting the `dwn_min_stream_order_diff` argument. This number corresponds to the difference between the stream order of the `root_site_code` site and the maximum stream order desired in the downstream flowlines. For example, if the `root_site_code` is located on a stream order of 6, and `dwn_min_stream_order_diff = 2`, only downstream flowlines of at least 6-2 = **4** will be downloaded. The extent of the downstream flowlines is constrained by the `sites_sf` object. The `queryFlowlines()` function returns a list consisting of:
+  * `flowlines`: the flowlines upstream of the `root_site_code`
+  * `basin`: the polygon containing the upstream flowlines
+  * `dwn_flowlines`: the flowlines downstream of the `root_site_code`, if `dwnstrm_sites = T`
+
+
+```{r map-flowlines}
+sites_sf = extractSites(ptagis_file,
+                        as_sf = T,
+                        min_date = "20150501",
+                        configuration = configuration)
+# focus on sites within Wenatchee subbasin
+sites_sf = sites_sf %>%
+  filter(grepl("754.", rkm),
+         # remove a few sites we don't care about
+         !site_code %in% c("LWE", "ICICLC"))
+
+# query the flowlines
+nhd_list = queryFlowlines(sites_sf = sites_sf,
+                          root_site_code = "TUM",
+                          min_strm_order = 2,
+                          dwnstrm_sites = T,
+                          dwn_min_stream_order_diff = 2)
+
+# compile the upstream and downstream flowlines
+flowlines = nhd_list$flowlines %>%
+    rbind(nhd_list$dwn_flowlines)
+
+# plot the flowlines and the sites
+library(ggplot2)
+ggplot() +
+  geom_sf(data = flowlines,
+          aes(color = as.factor(StreamOrde),
+              size = StreamOrde)) +
+  scale_color_viridis_d(direction = -1,
+                        option = "D",
+                        end = 0.8) +
+  scale_size_continuous(range = c(0.2, 1.2),
+                        guide = 'none') +
+  geom_sf(data = nhd_list$basin,
+          fill = NA,
+          lwd = 2) +
+  geom_sf(data = sites_sf,
+          size = 4,
+          color = "black") +
+  geom_sf_label(data = sites_sf,
+                aes(label = site_code)) +
+  theme_bw() +
+  theme(axis.title = element_blank()) +
+  labs(color = "Stream\nOrder")
+
+```
+
+# Parent-Child Table
+
+When dealing with detections of individual tags, the user often is interested in which nodes are connected to which other nodes by the stream network. One way to capture this information is through the construction of a parent-child table, where each row consists of a parent node, and a child node that is connected directly to that parent node. By default, `PITcleanr` assigns parent-child relationships as moving in an upstream direction, so a single parent may have mutiple child sites upstream, if the stream network branches upstream of it. However, a child should only have a single parent, as we are assuming a lack of looped connections in our stream network. If the user is interested in a downstream parent-child relationship, the `parent` and `child` designations in the table can be manually switched.
+
+`PITcleanr` constructs this relationship by joining a spatial (`sf`) point object of sites with the flowlines queried via `queryFlowlines()`. The NHDPlus layer that is returned contains a unique identifier, or hydrosequence, for every segment, as well as the identifier of the hydrosequence immediately upstream and downstream. Using this information, `PITcleanr` can identify the next downstream site from every known location (using the `findDwnstrmSite()` function), and thus construct the parent child table through the `buildParentChild()` function. By default, `buildParentChild()` returns a tibble identifying every parent-child pair, as well as the hydrosequence joined to the parent and child location. If the argument `add_rkm` is set to `TRUE`, `PITcleanr` will query the PTAGIS metadata again, and attach the river kilometer (or rkm) for each parent and child location. 
+
+```{r parent-child-table}
+parent_child = buildParentChild(sites_sf,
+                                flowlines)
+parent_child
+```
+
+After initially building a parent-child table, there is usually some editing that needs to happen. This is necessary for a variety of reasons. Perhaps the latitude and longitude of a site was not correct, and it was placed on the wrong hydrosequence of the flowlines. Maybe the flowlines layer from the USGS is incorrect around a particular area, causing the parent-child relationships to be incorrect. Perhaps a site that is located at the mouth of a tributary was joined to the mainstem hydrosequence of the flowline, instead of the tributary, causing problems for sites upstream and downstream of that site. For these reasons (or any others), `PITcleanr` provides a function to edit the parent-child table, `editParentChild()`. It requires a list the length of rows to be fixed (`fix_list`). Each element of this list is a vector of length 3, where the first two elements contain the parent and child locations to be edited, and the third element is the new parent location. As each child contains a single parent in the table, this is enough information to uniquely target individual rows of the parent-child table. 
+The user can also switch parent-child pairs, making the parent the child and vice versa, using the `switch_parent_child` argument. This is primarily intended to fix relationships between a root site and the initial downstream sites. If by default the parent child table is build assuming upstream movement, but the user would like to incorporate downstream movement from the root site to a location downstream, this argument will be useful. However, it will not "fix" associated parent-child relationships with the locations in the `switch_parent_child` list; those must be fixed through the `fix_list` argument. 
+
+In the example below, the original parent-child table had some problems with 2 sites downstream of the root site, TUM. In addition, the flowlines are not accurate near the confluence of Icicle Creek and the mainstem Wenatchee river, which has thrown off some of the relationships between ICL and surrounding sites. We would like to make TUM the parent of both ICL and PES, and ICL should be the parent of ICM, not LNF. In addition, ICL was placed on the mainstem river due to a mistake in the flowlines, and therefore listed as a parent of TUM, so we'd like to switch that. All of these corrections are implemented below in the `editParentChild()` function.
+
+```{r edit-pc-table}
+parent_child = editParentChild(parent_child,
+                               fix_list = list(c(NA, "ICL", "TUM"),
+                                               c(NA, "PES", "TUM"),
+                                               c("LNF", 'ICM', 'ICL')),
+                               switch_parent_child = list(c("ICL", 'TUM')))
+parent_child
+```
+
+If the configuration file contains multiple nodes for some sites (e.g. a node for each array at a site), then the parent child table can be expanded to accommodate these nodes. `addParentChildNodes()` assumes that the parent child table is arranged so that children are upstream of parents, and nodes designated as `A0` are upstream of those designated `B0`. Currently, it can only handle up to two nodes at each site.
+
+```{r}
+parent_child_nodes = addParentChildNodes(parent_child,
+                                         configuration)
+```
+
+
+## Movement Paths & Node Order
+
+`PITcleanr` provides a function to determine the detection locations a tag would pass between a starting point and an ending point, based on the parent-child table. We refer to these detection locations as a movement path. The function `buildPaths()` will provide the movement path leading to each node in a parent child table, and the `buildNodeOrder()` provides both the path and the node order of each node (starting from the root site and counting upwards past each node). Each of these functions currently has an argument, `direction` that provides paths and node orders based on upstream movement (the default) or downstream movement. For downstream movement, each node may appear in the resulting tibble multiple times, as there may be multiple ways to reach that node, from different starting points.
+
+```{r paths-node-order}
+buildPaths(parent_child)
+
+buildNodeOrder(parent_child)
+```
+
+Sometimes it helps to visualize the paths that each tag could take. `PITcleanr` provides a function, `plotNodes()` that utilizes the `tidygraph` and `ggraph` packages to generate a plot of all the detection nodes and their connections based on the parent child table. Within `plotNodes`, there is a function called `buildNodeGraph()` that constructs the tidygraph `tbl_graph` object that is then used to make the plot. Users can call thet `buildNodeGraph()` function themselves and use the output to make their own customizeable graphs if they desire.
+
+```{r plot-nodes}
+plotNodes(parent_child,
+          layout = "tree")
+```
+
+# Add Direction
+
+Users may be interested in the apparent movement directionality of the tag, based on the detections. For many analyses, it is necessary to assume a one-way travel direction (either all upstream or all downstream). To meet this assumption, individual detections sometimes need to be discarded. In other cases, more straightforward summaries of directional movements may be desired. `PITcleanr` provides a function, `addDirection()`, to take the compressed observations from `compress` and the parent-child table and indicate the movement direction of each detection in relation to its previous detection. It may be useful to filter detections so they all start at a particular site for each tag before applying `addDirection`. Currently this function only provides directions relative to an upstream movement (i.e. "forward" indicates upstream movement, "backward" indicates downstream movement). A direction of "unknown" indicates the tag has shifted to a different branch in the stream network. 
+
+```{r}
+# determine trap date, and remove detections prior to that
+obs_direct = comp_obs %>%
+  left_join(comp_obs %>%
+              filter(node == "TUM",
+                     event_type_name %in% c("Mark", "Recapture")) %>%
+              group_by(tag_code) %>%
+              filter(max_det == max(max_det)) %>%
+              summarise(start_date = max_det,
+                        .groups = "drop"),
+            by = "tag_code") %>%
+  filter(min_det >= start_date) %>%
+  group_by(tag_code) %>%
+  mutate(slot = slot - min(slot) + 1) %>%
+  ungroup() %>%
+  addDirection(parent_child = parent_child_nodes)
+
+obs_direct %>%
+  filter(tag_code == "3D9.1C2DE4B17E") %>%
+  select(tag_code, node, slot, min_det, direction)
+```
+

@@ -15,31 +15,36 @@
 queryPtagisMeta = function() {
 
   # get metadata for interrogation sites
-  print('Querying INT sites\' metadata')
+  cat('Querying INT sites\' metadata\n')
   int_meta = queryInterrogationMeta()
   # get configuration details for interrogation sites
-  print('Querying INT sites\' configuration information')
+  cat('Querying INT sites\' configuration information\n')
   int_config = queryInterrogationConfig()
 
   # get metadata for MRR sites
-  print('Querying MRR sites\' metadata')
+  cat('Querying MRR sites\' metadata\n')
   mrr_meta = queryMRRMeta()
 
   # put it all together
   all_meta = int_meta %>%
-    dplyr::full_join(int_config) %>%
+    dplyr::full_join(int_config,
+                     by = c("siteCode", "siteName")) %>%
     dplyr::mutate(Type = 'INT') %>%
     dplyr::full_join(mrr_meta %>%
                        dplyr::mutate(Type = 'MRR') %>%
                        dplyr::mutate(configurationSequence = 0,
                                      antennaID = as.character(NA)) %>%
-                       dplyr::rename(siteDescription = siteTypeDescription)) %>%
+                       dplyr::rename(siteDescription = siteTypeDescription),
+                     by = c("siteCode", "siteName", "siteType",
+                            "siteDescription", "latitude", "longitude", "rkm",
+                            "configurationSequence", "antennaID", "Type")) %>%
     tibble::add_column("RKMTotal" = NA, .after = "rkm") %>%
     dplyr::mutate(RKMTotal = stringr::str_split(rkm, "\\.")) %>%
     dplyr::mutate(RKMTotal = purrr::map_dbl(RKMTotal,
                                             .f = function(x) {
-                                              sum(as.numeric(x))
-                                            }))
+                                              sum(as.numeric(x), na.rm = T)
+                                            })) %>%
+    janitor::clean_names(case = "snake")
 
   return(all_meta)
 }

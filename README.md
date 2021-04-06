@@ -39,7 +39,9 @@ with:
 
 ``` r
 # install.packages("devtools")
-remotes::install_github("BiomarkABS/PITcleanr", build_vignettes = TRUE)
+remotes::install_github("BiomarkABS/PITcleanr", 
+                        dependencies = TRUE,
+                        build_vignettes = TRUE)
 ```
 
 ### Licenses

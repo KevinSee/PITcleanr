@@ -6,60 +6,54 @@
 #' each node as well as how many detections were made during that slot. Slots can be
 #' defined to include a maximum number of minutes, or not.
 #'
-#' Currently this function only works for PIT tag detections coded as `Observation`
-#' in PTAGIS. Other detection types are filtered out.
-#'
 #' @author Kevin See
 #'
-#' @param ptagis_file is the path to the PTAGIS observation file downloaded as a csv from PTAGIS.
-#' This must be the output from a Complete Tag History query (part of the Advanced Reporting).
-#' This query should contain: Tag, Mark Species, Mark Rear Type, Event Type, Event Site Type,
-#' Event Site Code, Event Date Time, Antenna, Antenna Group Configuration,
-#' Event Release Site Code, and Event Release Date Time.
+#' @inheritParams readCTH
 #' @param max_minutes maximum number of minutes between detections of a tag before it's considered a
-#' different "slot" of detections. Default is 60.
+#' different "slot" of detections. Default is `NA`, which means a new slot is only defined by
+#' detections on a new node.
 #' @param configuration is a data frame which assigns node names to unique SiteID, AntennaID, and
 #' site configuration ID combinations. One example can be built with the function `buildConfig`. If
 #' no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
 #' the column name should be `node`.
+#' @param ignore_event_vs_release Should the function attempt to choose whether to use the event time value
+#'  or the event release time value for different release batches? Default is `FALSE`. If set to `TRUE`,
+#'  the event time value will be used
 #'
 #' @inheritParams base::difftime
 #' @import dplyr lubridate
 #' @importFrom janitor clean_names
 #' @importFrom readr read_csv
 #' @importFrom magrittr %<>%
+#' @importFrom tidyr replace_na
 #' @export
 #' @return a tibble
 #' @examples compress()
 
 compress = function(ptagis_file = NULL,
-                    max_minutes = 60,
+                    max_minutes = NA,
                     configuration = NULL,
                     units = c("mins",
                               "auto", "secs", "hours",
-                              "days", "weeks")) {
+                              "days", "weeks"),
+                    ignore_event_vs_release = FALSE) {
 
   stopifnot(!is.null(ptagis_file))
 
   units = match.arg(units)
 
-  if(class(ptagis_file)[1] == "character") {
-    observations = suppressMessages(read_csv(ptagis_file)) %>%
-      janitor::clean_names() %>%
-      mutate(across(c(event_date_time_value,
-                      event_release_date_time_value),
-                    lubridate::mdy_hms))
-  } else if(class(ptagis_file)[1] %in% c("tbl_df", "data.frame")) {
-    observations = ptagis_file %>%
-      as_tibble()
-  }
+  observations = readCTH(ptagis_file)
 
   # perform some QC checks
-  qc_list = qcTagHistory(observations)
+  qc_list = qcTagHistory(observations,
+                         ignore_event_vs_release = ignore_event_vs_release)
 
+  if(!ignore_event_vs_release) {
   # identify batches of fish where lots of replicated event times or release times
   rel_time_batches = qc_list$rel_time_batches %>%
-    filter(event_rel_ratio < 1) %>%
+    filter(event_rel_ratio < 1 |
+             (event_rel_ratio == 1 &
+                rel_greq_event > rel_ls_event)) %>%
     select(mark_species_name,
            year,
            event_site_type_description,
@@ -70,13 +64,19 @@ compress = function(ptagis_file = NULL,
   # set event time to the release time for selected
   observations %<>%
     mutate(year = year(event_date_time_value)) %>%
-    left_join(rel_time_batches) %>%
-    mutate(use_release_time = replace_na(F)) %>%
+    left_join(rel_time_batches,
+              by = c("mark_species_name",
+                     "event_type_name",
+                     "event_site_type_description",
+                     "event_site_code_value",
+                     "year")) %>%
+    tidyr::replace_na(replace = list(use_release_time = F)) %>%
     mutate(event_date_time_value = if_else(use_release_time & !is.na(event_release_date_time_value),
                                            event_release_date_time_value,
                                            event_date_time_value)) %>%
     select(-year,
            -use_release_time)
+  }
 
   # filter out disowned and orphan tags, and
   # put observations in correct order in time
@@ -88,10 +88,10 @@ compress = function(ptagis_file = NULL,
   if(!is.null(configuration)) {
     observations %<>%
       left_join(configuration %>%
-                  select(event_site_code_value = SiteID,
-                         antenna_group_configuration_value = ConfigID,
-                         antenna_id = AntennaID,
-                         node = Node),
+                  select(event_site_code_value = site_code,
+                         antenna_group_configuration_value = config_id,
+                         antenna_id,
+                         node),
                 by = c("event_site_code_value",
                        "antenna_group_configuration_value",
                        "antenna_id")) %>%
@@ -137,7 +137,11 @@ compress = function(ptagis_file = NULL,
               max_det = max(event_date_time_value),
               .groups = "drop") %>%
     arrange(tag_code, slot) %>%
-    mutate(duration = difftime(max_det, min_det, units = units))
+    mutate(duration = difftime(max_det, min_det, units = units)) %>%
+    group_by(tag_code) %>%
+    mutate(travel_time = difftime(min_det, lag(max_det),
+                                  units = units)) %>%
+    ungroup()
 
   return(compress_summ)
 }

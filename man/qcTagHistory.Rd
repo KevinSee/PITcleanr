@@ -4,7 +4,7 @@
 \alias{qcTagHistory}
 \title{Quality Check Complete Tag Histories}
 \usage{
-qcTagHistory(ptagis_file = NULL)
+qcTagHistory(ptagis_file = NULL, ignore_event_vs_release = F)
 }
 \arguments{
 \item{ptagis_file}{is the path to the PTAGIS observation file downloaded as a csv from PTAGIS.
@@ -12,6 +12,10 @@ This must be the output from a Complete Tag History query (part of the Advanced 
 This query should contain: Tag, Mark Species, Mark Rear Type, Event Type, Event Site Type,
 Event Site Code, Event Date Time, Antenna, Antenna Group Configuration,
 Event Release Site Code, and Event Release Date Time.}
+
+\item{ignore_event_vs_release}{Should the function attempt to choose whether to use the event time value
+or the event release time value for different release batches? Default is `FALSE`. If set to `TRUE`,
+the event time value will be used}
 }
 \value{
 a list

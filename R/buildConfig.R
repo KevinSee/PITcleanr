@@ -18,50 +18,60 @@ buildConfig = function() {
 
 
   # clean things up a bit
-  config = config_all %>%
-    mutate(Node = NA,
-           ValidNode = NA,
-           ModelMainBranch = NA,
-           Comment = NA,
-           ArrayOrder = NA) %>%
-    select(SiteID = siteCode,
-           ConfigID = configurationSequence,
-           AntennaID = antennaID,
-           Node,
-           ValidNode,
-           StartDate = startDate,
-           EndDate = endDate,
-           Comment,
-           SiteType = Type,
-           SiteName = siteName,
-           ModelMainBranch,
-           AntennaGroup = antennaGroupName,
-           ArrayOrder,
-           SiteDescription = siteDescription,
-           SiteTypeName = siteType,
-           RKM = rkm,
-           RKMTotal,
-           Latitude = latitude,
-           Longitude = longitude) %>%
-    mutate(Node = ifelse(grepl('^LGR', SiteID),
+  configuration = config_all %>%
+    mutate(node = NA) %>%
+    rename(site_type_name = site_type,
+           site_type = type,
+           config_id = configuration_sequence,
+           antenna_group = antenna_group_name) %>%
+    select(site_code,
+           config_id,
+           antenna_id,
+           node,
+           start_date,
+           end_date,
+           site_type,
+           site_name,
+           antenna_group,
+           site_description,
+           site_type_name,
+           rkm,
+           rkm_total,
+           latitude,
+           longitude) %>%
+    mutate(node = ifelse(grepl('^LGR', site_code),
                          'GRA',
-                         Node),
-           Node = ifelse(grepl('UPSTREAM', AntennaGroup, ignore.case = T) |
-                           grepl('UPPER', AntennaGroup, ignore.case = T) |
-                           grepl('TOP', AntennaGroup, ignore.case = T),
-                         paste0(SiteID, 'A0'),
-                         Node),
-           Node = ifelse(grepl('DOWNSTREAM', AntennaGroup, ignore.case = T) |
-                           grepl('DNSTREAM', AntennaGroup, ignore.case = T) |
-                           grepl('LOWER', AntennaGroup, ignore.case = T) |
-                           grepl('BOTTOM', AntennaGroup, ignore.case = T),
-                         paste0(SiteID, 'B0'),
-                         Node),
-           Node = ifelse(grepl('MIDDLE', AntennaGroup, ignore.case = T) |
-                           grepl('MIDDLE', AntennaGroup, ignore.case = T),
-                         paste0(SiteID, 'A0'),
-                         Node),
-           Node = ifelse(is.na(Node), SiteID, Node))
+                         node),
+           node = ifelse(grepl('UPSTREAM', antenna_group, ignore.case = T) |
+                           grepl('UPPER', antenna_group, ignore.case = T) |
+                           grepl('TOP', antenna_group, ignore.case = T),
+                         paste0(site_code, 'A0'),
+                         node),
+           node = ifelse(grepl('DOWNSTREAM', antenna_group, ignore.case = T) |
+                           grepl('DNSTREAM', antenna_group, ignore.case = T) |
+                           grepl('LOWER', antenna_group, ignore.case = T) |
+                           grepl('BOTTOM', antenna_group, ignore.case = T),
+                         paste0(site_code, 'B0'),
+                         node),
+           node = ifelse(grepl('MIDDLE', antenna_group, ignore.case = T) |
+                           grepl('MIDDLE', antenna_group, ignore.case = T),
+                         paste0(site_code, 'A0'),
+                         node),
+           node = ifelse(is.na(node), site_code, node))
 
-  return(config)
+  # for any site that has some nodes with "A0", "B0", but some configurations with a single node, make that node "B0"
+  configuration = configuration %>%
+    group_by(site_code) %>%
+    mutate(node_site = sum(node == site_code),
+           node_site_b0 = sum(node == paste0(site_code, "B0"))) %>%
+    ungroup() %>%
+    rowwise() %>%
+    mutate(node = if_else(node_site > 0 & node_site_b0 > 0 & !(grepl("A0$", node) | grepl("B0$", node)),
+                          paste0(site_code, 'B0'),
+                          node)) %>%
+    ungroup() %>%
+    select(-node_site,
+           -node_site_b0)
+
+  return(configuration)
 }

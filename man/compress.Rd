@@ -6,9 +6,10 @@
 \usage{
 compress(
   ptagis_file = NULL,
-  max_minutes = 60,
+  max_minutes = NA,
   configuration = NULL,
-  units = c("mins", "auto", "secs", "hours", "days", "weeks")
+  units = c("mins", "auto", "secs", "hours", "days", "weeks"),
+  ignore_event_vs_release = FALSE
 )
 }
 \arguments{
@@ -19,7 +20,8 @@ Event Site Code, Event Date Time, Antenna, Antenna Group Configuration,
 Event Release Site Code, and Event Release Date Time.}
 
 \item{max_minutes}{maximum number of minutes between detections of a tag before it's considered a
-different "slot" of detections. Default is 60.}
+different "slot" of detections. Default is `NA`, which means a new slot is only defined by
+detections on a new node.}
 
 \item{configuration}{is a data frame which assigns node names to unique SiteID, AntennaID, and
 site configuration ID combinations. One example can be built with the function `buildConfig`. If
@@ -28,6 +30,10 @@ the column name should be `node`.}
 
 \item{units}{character string.  Units in which the results are
     desired.  Can be abbreviated.}
+
+\item{ignore_event_vs_release}{Should the function attempt to choose whether to use the event time value
+or the event release time value for different release batches? Default is `FALSE`. If set to `TRUE`,
+the event time value will be used}
 }
 \value{
 a tibble
@@ -38,9 +44,6 @@ and compresses them. This involves assigning nodes to the detection locations (e
 sites, arrays, antennas, etc.), and summarizing the first and last detection time on
 each node as well as how many detections were made during that slot. Slots can be
 defined to include a maximum number of minutes, or not.
-
-Currently this function only works for PIT tag detections coded as `Observation`
-in PTAGIS. Other detection types are filtered out.
 }
 \examples{
 compress()
