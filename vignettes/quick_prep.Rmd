@@ -98,7 +98,7 @@ Once the user has finished editing it, they may read it back into R:
 ```{r, echo = F}
 # find configuration file
 config_file = system.file("extdata", 
-                          "configuration.csv", 
+                          "configuration_TUM.csv", 
                           package = "PITcleanr",
                           mustWork = TRUE)
 ```
@@ -115,7 +115,7 @@ The parent-child table contains information about how sites or nodes are connect
 ```{r, echo = F}
 # find parent-child file
 parent_child_file = system.file("extdata", 
-                                "parent_child.csv", 
+                                "parent_child_TUM.csv", 
                                 package = "PITcleanr",
                                 mustWork = TRUE)
 ```
