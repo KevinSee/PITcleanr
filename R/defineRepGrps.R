@@ -1,6 +1,6 @@
 #' @title Define Report Groups
 #'
-#' @description Define which detection sites fall into which report groups, and what the lowest array is. These reporting gropus differ by species.
+#' @description Define which detection sites fall into which report groups, and what the lowest array is. These reporting groups differ by species.
 #'
 #' @author Kevin See
 #'
