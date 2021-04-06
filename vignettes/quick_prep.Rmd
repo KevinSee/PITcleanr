@@ -169,7 +169,7 @@ prepped_df = prepWrapper(compress_obs = comp_obs,
                          max_obs_date = "20150930")
 ```
 
-The user can even save that output directly to an Excel workbook or csv file by setting `save_file = TRUE` and defining a file path and name in the `file_name` argument.
+The user can even save that output directly to an Excel workbook or csv file by setting `save_file = TRUE` and defining a file path and name in the `file_name` argument. Within this output (either in R, or in the saved Excel file), all the rows where the field `user_keep_obs` is NA or blank must be filled in with either `TRUE` or `FALSE`. The field `auto_keep_obs` provides a suggestion, but the ultimate choice is up to the user. 
 
 ```{r, eval = F}
 prepped_df = prepWrapper(compress_obs = comp_obs,
