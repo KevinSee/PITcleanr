@@ -19,8 +19,8 @@ org_config = buildConfig()
 
 #-----------------------------------------------------------------
 # designate a starting point
-# root_site = "GRA"
-root_site = "PRA"
+root_site = "GRA"
+# root_site = "PRA"
 # root_site = "TUM"
 
 #-----------------------------------------------------------------
@@ -36,10 +36,10 @@ if(root_site == "GRA") {
                          'SC2B0',
                          node),
            node = ifelse(site_code %in% c('CROTRP',
-                                       'CRT',
-                                       'REDTRP',
-                                       'REDR',
-                                       'RRT'),
+                                          'CRT',
+                                          'REDTRP',
+                                          'REDR',
+                                          'RRT'),
                          'SC2A0',
                          node),
            node = ifelse(node == 'ACB',
@@ -134,9 +134,9 @@ if(root_site == "PRA") {
                      # this puts CLK upstream of RIA
                      latitude = 47.3707357269787,
                      longitude = -120.25617371760839)) %>%
-                     # this puts CLK on Colockum Creek, but between PRA and RIA
-                     # latitude = 47.29722788926544,
-                     # longitude = -120.10577913008702)) %>%
+    # this puts CLK on Colockum Creek, but between PRA and RIA
+    # latitude = 47.29722788926544,
+    # longitude = -120.10577913008702)) %>%
     filter(!(site_code == 'WAN' & site_type == 'MRR'),
            !(site_code == 'TMF' & site_type == 'MRR'),
            !(site_code == 'PRO' & site_type == 'MRR')) %>%
@@ -332,20 +332,20 @@ if(root_site == "PRA") {
                          '858.041.003',
                          rkm),
            rkm_total = if_else(site_code == 'SA1',
-                              902,
-                              rkm_total)) %>%
+                               902,
+                               rkm_total)) %>%
     mutate(rkm = if_else(site_code == 'TON',
                          '858.133.001',
                          rkm),
            rkm_total = if_else(site_code == 'TON',
-                              992,
-                              rkm_total)) %>%
+                               992,
+                               rkm_total)) %>%
     mutate(rkm = if_else(grepl('WVT', node),
                          '829.001',
                          rkm),
            rkm_total = if_else(grepl('WVT', node),
-                              830,
-                              rkm_total))
+                               830,
+                               rkm_total))
 }
 
 #-----------------------------------------------------------------
@@ -385,8 +385,8 @@ if(root_site == 'TUM') {
                          'NALA0',
                          node),
            node = if_else(site_code %in% c("LWE",
-                                        "RRF",
-                                        "WEA"),
+                                           "RRF",
+                                           "WEA"),
                           "LWE",
                           node)) %>%
     distinct()
@@ -394,7 +394,7 @@ if(root_site == 'TUM') {
 
 #-----------------------------------------------------------------
 # read in observations
-
+# find ptagis file, and generate old list of sites
 if(root_site == "GRA") {
   ptagis_file = system.file("extdata",
                             'LGR_Chinook_2014.csv',
@@ -412,7 +412,7 @@ if(root_site == "GRA") {
                   recode,
                   "BelowJD1" = "JDA"),
            path = str_replace(path, "BelowJD1", "JDA")) %>%
-      rename(site_code = SiteID)
+    rename(site_code = SiteID)
 } else if(root_site == 'TUM') {
   ptagis_file = system.file("extdata",
                             "TUM_Chinook_2015.csv",
@@ -462,8 +462,8 @@ obs_site_codes = obs %>%
   select(node) %>%
   distinct() %>%
   left_join(configuration %>%
-              select(node = node,
-                     site_code = site_code) %>%
+              select(node,
+                     site_code) %>%
               distinct())
 
 # add a couple other sites (based on sites_df)
@@ -472,8 +472,7 @@ obs_site_codes %<>%
               filter(end_date >= min(obs$start_date) |
                        is.na(end_date)) %>%
               filter(site_code %in% sites_df$site_code) %>%
-              select(node = node,
-                     site_code = site_code) %>%
+              select(any_of(names(obs_site_codes))) %>%
               distinct())
 
 #-----------------------------------------------------------------
@@ -551,7 +550,7 @@ single_site %>%
               select(site_code = site_code,
                      path)) %>%
   filter(!is.na(path))
-  # xtabs(~ is.na(path), .)
+# xtabs(~ is.na(path), .)
 
 # drop sites that are in the sites_df
 single_site %<>%
@@ -1004,6 +1003,13 @@ proc_obs %>%
   as.data.frame()
 
 #------------------------------------------------------
+# save a few things to share with package users
+write_csv(configuration,
+          paste0("inst/extdata/configuration_", root_site, ".csv"))
+write_csv(parent_child,
+          paste0("inst/extdata/parent_child_", root_site, ".csv"))
+
+#------------------------------------------------------
 #------------------------------------------------------
 #------------------------------------------------------
 x = obs_direct %>%
@@ -1032,8 +1038,8 @@ obs_direct %>%
          -max_det,
          -path) %>%
   slice(1:12)
-  # filter(AutoProcStatus)
-  as.data.frame()
+# filter(AutoProcStatus)
+as.data.frame()
 
 
 obs_direct %>%
@@ -1097,21 +1103,21 @@ proc_list$ProcCapHist %>%
                    "min_det", "max_det")) %>%
   filter(tag_code == "3DD.00773DBC00") %>%
   as.data.frame()
-  #
-  filter(!is.na(slot)) %>%
+#
+filter(!is.na(slot)) %>%
   filter(AutoProcStatus != AutoKeepObs,
          AutoKeepObs) %>%
   select(tag_code)
-  group_by(tag_code) %>%
+group_by(tag_code) %>%
   summarize(n_new = sum(is.na(UserKeepObs)),
             n_old = sum(!AutoProcStatus))
-  xtabs(~ is.na(UserKeepObs) + UserProcStatus, .)
-  select(tag_code) %>%
+xtabs(~ is.na(UserKeepObs) + UserProcStatus, .)
+select(tag_code) %>%
   distinct() %>%
   left_join(proc_obs)
 
-  filter(tag_code %in% union(sort(unique(proc_list$ProcCapHist$TagID)),
-                             sort(unique(proc_obs$tag_code)))) %>%
+filter(tag_code %in% union(sort(unique(proc_list$ProcCapHist$TagID)),
+                           sort(unique(proc_obs$tag_code)))) %>%
   # filter(is.na(slot)) %>%
   # janitor::tabyl(site_code)
   # filter(is.na(site_code)) %>%
@@ -1128,4 +1134,4 @@ proc_list$ProcCapHist %>%
   left_join(comp_obs %>%
               filter(node == 'TUM') %>%
               select(tag_code, event_type_name, min_det, max_det))
-  select(-duration, -travel_time)
+select(-duration, -travel_time)
