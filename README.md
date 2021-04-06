@@ -42,6 +42,20 @@ with:
 remotes::install_github("BiomarkABS/PITcleanr", build_vignettes = TRUE)
 ```
 
+For the latest development version:
+
+``` r
+remotes::install_github("BiomarkABS/PITcleanr@develop", 
+                        dependencies = TRUE,
+                        build_vignettes = TRUE)
+```
+
+To look at the various vignettes:
+
+``` r
+browseVignettes("PITcleanr")
+```
+
 ### Licenses
 
 **Text and figures :**

@@ -44,6 +44,21 @@ Or you can install this compendium as an R package, DABOM, from GitHub with:
 remotes::install_github("BiomarkABS/PITcleanr", build_vignettes = TRUE)
 ```
 
+For the latest development version:
+
+```{r develop-version, eval = FALSE}
+remotes::install_github("BiomarkABS/PITcleanr@develop", 
+                        dependencies = TRUE,
+                        build_vignettes = TRUE)
+```
+
+To look at the various vignettes:
+
+```{r show-vignettes, eval = F}
+browseVignettes("PITcleanr")
+```
+
+
 ### Licenses
 
 **Text and figures :**  [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/)
