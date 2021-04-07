@@ -1,7 +1,7 @@
 # Author: Kevin See
 # Purpose: Test new functions for processing PTAGIS data for DABOM
 # Created: 2/10/2021
-# Last Modified: 4/6/2021
+# Last Modified: 4/7/2021
 # Notes:
 
 #-----------------------------------------------------------------
@@ -19,9 +19,9 @@ org_config = buildConfig()
 
 #-----------------------------------------------------------------
 # designate a starting point
-root_site = "GRA"
+# root_site = "GRA"
 # root_site = "PRA"
-# root_site = "TUM"
+root_site = "TUM"
 
 #-----------------------------------------------------------------
 # Lower Granite
