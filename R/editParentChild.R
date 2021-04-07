@@ -13,8 +13,7 @@
 #' each vector consists of a current parent location and a child location, in that order.
 #' This is primarily intended to help with sites downstream of a tagging/marking location.
 #' Adding a parent/child pair here will not fix parent/child relationships with upstream or
-#' downstream locations of the parent/child pair (use the `parent_locs`, `child_locs` and
-#' `new_parent_locs` for that).
+#' downstream locations of the parent/child pair (use the `fix_list` for that).
 #'
 #' @source \url{http://www.ptagis.org}
 #'
