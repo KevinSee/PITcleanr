@@ -36,11 +36,7 @@ extractSites = function(ptagis_file = NULL,
 
   # read in observations
   if(class(ptagis_file)[1] == "character") {
-    observations = suppressMessages(read_csv(ptagis_file)) %>%
-      janitor::clean_names() %>%
-      mutate(across(c(event_date_time_value,
-                      event_release_date_time_value),
-                    lubridate::mdy_hms))
+    observations = readCTH(ptagis_file)
   } else if(class(ptagis_file)[1] %in% c("spec_tbl_df", "tbl_df", "tbl", "data.frame")) {
     observations = ptagis_file %>%
       as_tibble()
