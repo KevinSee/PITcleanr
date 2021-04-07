@@ -21,7 +21,8 @@ org_config = buildConfig()
 # designate a starting point
 # root_site = "GRA"
 # root_site = "PRA"
-root_site = "TUM"
+# root_site = "TUM"
+root_site = "PRO"
 
 #-----------------------------------------------------------------
 # Lower Granite
@@ -393,6 +394,62 @@ if(root_site == 'TUM') {
 }
 
 #-----------------------------------------------------------------
+# Prosser Dam (Yakima River)
+#-----------------------------------------------------------------
+# make a few change
+if(root_site == "PRO") {
+  # customize some nodes based on DABOM framework
+  configuration = org_config %>%
+    mutate(node = if_else(site_code %in% c('PRO'),
+                          'PRO',
+                          node),
+           node = if_else(site_code %in% c("NFTEAN", "TEANAR", "TEANM", "TEANWF"),
+                          "LMTA0",
+                          node),
+           node = if_else(site_code == 'ROZ',
+                          if_else(antenna_id %in% c('01', '02', '03'),
+                                  node,
+                                  as.character(NA)),
+                          node),
+           node = if_else(site_code == 'TAN' & config_id %in% c(120, 130),
+                          "TANB0",
+                          node),
+           node = if_else(site_code %in% c('MC1', 'MC2', 'MCJ', 'MCN'),
+                          'MCN',
+                          node),
+           node = if_else(site_code == 'ICH',
+                          'ICHB0',
+                          node),
+           node = if_else(grepl('522\\.', rkm) & rkm_total > 538,
+                          'ICHA0',
+                          node),
+           node = if_else(site_code == 'JD1',
+                          'JD1B0',
+                          node),
+           node = if_else(site_code %in% c('30M', 'BR0', 'JDM', 'SJ1', 'SJ2', 'MJ1'),
+                          'JD1A0',
+                          node),
+           node = if_else(site_code != 'JD1' & as.integer(stringr::str_split(rkm, '\\.', simplify = T)[,1]) < 351,
+                          'JDA',
+                          node),
+           node = if_else(site_code == 'PRA',
+                          'PRAB0',
+                          node),
+           node = if_else(site_code != 'PRA' & as.integer(stringr::str_split(rkm, '\\.', simplify = T)[,1]) >= 639,
+                          'PRAA0',
+                          node)) %>%
+    # add a missing lat/long
+    mutate(latitude = if_else(site_code == "SWK",
+                              47.210348,
+                              latitude),
+           longitude = if_else(site_code == "SWK",
+                              -120.699021,
+                              longitude))
+}
+
+
+
+#-----------------------------------------------------------------
 # read in observations
 # find ptagis file, and generate old list of sites
 if(root_site == "GRA") {
@@ -419,6 +476,17 @@ if(root_site == "GRA") {
                             package = "PITcleanr",
                             mustWork = TRUE)
   sites_df = writeOldNetworks()$Tumwater_noUWE %>%
+    rename(site_code = SiteID)
+} else if(root_site == "PRO") {
+  ptagis_file = system.file("extdata",
+                            "PRO_Steelhead_2019.csv",
+                            package = "PITcleanr",
+                            mustWork = TRUE)
+  sites_df = writeOldNetworks()$Prosser %>%
+    mutate(across(c(SiteID, Step2),
+                  recode,
+                  "BelowJD1" = "JDA"),
+           path = str_replace(path, "BelowJD1", "JDA")) %>%
     rename(site_code = SiteID)
 }
 
@@ -516,12 +584,15 @@ sites_sf %<>%
               st_transform(crs = st_crs(sites_sf)))
 
 # drop an MRR site with the same code as an INT site
-if(root_site == "PRA") {
+if(root_site %in% c("PRA", "PRO")) {
   sites_sf %<>%
     filter(!(site_code == "PRO" & type == "MRR"))
 }
 
-
+if(root_site %in% c("PRO")) {
+  sites_sf %<>%
+    filter(!(site_code == "ROZ" & type == "MRR"))
+}
 
 # for sites that are assigned to another node, delete those sites
 sites_sf %<>%
@@ -640,17 +711,17 @@ ggplot() +
                         end = 0.8) +
   scale_size_continuous(range = c(0.2, 1.2),
                         guide = 'none') +
-  # geom_sf(data = nhd_list$basin,
-  #         fill = NA,
-  #         lwd = 2) +
-  # this cuts out parts of the basin upstream of upstrm_loc
-  geom_sf(data = flowlines %>%
-            filter(!Hydroseq %in% nhd_list$dwn_flowlines$Hydroseq) %>%
-            summarise(bndry = 'basin') %>%
-            select(bndry) %>%
-            st_convex_hull(),
+  geom_sf(data = nhd_list$basin,
           fill = NA,
           lwd = 2) +
+  # this cuts out parts of the basin upstream of upstrm_loc
+  # geom_sf(data = flowlines %>%
+  #           filter(!Hydroseq %in% nhd_list$dwn_flowlines$Hydroseq) %>%
+  #           summarise(bndry = 'basin') %>%
+  #           select(bndry) %>%
+  #           st_convex_hull(),
+  #         fill = NA,
+  #         lwd = 2) +
   geom_sf(data = sites_sf,
           size = 4,
           color = "black") +
@@ -663,23 +734,6 @@ ggplot() +
   theme_bw() +
   theme(axis.title = element_blank()) +
   labs(color = "Stream\nOrder")
-
-# # join sites to nearest hydro sequence
-# sites_NHDseg = st_join(sites_sf,
-#                        flowlines %>%
-#                          select(gnis_name, Hydroseq),
-#                        join = st_nearest_feature)
-#
-# # which sites were joined to the same hydrosequence?
-# sites_NHDseg %>%
-#   filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
-#   arrange(Hydroseq, rkm, site_code)
-#
-# sites_NHDseg %>%
-#   filter(Hydroseq %in% Hydroseq[duplicated(Hydroseq)]) %>%
-#   arrange(Hydroseq, rkm) %>%
-#   st_drop_geometry() %>%
-#   split(list(.$Hydroseq))
 
 #-----------------------------------------------------------------
 # build parent child table
@@ -782,6 +836,18 @@ if(root_site == 'TUM') {
                                     c("ASOTIC", "AFC", "ACB"),
                                     c("ASOTIC", "CCA", "ACB"))) %>%
     filter(!(is.na(parent) & child == "GRA"))
+} else if(root_site == 'PRO') {
+  parent_child = sites_sf %>%
+    # filter(! site_code %in% c("MC1", "MC2", "MCJ")) %>%
+    buildParentChild(flowlines,
+                     # rm_na_parent = T,
+                     add_rkm = T) %>%
+    editParentChild(fix_list = list(c("JDA", "MCN", "PRO"),
+                                    c("JDA", "JD1", "PRO"),
+                                    c("MCN", "ICH", "PRO"),
+                                    c("MCN", "PRA", "PRO"),
+                                    c(NA, "JDA", "PRO")),
+                    switch_parent_child = list(c("MCN", "PRO")))
 }
 
 ques_locs = c("CLC", "KOOS")
@@ -830,6 +896,14 @@ parent_child %>%
 parent_child %>%
   anti_join(sites_df %>%
               select(child = site_code))
+
+# any sites in the original sites_df that aren't in parent/child table?
+sites_df %>%
+  filter(site_code != root_site) %>%
+  select(child = site_code) %>%
+  anti_join(parent_child)
+
+
 
 parent_child %>%
   # filter(parent == "PENAWC")
@@ -982,7 +1056,10 @@ if(root_site == "TUM") {
   max_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0630")
 } else if(root_site == "GRA") {
   max_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0930")
+} else if(root_site == "PRO") {
+  max_obs_date = paste0(as.numeric(str_extract(ptagis_file, "[:digit:]+")), "0630")
 }
+
 proc_obs = filterDetections(obs,
                             parent_child_nodes,
                             max_obs_date)
