@@ -58,7 +58,7 @@ filterDetections = function(compress_obs = NULL,
 
                                  # see if tag was seen further upstream but along the same path
                                  spwn_loc = x %>%
-                                   filter(grepl(spwn_loc$node, path)) %>%
+                                   filter(stringr::str_detect(path, spwn_loc$node)) %>%
                                    filter(node_order == max(node_order)) %>%
                                    filter(slot == max(slot))
 
@@ -68,7 +68,8 @@ filterDetections = function(compress_obs = NULL,
                                    mutate(max_slot = max(1, slot[slot <= spwn_loc$slot])) %>%
                                    ungroup() %>%
                                    rowwise() %>%
-                                   mutate(in_spawn_path = if_else(grepl(node, spwn_loc$path),
+                                   mutate(in_spawn_path = if_else(stringr::str_detect(spwn_loc$path, paste0(" ", node)) |
+                                                                    stringr::str_detect(spwn_loc$path, paste0("^", node)),
                                                                   T, F)) %>%
                                    # select(-travel_time, -start_date) %>%
                                    mutate(auto_keep_obs = if_else((in_spawn_path & slot == max_slot) | direction == "start",
