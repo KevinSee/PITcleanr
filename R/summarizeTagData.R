@@ -27,7 +27,13 @@ summarizeTagData = function(filtered_obs = NULL,
 
   if(!is.null(bio_data)) {
     tag_summ = tag_summ %>%
-    full_join(bio_data)
+      left_join(bio_data)
+
+    if(sum(!unique(filtered_obs$tag_code) %in% unique(bio_data$tag_code)) > 0) {
+      cat(paste("The following tag codes were not found in the biological data:\n",
+                paste(unique(filtered_obs$tag_code)[!unique(filtered_obs$tag_code) %in% unique(bio_data$tag_code)], collapse = "\n"),
+                "\n"))
+    }
   }
 
   if(saveCSV) {
