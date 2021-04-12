@@ -58,10 +58,12 @@ addDirection = function(compress_obs = NULL,
     mutate(direction = if_else(node_order == 1 & is.na(lag_node_order),
                                "start",
                                if_else(node_order > lag_node_order &
-                                         grepl(lag_node, path),
+                                         (stringr::str_detect(path, paste0(" ", lag_node)) |
+                                            stringr::str_detect(path, paste0("^", lag_node))),
                                        "forward",
                                        if_else(node_order < lag_node_order &
-                                                 grepl(node, lag_path),
+                                                 (stringr::str_detect(lag_path, paste0(" ", node)) |
+                                                    stringr::str_detect(lag_path, paste0("^", node))),
                                                "backward",
                                                if_else(node == lag_node,
                                                        "no movement",
