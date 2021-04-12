@@ -36,6 +36,7 @@ estimateSpawnLoc = function(filtered_obs = NULL,
     group_by(tag_code) %>%
     filter(node_order == max(node_order),
            min_det == max(min_det)) %>%
+    slice(1) %>%
     ungroup() %>%
     select(tag_code,
            spawn_node = node,
@@ -53,29 +54,7 @@ estimateSpawnLoc = function(filtered_obs = NULL,
   if(spawn_site) {
     stopifnot(!is.null(ptagis_file))
 
-    ptagis_obs = suppressMessages(read_csv(ptagis_file)) %>%
-      janitor::clean_names()
-
-    # determine format of event date time value
-    n_colons = ptagis_obs %>%
-      mutate(event_time = str_split(event_date_time_value, " ", simplify = T)[,2],
-             n_colon = str_count(event_time, "\\:")) %>%
-      pull(n_colon) %>%
-      max()
-
-    if(n_colons == 2) {
-      ptagis_obs = ptagis_obs %>%
-        mutate(across(c(event_date_time_value,
-                        event_release_date_time_value),
-                      lubridate::mdy_hms))
-    } else if(n_colons == 1) {
-      ptagis_obs = ptagis_obs %>%
-        mutate(across(c(event_date_time_value,
-                        event_release_date_time_value),
-                      lubridate::mdy_hm))
-    } else {
-      warning("Event Date Time Value has strange format.")
-    }
+    ptagis_obs = readCTH(ptagis_file)
 
     spawn_loc = spawn_loc %>%
       left_join(ptagis_obs %>%
