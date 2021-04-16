@@ -796,10 +796,10 @@ if(root_site == 'TUM') {
                                     c("JOH", 'AEN', 'OKL')),
                     switch_parent_child = list(c("RSH", "PRA"))) %>%
     filter(!parent %in% c("WEH", "PRH"))
-  if("child_rkm" %in% names(parent_child)) {
-    parent_child %<>%
-      filter(!(child == "WAN" & child_rkm == "669"))
-  }
+  # if("child_rkm" %in% names(parent_child)) {
+  #   parent_child %<>%
+  #     filter(!(child == "WAN" & child_rkm == "669"))
+  # }
   # add RKMs from configuration file (since we had to fix at least one from PTAGIS)
   parent_child %<>%
     left_join(configuration %>%
