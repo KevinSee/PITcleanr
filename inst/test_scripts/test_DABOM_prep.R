@@ -1,7 +1,7 @@
 # Author: Kevin See
 # Purpose: Test new functions for processing PTAGIS data for DABOM
 # Created: 2/10/2021
-# Last Modified: 4/7/2021
+# Last Modified: 4/16/2021
 # Notes:
 
 #-----------------------------------------------------------------
@@ -20,9 +20,9 @@ org_config = buildConfig()
 #-----------------------------------------------------------------
 # designate a starting point
 # root_site = "GRA"
-# root_site = "PRA"
+root_site = "PRA"
 # root_site = "TUM"
-root_site = "PRO"
+# root_site = "PRO"
 
 #-----------------------------------------------------------------
 # Lower Granite
@@ -767,7 +767,7 @@ if(root_site == 'TUM') {
                               "ENM", 'ENS', 'TY4', '3D4')) %>%
     buildParentChild(flowlines,
                      # rm_na_parent = T,
-                     add_rkm = T) %>%
+                     add_rkm = F) %>%
     editParentChild(fix_list = list(c("JDA", 'ICH', "PRA"),
                                     c("JDA", 'RSH', "PRA"),
                                     c("JDA", 'JD1', "PRA"),
@@ -800,6 +800,20 @@ if(root_site == 'TUM') {
     parent_child %<>%
       filter(!(child == "WAN" & child_rkm == "669"))
   }
+  # add RKMs from configuration file (since we had to fix at least one from PTAGIS)
+  parent_child %<>%
+    left_join(configuration %>%
+                select(parent = site_code,
+                       parent_rkm = rkm) %>%
+                distinct(),
+              by = "parent") %>%
+    left_join(configuration %>%
+                select(child = site_code,
+                       child_rkm = rkm) %>%
+                distinct(),
+              by = "child")
+    mutate(parent_rkm = if_else(grepl("^SA1", parent)))
+
 } else if(root_site == 'GRA') {
   parent_child = sites_sf %>%
     filter(! site_code %in% c("RRF", "PRA", 'PRO',
