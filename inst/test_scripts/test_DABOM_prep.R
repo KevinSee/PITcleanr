@@ -1,7 +1,7 @@
 # Author: Kevin See
 # Purpose: Test new functions for processing PTAGIS data for DABOM
 # Created: 2/10/2021
-# Last Modified: 4/16/2021
+# Last Modified: 4/19/2021
 # Notes:
 
 #-----------------------------------------------------------------
@@ -346,6 +346,18 @@ if(root_site == "PRA") {
                          rkm),
            rkm_total = if_else(grepl('WVT', node),
                                830,
+                               rkm_total)) %>%
+    mutate(rkm = if_else(site_code == "MSH",
+                         '843.082',
+                         rkm),
+           rkm_total = if_else(site_code == "MSH",
+                               925,
+                               rkm_total),
+           rkm = if_else(site_code == "METH",
+                         '843.083',
+                         rkm),
+           rkm_total = if_else(site_code == "METH",
+                               926,
                                rkm_total))
 }
 
@@ -811,9 +823,8 @@ if(root_site == 'TUM') {
                 select(child = site_code,
                        child_rkm = rkm) %>%
                 distinct(),
-              by = "child")
-    mutate(parent_rkm = if_else(grepl("^SA1", parent)))
-
+              by = "child") %>%
+    distinct()
 } else if(root_site == 'GRA') {
   parent_child = sites_sf %>%
     filter(! site_code %in% c("RRF", "PRA", 'PRO',
@@ -886,7 +897,8 @@ parent_child %>%
            child %in% ques_locs) %>%
   left_join(sites_df %>%
               select(child = site_code,
-                     path))
+                     path)) %>%
+  distinct()
 
 parent_child %>%
   filter(parent %in% ques_locs |
