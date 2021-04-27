@@ -19,8 +19,8 @@ org_config = buildConfig()
 
 #-----------------------------------------------------------------
 # designate a starting point
-# root_site = "GRA"
-root_site = "PRA"
+root_site = "GRA"
+# root_site = "PRA"
 # root_site = "TUM"
 # root_site = "PRO"
 
