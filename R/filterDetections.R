@@ -56,6 +56,16 @@ filterDetections = function(compress_obs = NULL,
                                                                             "unknown") &
                                                              min_det <= lubridate::ymd(max_obs_date)]))
 
+                                 if(nrow(spwn_loc) == 0) {
+                                   x %>%
+                                     mutate(auto_keep_obs = if_else(min_det <= lubridate::ymd(max_obs_date),
+                                                                    T, F),
+                                            user_keep_obs = if_else(min_det <= lubridate::ymd(max_obs_date),
+                                                                    T, F)) %>%
+                                     return()
+                                 }
+
+
                                  # see if tag was seen further upstream but along the same path
                                  spwn_loc = x %>%
                                    filter(stringr::str_detect(path, spwn_loc$node)) %>%
