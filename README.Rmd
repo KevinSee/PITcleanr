@@ -22,7 +22,7 @@ Title <- "Title of your paper goes here"
 
 ## Description
 
-`PITcleanr` is an R package for preparing PIT tag data for further analysis. It was originally conceived as a companion to the [DABOM](https://github.com/BiomarkABS/DABOM) package for estimating abundance of returning anadromous adult fish moving upstream. `PITcleanr` was designed to prepare the raw PIT tag observations from [PTAGIS](http://www.ptagis.org) for use in the `DABOM` package. A key assumption of a DABOM model is that fish travel along a single upstream route. Therefore, the model will fail if presented with detections by a single fish in multiple tributaries above a branching node. `PITcleanr` is designed to help clean the PIT tag detection data to identify non-linear upstream pathways and help the user determine which observations to keep. It also summarises final spawning location, and in the case of the Snake River DABOM model, can be combined with biological data from the Lower Granite adult fish trap database for fish tagged there.
+`PITcleanr` is an R package for preparing PIT tag data for further analysis. It was originally conceived as a companion to the [DABOM](https://github.com/BiomarkABS/DABOM) package for estimating abundance of returning anadromous adult fish moving upstream. `PITcleanr` was designed to prepare the raw PIT tag observations from [PTAGIS](http://www.ptagis.org) for use in the `DABOM` package.
 
 ## Installation Instructions
 
