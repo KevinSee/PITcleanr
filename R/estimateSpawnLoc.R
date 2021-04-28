@@ -65,7 +65,8 @@ estimateSpawnLoc = function(filtered_obs = NULL,
                                       names_to = "name",
                                       values_to = "max_det") %>%
                   filter(!is.na(max_det)) %>%
-                  select(-name)) %>%
+                  select(-name),
+                by = c("tag_code", "event_type_name", "max_det")) %>%
       select(tag_code,
              starts_with("spawn"),
              everything())
