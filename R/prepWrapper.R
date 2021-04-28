@@ -10,6 +10,8 @@
 #' @param start_node character of the node where detection histories should begin.
 #' If `NULL`, the node order from the parent-child table will be constructed, and
 #' the node with node order of 1 will be used.
+#' @param min_obs_date Character string in the format "YYYYMMDD". If included, the
+#' output will filter out observations prior to this date.
 #' @param max_obs_date Character string in the format "YYYYMMDD". If included, the
 #' output will suggest that observations after this date should be deleted.
 #' @param save_file Should the output be saved to a csv or Excel workbook? Default
@@ -25,6 +27,7 @@
 prepWrapper = function(compress_obs = NULL,
                        parent_child = NULL,
                        start_node = NULL,
+                       min_obs_date = NULL,
                        max_obs_date = NULL,
                        save_file = F,
                        file_name = NULL) {
@@ -38,6 +41,13 @@ prepWrapper = function(compress_obs = NULL,
     start_node = node_order %>%
       filter(node_order == 1) %>%
       pull(node)
+  }
+
+  # filter all compressed observations before the min_obs_date
+  if(!is.null(min_obs_date)) {
+    cat(paste("Filtering observations prior to", format(lubridate::ymd(min_obs_date), "%b %d, %Y"), "\n"))
+    compress_obs = compress_obs %>%
+      filter(min_det >= lubridate::ymd(min_obs_date))
   }
 
   # filter all the compressed observations to start at the start_node
