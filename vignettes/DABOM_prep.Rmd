@@ -126,8 +126,8 @@ obs = comp_obs %>%
               filter(node == "TUM",
                      event_type_name %in% c("Mark", "Recapture")) %>%
               group_by(tag_code) %>%
-              filter(max_det == max(max_det)) %>%
-              summarise(start_date = max_det,
+              filter(min_det == min(min_det)) %>%
+              summarise(start_date = min_det,
                         .groups = "drop"),
             by = "tag_code") %>%
   filter(min_det >= start_date) %>%
@@ -209,6 +209,7 @@ The next step would be for a user to filter the prepared data for all rows with 
 `PITcleanr includes a wrapper function that starts with the initial compressed observations and the user-defined parent-child table, and performs several steps:
 
 * Adds a start date corresponding to the date when a tag was marked or recaptured at the starting node (`start_node`)
+* Provides an arguement `min_obs_date` that will filter out observations prior to that date
 * Runs the `filterDetections()` function
 * If desired, saves the output as a csv or Excel file, to make it easier to examine tag histories with less than straightforward detection paths
 
@@ -217,6 +218,7 @@ If a user has a parent-child table built from a previous year, or by hand, this 
 ```{r, eval = F}
 prepped_df = prepWrapper(compress_obs = comp_obs,
                          parent_child = parent_child_nodes,
+                         min_obs_date = "20150301",
                          max_obs_date = "20150930")
 ```
 

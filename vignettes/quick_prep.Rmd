@@ -156,7 +156,7 @@ ptagis_file = system.file("extdata",
                           mustWork = TRUE)
 ```
 
-Now the user can assign those detections to a "node", compress that data, assign directionality and determine which observations should be retained for DABOM using the `compress` and `prepWrapper` functions. The `max_obs_date` argument will ensure that all detections after that date are not retained. 
+Now the user can assign those detections to a "node", compress that data, assign directionality and determine which observations should be retained for DABOM using the `compress` and `prepWrapper` functions. The `min_obs_date` argument will filter out observations prior to that date, while the `max_obs_date` argument will ensure that all detections after that date are not retained. 
 
 ```{r}
 # read in PTAGIS observations and compress them
@@ -166,6 +166,7 @@ comp_obs = compress(ptagis_file,
 # prep data for choice of which detections to keep
 prepped_df = prepWrapper(compress_obs = comp_obs,
                          parent_child = parent_child,
+                         min_obs_date = "20150301",
                          max_obs_date = "20150930")
 ```
 
@@ -174,6 +175,7 @@ The user can even save that output directly to an Excel workbook or csv file by 
 ```{r, eval = F}
 prepped_df = prepWrapper(compress_obs = comp_obs,
                          parent_child = parent_child,
+                         min_obs_date = "20150301",
                          max_obs_date = "20150930",
                          save_file = T,
                          file_name = "PITcleanr_output.xlsx")
