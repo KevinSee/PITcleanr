@@ -110,7 +110,69 @@ if(root_site == "GRA") {
                          str_replace(node, '18M', 'HEC'),
                          node)) %>%
     distinct()
+
+  # a few more modifications to make it work better with generic DABOM functions
+  configuration %<>%
+    mutate(node = if_else(site_code == "LC1",
+                          "LC1B0",
+                          node),
+           node = if_else(site_code == "LC2",
+                          "LC1A0",
+                          node),
+           node = if_else(site_code == "VC1",
+                          "VC1B0",
+                          node),
+           node = if_else(site_code == "VC2",
+                          "VC1A0",
+                          node),
+           node = if_else(site_code == "SW1",
+                          "SW1B0",
+                          node),
+           node = if_else(site_code == "SW2",
+                          "SW1A0",
+                          node),
+           node = if_else(site_code == "IR1",
+                          "IR1B0",
+                          node),
+           node = if_else(site_code == "IR2",
+                          "IR1A0",
+                          node),
+           node = if_else(site_code == "IMNAHW",
+                          "IMLA0",
+                          node),
+           node = if_else(site_code == "SC1",
+                          "SC1B0",
+                          node),
+           node = if_else(site_code == "SC2",
+                          "SC1A0",
+                          node),
+           node = if_else(site_code == "LRL",
+                          "LRLB0",
+                          node),
+           node = if_else(site_code == "LRU",
+                          "LRLA0",
+                          node),
+           node = if_else(site_code == "CLC",
+                          "CLCB0",
+                          node),
+           node = if_else(site_code == "KOOS",
+                          "CLCA0",
+                          node),
+           node = if_else(site_code == "CATHEW",
+                          "CCWA0",
+                          node),
+           node = if_else(site_code == "GRANDW",
+                          "UGSA0",
+                          node),
+           node = if_else(site_code == "TUCH",
+                          "TFHB0",
+                          node)) %>%
+    filter(site_code != "TFH") %>%
+    bind_rows(org_config %>%
+                filter(site_code == 'TFH'))
 }
+
+
 
 #-----------------------------------------------------------------
 # Priest Rapids
@@ -521,12 +583,26 @@ comp_obs %>%
 n_distinct(comp_obs$tag_code)
 
 # determine trap date, and remove detections prior to that
+spwn_yr = ptagis_file %>%
+  str_split("/") %>%
+  unlist() %>%
+  last() %>%
+  str_extract("[:digit:]+") %>%
+  as.numeric()
+
+min_obs_date = if_else(root_site %in% c("TUM", 'GRA'),
+                       paste0(spwn_yr, "0301"),
+                       if_else(root_site %in% c("PRA", 'PRO'),
+                               paste0(spwn_yr-1, "0701"),
+                               NA_character_))
+
 obs = comp_obs %>%
   left_join(comp_obs %>%
+              filter(min_det >= lubridate::ymd(min_obs_date)) %>%
               filter(node == root_site,
                      event_type_name %in% c("Mark", "Recapture")) %>%
               group_by(tag_code) %>%
-              filter(max_det == max(max_det)) %>%
+              filter(min_det == min(min_det)) %>%
               summarise(start_date = max_det,
                         .groups = "drop"),
             by = "tag_code") %>%
@@ -837,13 +913,13 @@ if(root_site == 'TUM') {
     buildParentChild(flowlines,
                      rm_na_parent = F,
                      add_rkm = T) %>%
-    editParentChild(fix_list = list(c("IR4", "IR5", "IMNAHW"),
-                                    c("IML", "IR5", "IMNAHW"),
-                                    c("IR3", "IMNAHW", "IML"),
-                                    c("IR3", "IML", "IR4"),
-                                    c("GRA", "KOOS", "CLC"),
-                                    c("UGR", "GRANDW", "UGS"),
-                                    c("UGR", "CATHEW", "CCW"),
+    editParentChild(fix_list = list(c("IR3", "IML", "IR4"),
+                                    c("IR4", "IR5", "IML"),
+                                    # c("IML", "IR5", "IMNAHW"),
+                                    # c("IR3", "IMNAHW", "IML"),
+                                    # c("GRA", "KOOS", "CLC"),
+                                    # c("UGR", "GRANDW", "UGS"),
+                                    # c("UGR", "CATHEW", "CCW"),
                                     c(NA, "LTR", "GRA"),
                                     c(NA, "PENAWC", "GRA"),
                                     c(NA, "ALMOTC", "GRA"),
@@ -927,7 +1003,12 @@ parent_child %>%
 sites_df %>%
   filter(site_code != root_site) %>%
   select(child = site_code) %>%
-  anti_join(parent_child)
+  anti_join(parent_child) %>%
+  left_join(configuration %>%
+              select(child = site_code,
+                     node) %>%
+              distinct()) %>%
+  as.data.frame()
 
 
 
@@ -937,7 +1018,14 @@ parent_child %>%
   # filter(parent == "PRA")
   filter(parent == "GRA")
 
+#------------------------------------------------------
+# save a few things to share with package users
+write_csv(configuration,
+          paste0("inst/extdata/configuration_", root_site, ".csv"))
+write_csv(parent_child,
+          paste0("inst/extdata/parent_child_", root_site, ".csv"))
 
+#------------------------------------------------------
 
 # look at paths to each location
 buildPaths(parent_child)
@@ -1134,13 +1222,6 @@ proc_obs %>%
          -user_keep_obs) %>%
   select(-max_det) %>%
   as.data.frame()
-
-#------------------------------------------------------
-# save a few things to share with package users
-write_csv(configuration,
-          paste0("inst/extdata/configuration_", root_site, ".csv"))
-write_csv(parent_child,
-          paste0("inst/extdata/parent_child_", root_site, ".csv"))
 
 #------------------------------------------------------
 #------------------------------------------------------
