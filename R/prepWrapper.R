@@ -64,7 +64,17 @@ prepWrapper = function(compress_obs = NULL,
                 summarise(start_date = min_det,
                           .groups = "drop"),
               by = "tag_code") %>%
-    filter(min_det >= start_date) %>%
+    left_join(compress_obs %>%
+                filter(node == start_node) %>%
+                group_by(tag_code) %>%
+                filter(min_det == min(min_det)) %>%
+                summarise(min_root_date = min_det,
+                          .groups = "drop")) %>%
+    mutate(start_date = if_else(is.na(start_date),
+                                min_root_date,
+                                start_date)) %>%
+    select(-min_root_date) %>%
+    filter(min_det >= start_date | is.na(start_date)) %>%
     group_by(tag_code) %>%
     mutate(slot = slot - min(slot) + 1) %>%
     ungroup()

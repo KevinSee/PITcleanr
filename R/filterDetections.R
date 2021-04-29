@@ -45,9 +45,9 @@ filterDetections = function(compress_obs = NULL,
                                if(sum(x$direction %in% c("backward", "unknown")) == 0) {
                                  x %>%
                                    mutate(auto_keep_obs = if_else(min_det <= lubridate::ymd(max_obs_date),
-                                                                T, F),
+                                                                  T, F),
                                           user_keep_obs = if_else(min_det <= lubridate::ymd(max_obs_date),
-                                                                T, F)) %>%
+                                                                  T, F)) %>%
                                    return()
                                } else {
                                  spwn_loc = x %>%
@@ -56,27 +56,38 @@ filterDetections = function(compress_obs = NULL,
                                                                             "unknown") &
                                                              min_det <= lubridate::ymd(max_obs_date)]))
 
-                                 # see if tag was seen further upstream but along the same path
-                                 spwn_loc = x %>%
-                                   filter(stringr::str_detect(path, spwn_loc$node)) %>%
-                                   filter(node_order == max(node_order)) %>%
-                                   filter(slot == max(slot))
+                                 if(nrow(spwn_loc) == 0) {
+                                   x %>%
+                                     mutate(auto_keep_obs = if_else(min_det <= lubridate::ymd(max_obs_date),
+                                                                    T, F),
+                                            user_keep_obs = if_else(min_det <= lubridate::ymd(max_obs_date),
+                                                                    T, F)) %>%
+                                     return()
+                                 } else {
 
 
-                                 x %>%
-                                   group_by(node) %>%
-                                   mutate(max_slot = max(1, slot[slot <= spwn_loc$slot])) %>%
-                                   ungroup() %>%
-                                   rowwise() %>%
-                                   mutate(in_spawn_path = if_else(stringr::str_detect(spwn_loc$path, paste0(" ", node)) |
-                                                                    stringr::str_detect(spwn_loc$path, paste0("^", node)),
-                                                                  T, F)) %>%
-                                   # select(-travel_time, -start_date) %>%
-                                   mutate(auto_keep_obs = if_else((in_spawn_path & slot == max_slot) | direction == "start",
-                                                                T, F),
-                                          user_keep_obs = NA) %>%
-                                   select(-max_slot, - in_spawn_path) %>%
-                                   return()
+                                   # see if tag was seen further upstream but along the same path
+                                   spwn_loc = x %>%
+                                     filter(stringr::str_detect(path, spwn_loc$node)) %>%
+                                     filter(node_order == max(node_order)) %>%
+                                     filter(slot == max(slot))
+
+
+                                   x %>%
+                                     group_by(node) %>%
+                                     mutate(max_slot = max(1, slot[slot <= spwn_loc$slot])) %>%
+                                     ungroup() %>%
+                                     rowwise() %>%
+                                     mutate(in_spawn_path = if_else(stringr::str_detect(spwn_loc$path, paste0(" ", node)) |
+                                                                      stringr::str_detect(spwn_loc$path, paste0("^", node)),
+                                                                    T, F)) %>%
+                                     # select(-travel_time, -start_date) %>%
+                                     mutate(auto_keep_obs = if_else((in_spawn_path & slot == max_slot) | direction == "start",
+                                                                    T, F),
+                                            user_keep_obs = NA) %>%
+                                     select(-max_slot, - in_spawn_path) %>%
+                                     return()
+                                 }
                                }
                              })) %>%
     select(-data) %>%
