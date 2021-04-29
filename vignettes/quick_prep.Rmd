@@ -1,8 +1,12 @@
 ---
-title: "Quickly Preparing Data for DABOM"
-output: rmarkdown::html_vignette
+title: "2.1) Quickly Preparing Data for DABOM"
+author: Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
-  %\VignetteIndexEntry{quick_prep}
+  %\VignetteIndexEntry{2.1) Quickly Preparing Data for DABOM}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

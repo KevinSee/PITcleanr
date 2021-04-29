@@ -1,10 +1,12 @@
 ---
-title: "Importing, Cleaning, and Compressing PIT Tag Data"
+title: "1.0) Importing, Cleaning, and Compressing PIT Tag Data"
 author: Kevin See
 date: "`r format(Sys.time(), '%d %B, %Y')`"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: true
 vignette: >
-  %\VignetteIndexEntry{Prep_PIT_data}
+  %\VignetteIndexEntry{1.0) Importing, Cleaning, and Compressing PIT Tag Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
