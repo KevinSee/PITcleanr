@@ -87,9 +87,18 @@ ptagis_file = system.file("extdata",
 
 # Compress Detections
 
-The complete tag history query output from [PTAGIS](https://ptagis.org/) will provide a record for every detection of each tag code in the tag list. This may include multiple detections on the same antenna, or same site within a short period of time. `PITcleanr` can help compress that data into an initial summary using the function `compress()`. At a minimum. this function requires the complete tag history file downloaded from PTAGIS. 
+The complete tag history query output from [PTAGIS](https://ptagis.org/) will provide a record for every detection of each tag code in the tag list. This may include multiple detections on the same antenna, or same site within a short period of time. `PITcleanr` can help compress that data into an initial summary using the function `compress()`. At a minimum. this function requires a path to the complete tag history file downloaded from PTAGIS. 
+
+```{r, eval = F}
+# As an example, set path to PTAGIS query output
+ptagis_file = "C:/Users/username/Desktop/TUM_Chinook_2015.csv"
+
+```
+
+And then the `compress()` function can be performed on the file path. In our example, we write the output to an object `comp_obs` containing the compressed observations.
 
 ```{r, eval = T}
+
 comp_obs = compress(ptagis_file)
 comp_obs
 ```
