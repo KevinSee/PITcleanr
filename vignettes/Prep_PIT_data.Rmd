@@ -67,14 +67,14 @@ system.file("extdata",
             mustWork = TRUE)
 ```
 
-The file is very simple:
+The file of tag codes is very simple:
 
 ```{r, echo = F}
 system.file("extdata", 
             "tag_list_TUM_2015.txt", 
             package = "PITcleanr",
             mustWork = TRUE) %>%
-  read_table()
+  readr::read_table(col_names = F)
 ```
 
 
@@ -325,7 +325,7 @@ plotNodes(parent_child,
           layout = "tree")
 ```
 
-# Add Direction
+## Add Direction
 
 Users may be interested in the apparent movement directionality of the tag, based on the detections. For many analyses, it is necessary to assume a one-way travel direction (either all upstream or all downstream). To meet this assumption, individual detections sometimes need to be discarded. In other cases, more straightforward summaries of directional movements may be desired. `PITcleanr` provides a function, `addDirection()`, to take the compressed observations from `compress` and the parent-child table and indicate the movement direction of each detection in relation to its previous detection. It may be useful to filter detections so they all start at a particular site for each tag before applying `addDirection`. Currently this function only provides directions relative to an upstream movement (i.e. "forward" indicates upstream movement, "backward" indicates downstream movement). A direction of "unknown" indicates the tag has shifted to a different branch in the stream network. 
 
