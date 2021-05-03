@@ -125,7 +125,7 @@ raw_ptagis = readr::read_csv(ptagis_file)
 n_raw_tags = n_distinct(raw_ptagis$`Tag Code`)
 ```
 
-Note that in our example file, there are `r nrow(raw_ptagis)` detections (rows) for `r n_raw_tags` tags. Many of these detections are often at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of the raw data for a single tag
+Note that in our example file, there are `r nrow(raw_ptagis)` detections (rows) for `r n_raw_tags` tags. Many of these detections are often at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of the raw data for a single tag:
 
 ```{r, echo = F}
 raw_ptagis %>%
@@ -141,7 +141,7 @@ raw_ptagis %>%
 
 # Compress Detections
 
-The complete tag history query output from [PTAGIS](https://ptagis.org/) will provide a record for every detection of each tag code in the tag list. This may include multiple detections on the same antenna, or same site within a short period of time. `PITcleanr` can help compress that data into an initial summary using the function `compress()`. At a minimum. this function requires a path to the complete tag history file downloaded from PTAGIS, as seen at the end of the last section. 
+The complete tag history query output from [PTAGIS](https://ptagis.org/) will provide a record for every detection of each tag code in the tag list. This may include multiple detections on the same antenna, or same site within a short period of time. One of the main purposes of `PITcleanr` is to compress that data into an initial summary using the function `compress()`. At a minimum. this function requires a path to the complete tag history file downloaded from PTAGIS, as seen at the end of the last section. 
 
 Then the `compress()` function can be performed on the file path. In our example, we write the output to an object `comp_obs` containing the compressed observations.
 
@@ -154,7 +154,7 @@ The output consists of a tibble containing columns for tag_code, node, detection
 
 Therefore, if a tag moves from node A to B and back to A, there will be three slots in the compressed data. The nodes are the user-defined groupings of detection infrastructure. By default, each site code from PTAGIS is considered a node. However, the user may construct their own groupings, perhaps by array, groups of arrays, groups of sites, or even antenna, depending on the spatial scale desired. To utilize this kind of grouping, a configuration file must be supplied to the `compress()` function.
 
-Note that we have scaled back the raw data from PTAGIS from `r nrow(raw_ptagis)` rows of data to `r nrow(comp_obs)` rows. At the same time, the sum of the `n_dets` column in `comp_obs` is `r sum(comp_obs$n_dets)`, showing that every detection from the raw data has been accounted for. For the rest of this vignette, we will be exploring other functionality of `PITcleanr` as it related to this compressed data.
+Note that we have scaled down the raw data from PTAGIS from `r nrow(raw_ptagis)` rows of data to `r nrow(comp_obs)` rows. At the same time, the sum of the `n_dets` column in `comp_obs` is `r sum(comp_obs$n_dets)`, showing that every detection from the raw data has been accounted for. For the rest of this vignette, we will be exploring other functionality of `PITcleanr` as it related to this compressed data.
 
 `PITcleanr` can help perform some basic quality control on the PTAGIS detections as well. The `qcTagHistory()` function returns a list including a vector of tags listed as "DISOWN" by PTAGIS, another vector of tags listed as "ORPHAN" (which may indicate a mark file has not been uploaded), and a dataframe of release batches. This latter dataframe is used by `compress` to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination. 
 
@@ -171,9 +171,9 @@ ptagis_meta = queryPtagisMeta()
 ptagis_meta
 ```
 
-The default operation of `compress()` maps each site code to a node. `PITcleanr` also includes a function that maps each array at a site onto a node. The upstream arrays are labeled with the site code plus `A0` and the downstream arrays are assigned `B0`. For sites with three arrays, the middle array is grouped with the upstream array. For sites with four arrays, the upper two arrays are mapped to `A0` and the lower two arrays are mapped to `B0`. However, the user can start with the `ptagis_meta` file and construct this mapping any way they choose. This type of configuration file can be included in the `compress()` function to assign each detection to it's associated node.
+The default operation of `compress()` maps each site code to its own node, but that may not always be desireable. `PITcleanr` also includes a function that maps each array (i.e. row of antennas) at a site onto a node. The upstream arrays are labeled with the site code plus `A0` and the downstream arrays are assigned `B0`. For sites with three arrays, the middle array is grouped with the upstream array. For sites with four arrays, the upper two arrays are mapped to `A0` and the lower two arrays are mapped to `B0`. However, the user can start with the `ptagis_meta` file and construct this mapping any way they choose. This type of configuration file can be included in the `compress()` function to assign each detection to it's associated node.
 
-In the example below, several sites are consolidated into a single node (e.g. LNF, TUM), and some mark-recovery-recapture sites are merged with upstream array nodes
+In the example below, several sites are consolidated into a single node (e.g. LNF, TUM), and some mark-recovery-recapture sites are merged with upstream array nodes.
 
 ```{r}
 array_configuration = buildConfig()
