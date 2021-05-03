@@ -49,7 +49,8 @@ estimateSpawnLoc = function(filtered_obs = NULL,
                 summarize(tag_detects = toString(node),
                           .groups = "drop") %>%
                 distinct(),
-              by = "tag_code")
+              by = "tag_code") %>%
+    arrange(tag_code)
 
   if(spawn_site) {
     stopifnot(!is.null(ptagis_file))
