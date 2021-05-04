@@ -37,6 +37,7 @@ queryFlowlines = function(sites_sf = NULL,
   # find the starting point (most downstream point)
   start_comid = sites_sf %>%
     dplyr::filter(site_code == root_site_code) %>%
+    sf::st_transform(crs = 4326) %>%
     nhdplusTools::discover_nhdplus_id()
 
   # query flowlines from NHDPlus layer
