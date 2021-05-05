@@ -8,6 +8,7 @@ prepWrapper(
   compress_obs = NULL,
   parent_child = NULL,
   start_node = NULL,
+  min_obs_date = NULL,
   max_obs_date = NULL,
   save_file = F,
   file_name = NULL
@@ -22,6 +23,9 @@ Can be created with `buildParentChild()` function.}
 \item{start_node}{character of the node where detection histories should begin.
 If `NULL`, the node order from the parent-child table will be constructed, and
 the node with node order of 1 will be used.}
+
+\item{min_obs_date}{Character string in the format "YYYYMMDD". If included, the
+output will filter out observations prior to this date.}
 
 \item{max_obs_date}{Character string in the format "YYYYMMDD". If included, the
 output will suggest that observations after this date should be deleted.}
