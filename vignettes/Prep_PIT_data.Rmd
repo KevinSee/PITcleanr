@@ -31,12 +31,12 @@ This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data t
 
 # Installation
 
-Directions on how to install `PITcleanr` can found at its GitHub homepage [here](https://github.com/BiomarkABS/PITcleanr). It should be noted that many of the various queries in `PITcleanr` require a connection to the internet. If the user is somewhat familiar with installing R packages from GitHub, the following code can be used:
+More complete directions on how to install `PITcleanr` can found at its GitHub homepage [here](https://github.com/BiomarkABS/PITcleanr). If the user is somewhat familiar with installing R packages from GitHub, the following code can be used:
 
 ```{r gh-installation, eval = F}
 # install.packages("devtools")
 remotes::install_github("BiomarkABS/PITcleanr", 
-                        dependencies = T
+                        dependencies = TRUE,
                         build_vignettes = TRUE)
 ```
 
@@ -46,19 +46,22 @@ Additionally, one function in `PITcleanr` allows the user to make a plot of how 
 install.packages("ggraph")
 ```
 
-Once `PITcleanr` is successfully installed, it can be loaded into R session. In this vignette, we will also use many functions from the `dplyr` package, so load that as well:
+Once `PITcleanr` is successfully installed, it can be loaded into the R session. In this vignette, we will also use many functions from the `tidyverse` group of packages, so load those as well:
 
 ```{r load-package}
 library(PITcleanr)
-library(dplyr)
+library(tidyverse)
 ```
 
+Note that many of the various queries in `PITcleanr` require a connection to the internet. 
 
 # Querying Detection Data from PTAGIS
 
-The Columbia Basin PIT Tag Information System ([PTAGIS](https://ptagis.org/)) is the centralized regional database for PIT-tag detections within the Columbia Basin. It contains a record of each detection of every PIT tag, including the initial detection, or "mark", when the tag is embedded in the fish, detections on PIT-tag antennas, recaptures (e.g. at weirs) and recoveries (e.g. carcass surveys). It contains a record of every individual detection, which means potentially multiple records of a tag being detected on the same antenna over and over if it is not moving. Querying PTAGIS for all of these detections leads to a wealth of data, but it can be unwieldy for the user. `PITcleanr` aims to compress that data to a more manageable size, without losing any of the information contained in that dataset. 
+The Columbia Basin PIT Tag Information System ([PTAGIS](https://ptagis.org/)) is the centralized regional database for PIT-tag detections within the Columbia River Basin. It contains a record of each detection of every PIT tag, including the initial detection, or "mark", when the tag is embedded in the fish, detections on PIT-tag antennas, recaptures (e.g. at weirs) and recoveries (e.g. carcass surveys). It contains a record of every individual detection, which means potentially multiple records of a tag being detected on the same antenna over and over e.g., in the case that it is not moving. Therefore, querying PTAGIS for all of these detections leads to a wealth of data, which can be unwieldy for the user. `PITcleanr` aims to compress that data to a more manageable size, without losing any of the information contained in that dataset. 
 
-`PITcleanr` starts with a complete capture history query from [PTAGIS](https://ptagis.org/) for a select group of tags of interest. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query. For an example of one such file, the following code can be used to find the example file included with `PITcleanr`.
+`PITcleanr` starts with a complete capture history query from [PTAGIS](https://ptagis.org/) for a select group of tags of interest. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query. 
+
+For convenience, we've included one such file with `PITcleanr`. The following code can be used to find the path to that example file, titled "tag_list_TUM_2015.txt", containing IDs for Chinook salmon adults implanted with PIT tags at Tumwater Dam in 2015. Alternatively, the user can follow along with their own file containing their tags of interest.
 
 ```{r tag-list-file, eval = F}
 system.file("extdata", 
@@ -86,18 +89,21 @@ There are several query indices on the left side of the query builder, but for t
 * Mark Species
 * Mark Rear Type
 * Event Type
+* Event Site Type
 * Event Site Code
 * Event Date Time
 * Antenna
 * Antenna Group Configuration
-* Event Release Date Time
 * Event Release Site Code
+* Event Release Date Time
 
 Simply move these fields over to the "Selected:" column on the page. Other fields may be included as well, but the ones listed above must be added. Any additional fields will just be included as extra columns in the query output. 
 
 The only other required index is "2 Select Metrics", but that can remain as the default, "CTH Count", which provides one record for each event recorded per tag.
 
-Set up a filter for specific tags by next navigating to the "29 Tag Code - List or Text File" on the left. And then, after selecting "Tag" under "Attributes:", click on "Import file...". Simply upload the .txt file prepared earlier containing your PIT tag codes of interest. Under "Report Message Name:" near the bottom, name the query something appropriate, such as "TUM_Chinook_2015.csv", and select "Run Report". Once the query has successfully completed, export the output as a .csv file (e.g. "TUM_Chinook_2015.csv") using the default settings:
+Set up a filter for specific tags by next navigating to the "29 Tag Code - List or Text File" on the left. And then, after selecting "Tag" under "Attributes:", click on "Import file...". Simply upload the .txt file containing your PIT tag codes of interest, or alternatively, feel free to use the "tag_list_TUM_2015.txt" file provided with `PITcleanr`. After choosing the file, click on "Import" and the tag list will be loaded (delimited by semi-colons). Click "OK". 
+
+Under "Report Message Name:" near the bottom, name the query something appropriate, such as "TUM_Chinook_2015", and select "Run Report". Once the query has successfully completed, the output can be exported as a .csv file (e.g. "TUM_Chinook_2015.csv"). Simply click on the "Export" icon near the top, which will open a new page, and select the default settings:
 
 * Export: Whole report
 * CSV file format
@@ -105,7 +111,8 @@ Set up a filter for specific tags by next navigating to the "29 Tag Code - List 
 * Export filter details: unchecked
 * Remove extra column: Yes
 
-We have included an example of data downloaded from PTAGIS with the `PITcleanr` package. The user can find where that example file has been saved by running the following code. 
+And click "Export", again. We have included an example of data downloaded from PTAGIS with the `PITcleanr` package. The user can find where that example file has been saved by running the following code. The file path will be stored as a new object `ptagis_file`.
+
 ```{r}
 ptagis_file = system.file("extdata", 
                           "TUM_Chinook_2015.csv", 
@@ -117,15 +124,28 @@ Alternatively, if the user has run a query from PTAGIS as described above, they 
 
 ```{r, eval = F}
 # As an example, set path to PTAGIS query output
-ptagis_file = "C:/Users/Downloads/TUM_Chinook_2015.csv"
+ptagis_file = "C:/Users/usernamehere/Downloads/TUM_Chinook_2015.csv"
+
 ```
 
 ```{r raw-ptagis-data, echo = F}
 raw_ptagis = readr::read_csv(ptagis_file)
 n_raw_tags = n_distinct(raw_ptagis$`Tag Code`)
+
+obs_tbl = raw_ptagis %>%
+  select(`Tag Code`, `Event Type Name`) %>%
+  count(`Tag Code`, `Event Type Name`) %>%
+  pivot_wider(names_from = `Event Type Name`,
+              values_from = n,
+              values_fill = 0) %>%
+  mutate(nDetections = rowSums(across(where(is.numeric))))
+
+mark_only_tags = obs_tbl %>%
+  filter(Observation == 0 & Recapture == 0 & Recovery == 0)
+
 ```
 
-Note that in our example file, there are `r nrow(raw_ptagis)` detections (rows) for `r n_raw_tags` tags. Many of these detections are often at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of the raw data for a single tag:
+Note that in our example file, there are `r nrow(raw_ptagis)` detections (rows) for `r n_raw_tags` unique tags, matching the number of tags in our example tag list "tag_list_TUM_2015.txt". For a handful of those tags, in our case `r nrow(mark_only_tags)`, there is only a "Mark" detection i.e., that tag was never detected again after the fish was marked. For the remaining, there are many tags often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of the raw data for a single tag:
 
 ```{r, echo = F}
 raw_ptagis %>%
@@ -138,28 +158,49 @@ raw_ptagis %>%
   # DT::datatable()
 ```
 
+Let's "compress" all of those detections into a more manageable format as follows...
 
 # Compress Detections
 
-The complete tag history query output from [PTAGIS](https://ptagis.org/) will provide a record for every detection of each tag code in the tag list. This may include multiple detections on the same antenna, or same site within a short period of time. One of the main purposes of `PITcleanr` is to compress that data into an initial summary using the function `compress()`. At a minimum. this function requires a path to the complete tag history file downloaded from PTAGIS, as seen at the end of the last section. 
+The complete tag history query output from [PTAGIS](https://ptagis.org/) will provide a record for every detection of each tag code in the tag list. Again, this may include multiple detections on the same antenna, or same site within a short period of time, leading to an unwieldy and perhaps messy dataset. One of the main purposes of `PITcleanr` is to compress that data into an initial summary using the function `compress()`. At a minimum, this function requires a path to the complete tag history file downloaded from PTAGIS, as seen at the end of the last section. 
 
-Then the `compress()` function can be performed on the file path. In our example, we write the output to an object `comp_obs` containing the compressed observations.
+The `compress()` function can be performed on the file path. In our example, we perform the `compress()` function on the `ptagis_file` object containing the file path, and write the output to an object `comp_obs` containing the compressed observations.
 
 ```{r, eval = T}
 comp_obs = compress(ptagis_file)
 comp_obs
+
 ```
 
-The output consists of a tibble containing columns for tag_code, node, detection slot, type of event, number of detections within that slot, the first and last detection within that slot, the duration of that slot (maximum - minimum detection time) and the travel time between the previous slot and that one. Each slot is defined as all detections on a particular node before the tag is detected on a different node. The user can define a maximum number of minutes between detections before a new slot should be defined by supplying a `max_minutes` argument to `compress`. The units of the duration and travel time columns can also be defined by the `units` argument. The default is minutes (`mins`).
+The output consists of a tibble containing columns for:
 
-Therefore, if a tag moves from node A to B and back to A, there will be three slots in the compressed data. The nodes are the user-defined groupings of detection infrastructure. By default, each site code from PTAGIS is considered a node. However, the user may construct their own groupings, perhaps by array, groups of arrays, groups of sites, or even antenna, depending on the spatial scale desired. To utilize this kind of grouping, a configuration file must be supplied to the `compress()` function.
+* **tag_code:** The unique PIT tag ID.
+* **node:** By default, each site code from PTAGIS is considered a node. However, the user may construct their own groupings, perhaps by array, groups of arrays, groups of sites, or even antenna, depending on the spatial scale desired. To utilize this kind of grouping, a configuration file must be supplied to the `compress()` function. More on this later...
+* **slot:** A detection slot for each tag, numbered in chronological order. 
+* **event_type_name:** The type of "event" Typically, mark, observation, recapture, or recovery.
+* **n_dets:** The number of detections that occurred within that slot.
+* **min_det:** The time of the first (min) detection.
+* **max_det:** The time of the last (max) detection.
+* **duration:** The duration of that slot (maximum - minimum detection time). 
+* **travel_time:** The travel time between the previous slot and that one. 
 
-Note that we have scaled down the raw data from PTAGIS from `r nrow(raw_ptagis)` rows of data to `r nrow(comp_obs)` rows. At the same time, the sum of the `n_dets` column in `comp_obs` is `r sum(comp_obs$n_dets)`, showing that every detection from the raw data has been accounted for. For the rest of this vignette, we will be exploring other functionality of `PITcleanr` as it related to this compressed data.
+Each slot in the output is defined as all detections on a particular node before the tag is detected on a different node. The user can define a maximum number of minutes between detections before a new slot should be defined by supplying a `max_minutes` argument to `compress()`. The units of the duration and travel time columns can also be defined by the `units` argument. The default is minutes (`mins`). As an example, if a tag moves from node A to B and back to A, there will be three slots in the compressed data.
 
-`PITcleanr` can help perform some basic quality control on the PTAGIS detections as well. The `qcTagHistory()` function returns a list including a vector of tags listed as "DISOWN" by PTAGIS, another vector of tags listed as "ORPHAN" (which may indicate a mark file has not been uploaded), and a dataframe of release batches. This latter dataframe is used by `compress` to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination. 
+The help menu for `compress()`, or any function for that matter, can be accessed using:
+```{r, eval = F}
+?compress
+
+```
+
+Note that we have scaled down the raw data from PTAGIS from `r nrow(raw_ptagis)` rows of data to `r nrow(comp_obs)` rows in our example from Chinook salmon at Tumwater Dam. At the same time, the sum of the `n_dets` column in `comp_obs` is `r sum(comp_obs$n_dets)`, showing that every detection from the raw data has been accounted for. For the rest of this vignette, we will be exploring other functionality of `PITcleanr` as it relates to this compressed data.
+
+## Quality Control
+
+`PITcleanr` can help perform some basic quality control on the PTAGIS detections as well. The `qcTagHistory()` function returns a list including a vector of tags listed as "DISOWN" by PTAGIS, another vector of tags listed as "ORPHAN" (which may indicate a mark file has not been uploaded), and a dataframe of release batches. This latter dataframe is used by `compress()` to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination. 
 
 ```{r}
 qcTagHistory(ptagis_file)
+
 ```
 
 ## Configuration File
