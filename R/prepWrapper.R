@@ -69,7 +69,8 @@ prepWrapper = function(compress_obs = NULL,
                 group_by(tag_code) %>%
                 filter(min_det == min(min_det)) %>%
                 summarise(min_root_date = min_det,
-                          .groups = "drop")) %>%
+                          .groups = "drop"),
+              by = "tag_code") %>%
     mutate(start_date = if_else(is.na(start_date),
                                 min_root_date,
                                 start_date)) %>%
