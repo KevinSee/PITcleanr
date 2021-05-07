@@ -37,7 +37,7 @@ addDirection = function(compress_obs = NULL,
   paste("Detections from the following nodes were dropped,
         because they were not in the parent-child table:\n",
         paste(dropped_locs, collapse = ", "), "\n") %>%
-    warning()
+    message()
 
   # filter out observations at sites not included in the node order
   # determine direction of movement
