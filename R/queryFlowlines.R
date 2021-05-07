@@ -8,7 +8,7 @@
 #' @param root_site_code Site code for the starting detection site.
 #' @param min_strm_order minimum stream order to query flowlines for. Default value is `0`.
 #' @param dwnstream_sites Does `sites_sf` contain sites that are downstream of `root_site_code`? If `TRUE`, then all flowlines within a boundary box of `sites_df` will be downloaded
-#' @param dwn_min_stream_order_diff Used to control the minimum stream order of downloaded downstream flowlines. This can be useful if the user wants to prevent downloading excessive smaller streams downstream of a tagging or release locations. It corresponds to the difference between the stream order of the `root_site_code` site and the minimum stream order desired in the downstream flowlines. For example, if the `root_site_code` is located on a stream order 6 and `dwn_min_stream_order_diff = 2`, then only flowlines of at least 6-2=**4** will be downloaded.
+#' @param dwn_min_stream_order_diff Used to control the minimum stream order of downloaded downstream flowlines. This can be useful if the user wants to prevent downloading excessive smaller streams downstream of a tagging or release location. It corresponds to the difference between the stream order of the `root_site_code` site and the minimum stream order desired in the downstream flowlines. For example, if the `root_site_code` is located on a stream order 6 and `dwn_min_stream_order_diff = 2`, then only flowlines of at least 6-2=**4** will be downloaded. The default value is 0, meaning only streams of equal or greater order than the tagging or release site will be returned.
 #'
 #' @import dplyr sf nhdplusTools
 #' @importFrom magrittr %<>%
