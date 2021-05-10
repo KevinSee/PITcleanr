@@ -2,11 +2,13 @@
 #'
 #' @description Filters the compressed detections for those that occur at or after
 #' the `start_node`. Adds directionality and columns to indicate whether detections
-#' at each node should be retained for DABOM.
+#' at each node should be retained for DABOM. If desired, can create the compressed
+#' detections with a PTAGIS file path and a configuration file, before doing the rest.
 #'
 #' @author Kevin See
 #'
 #' @inheritParams addDirection
+#' @inheritParams compress
 #' @param start_node character of the node where detection histories should begin.
 #' If `NULL`, the node order from the parent-child table will be constructed, and
 #' the node with node order of 1 will be used.
@@ -25,6 +27,8 @@
 #' @examples prepWrapper()
 
 prepWrapper = function(compress_obs = NULL,
+                       ptagis_file = NULL,
+                       configuration = NULL,
                        parent_child = NULL,
                        start_node = NULL,
                        min_obs_date = NULL,
@@ -32,8 +36,16 @@ prepWrapper = function(compress_obs = NULL,
                        save_file = F,
                        file_name = NULL) {
 
-  stopifnot(!is.null(compress_obs),
-            !is.null(parent_child))
+  stopifnot(exprs = {
+    (!is.null(compress_obs)) | (!is.null(ptagis_file) & !is.null(configuration))
+    !is.null(parent_child)
+  })
+
+  if(is.null(compress_obs)) {
+    cat("Compressing detections\n")
+    compress_obs = compress(ptagis_file = ptagis_file,
+                            configuration = configuration)
+  }
 
   if(is.null(start_node)) {
     cat("Determining starting node\n")
