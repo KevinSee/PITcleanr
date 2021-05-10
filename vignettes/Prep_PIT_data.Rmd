@@ -293,6 +293,7 @@ configuration = array_configuration %>%
                        node)) %>%
   distinct()
 
+# re-run compress(), except provide configuration
 comp_obs = compress(ptagis_file,
                     configuration = configuration)
 comp_obs
@@ -518,11 +519,14 @@ plotNodes(parent_child_nodes,
 
 ## Add Direction
 
-Users may be interested in the apparent movement directionality of the tag, based on the detections. For many analyses, it is necessary to assume a one-way travel direction (either all upstream or all downstream). To meet this assumption, individual detections sometimes need to be discarded. In other cases, more straightforward summaries of directional movements may be desired. `PITcleanr` provides a function, `addDirection()`, to take the compressed observations from `compress()` and the parent-child table and indicate the movement direction of each detection in relation to its previous detection. It may be useful to filter detections so they all start at a particular site for each tag before applying `addDirection()`. Currently this function only provides directions relative to an upstream movement (i.e. "forward" indicates upstream movement, "backward" indicates downstream movement). A direction of "unknown" indicates the tag has shifted to a different branch in the stream network. 
+Users may be interested in the apparent movement directionality of a tag, based on its detections. For many analyses, it is necessary to assume a tag/individual undergoes only one-way travel (i.e., travel is either all upstream or all downstream). To meet this assumption, individual detections sometime need to be discarded. For example, an adult salmon undergoing an upstream spawning migration may move up a mainstem migration corridor (e.g., the Snake River), dip into a tributary (e.g., Selway River in the Clearwater), and then move back downstream and up another tributary (e.g., Salmon River) to their spawning location. In this case, any detections that occurred in the Clearwater River would need to be discarded if we believe the fish was destined for a location in the Salmon River. In other cases, more straightforward summaries of directional movements may be desired.
+
+To accommodate this, `PITcleanr` provides a function, `addDirection()`, to take the compressed observations from `compress()` and the parent-child table (`parent_child` or `parent_child_nodes`) and indicate the movement direction of each detection in relation to its previous detection. It may be useful to filter detections so they all start at a particular site for each tag before applying `addDirection()`. Currently this function only provides directions relative to an upstream movement (i.e. "forward" indicates upstream movement, "backward" indicates downstream movement). A direction of "unknown" indicates the tag has shifted to a different branch in the stream network. 
 
 ```{r}
 # determine trap date, and remove detections prior to that
 obs_direct = comp_obs %>%
+  # get the first detection of each tag at Tumwater Dam
   left_join(comp_obs %>%
               filter(node == "TUM",
                      event_type_name %in% c("Mark", "Recapture")) %>%
@@ -531,12 +535,16 @@ obs_direct = comp_obs %>%
               summarise(start_date = min_det,
                         .groups = "drop"),
             by = "tag_code") %>%
+  # filter any detections before the "start_date"
   filter(min_det >= start_date) %>%
   group_by(tag_code) %>%
+  # re-calculate the "slots" for each tag_code
   mutate(slot = slot - min(slot) + 1) %>%
   ungroup() %>%
+  # add direction using "addDirection()
   addDirection(parent_child = parent_child_nodes)
 
+# for example, let's look at directional observations for a single tag, and select certain columns
 obs_direct %>%
   filter(tag_code == "3D9.1C2DE4B17E") %>%
   select(tag_code, node, slot, min_det, direction)
@@ -545,9 +553,11 @@ obs_direct %>%
 
 # What Next?
 
-Congratulations, you've now finished the introductory vignette of the `PITcleanr` R package. One purpose of the `PITcleanr` pacage is to prepare and help clean PIT tag observations for the Dam Adult Branch Occupancy Model ([DABOM](https://github.com/BiomarkABS/DABOM)). For further information, consider browsing additional vignettes included with the `PITcleanr` package using:
+Congratulations, you've now finished the introductory vignette of the `PITcleanr` R package. One purpose of the `PITcleanr` package is to prepare and help clean PIT tag observations for the Dam Adult Branch Occupancy Model ([DABOM](https://github.com/BiomarkABS/DABOM)). For further information, consider browsing additional vignettes included with the `PITcleanr` package using:
 
 ```{r browse-vignettes, eval = F}
 browseVignettes("PITcleanr")
 
 ```
+
+#### End Vignette
