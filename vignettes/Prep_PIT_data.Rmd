@@ -177,7 +177,7 @@ The output consists of a tibble containing columns for:
 * **tag_code:** The unique PIT tag ID.
 * **node:** By default, each site code from PTAGIS is considered a node. More on this below... 
 * **slot:** A detection "slot" for each tag, numbered in chronological order. Also more on this below... 
-* **event_type_name:** The type of "event" Typically, mark, observation, recapture, or recovery.
+* **event_type_name:** The type of "event". Typically, mark, observation, recapture, or recovery.
 * **n_dets:** The number of detections that occurred within that slot.
 * **min_det:** The time of the first (min) detection in the slot.
 * **max_det:** The time of the last (max) detection in the slot.
