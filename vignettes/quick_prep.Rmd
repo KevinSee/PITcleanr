@@ -52,12 +52,10 @@ my_config = read_csv(config_file)
 parent_child = read_csv(parent_child_file) %>%
   addParentChildNodes(configuration = my_config)
 
-# read in PTAGIS observations and compress them
-comp_obs = compress(ptagis_file,
-                    configuration = my_config)
-
-# prep data for choice of which detections to keep
-prepped_df = prepWrapper(compress_obs = comp_obs,
+# read in PTAGIS observations and compress them, 
+# then prep data for choice of which detections to keep
+prepped_df = prepWrapper(ptagis_file = ptagis_file,
+                         configuration = my_config,
                          parent_child = parent_child,
                          max_obs_date = "20150930",
                          save_file = T,
@@ -133,8 +131,8 @@ parent_child = read_csv(parent_child_file)
 The user may choose to only include site codes in the parent and child columns, and then use their configuration file to build out the parent child table to include nodes. To add nodes, use the `addParentChildNodes` function:
 
 ```{r add-nodes}
-parent_child = addParentChildNodes(parent_child = parent_child,
-                                   configuration = my_config)
+parent_child_nodes = addParentChildNodes(parent_child = parent_child,
+                                         configuration = my_config)
 ```
 
 # Preparing for DABOM
@@ -160,16 +158,14 @@ ptagis_file = system.file("extdata",
                           mustWork = TRUE)
 ```
 
-Now the user can assign those detections to a "node", compress that data, assign directionality and determine which observations should be retained for DABOM using the `compress` and `prepWrapper` functions. The `min_obs_date` argument will filter out observations prior to that date, while the `max_obs_date` argument will ensure that all detections after that date are not retained. 
+Now the user can assign those detections to a "node", compress that data, assign directionality and determine which observations should be retained for DABOM using the `prepWrapper` functions. The `min_obs_date` argument will filter out observations prior to that date, while the `max_obs_date` argument will ensure that all detections after that date are not retained. 
 
 ```{r}
-# read in PTAGIS observations and compress them
-comp_obs = compress(ptagis_file,
-                    configuration = my_config)
-
-# prep data for choice of which detections to keep
-prepped_df = prepWrapper(compress_obs = comp_obs,
-                         parent_child = parent_child,
+# read in PTAGIS observations and compress them,
+# then prep data for choice of which detections to keep
+prepped_df = prepWrapper(ptagis_file = ptagis_file,
+                         configuration = my_config,
+                         parent_child = parent_child_nodes,
                          min_obs_date = "20150301",
                          max_obs_date = "20150930")
 ```
@@ -177,8 +173,9 @@ prepped_df = prepWrapper(compress_obs = comp_obs,
 The user can even save that output directly to an Excel workbook or csv file by setting `save_file = TRUE` and defining a file path and name in the `file_name` argument. Within this output (either in R, or in the saved Excel file), all the rows where the field `user_keep_obs` is NA or blank must be filled in with either `TRUE` or `FALSE`. The field `auto_keep_obs` provides a suggestion, but the ultimate choice is up to the user. 
 
 ```{r, eval = F}
-prepped_df = prepWrapper(compress_obs = comp_obs,
-                         parent_child = parent_child,
+prepped_df = prepWrapper(ptagis_file = ptagis_file,
+                         configuration = my_config,
+                         parent_child = parent_child_nodes,
                          min_obs_date = "20150301",
                          max_obs_date = "20150930",
                          save_file = T,

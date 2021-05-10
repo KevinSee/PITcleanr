@@ -209,17 +209,25 @@ The next step would be for a user to filter the prepared data for all rows with 
 
 # Wrapper Function
 
-`PITcleanr includes a wrapper function that starts with the initial compressed observations and the user-defined parent-child table, and performs several steps:
+`PITcleanr includes a wrapper function that starts with the user-defined parent-child table and either the initial compressed observations or the PTAGIS file and configuration file, and performs several steps:
 
 * Adds a start date corresponding to the date when a tag was marked or recaptured at the starting node (`start_node`)
-* Provides an arguement `min_obs_date` that will filter out observations prior to that date
+* Provides an argument `min_obs_date` that will filter out observations prior to that date
 * Runs the `filterDetections()` function
 * If desired, saves the output as a csv or Excel file, to make it easier to examine tag histories with less than straightforward detection paths
 
-If a user has a parent-child table built from a previous year, or by hand, this function makes it very easy to prepare a new year's worth data for DABOM.
+If a user has a parent-child table and configuration file built from a previous year, or by hand, this function makes it very easy to prepare a new year's worth data for DABOM.
 
 ```{r, eval = F}
+# using the compressed observations
 prepped_df = prepWrapper(compress_obs = comp_obs,
+                         parent_child = parent_child_nodes,
+                         min_obs_date = "20150301",
+                         max_obs_date = "20150930")
+
+# using the PTAGIS file and configuration file
+prepped_df = prepWrapper(ptagis_file = ptagis_file,
+                         configuration = configuration,
                          parent_child = parent_child_nodes,
                          min_obs_date = "20150301",
                          max_obs_date = "20150930")
