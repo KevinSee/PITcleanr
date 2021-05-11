@@ -61,11 +61,14 @@ Note that many of the various queries in `PITcleanr` require a connection to the
 ```{r child = "../man/fragments/query-ptagis.Rmd"}
 ```
 
+Let's "compress" all of those detections into a more manageable format as follows...
 
 # Compressing Detection Data
 
 ```{r child = "../man/fragments/compress-data.Rmd"}
 ```
+
+In our Tumwater Dam Chinook salmon example, the `compress()` function has scaled down the raw data from PTAGIS from `r prettyNum(nrow(raw_ptagis), big.mark = ",")` rows of data to a slightly more manageable `r prettyNum(nrow(comp_obs), big.mark = ",")` rows. At the same time, the sum of the `n_dets` column in `comp_obs` is `r prettyNum(sum(comp_obs$n_dets), big.mark = ",")`, showing that every detection from the raw data has been accounted for. For much of the remaining vignette, we will explore other functionality of `PITcleanr` and as it relates to this compressed data i.e., the `comp_obs` object.
 
 
 ## Quality Control

@@ -3,18 +3,6 @@ output:
   rmarkdown::html_vignette: default
   html_document: default
 ---
-```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
-# knitr options
-knitr::opts_chunk$set(
-collapse = TRUE,
-warning = FALSE,
-message = FALSE,
-echo = TRUE,
-comment = "#>"
-)
-
-library(knitr)
-```
 
 The Columbia Basin PIT Tag Information System ([PTAGIS](https://ptagis.org/)) is the centralized regional database for PIT-tag detections within the Columbia River Basin. It contains a record of each detection of every PIT tag, including the initial detection, or "mark", when the tag is embedded in the fish, detections on PIT-tag antennas, recaptures (e.g. at weirs) and recoveries (e.g. carcass surveys). It contains a record of every individual detection, which means potentially multiple records of a tag being detected on the same antenna over and over e.g., in the case that it is not moving. Therefore, querying PTAGIS for all of these detections leads to a wealth of data, which can be unwieldy for the user. `PITcleanr` aims to compress that data to a more manageable size, without losing any of the information contained in that dataset. 
 
@@ -114,5 +102,3 @@ raw_ptagis %>%
   # DT::datatable()
 
 ```
-
-Let's "compress" all of those detections into a more manageable format as follows...

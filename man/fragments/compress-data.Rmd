@@ -3,18 +3,6 @@ output:
   rmarkdown::html_vignette: default
   html_document: default
 ---
-```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
-# knitr options
-knitr::opts_chunk$set(
-collapse = TRUE,
-warning = FALSE,
-message = FALSE,
-echo = TRUE,
-comment = "#>"
-)
-
-library(knitr)
-```
 
 The complete tag history query output from [PTAGIS](https://ptagis.org/) will provide a record for every detection of each tag code in the tag list. Again, this may include multiple detections on the same antenna, or same site within a short period of time, leading to an unwieldy and perhaps messy dataset. One of the main purposes of `PITcleanr` is to compress that data into an initial summary using the function `compress()`. At a minimum, this function requires a path to the complete tag history query results downloaded from PTAGIS, as seen at the end of the last section. 
 
@@ -49,5 +37,3 @@ The help menu for `compress()`, or any function for that matter, can be accessed
 ?compress
 
 ```
-
-In our Tumwater Dam Chinook salmon example, the `compress()` function has scaled down the raw data from PTAGIS from `r nrow(raw_ptagis)` rows of data to a slightly more manageable `r nrow(comp_obs)` rows. At the same time, the sum of the `n_dets` column in `comp_obs` is `r sum(comp_obs$n_dets)`, showing that every detection from the raw data has been accounted for. For much of the remaining vignette, we will explore other functionality of `PITcleanr` and as it relates to this compressed data i.e., the `comp_obs` object.

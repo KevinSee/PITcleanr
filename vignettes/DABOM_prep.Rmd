@@ -34,7 +34,6 @@ library(PITcleanr)
 library(tidyverse)
 ```
 
-
 # Data Preparation
 
 The following two sections are included from the introductory `PITcleanr` vignette which can be found [here](Prep_PIT_data.html). That vignette can also be accessed using:
@@ -50,6 +49,7 @@ vignette("Prep_PIT_data",
 ```{r child = "../man/fragments/query-ptagis.Rmd"}
 ```
 
+These detections can then be "compressed" into a more manageable format as follows...
 
 ## Compressing Data
 
