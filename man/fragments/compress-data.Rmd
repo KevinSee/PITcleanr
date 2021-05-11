@@ -1,0 +1,53 @@
+---
+output:
+  rmarkdown::html_vignette: default
+  html_document: default
+---
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+collapse = TRUE,
+warning = FALSE,
+message = FALSE,
+echo = TRUE,
+comment = "#>"
+)
+
+library(knitr)
+```
+
+The complete tag history query output from [PTAGIS](https://ptagis.org/) will provide a record for every detection of each tag code in the tag list. Again, this may include multiple detections on the same antenna, or same site within a short period of time, leading to an unwieldy and perhaps messy dataset. One of the main purposes of `PITcleanr` is to compress that data into an initial summary using the function `compress()`. At a minimum, this function requires a path to the complete tag history query results downloaded from PTAGIS, as seen at the end of the last section. 
+
+The `compress()` function can be performed on the file path. In our example, we perform the `compress()` function on the `ptagis_file` object containing the file path, and write the output to an object `comp_obs` containing the compressed observations.
+
+```{r, eval = T}
+comp_obs = compress(ptagis_file)
+
+# look at comp_obs
+comp_obs
+
+```
+
+The output consists of a tibble containing columns for:
+
+* **tag_code:** The unique PIT tag ID.
+* **node:** By default, each site code from PTAGIS is considered a node. More on this below... 
+* **slot:** A detection "slot" for each tag, numbered in chronological order. Also more on this below... 
+* **event_type_name:** The type of "event". Typically, mark, observation, recapture, or recovery.
+* **n_dets:** The number of detections that occurred within that slot.
+* **min_det:** The time of the first (min) detection in the slot.
+* **max_det:** The time of the last (max) detection in the slot.
+* **duration:** The duration of that slot (maximum - minimum detection time). 
+* **travel_time:** The travel time between the previous slot and that one. 
+
+By default, the `compress()` function considers the site code from PTAGIS as the node. However, the user may construct their own groups, perhaps by array, group of arrays, group of sites, or even antenna, depending on the spatial scale desired. To utilize this kind of grouping, a configuration file must be supplied `configuration` argument in the `compress()` function. More on this is described in the [Configuration File] section below.  
+
+Each slot in the output is defined as all detections on a particular node before the tag is detected on a different node. The user can define a maximum number of minutes between detections before a new slot should be defined by supplying a value to the `max_minutes` argument to `compress()`. The units of the duration and travel_time columns can also be defined by the `units` argument. The default is minutes (`mins`). As an example, if a tag moves from node A to B and back to A, there will be three slots in the compressed data.
+
+The help menu for `compress()`, or any function for that matter, can be accessed using:
+```{r, eval = F}
+?compress
+
+```
+
+In our Tumwater Dam Chinook salmon example, the `compress()` function has scaled down the raw data from PTAGIS from `r nrow(raw_ptagis)` rows of data to a slightly more manageable `r nrow(comp_obs)` rows. At the same time, the sum of the `n_dets` column in `comp_obs` is `r sum(comp_obs$n_dets)`, showing that every detection from the raw data has been accounted for. For much of the remaining vignette, we will explore other functionality of `PITcleanr` and as it relates to this compressed data i.e., the `comp_obs` object.
