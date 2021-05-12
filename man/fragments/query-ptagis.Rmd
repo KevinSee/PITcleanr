@@ -102,5 +102,3 @@ raw_ptagis %>%
   # DT::datatable()
 
 ```
-
-Congratulations! You now have complete tag histories for your tags of interest from [PTAGIS](https:://www.ptagis/org)! Later, we'll demonstrate how to compress all of those records into a more managable size. 

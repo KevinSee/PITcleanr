@@ -98,6 +98,7 @@ write_csv(ptagis_meta,
 
 ```
 
+Congratulations! You now have complete tag histories for your tags of interest from [PTAGIS](https:://www.ptagis/org)! Next, we'll demonstrate how to compress all of those records into a more manageable size. 
 
 # Compressing Detection Data
 

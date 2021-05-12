@@ -1,12 +1,12 @@
 ---
-title: "2.1) Quickly Preparing Data for DABOM"
+title: "2.1) DABOM Data Prep 'Cheatsheet'"
 author: Kevin See
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{2.1) Quickly Preparing Data for DABOM}
+  %\VignetteIndexEntry{2.1) DABOM Data Prep 'Cheatsheet'}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -28,7 +28,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 
 # Introduction
 
-The core of `PITcleanr`'s functionality relies on detections from [PTAGIS](https://ptagis.org/), a configuration file that maps those detections onto user-defined "nodes", and a parent-child table showing how those nodes are related to each other on a stream network (i.e. which nodes are connected). `PITcleanr` contains several functions to help create the configuration file and the parent-child table, but the user can also create those files by hand, or use files from a previous analysis (e.g. last year). This vignette will show only the essential steps needed to make use of `PITcleanr` in prepparing data for `DABOM`. 
+The core of `PITcleanr`'s functionality relies on detections from [PTAGIS](https://ptagis.org/), a configuration file that maps those detections onto user-defined "nodes", and a parent-child table showing how those nodes are related to each other on a stream network (i.e. which nodes are connected). `PITcleanr` contains several functions to help create the configuration file and the parent-child table, but the user can also create those files by hand, or use files from a previous analysis (e.g. last year). This vignette will show only the essential steps needed to make use of `PITcleanr` in preparing data for `DABOM`. 
 
 ```{r setup, echo = F}
 library(PITcleanr)
