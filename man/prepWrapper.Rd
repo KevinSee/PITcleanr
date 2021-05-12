@@ -6,6 +6,8 @@
 \usage{
 prepWrapper(
   compress_obs = NULL,
+  ptagis_file = NULL,
+  configuration = NULL,
   parent_child = NULL,
   start_node = NULL,
   min_obs_date = NULL,
@@ -16,6 +18,17 @@ prepWrapper(
 }
 \arguments{
 \item{compress_obs}{The result of `compress()`.}
+
+\item{ptagis_file}{is the path to the PTAGIS observation file downloaded as a csv from PTAGIS.
+This must be the output from a Complete Tag History query (part of the Advanced Reporting).
+This query should contain: Tag, Mark Species, Mark Rear Type, Event Type, Event Site Type,
+Event Site Code, Event Date Time, Antenna, Antenna Group Configuration,
+Event Release Site Code, and Event Release Date Time.}
+
+\item{configuration}{is a data frame which assigns node names to unique SiteID, AntennaID, and
+site configuration ID combinations. One example can be built with the function `buildConfig`. If
+no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
+the column name should be `node`.}
 
 \item{parent_child}{data frame with at least `parent` and `child` columns.
 Can be created with `buildParentChild()` function.}
@@ -42,7 +55,8 @@ a tibble
 \description{
 Filters the compressed detections for those that occur at or after
 the `start_node`. Adds directionality and columns to indicate whether detections
-at each node should be retained for DABOM.
+at each node should be retained for DABOM. If desired, can create the compressed
+detections with a PTAGIS file path and a configuration file, before doing the rest.
 }
 \examples{
 prepWrapper()
