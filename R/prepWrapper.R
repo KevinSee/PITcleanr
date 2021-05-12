@@ -20,6 +20,7 @@
 #' is `FALSE`.
 #' @param file_name if `save_file` is `TRUE`, the file name and path to save the
 #' output to. Should end in either ".csv" or ".xlsx".
+#' @param ... other inputs to `compress`, if not using the default values
 #'
 #' @import dplyr tidyr lubridate purrr writexl
 #' @export
@@ -34,7 +35,8 @@ prepWrapper = function(compress_obs = NULL,
                        min_obs_date = NULL,
                        max_obs_date = NULL,
                        save_file = F,
-                       file_name = NULL) {
+                       file_name = NULL,
+                       ...) {
 
   stopifnot(exprs = {
     (!is.null(compress_obs)) | (!is.null(ptagis_file) & !is.null(configuration))
@@ -44,7 +46,8 @@ prepWrapper = function(compress_obs = NULL,
   if(is.null(compress_obs)) {
     cat("Compressing detections\n")
     compress_obs = compress(ptagis_file = ptagis_file,
-                            configuration = configuration)
+                            configuration = configuration,
+                            ...)
   }
 
   if(is.null(start_node)) {
