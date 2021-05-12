@@ -53,6 +53,11 @@ remotes::install_github("BiomarkABS/PITcleanr@develop",
                         build_vignettes = TRUE)
 ```
 
+## Compressing PTAGIS Detection Data
+
+```{r child = "../man/fragments/compress-data.Rmd"}
+```
+
 ## Developers Note
 
 `PITcleanr` can alternatively be installed using Hadley Wickham's `devtools` package, which can be installed and loaded using:
