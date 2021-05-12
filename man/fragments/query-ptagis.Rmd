@@ -8,7 +8,7 @@ The Columbia Basin PIT Tag Information System ([PTAGIS](https://ptagis.org/)) is
 
 `PITcleanr` starts with a complete capture history query from [PTAGIS](https://ptagis.org/) for a select group of tags of interest. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query. 
 
-For convenience, we've included one such file with `PITcleanr`. The following code can be used to find the path to that example file that was installed with the package, titled "tag_list_TUM_2015.txt", containing IDs for Chinook salmon adults implanted with PIT tags at Tumwater Dam in 2015. Alternatively, the user can follow along with their own file containing their tags of interest.
+For convenience, we've included one such file with `PITcleanr`. The following code can be used to find the path to that example file that was installed with the package, titled "tag_list_TUM_2015.txt", containing IDs for Chinook salmon adults implanted with PIT tags at Tumwater Dam in 2015. Feel free to copy/paste that file to use as a template for creating your own tag list, in which case, you can follow along with your own tags of interest.
 
 ```{r tag-list-file, eval = F}
 system.file("extdata", 
@@ -17,7 +17,7 @@ system.file("extdata",
             mustWork = TRUE)
 ```
 
-The file of tag codes is very simple:
+The example file of tag codes is very simple:
 
 ```{r, echo = F}
 system.file("extdata", 
@@ -102,3 +102,5 @@ raw_ptagis %>%
   # DT::datatable()
 
 ```
+
+Congratulations! You now have complete tag histories for your tags of interest from [PTAGIS](https:://www.ptagis/org)! Later, we'll demonstrate how to compress all of those records into a more managable size. 

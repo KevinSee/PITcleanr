@@ -1,0 +1,54 @@
+---
+output:
+  rmarkdown::html_vignette: default
+  html_document: default
+---
+
+`PITcleanr` also includes a function `buildConfig()` that maps each array (i.e., row of antennas) at a site onto a node. Using `buildConfig()`, the upstream arrays are labeled with the site code plus `A0` and the downstream arrays are assigned `B0`. For sites with three arrays, the middle array is grouped with the upstream array. For sites with four arrays, the upper two arrays are mappto to `A0` and the lower two arrays are mapped to `B0`. However, the user could use the information in the `ptagis_meta` object and construct this mapping any way they choose. This type of configuration file (or tibble or data frame) can be provided to the `configuration` argument in `compress()` to assign each detection to it's associated node.
+
+In the following example, we use the `buildConfig()` function to generate a default configuration and save it as `array_configuration`. Several sites are then consolidated into a single node (e.g. LNF, TUM), and some mark-recovery-recapture sites are merged with upstream array nodes, and the modified configuration is saved as `configuration` which can then be fed to the `compress()` function.
+
+```{r}
+array_configuration = buildConfig()
+
+# customize some pieces
+configuration = array_configuration %>%
+  # first, for example, 'LNF' and 'LEAV' are re-coded into a single node 'LNF'
+  mutate(node = ifelse(site_code %in% c('LNF', 'LEAV'),
+                       'LNF',
+                       node),
+         # these three nodes are all re-coded to a single 'TUM'
+         node = ifelse(site_code %in% c('TUF', 'TUMFBY', 'TUM'),
+                       'TUM',
+                       node),
+         node = ifelse(site_code == 'CHIWAC',
+                       'CHWA0',
+                       node),
+         node = ifelse(site_code %in% c('CHIWAR', 'CHIWAT'),
+                       'CHLA0',
+                       node),
+         node = ifelse(site_code == 'CHIW',
+                       'CHLA0',
+                       node),
+         # In this case, PIT tags from carcass recoveries in the Chikamin River are
+         # grouped with the upper 'CHU' array
+         node = ifelse(site_code == 'CHIKAC',
+                       'CHUA0',
+                       node),
+         node = ifelse(site_code == 'NASONC',
+                       'NALA0',
+                       node),
+         node = ifelse(site_code == 'WHITER',
+                       'WTLA0',
+                       node),
+         node = ifelse(site_code == 'LWENAT',
+                       'LWNA0',
+                       node)) %>%
+  distinct()
+
+# re-run compress(), except provide configuration
+comp_obs = compress(ptagis_file,
+                    configuration = configuration)
+comp_obs
+
+```
