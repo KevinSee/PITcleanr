@@ -11,7 +11,6 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-
 ```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
 # knitr options
 knitr::opts_chunk$set(
@@ -26,9 +25,10 @@ knitr::opts_chunk$set(
 options(rmarkdown.html_vignette.check_title = FALSE) 
 ```
 
+
 # Introduction
 
-The core of `PITcleanr`'s functionality relies on detections from [PTAGIS](https://ptagis.org/), a configuration file that maps those detections onto user-defined "nodes", and a parent-child table showing how those nodes are related to each other on a stream network (i.e. which nodes are connected). `PITcleanr` contains several functions to help create the configuration file and the parent-child table, but the user can also create those files by hand, or use files from a previous analysis (e.g. last year). This vignette will show only the essential steps needed to make use of `PITcleanr` in preparing data for `DABOM`. 
+The core of `PITcleanr`'s functionality relies on detections from [PTAGIS](https://ptagis.org/), a configuration file that maps those detections onto user-defined "nodes", and a parent-child table showing how those nodes are related to each other on a stream network (i.e. which nodes are connected). `PITcleanr` contains several functions to help create the configuration file and the parent-child table, but the user can also create those files by hand, or use files from a previous analysis (e.g. last year). This vignette shows only the essential steps needed to make use of `PITcleanr` in preparing data for `DABOM`. 
 
 ```{r setup, echo = F}
 library(PITcleanr)
@@ -36,9 +36,10 @@ library(readr)
 library(dplyr)
 ```
 
+
 # Minimal R Script
 
-If the user has the ptagis file, the configuration file, and the parent-child file ready, the only script necessary to run in R (which will include saving the output as an Excel workbook) is:
+If the user has file containing the complete tag histories for their tags of interest, plus the configuration file and the parent-child file ready, the only script necessary to run in R (which will include saving the output as an Excel workbook) is:
 
 ```{r quick-script}
 # load the necessary packages
@@ -46,53 +47,58 @@ library(PITcleanr)
 library(readr)
 library(dplyr)
 
-# read in configuration file
+# read in configuration file, config_file = path to that file
 my_config = read_csv(config_file)
-# read in parent_child file
+
+# read in parent_child file, parent_child_file = path to that file
 parent_child = read_csv(parent_child_file) %>%
   addParentChildNodes(configuration = my_config)
 
-# read in PTAGIS observations and compress them, 
-# then prep data for choice of which detections to keep
+# read in PTAGIS observations (ptagis_file), site configuration, and parent-child, 
 prepped_df = prepWrapper(ptagis_file = ptagis_file,
                          configuration = my_config,
                          parent_child = parent_child,
+                         # filter out detections after a date
                          max_obs_date = "20150930",
+                         # save results to file
                          save_file = T,
                          file_name = "PITcleanr_output.xlsx")
 ```
 
-For more details, continue reading.
+For additional details on site configuration, parent-child tables, and using the `prepWrapper()` function, continue reading.
 
-# Configuration File
+
+# Site Configuration
 
 The user may want to start with a configuration file queried from PTAGIS, or generate their own. If they choose to generate their own, it must contain the following columns (at a minimum):
 
 * `site_code`: this is the site code associated with a detection site in PTAGIS
 * `config_id`: this is the configuration sequence from PTAGIS associated with a specific antenna arrangement for that site
 * `antenna_id`: this is the antenna code or ID from PTAGIS
-* `node`: this is the user-defined node that detections on a specific antenna, in a specific configuration at a specific site are mapped to. 
+* `node`: this is the user-defined node that detections are mapped to i.e., how would the user like to group detections on a specific antenna, in a specific configuration, and at a specific site?
 
 The user may want to include other columns such as site name, latitude/longitude, river kilometer (RKM), etc. but none of those are strictly necessary.
 
-To start with a template by downloading all the metadata associated with each detection site in PTAGIS, run the following:
+The user can start with a template by downloading all the metadata associated with each detection site in PTAGIS using the following:
 
 ```{r}
 config_template = queryPtagisMeta() %>%
   select(site_code, 
          config_id = configuration_sequence,
          antenna_id) %>%
+  # set each node to NA to start
   mutate(node = NA_character_)
 ```
 
-The user may save this template to a csv file, and then edit it by hand, deleting sites they are not interested in, and filling in the `node` information for all other rows.
+The user may save this template to a .csv file, and then edit it by hand, deleting sites they are not interested in, and filling in the `node` information for all other rows they are interested in.
 
 ```{r}
 # tell R where to save the csv file
 config_file = "configuration.csv"
+
 # save the template as a csv file
 write_csv(config_template,
-          config_file)
+          file = config_file)
 ```
 
 Once the user has finished editing it, they may read it back into R:
@@ -110,9 +116,12 @@ config_file = system.file("extdata",
 my_config = read_csv(config_file)
 ```
 
-# Parent Child Table
 
-The parent-child table contains information about how sites or nodes are connected on the stream network. Each site/node child has a single parent, defined as the site/node most directly downstream of the child. Each parent may have multiple children, as the stream network may branch upstream of the parent. If the user wishes to create a parent child table by hand, the file must contain at a minimum the columns `parent` and `child`. This file can then be read into R.
+# "Parent-Child" Relationships
+
+The parent-child table contains information about how sites or nodes are connected on the stream network. Each site/node child has a single parent, defined as the site/node most directly downstream of the child. Each parent may have multiple children, as the stream network may branch upstream of the parent. For additional information, see that section in [this vignette](Prep_PIT_data.Rmd). 
+
+If the user wishes to create a parent-child table by hand, the file must contain at a minimum the columns `parent` and `child`. This file can then be read into R.
 
 ```{r, echo = F}
 # find parent-child file
@@ -128,6 +137,16 @@ parent_child_file = system.file("extdata",
 parent_child = read_csv(parent_child_file)
 ```
 
+The path to an example parent-child file included with `PITcleanr` can be found by running the following. The user could copy/paste that file to use as a template. Again, only the `parent` and `child` columns are necessary, although other columns may be useful.
+
+```{r, eval = F}
+# path to example parent-child table
+system.file("extdata", 
+            "parent_child_TUM.csv", 
+            package = "PITcleanr",
+            mustWork = TRUE)
+```
+
 The user may choose to only include site codes in the parent and child columns, and then use their configuration file to build out the parent child table to include nodes. To add nodes, use the `addParentChildNodes` function:
 
 ```{r add-nodes}
@@ -135,9 +154,10 @@ parent_child_nodes = addParentChildNodes(parent_child = parent_child,
                                          configuration = my_config)
 ```
 
+
 # Preparing for DABOM
 
-Finally, the user must download complete capture histories from PTAGIS for the tags of interest, ensuring that the following attributes are selected to be included in the output:
+Finally, the user must download complete tag histories from PTAGIS for the tags of interest, ensuring that the following attributes are selected to be included in the output:
 
 * Tag
 * Mark Species
@@ -158,7 +178,7 @@ ptagis_file = system.file("extdata",
                           mustWork = TRUE)
 ```
 
-Now the user can assign those detections to a "node", compress that data, assign directionality and determine which observations should be retained for DABOM using the `prepWrapper` functions. The `min_obs_date` argument will filter out observations prior to that date, while the `max_obs_date` argument will ensure that all detections after that date are not retained. 
+Now the user can assign those detections to a "node", compress that data, assign directionality and determine which observations should be retained for DABOM, all using the `prepWrapper()` function. The `min_obs_date` argument will filter out observations prior to that date, while the `max_obs_date` argument will ensure that all detections after that date are not retained. 
 
 ```{r}
 # read in PTAGIS observations and compress them,
@@ -170,7 +190,7 @@ prepped_df = prepWrapper(ptagis_file = ptagis_file,
                          max_obs_date = "20150930")
 ```
 
-The user can even save that output directly to an Excel workbook or csv file by setting `save_file = TRUE` and defining a file path and name in the `file_name` argument. Within this output (either in R, or in the saved Excel file), all the rows where the field `user_keep_obs` is NA or blank must be filled in with either `TRUE` or `FALSE`. The field `auto_keep_obs` provides a suggestion, but the ultimate choice is up to the user. 
+The user can even save that output directly to an Excel workbook or .csv file by setting `save_file = TRUE` and defining a file path and name in the `file_name` argument. Within this output (either in R, or in the saved Excel file), all the rows where the field `user_keep_obs` is NA or blank must be filled in with either `TRUE` or `FALSE`. The field `auto_keep_obs` provides a suggestion, but the ultimate choice is up to the user. 
 
 ```{r, eval = F}
 prepped_df = prepWrapper(ptagis_file = ptagis_file,
@@ -182,3 +202,4 @@ prepped_df = prepWrapper(ptagis_file = ptagis_file,
                          file_name = "PITcleanr_output.xlsx")
 ```
 
+#### End Vignette
