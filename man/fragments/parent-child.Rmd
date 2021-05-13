@@ -33,6 +33,7 @@ parent_child
 ```
 
 After initially building a parent-child table, there is usually some editing that needs to happen. This is necessary for a variety of reasons we've observed:
+
 * Perhaps the latitude and longitude of a site was not correct, and it was placed on the wrong hydrosequence of the flowlines. 
 * The flowlines layer from the USGS could be inaccurate around a particular area, causing the parent-child relationships to be incorrect. 
 * A site may be located at the mouth of a tributary was joined to the mainstem hydrosequence of the flowline, instead of the tributary, causing problems for sites upstream and downstream of that site. 
