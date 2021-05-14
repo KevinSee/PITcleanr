@@ -52,9 +52,10 @@ reference:
   - filterDetections
   - prepWrapper
   - summarizeTagData
-- title: "Outdated Functions"
+  - compressDART
+- title: "Deprecated functions"
   desc: >
-    These functions have become outdated
+    These functions have been superseded
 - contents:
   - obsNetwork
   - defineRepGrps
