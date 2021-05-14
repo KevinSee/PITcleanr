@@ -151,6 +151,12 @@ accessed using:
 ?PITcleanr::compress
 ```
 
+## Other Functionality
+
+`PITcleanr` contains lots of additional functionality to help users
+summarize and further analyze the compressed PTAGIS observations. Find
+more details in the various vignettes.
+
 ## Authors
 
 PITcleanr is a collaborative project, with the primary contributors
