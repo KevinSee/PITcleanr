@@ -82,7 +82,8 @@ filterDetections = function(compress_obs = NULL,
                                                                       stringr::str_detect(spwn_loc$path, paste0("^", node)),
                                                                     T, F)) %>%
                                      # select(-travel_time, -start_date) %>%
-                                     mutate(auto_keep_obs = if_else((in_spawn_path & slot == max_slot) | direction == "start",
+                                     mutate(auto_keep_obs = if_else(((in_spawn_path & slot == max_slot) | direction == "start") &
+                                                                      min_det <= lubridate::ymd(max_obs_date),
                                                                     T, F),
                                             user_keep_obs = NA) %>%
                                      select(-max_slot, - in_spawn_path) %>%
