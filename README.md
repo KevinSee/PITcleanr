@@ -48,6 +48,12 @@ devtools::install_github("BiomarkABS/PITcleanr",
 latest version of Rtools can be found
 [here](https://cran.r-project.org/bin/windows/Rtools/).
 
+For the latest development version:
+
+``` r
+devtools::install_github("BiomarkABS/PITcleanr@develop")
+```
+
 Be sure to use the `build_vignettes = TRUE` argument, as this will build
 all of the vignettes (i.e., user manuals) that are included with the
 package. Further instructions on how to use `PITcleanr` can be found in
@@ -56,12 +62,6 @@ the vignettes, which can be accessed using:
 ``` r
 browseVignettes(package = "PITcleanr")
 #> No vignettes found by browseVignettes(package = "PITcleanr")
-```
-
-For the latest development version:
-
-``` r
-devtools::install_github("BiomarkABS/PITcleanr@develop")
 ```
 
 ## Compressing PTAGIS Detection Data

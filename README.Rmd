@@ -28,18 +28,8 @@ It was originally conceived as a companion to the [DABOM](https://github.com/Bio
 
 ## Installation Instructions
 
-The `PITcleanr` compendium can be downloaded as a zip from from this URL: <https://github.com/BiomarkABS/PITcleanr/archive/master.zip>
-
-Or you can install the compendium as an R package from GitHub by using Hadley Wickham's `devtools` package:
-
-```{r gh-installation, eval = FALSE}
-# install and load remotes, if necessary
-install.packages("devtools")
-devtools::install_github("BiomarkABS/PITcleanr", 
-                         build_vignettes = TRUE)
+```{r child = "man/fragments/install-inst.Rmd"}
 ```
-
-`devtools` may require the downloading and installation of Rtools. The latest version of Rtools can be found [here](https://cran.r-project.org/bin/windows/Rtools/).
 
 Be sure to use the `build_vignettes = TRUE` argument, as this will build all of the vignettes (i.e., user manuals) that are included with the package. Further instructions on how to use `PITcleanr` can be found in the vignettes, which can be accessed using:
 
@@ -48,11 +38,6 @@ browseVignettes(package = "PITcleanr")
 ```
 
 
-For the latest development version:
-
-```{r develop-version, eval = FALSE}
-devtools::install_github("BiomarkABS/PITcleanr@develop")
-```
 
 ## Compressing PTAGIS Detection Data
 

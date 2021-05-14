@@ -1,0 +1,24 @@
+---
+output:
+  rmarkdown::html_vignette: default
+  html_document: default
+---
+
+The `PITcleanr` compendium can be downloaded as a zip from from this URL: <https://github.com/BiomarkABS/PITcleanr/archive/master.zip>
+
+Or you can install the compendium as an R package from GitHub by using Hadley Wickham's `devtools` package:
+
+```{r gh-installation, eval = FALSE}
+# install and load remotes, if necessary
+install.packages("devtools")
+devtools::install_github("BiomarkABS/PITcleanr", 
+                         build_vignettes = TRUE)
+```
+
+`devtools` may require the downloading and installation of Rtools. The latest version of Rtools can be found [here](https://cran.r-project.org/bin/windows/Rtools/).
+
+For the latest development version:
+
+```{r develop-version, eval = FALSE}
+devtools::install_github("BiomarkABS/PITcleanr@develop")
+```

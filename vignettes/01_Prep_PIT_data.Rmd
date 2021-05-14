@@ -31,13 +31,7 @@ This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data t
 
 # Installation
 
-More complete directions on how to install `PITcleanr` can found at its GitHub homepage [here](https://github.com/BiomarkABS/PITcleanr). If the user is somewhat familiar with installing R packages from GitHub, the following code can be used:
-
-```{r gh-installation, eval = F}
-# install.packages("devtools")
-remotes::install_github("BiomarkABS/PITcleanr", 
-                        dependencies = TRUE,
-                        build_vignettes = TRUE)
+```{r child = "../man/fragments/install-inst.Rmd"}
 ```
 
 Additionally, one function in `PITcleanr` allows the user to make a plot of how the detection sites or nodes are related to each other. To use this function, one will need the `ggraph` and `tidygraph` R packages. `tidygraph` is included with `ggraph`, so a user only needs to install `ggraph`. If the argument `dependencies` is set to `TRUE` in the code above, it should be installed automatically. Otherwise, run the following:
