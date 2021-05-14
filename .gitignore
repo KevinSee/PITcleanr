@@ -2,10 +2,7 @@
 .Rhistory
 .RData
 .DS_Store
-Example
 vignettes/ProcessedCH.xlsx
 vignettes/ValidTags.txt
 inst/doc
-doc
-Meta
 docs
