@@ -2,7 +2,7 @@
 #'
 #' @description The function reads in complete tag histories from PTAGIS that
 #' have been downloaded and coverts the date time values from character
-#' vectors into date-time vectore
+#' vectors into date-time vectors
 #'
 #' @author Kevin See
 #'
@@ -16,8 +16,10 @@
 #' @importFrom janitor clean_names
 #' @importFrom readr read_csv
 #' @export
-#' @return a list
-#' @examples qcTagHistory()
+#' @return a tibble containing the data downloaded from PTAGIS through a complete capture history query.
+#' @examples
+#' ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+#' readCTH(ptagis_file)
 
 readCTH = function(ptagis_file = NULL) {
 

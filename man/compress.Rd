@@ -46,7 +46,8 @@ each node as well as how many detections were made during that slot. Slots can b
 defined to include a maximum number of minutes, or not.
 }
 \examples{
-compress()
+ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+compress(ptagis_file)
 }
 \author{
 Kevin See

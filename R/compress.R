@@ -28,7 +28,9 @@
 #' @importFrom tidyr replace_na
 #' @export
 #' @return a tibble
-#' @examples compress()
+#' @examples
+#' ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+#' compress(ptagis_file)
 
 compress = function(ptagis_file = NULL,
                     max_minutes = NA,

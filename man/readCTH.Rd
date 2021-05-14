@@ -14,15 +14,16 @@ Event Site Code, Event Date Time, Antenna, Antenna Group Configuration,
 Event Release Site Code, and Event Release Date Time.}
 }
 \value{
-a list
+a tibble containing the data downloaded from PTAGIS through a complete capture history query.
 }
 \description{
 The function reads in complete tag histories from PTAGIS that
 have been downloaded and coverts the date time values from character
-vectors into date-time vectore
+vectors into date-time vectors
 }
 \examples{
-qcTagHistory()
+ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+readCTH(ptagis_file)
 }
 \author{
 Kevin See

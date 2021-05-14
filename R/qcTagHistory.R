@@ -12,7 +12,9 @@
 #' @importFrom readr read_csv
 #' @export
 #' @return a list
-#' @examples qcTagHistory()
+#' @examples
+#' ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+#' qcTagHistory(ptagis_file)
 
 qcTagHistory = function(ptagis_file = NULL,
                         ignore_event_vs_release = F) {

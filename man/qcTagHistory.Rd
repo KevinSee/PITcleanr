@@ -25,7 +25,8 @@ The function takes complete capture histories downloaded from PTAGIS
 and performs several QA/QC checks on them. It returns the results in the form of a list.
 }
 \examples{
-qcTagHistory()
+ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+qcTagHistory(ptagis_file)
 }
 \author{
 Kevin See
