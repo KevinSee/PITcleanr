@@ -2,7 +2,3 @@
 .Rhistory
 .RData
 .DS_Store
-vignettes/ProcessedCH.xlsx
-vignettes/ValidTags.txt
-inst/doc
-docs
