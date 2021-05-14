@@ -13,7 +13,8 @@ prepWrapper(
   min_obs_date = NULL,
   max_obs_date = NULL,
   save_file = F,
-  file_name = NULL
+  file_name = NULL,
+  ...
 )
 }
 \arguments{
@@ -48,6 +49,8 @@ is `FALSE`.}
 
 \item{file_name}{if `save_file` is `TRUE`, the file name and path to save the
 output to. Should end in either ".csv" or ".xlsx".}
+
+\item{...}{other inputs to `compress`, if not using the default values}
 }
 \value{
 a tibble
