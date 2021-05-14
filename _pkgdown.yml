@@ -1,6 +1,6 @@
 template:
   params:
-    bootswatch: cerulean
+    bootswatch: sandstone
 
 reference:
 - title: "Compressing PTAGIS Data"
@@ -15,8 +15,8 @@ reference:
     Functions for querying data from PTAGIS or NHDPlus
 - contents:
   - queryPtagisMeta
-  - queryInterrogrationMeta
-  - queryInterrogrationConfig
+  - queryInterrogationMeta
+  - queryInterrogationConfig
   - queryMRRMeta
   - queryFlowlines
   - queryTagMeta
@@ -51,7 +51,7 @@ reference:
   - estNodeEff
   - filterDetections
   - prepWrapper
-  - summarizeTagDate
+  - summarizeTagData
 - title: "Outdated Functions"
   desc: >
     These functions have become outdated
@@ -64,7 +64,7 @@ reference:
   - processCapHist_PRD
   - processCapHist_PRO
   - processCapHist_TUM
-  - processDART_LGD
+  - processDART_LGR
   - summariseValidTagsLGR
   - writeCapHistOutput
   - writeFishPaths
@@ -75,8 +75,3 @@ reference:
   - writePRONodeNetwork
   - writeTUMNodeNetwork
   - writeTUMNodeNetwork_noUWE
-
-- title: "Others"
-  desc: >
-    Other functions not grouped above
-- contents:
