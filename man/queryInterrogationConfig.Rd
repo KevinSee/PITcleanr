@@ -16,7 +16,7 @@ queryInterrogationConfig(site = NULL)
 Query and download configuration metadata for PTAGIS Interrogation sites
 }
 \examples{
-queryInterrogationConfig()
+queryInterrogationConfig(site = "ZEN")
 }
 \author{
 Kevin See

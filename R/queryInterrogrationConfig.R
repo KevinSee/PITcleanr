@@ -11,7 +11,7 @@
 #' @import dplyr httr purrr
 #' @export
 #' @return NULL
-#' @examples queryInterrogationConfig()
+#' @examples queryInterrogationConfig(site = "ZEN")
 
 queryInterrogationConfig = function(site = NULL) {
 
