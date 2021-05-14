@@ -11,7 +11,11 @@
 #' @importFrom janitor clean_names
 #' @importFrom readr read_csv
 #' @export
-#' @return a list
+#' @return a list consisting of a vector of tag codes that are listed as "Disown" in PTAGIS (`disown_tags`),
+#' a vector of tag codes that are listed as "Orphan" in PTAGIS (`orphan_tags`), and,
+#' if `ignore_event_vs_release` is `TRUE`,
+#' a tibble containing information about sites with release information to help the user
+#' determine with event time or release time should be used for those sites.
 #' @examples
 #' ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
 #' qcTagHistory(ptagis_file)

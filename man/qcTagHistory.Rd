@@ -18,7 +18,11 @@ or the event release time value for different release batches? Default is `FALSE
 the event time value will be used}
 }
 \value{
-a list
+a list consisting of a vector of tag codes that are listed as "Disown" in PTAGIS (`disown_tags`),
+a vector of tag codes that are listed as "Orphan" in PTAGIS (`orphan_tags`), and,
+if `ignore_event_vs_release` is `TRUE`,
+a tibble containing information about sites with release information to help the user
+determine with event time or release time should be used for those sites.
 }
 \description{
 The function takes complete capture histories downloaded from PTAGIS
