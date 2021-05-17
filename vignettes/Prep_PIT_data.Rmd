@@ -6,7 +6,7 @@ output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{1.0) Querying, Compressing, and Making Sense of PIT Tag Detection Data}
+  %\VignetteIndexEntry{Querying, Compressing, and Making Sense of PIT Tag Detection Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

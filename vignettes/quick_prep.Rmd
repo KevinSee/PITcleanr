@@ -6,7 +6,7 @@ output:
   rmarkdown::html_vignette:
     toc: true
 vignette: >
-  %\VignetteIndexEntry{2.1) DABOM Data Prep 'Cheatsheet'}
+  %\VignetteIndexEntry{DABOM Data Prep 'Cheatsheet'}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
