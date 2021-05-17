@@ -7,16 +7,18 @@
 \url{http://www.ptagis.org}
 }
 \usage{
-queryCapHist(tagCode = NULL, configuration = NULL)
+queryCapHist(tag_code = NULL, configuration = NULL)
 }
 \arguments{
-\item{tagCode}{PTAGIS tag code}
+\item{tag_code}{PTAGIS tag code}
 }
 \description{
-Query and download complete capture history for one tag from PTAGIS
+Query and download complete capture history for one tag from PTAGIS. Due to
+PTAGIS no longer offering queries for the mark event information for a given tag code, only
+observations after the mark event are returned.
 }
 \examples{
-queryCapHist(tagCode = '384.3B23A0A6EE')
+queryCapHist(tag_code = '384.3B23A0A6EE')
 }
 \author{
 Kevin See
