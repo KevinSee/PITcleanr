@@ -58,7 +58,7 @@ parent_child = read_csv(parent_child_file) %>%
 prepped_df = prepWrapper(ptagis_file = ptagis_file,
                          configuration = my_config,
                          parent_child = parent_child,
-                         # filter out detections after a date
+                         # filter out detections after a particular date
                          max_obs_date = "20150930",
                          # save results to file
                          save_file = T,
@@ -84,11 +84,26 @@ The user can start with a template by downloading all the metadata associated wi
 ```{r}
 config_template = queryPtagisMeta() %>%
   select(site_code, 
+         # site_name,
          config_id = configuration_sequence,
+         # antenna_group = antenna_group_name,
          antenna_id) %>%
   # set each node to NA to start
   mutate(node = NA_character_)
 ```
+
+For a typical DABOM model, where nodes are generally defined as arrays, the user may wish to start with a configuration file that has nodes assigned to each antenna, based on the array the antenna is part of, and merely edit some rows.
+
+```{r, eval = F}
+config_template = buildConfig() %>%
+  select(site_code, 
+         # site_name, 
+         config_id, 
+         # antenna_group, 
+         antenna_id, 
+         node)
+```
+
 
 The user may save this template to a .csv file, and then edit it by hand, deleting sites they are not interested in, and filling in the `node` information for all other rows they are interested in.
 

@@ -27,7 +27,7 @@ library(knitr)
 
 # Introduction
 
-One purpose of the `PITcleanr` package is to prepare PIT tag observations for the Dam Adult Branch Occupancy Model ([DABOM](https://github.com/BiomarkABS/DABOM)). DABOM estimates upstream movement probabilities across a branching stream network. One of the major assumptions in that model is that fish are making a one-way trip upstream, meaning they aren't moving into one tributary, turning around and moving into another. In reality, such movements certainly happen, but those detections must be "cleaned" before running the model. This means that if a tag is detected in multiple branches, someone must decide which branch (i.e, stream or river) represents their spawning trajectory, and the detections from the other branches are deleted. `PITcleanr` can examine complete tag histories from [PTAGIS](https://ptagis.org/) for a list of tags and help identify which tags have detections in multiple branches, and provide a suggestion for which detections to retain.
+One purpose of the `PITcleanr` package is to prepare PIT tag observations for the Dam Adult Branch Occupancy Model ([DABOM](https://github.com/BiomarkABS/DABOM)). DABOM estimates upstream movement probabilities across a branching stream network. One of the major assumptions in that model is that fish are making a one-way trip upstream, meaning they aren't moving into one tributary, turning around and moving into another. In reality, such movements certainly happen, but those detections must be "cleaned" before running the model. This means that if a tag is detected in multiple branches, someone must decide which branch (i.e, stream or river) represents their spawning trajectory, and the detections from the other branches must be deleted. `PITcleanr` can examine complete tag histories from [PTAGIS](https://ptagis.org/) for a list of tags and help identify which tags have detections in multiple branches, and provide a suggestion for which detections to retain.
 
 In this vignette, we will also use many functions from the `tidyverse` [group of packages](https://www.tidyverse.org/), so we load that as well:
 
@@ -39,7 +39,7 @@ library(tidyverse)
 Many of the following sections are also included in the introductory `PITcleanr` vignette which can be accessed  [here](Prep_PIT_data.html). That vignette explains additional functionality available from `PITcleanr` and can also be accessed using:
 
 ```{r, eval = F}
-vignette("Prep_PIT_data",
+vignette("01_Prep_PIT_data",
          package = "PITcleanr")
 ```
 
@@ -65,12 +65,10 @@ Good luck!
 
 Congratulations! You now have complete tag histories for your tags of interest from [PTAGIS](https:://www.ptagis/org)! Next, we'll demonstrate how to compress all of those records into a more manageable size. 
 
-
 ## Compressing Data
 
 ```{r child = "../man/fragments/compress-data.Rmd"}
 ```
-
 
 ## Site Configuration
 
@@ -78,7 +76,6 @@ Congratulations! You now have complete tag histories for your tags of interest f
 ```
 
 Note: If the user has their own site configuration file ready or would like a template to create their own configuration file, those directions can be found in [this](quick_prep.Rmd) vignette.
-
 
 ## Mapping Detection Sites
 
@@ -150,7 +147,6 @@ Let's look at an example of a fish where `filterDetections()` identified "backwa
 
 ```{r}
 prepped_df %>%
-  filter(is.na(user_keep_obs)) %>%
   filter(tag_code == "3D9.1C2DE4B17E") %>%
   select(tag_code:node, 
          min_det,
@@ -196,7 +192,7 @@ prepped_df = prepWrapper(ptagis_file = ptagis_file,
 Congratulations, you've now finished the vignette to prepare data for [DABOM](https://github.com/BiomarkABS/DABOM). For advanced users, or users that already have their PTAGIS query output, configuration file, and parent-child file ready, consider viewing the [DABOM Prep "Cheatsheet"](quick_prep.html) vignette, which can also be viewed using:
 
 ```{r, eval = F}
-vignette("quick_prep",
+vignette("03_quick_prep",
          package = "PITcleanr")
 ```
 
