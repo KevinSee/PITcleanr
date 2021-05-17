@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Process capture histories for Priest Rapids — processCapHist_PRD • PITcleanr</title>
+<title>Changelog • PITcleanr</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,8 +46,7 @@
 
 
 
-<meta property="og:title" content="Process capture histories for Priest Rapids — processCapHist_PRD" />
-<meta property="og:description" content="Using a site/node configuration file, a list of modeled sites, a parent-child table of nodes, and the raw capture histories from PTAGIS, process them. This function is specific to fish tagged at Priest Rapids dam." />
+<meta property="og:title" content="Changelog" />
 <meta property="og:image" content="https://biomarkabs.github.io/PITcleanr/index.html/logo.png" />
 
 
@@ -67,7 +66,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-topic">
+    <div class="container template-news">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -108,7 +107,9 @@
       <a href="../articles/Prep_PIT_data.html">Querying, Compressing, and Making Sense of PIT Tag Detection Data</a>
     </li>
     <li class="divider"></li>
-    <li class="dropdown-header">More...</li>
+    <li>
+      <a href="../articles/index.html">More...</a>
+    </li>
   </ul>
 </li>
 <li>
@@ -135,62 +136,87 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Process capture histories for Priest Rapids</h1>
-    <small class="dont-index">Source: <a href='https://github.com/BiomarkABS/PITcleanr/blob/master/R/processCapHist_PRD.R'><code>R/processCapHist_PRD.R</code></a></small>
-    <div class="hidden name"><code>processCapHist_PRD.Rd</code></div>
+      <h1 data-toc-skip>Changelog <small></small></h1>
+      <small>Source: <a href='https://github.com/BiomarkABS/PITcleanr/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="ref-description">
-    <p>Using a site/node configuration file, a list of modeled sites, a parent-child table of nodes, and the raw capture histories from PTAGIS, process them. This function is specific to fish tagged at Priest Rapids dam.</p>
-    </div>
-
-    <pre class="usage"><span class='fu'>processCapHist_PRD</span><span class='op'>(</span>
-  startDate <span class='op'>=</span> <span class='cn'>NULL</span>,
-  configuration <span class='op'>=</span> <span class='cn'>NULL</span>,
-  parent_child <span class='op'>=</span> <span class='cn'>NULL</span>,
-  observations <span class='op'>=</span> <span class='cn'>NULL</span>,
-  last_obs_date <span class='op'>=</span> <span class='cn'>NULL</span>,
-  truncate <span class='op'>=</span> <span class='cn'>T</span>,
-  <span class='va'>site_df</span>,
-  step_num <span class='op'>=</span> <span class='fl'>1</span>,
-  save_file <span class='op'>=</span> <span class='cn'>F</span>,
-  file_name <span class='op'>=</span> <span class='cn'>NULL</span>
-<span class='op'>)</span></pre>
-
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>startDate</th>
-      <td><p>observations that occurred before this date (YYYYMMDD format) will not be included.</p></td>
-    </tr>
-    <tr>
-      <th>last_obs_date</th>
-      <td><p>Character string in the format "YYYYMMDD". If included, the output will suggest that observations after this date should be deleted.</p></td>
-    </tr>
-    <tr>
-      <th>save_file</th>
-      <td><p>Should output be written to an file? Default value is <code>FALSE</code>.</p></td>
-    </tr>
-    <tr>
-      <th>file_name</th>
-      <td><p>If <code>save_file == TRUE</code>, this is the file name (with possible extension) to be saved to.</p></td>
-    </tr>
-    </table>
-
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p>Kevin See</p>
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>processCapHist_PRD</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in processCapHist_PRD(): !is.null(startDate) | !is.null(parent_child) | !is.null(observations) is not TRUE</span></div></pre>
+    <div id="pitcleanr-200-unreleased" class="section level1">
+<h1 class="page-header" data-toc-text="2.0.0">
+<a href="#pitcleanr-200-unreleased" class="anchor"></a>PITcleanr 2.0.0 (unreleased)</h1>
+<div id="major-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#major-changes" class="anchor"></a>Major Changes</h2>
+<ul>
+<li>Complete overhaul of most of <code>PITcleanr</code>’s functions</li>
+<li>New names for many functions</li>
+<li>New functionality</li>
+<li>Improved outputs</li>
+<li>Better documentation, including several vignettes</li>
+<li>
+<strong><em>NOT</em></strong> backward compatible with code that uses older versions of <code>PITcleanr</code>
+</li>
+</ul>
+</div>
+</div>
+    <div id="pitcleanr-120-2021-01-22" class="section level1">
+<h1 class="page-header" data-toc-text="1.2.0">
+<a href="#pitcleanr-120-2021-01-22" class="anchor"></a>PITcleanr 1.2.0 (2021-01-22)</h1>
+<div id="major-changes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#major-changes-1" class="anchor"></a>Major Changes</h2>
+<ul>
+<li>This release includes updated code for the Upper Columbia to make it appropriate to run for spawn year 2020 (and beyond). Is compatible with v1.1.0 of DABOM (but not previous versions)</li>
+</ul>
+</div>
+</div>
+    <div id="pitcleanr-112-2021-01-22" class="section level1">
+<h1 class="page-header" data-toc-text="1.1.2">
+<a href="#pitcleanr-112-2021-01-22" class="anchor"></a>PITcleanr 1.1.2 (2021-01-22)</h1>
+<div id="minor-changes" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-changes" class="anchor"></a>Minor Changes</h2>
+<ul>
+<li>Added some functionality, but should be backwards compatible with DABOM v1.0.0</li>
+</ul>
+</div>
+</div>
+    <div id="pitcleanr-111-2020-12-17" class="section level1">
+<h1 class="page-header" data-toc-text="1.1.1">
+<a href="#pitcleanr-111-2020-12-17" class="anchor"></a>PITcleanr 1.1.1 (2020-12-17)</h1>
+<div id="minor-changes-1" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-changes-1" class="anchor"></a>Minor Changes</h2>
+<ul>
+<li>a few coding improvements</li>
+</ul>
+</div>
+</div>
+    <div id="pitcleanr-110-2020-05-22" class="section level1">
+<h1 class="page-header" data-toc-text="1.1.0">
+<a href="#pitcleanr-110-2020-05-22" class="anchor"></a>PITcleanr 1.1.0 (2020-05-22)</h1>
+<div id="minor-changes-2" class="section level2">
+<h2 class="hasAnchor">
+<a href="#minor-changes-2" class="anchor"></a>Minor Changes</h2>
+<ul>
+<li>added PRA to possible site codes that could be used to determine trap date at Priest Rapids</li>
+</ul>
+</div>
+</div>
+    <div id="pitcleanr-100-2018-01-18" class="section level1">
+<h1 class="page-header" data-toc-text="1.0.0">
+<a href="#pitcleanr-100-2018-01-18" class="anchor"></a>PITcleanr 1.0.0 (2018-01-18)</h1>
+<ul>
+<li>Initial release</li>
+</ul>
+</div>
   </div>
+
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
     </nav>
   </div>
+
 </div>
 
 

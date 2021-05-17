@@ -47,8 +47,10 @@
 
 
 <meta property="og:title" content="PTAGIS Detection History — queryCapHist" />
-<meta property="og:description" content="Query and download complete capture history for one tag from PTAGIS" />
-<meta property="og:image" content="/logo.png" />
+<meta property="og:description" content="Query and download complete capture history for one tag from PTAGIS. Due to
+PTAGIS no longer offering queries for the mark event information for a given tag code, only
+observations after the mark event are returned." />
+<meta property="og:image" content="https://biomarkabs.github.io/PITcleanr/index.html/logo.png" />
 
 
 
@@ -93,25 +95,26 @@
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
+    Vignettes
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
+    <li class="divider"></li>
+    <li class="dropdown-header">Getting Started</li>
     <li>
-      <a href="../articles/01_Prep_PIT_data.html">1.0) Querying, Compressing, and Making Sense of PIT Tag Detection Data</a>
+      <a href="../articles/Prep_PIT_data.html">Querying, Compressing, and Making Sense of PIT Tag Detection Data</a>
     </li>
-    <li>
-      <a href="../articles/02_DABOM_prep.html">2.0) Preparing Data for DABOM</a>
-    </li>
-    <li>
-      <a href="../articles/03_quick_prep.html">2.1) DABOM Data Prep 'Cheatsheet'</a>
-    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">More...</li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">News</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -140,16 +143,18 @@
     </div>
 
     <div class="ref-description">
-    <p>Query and download complete capture history for one tag from PTAGIS</p>
+    <p>Query and download complete capture history for one tag from PTAGIS. Due to
+PTAGIS no longer offering queries for the mark event information for a given tag code, only
+observations after the mark event are returned.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>queryCapHist</span><span class='op'>(</span>tagCode <span class='op'>=</span> <span class='cn'>NULL</span>, configuration <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>queryCapHist</span><span class='op'>(</span>tag_code <span class='op'>=</span> <span class='cn'>NULL</span>, configuration <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>tagCode</th>
+      <th>tag_code</th>
       <td><p>PTAGIS tag code</p></td>
     </tr>
     </table>
@@ -162,8 +167,24 @@
     <p>Kevin See</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>queryCapHist</span><span class='op'>(</span>tagCode <span class='op'>=</span> <span class='st'>'384.3B23A0A6EE'</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='error'>Error in queryCapHist(tagCode = "384.3B23A0A6EE"): !is.null(configuration) is not TRUE</span></div></pre>
+    <pre class="examples"><div class='input'><span class='fu'>queryCapHist</span><span class='op'>(</span>tag_code <span class='op'>=</span> <span class='st'>'384.3B23A0A6EE'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; Querying INT sites' metadata
+#&gt; Querying INT sites' configuration information
+#&gt; Querying MRR sites' metadata</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 158 x 7</span><span>
+#&gt;    `Tag Code` `Event Date Time V… `Event Site Cod… `Antenna ID` `Antenna Group …
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;dttm&gt;</span><span>              </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 384.3B23A… 2017-05-21 </span><span style='color: #949494;'>14:21:04</span><span> BO1              23                        110
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 384.3B23A… 2017-05-21 </span><span style='color: #949494;'>14:21:49</span><span> BO1              21                        110
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 384.3B23A… 2017-05-21 </span><span style='color: #949494;'>14:21:50</span><span> BO1              21                        110
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 384.3B23A… 2017-05-21 </span><span style='color: #949494;'>14:22:08</span><span> BO1              1F                        110
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 384.3B23A… 2017-05-21 </span><span style='color: #949494;'>14:25:11</span><span> BO1              1D                        110
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 384.3B23A… 2017-05-21 </span><span style='color: #949494;'>14:25:12</span><span> BO1              1D                        110
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 384.3B23A… 2017-05-21 </span><span style='color: #949494;'>14:26:09</span><span> BO1              1B                        110
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 384.3B23A… 2017-05-21 </span><span style='color: #949494;'>14:27:37</span><span> BO1              19                        110
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 384.3B23A… 2017-05-21 </span><span style='color: #949494;'>14:27:38</span><span> BO1              19                        110
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 384.3B23A… 2017-05-21 </span><span style='color: #949494;'>14:27:54</span><span> BO1              17                        110
+#&gt; </span><span style='color: #949494;'># … with 148 more rows, and 2 more variables: Antenna Group &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   SiteType &lt;chr&gt;</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
