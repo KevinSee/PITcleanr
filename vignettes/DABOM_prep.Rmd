@@ -1,5 +1,5 @@
 ---
-title: "2.0) Preparing Data for DABOM"
+title: "Preparing Data for DABOM"
 author: Kevin See
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -39,7 +39,7 @@ library(tidyverse)
 Many of the following sections are also included in the introductory `PITcleanr` vignette which can be accessed  [here](Prep_PIT_data.html). That vignette explains additional functionality available from `PITcleanr` and can also be accessed using:
 
 ```{r, eval = F}
-vignette("01_Prep_PIT_data",
+vignette("Prep_PIT_data",
          package = "PITcleanr")
 ```
 
@@ -192,7 +192,7 @@ prepped_df = prepWrapper(ptagis_file = ptagis_file,
 Congratulations, you've now finished the vignette to prepare data for [DABOM](https://github.com/BiomarkABS/DABOM). For advanced users, or users that already have their PTAGIS query output, configuration file, and parent-child file ready, consider viewing the [DABOM Prep "Cheatsheet"](quick_prep.html) vignette, which can also be viewed using:
 
 ```{r, eval = F}
-vignette("03_quick_prep",
+vignette("quick_prep",
          package = "PITcleanr")
 ```
 

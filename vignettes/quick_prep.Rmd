@@ -1,5 +1,5 @@
 ---
-title: "2.1) DABOM Data Prep 'Cheatsheet'"
+title: "DABOM Data Prep 'Cheatsheet'"
 author: Kevin See
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
