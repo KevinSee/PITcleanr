@@ -4,23 +4,17 @@ output:
   html_document: default
 ---
 
-When dealing with detections of individual tags, the user often is interested in which nodes are connected to which other nodes by the stream network. One way to capture this information is through the construction of a parent-child table describing the "relationships" among nodes. In a parent-child table, each row consists of a parent node, and a child node that is connected directly to that parent node. By default, `PITcleanr` assigns parent-child relationships as moving in an upstream direction, so a single parent may have multiple child sites upstream, if the stream network branches upstream of it. However, each child should only have a single parent, as we are assuming a lack of looped connections in our stream network. If the user is interested in a downstream parent-child relationship, the `parent` and `child` designations in the table can be manually switched. As an example, assuming only upstream movement, a weir may be considered a parent and each of its next upstream arrays considered children. A farthest upstream array, on the other hand, has no children, but is the child of a downstream array. All of the parent-child relationships among nodes in a watershed can describe the potential movements by an individual tag.
+When dealing with detections of individual tags, the user often is interested in which locations are connected to which other locations along the stream network. One way to capture this information is through the construction of a parent-child table describing the "relationships" among locations. In a parent-child table, each row consists of a parent location, and a child location that is connected directly to that parent location By default, `PITcleanr` assigns parent-child relationships as moving in an upstream direction, so a single parent may have multiple child locations upstream, if the stream network branches upstream of it. However, each child should only have a single parent, as we are assuming a lack of looped connections in our stream network. If the user is interested in a downstream parent-child relationship, the `parent` and `child` designations in the table can be manually switched. As an example, assuming only upstream movement, a weir may be considered a parent and each of its next upstream arrays considered children. A location with no detection sites further upstream has no children, but is presumably the child of a downstream location. All of the parent-child relationships among locations in a watershed can describe the potential movements by an individual tag (moving from parent to child, to the next child, etc.).
 
 To help illustrate, the following depicts the parent-child relationships among nodes in our Wenatchee River example, assuming only upriver movement from Tumwater Dam. More on this to follow...
 
 ```{r parent-child-fig, echo = F, results = "hide", fig.align = "center"}
 parent_child = buildParentChild(sites_sf,
-                                flowlines) %>%
-  filter(!child %in% c("ICL", "ICM", "PES", "LNF", "TUM"))
+                                flowlines)
 
-#parent_child = editParentChild(parent_child,
-#                               fix_list = list(c(NA, "ICL", "TUM"),
-#                                               c(NA, "PES", "TUM"),
-#                                               c("LNF", 'ICM', 'ICL')),
-#                               switch_parent_child = list(c("ICL", 'TUM')))
-plotNodes(parent_child,
-          layout = "tree")
-
+parent_child %>%
+  filter(!child %in% c("ICL", "PES", "LNF", "ICM", "TUM")) %>%
+  plotNodes(layout = "tree")
 ```
 
 `PITcleanr` constructs this relationship by joining a spatial (`sf`) point object of sites with the flowlines queried via `queryFlowlines()`. The NHDPlus layer that is returned contains a unique identifier, or hydrosequence, for every segment, as well as the identifier of the hydrosequence immediately upstream and downstream. Using this information, `PITcleanr` can identify the next downstream site from every known location (using the `findDwnstrmSite()` function), and thus construct the parent child table through the `buildParentChild()` function. By default, `buildParentChild()` returns a tibble identifying every parent-child pair, as well as the hydrosequence joined to the parent and child location. If the argument `add_rkm` is set to `TRUE`, `PITcleanr` will query the PTAGIS metadata again, and attach the river kilometer (or rkm) for each parent and child location. 
@@ -48,6 +42,7 @@ In the example below, the original parent-child table had some problems with 2 s
 parent_child = editParentChild(parent_child,
                                fix_list = list(c(NA, "ICL", "TUM"),
                                                c(NA, "PES", "TUM"),
+                                               c(NA, "LNF", "ICL"),
                                                c("LNF", 'ICM', 'ICL')),
                                switch_parent_child = list(c("ICL", 'TUM')))
 

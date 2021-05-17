@@ -49,16 +49,16 @@ library(tidyverse)
 
 Note that many of the various queries in `PITcleanr` require a connection to the internet. 
 
-
 # Querying Detection Data from PTAGIS
 
 ```{r child = "../man/fragments/query-ptagis.Rmd"}
 ```
 
+Congratulations! You now have complete tag histories for your tags of interest from [PTAGIS](https:://www.ptagis/org)! Next, we'll demonstrate how to perform some quick quality control checks and compress all of those records into a more manageable size. 
 
 ## Quality Control
 
-Later, we'll demonstrate how `PITcleanr` can be used to compress the detections in your complete tag history output (`ptagis_file`) from [PTAGIS](https:://www.ptagis/org). Bur first, `PITcleanr` can help perform some basic quality control on the PTAGIS detections. The `qcTagHistory()` function returns a list including a vector of tags listed as "DISOWN" by PTAGIS, another vector or tags listed as "ORPHAN" (which may indicate a mark file has not been uploaded), and a data frame of release batches. This latter data frame can be used by the `compress()` function in `PITcleanr` to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination.
+Later, we'll demonstrate how `PITcleanr` can be used to compress the detections in your complete tag history output (`ptagis_file`) from [PTAGIS](https:://www.ptagis/org). Bur first, `PITcleanr` can help perform some basic quality control on the PTAGIS detections. The `qcTagHistory()` function returns a list including a vector of tags listed as "DISOWN" by PTAGIS, another vector of tags listed as "ORPHAN", and a data frame of release batches. A tag listed as "DISOWN" or "ORPHAN" indicates that PTAGIS has not received a valid mark file for that tag, which may prompt a user to upload such a file. This latter data frame can be used by the `compress()` function in `PITcleanr` to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination.
 
 Here, we'll run the `qcTagHistory()` function, again on the file path (`ptagis_file`) of the PTAGIS complete tag history query output, and save the results to an object `qc_detections`.
 
@@ -72,6 +72,12 @@ qc_detections
 
 To extract a single element from the `qc_detections`, the user can simply use the basic extraction operator `$` e.g., `qc_detections$orphan_tags`.
 
+# Compressing Detection Data
+
+```{r child = "../man/fragments/compress-data.Rmd"}
+```
+
+In our Tumwater Dam Chinook salmon example, the `compress()` function has scaled down the raw data from PTAGIS from `r prettyNum(nrow(raw_ptagis), big.mark = ",")` rows of data to a slightly more manageable `r prettyNum(nrow(comp_obs), big.mark = ",")` rows. At the same time, the sum of the `n_dets` column in `comp_obs` is `r prettyNum(sum(comp_obs$n_dets), big.mark = ",")`, showing that every detection from the raw data has been accounted for. For much of the remaining vignette, we will explore other functionality of `PITcleanr` and as it relates to this compressed data i.e., the `comp_obs` object.
 
 ## PTAGIS Site Metadata
 
@@ -91,15 +97,6 @@ write_csv(ptagis_meta,
           "C:/Users/usernamehere/Desktop/ptagis_metadata.csv")
 
 ```
-
-Congratulations! You now have complete tag histories for your tags of interest from [PTAGIS](https:://www.ptagis/org)! Next, we'll demonstrate how to compress all of those records into a more manageable size. 
-
-# Compressing Detection Data
-
-```{r child = "../man/fragments/compress-data.Rmd"}
-```
-
-In our Tumwater Dam Chinook salmon example, the `compress()` function has scaled down the raw data from PTAGIS from `r prettyNum(nrow(raw_ptagis), big.mark = ",")` rows of data to a slightly more manageable `r prettyNum(nrow(comp_obs), big.mark = ",")` rows. At the same time, the sum of the `n_dets` column in `comp_obs` is `r prettyNum(sum(comp_obs$n_dets), big.mark = ",")`, showing that every detection from the raw data has been accounted for. For much of the remaining vignette, we will explore other functionality of `PITcleanr` and as it relates to this compressed data i.e., the `comp_obs` object.
 
 
 ## Site Configuration
@@ -122,7 +119,7 @@ ptagis_meta$configuration_sequence             # antenna configuration
 ```{r child = "../man/fragments/site-configuration.Rmd"}
 ```
 
-Note that `buildConfig()` returns the same number of records as `queryPtagisMeta()`, except `buildConfig()` returns a more manageable number of columns `r ncol(array_configuration)` and provides the functionality of assigning each antenna to a node.
+Note that `buildConfig()` returns the same number of records as `queryPtagisMeta()`, except `buildConfig()` returns a more manageable number of columns (`r ncol(array_configuration)`) and provides the functionality of assigning each antenna to a node, based on the array it is part of.
 
 Alternately, the user could write the object `array_configuration` to file, modify values in the node column by hand, and then re-import the modified file, again to an object `configuration` which could be fed to `compress()`.
 
@@ -197,7 +194,7 @@ ggsave("C:/Users/usernamehere/Desktop/site_map.pdf")
 ```
 
 
-## "Parent-Child" Relationships
+# "Parent-Child" Relationships
 
 ```{r child = "../man/fragments/parent-child.Rmd"}
 ```
