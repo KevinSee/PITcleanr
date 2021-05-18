@@ -29,8 +29,9 @@ abundance of returning anadromous adult fish moving upstream.
 `PITcleanr` was designed to prepare the raw PIT tag observations from
 [PTAGIS](http://www.ptagis.org) for use in the `DABOM` package.
 
-The user can find information related to installation and use at
-<https://biomarkabs.github.io/PITcleanr/>.
+The user can find more information related to installation and use of
+this package on the [package
+website](https://biomarkabs.github.io/PITcleanr/).
 
 ## Installation Instructions
 
