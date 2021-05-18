@@ -30,7 +30,7 @@ abundance of returning anadromous adult fish moving upstream.
 [PTAGIS](http://www.ptagis.org) for use in the `DABOM` package.
 
 The user can find information related to installation and use at
-(<https://biomarkabs.github.io/PITcleanr/>)\[<https://biomarkabs.github.io/PITcleanr/>\].
+<https://biomarkabs.github.io/PITcleanr/>.
 
 ## Installation Instructions
 
