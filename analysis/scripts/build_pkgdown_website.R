@@ -17,8 +17,8 @@ usethis::use_pkgdown()
 pkgdown::build_site()
 
 # to look at the site
-preview_site()
+pkgdown::preview_site()
 
 #-----------------------------------------------------------------
 # deploy site to gh-pages branch on GitHub
-deploy_to_branch()
+pkgdown::deploy_to_branch()
