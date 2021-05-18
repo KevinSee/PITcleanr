@@ -29,6 +29,9 @@ abundance of returning anadromous adult fish moving upstream.
 `PITcleanr` was designed to prepare the raw PIT tag observations from
 [PTAGIS](http://www.ptagis.org) for use in the `DABOM` package.
 
+The user can find information related to installation and use at
+(<https://biomarkabs.github.io/PITcleanr/>)\[<https://biomarkabs.github.io/PITcleanr/>\].
+
 ## Installation Instructions
 
 The `PITcleanr` compendium can be downloaded as a zip from from this
@@ -133,7 +136,8 @@ the sites in a particular watershed into a single node. To utilize this
 kind of grouping, a configuration file or table must be supplied to the
 `configuration` argument in the `compress()` function. This
 configuration file helps map what node each antenna or MRR site
-corresponds to.
+corresponds to. By default, `compress` assigns each site code to its own
+node.
 
 Each slot in the output is defined as all detections on a particular
 node before the tag is detected on a different node. The user can define
