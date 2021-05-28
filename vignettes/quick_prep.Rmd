@@ -39,9 +39,9 @@ library(dplyr)
 
 # Minimal R Script
 
-If the user has file containing the complete tag histories for their tags of interest, plus the configuration file and the parent-child file ready, the only script necessary to run in R (which will include saving the output as an Excel workbook) is:
+If the user has file containing the complete tag histories for their tags of interest, plus the configuration file (`config_file`) and the parent-child file (`parent_child_file`) ready, the only script necessary to run in R (which will include saving the output as an Excel workbook) is:
 
-```{r quick-script}
+```{r quick-script, eval = F}
 # load the necessary packages
 library(PITcleanr)
 library(readr)
