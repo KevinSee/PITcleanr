@@ -10,7 +10,7 @@
 #' @param label_points `TRUE/FALSE` should the nodes be labeled with their names? Default is `TRUE`.
 #' @param point_size size for points on graph (passed to `size` argument of `geom_node_point()`).
 #' @param label_size size for node labels on graph (passed to `size` argument of `geom_node_label()`).
-#' @param ... other arguments for `geom_node_point()` or `geom_node_label()`.
+#' @param ... other arguments for `geom_edge_diagonal`, `geom_node_point()` or `geom_node_label()`.
 #'
 #' @import dplyr tidyr tidygraph ggraph
 #' @importFrom rlang set_names
@@ -32,8 +32,9 @@ plotNodes = function(parent_child = NULL,
   # create ggraph plot
   node_p = node_graph %>%
     ggraph(layout = layout) +
-    geom_edge_diagonal() +
-    geom_node_point(size = point_size) +
+    geom_edge_diagonal(...) +
+    geom_node_point(size = point_size,
+                    ...) +
     theme_graph(base_family = 'Times') +
     theme(legend.position = 'bottom')
 
@@ -42,7 +43,8 @@ plotNodes = function(parent_child = NULL,
       geom_node_label(aes(label = label),
                       size = label_size,
                       label.padding = unit(0.1, 'lines'),
-                      label.size = 0.1)
+                      label.size = 0.1,
+                      ...)
   }
 
   return(node_p)

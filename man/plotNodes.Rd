@@ -25,7 +25,7 @@ function, a matrix, or a data.frame (see Details)}
 
 \item{label_size}{size for node labels on graph (passed to `size` argument of `geom_node_label()`).}
 
-\item{...}{other arguments for `geom_node_point()` or `geom_node_label()`.}
+\item{...}{other arguments for `geom_edge_diagonal`, `geom_node_point()` or `geom_node_label()`.}
 }
 \value{
 
