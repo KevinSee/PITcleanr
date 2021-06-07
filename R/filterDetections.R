@@ -68,6 +68,7 @@ filterDetections = function(compress_obs = NULL,
 
                                    # see if tag was seen further upstream but along the same path
                                    spwn_loc = x %>%
+                                     filter(min_det <= lubridate::ymd(max_obs_date)) %>%
                                      filter(stringr::str_detect(path, spwn_loc$node)) %>%
                                      filter(node_order == max(node_order)) %>%
                                      filter(slot == max(slot))
