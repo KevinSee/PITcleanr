@@ -34,8 +34,8 @@ estimateSpawnLoc = function(filtered_obs = NULL,
   spawn_loc = filtered_obs %>%
     filter(user_keep_obs) %>%
     group_by(tag_code) %>%
-    filter(node_order == max(node_order),
-           min_det == max(min_det)) %>%
+    filter(node_order == max(node_order)) %>%
+    filter(min_det == max(min_det)) %>%
     slice(1) %>%
     ungroup() %>%
     select(tag_code,
