@@ -72,10 +72,8 @@ prepWrapper = function(compress_obs = NULL,
                 filter(node == start_node,
                        event_type_name %in% c("Mark", "Recapture")) %>%
                 group_by(tag_code) %>%
-                # filter(max_det == max(max_det)) %>%
-                # summarise(start_date = max_det,
-                #           .groups = "drop"),
                 filter(min_det == min(min_det)) %>%
+                slice(1) %>%
                 summarise(start_date = min_det,
                           .groups = "drop"),
               by = "tag_code") %>%
@@ -83,6 +81,7 @@ prepWrapper = function(compress_obs = NULL,
                 filter(node == start_node) %>%
                 group_by(tag_code) %>%
                 filter(min_det == min(min_det)) %>%
+                slice(1) %>%
                 summarise(min_root_date = min_det,
                           .groups = "drop"),
               by = "tag_code") %>%
