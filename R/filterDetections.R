@@ -39,7 +39,7 @@ filterDetections = function(compress_obs = NULL,
     group_by(tag_code) %>%
     tidyr::nest() %>%
     mutate(proc = purrr::map(data,
-                             .f = function(x) {
+                             .f = purrr::safely(function(x) {
                                pb$tick()
 
                                if(sum(x$direction %in% c("backward", "unknown")) == 0) {
@@ -88,14 +88,31 @@ filterDetections = function(compress_obs = NULL,
                                                                     T, F),
                                             user_keep_obs = NA) %>%
                                      select(-max_slot, - in_spawn_path) %>%
+                                     ungroup() %>%
                                      return()
                                  }
                                }
-                             })) %>%
-    select(-data) %>%
-    tidyr::unnest(proc) %>%
+                             },
+                             otherwise = NULL))) %>%
     ungroup()
 
-  return(keep_obs)
+  # test for errors
+  err_df = keep_obs %>%
+    mutate(err = map(proc,
+                     "error")) %>%
+    mutate(not_err = map_lgl(err, is.null)) %>%
+    filter(!not_err)
+  if(nrow(err_df) > 0) {
+    cat(paste('Problem with', nrow(err_df), 'tag(s)'))
+    return(err_df)
+  } else {
+
+    keep_obs %>%
+      mutate(res = map(proc,
+                       "result")) %>%
+      select(-c(data:proc)) %>%
+      tidyr::unnest(res) %>%
+      return()
+  }
 
 }
