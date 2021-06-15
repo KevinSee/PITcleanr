@@ -27,17 +27,16 @@ queryPtagisMeta = function() {
 
   # put it all together
   all_meta = int_meta %>%
+    dplyr::rename(siteName = name,
+                  siteDescription = description) %>%
     dplyr::full_join(int_config,
                      by = c("siteCode", "siteName")) %>%
     dplyr::mutate(Type = 'INT') %>%
-    dplyr::full_join(mrr_meta %>%
+    dplyr::bind_rows(mrr_meta %>%
                        dplyr::mutate(Type = 'MRR') %>%
                        dplyr::mutate(configurationSequence = 0,
                                      antennaID = as.character(NA)) %>%
-                       dplyr::rename(siteDescription = siteTypeDescription),
-                     by = c("siteCode", "siteName", "siteType",
-                            "siteDescription", "latitude", "longitude", "rkm",
-                            "configurationSequence", "antennaID", "Type")) %>%
+                       dplyr::rename(siteDescription = siteTypeDescription)) %>%
     tibble::add_column("RKMTotal" = NA, .after = "rkm") %>%
     dplyr::mutate(RKMTotal = stringr::str_split(rkm, "\\.")) %>%
     dplyr::mutate(RKMTotal = purrr::map_dbl(RKMTotal,
@@ -46,7 +45,6 @@ queryPtagisMeta = function() {
                                                 as.numeric() %>%
                                                 suppressWarnings() %>%
                                                 sum(na.rm = T)
-                                              # sum(as.numeric(x), na.rm = T)
                                             })) %>%
     janitor::clean_names(case = "snake")
 
