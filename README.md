@@ -171,6 +171,20 @@ being:
   - Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)
   - Rick Orme (Nez Perce Tribe - Fisheries Resources Management)
   - Mike Ackerman (Biomark, Inc. - Applied Biological Services)
+=======
+For the latest development version:
+
+``` r
+remotes::install_github("BiomarkABS/PITcleanr@develop", 
+                        dependencies = TRUE,
+                        build_vignettes = TRUE)
+```
+
+To look at the various vignettes:
+
+``` r
+browseVignettes("PITcleanr")
+```
 
 ### Licenses
 
