@@ -160,28 +160,30 @@
     <pre class="examples"><div class='input'><span class='fu'>queryPtagisMeta</span><span class='op'>(</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; Querying INT sites' metadata
 #&gt; Querying INT sites' configuration information
-#&gt; Querying MRR sites' metadata</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6,284 x 32</span><span>
-#&gt;    site_code site_name   site_type  site_description     is_site_active latitude
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 158       Fifteenmil… Instream … INSTREAM DETECTION … TRUE               45.6
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 158       Fifteenmil… Instream … INSTREAM DETECTION … TRUE               45.6
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 158       Fifteenmil… Instream … INSTREAM DETECTION … TRUE               45.6
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 158       Fifteenmil… Instream … INSTREAM DETECTION … TRUE               45.6
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 158       Fifteenmil… Instream … INSTREAM DETECTION … TRUE               45.6
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 158       Fifteenmil… Instream … INSTREAM DETECTION … TRUE               45.6
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 15D       Fifteenmil… Instream … INSTREAM DETECTION … FALSE              45.5
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 15D       Fifteenmil… Instream … INSTREAM DETECTION … FALSE              45.5
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 15D       Fifteenmil… Instream … INSTREAM DETECTION … FALSE              45.5
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 15D       Fifteenmil… Instream … INSTREAM DETECTION … FALSE              45.5
-#&gt; </span><span style='color: #949494;'># … with 6,274 more rows, and 26 more variables: longitude &lt;dbl&gt;, rkm &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   rkm_total &lt;dbl&gt;, operations_organization &lt;chr&gt;, first_year_operated &lt;dbl&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   last_year_operated &lt;dbl&gt;, configuration_sequence &lt;dbl&gt;,</span><span>
+#&gt; Querying MRR sites' metadata</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6,734 x 38</span><span>
+#&gt;    site_code site_name    site_description        site_type   active operational
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>      
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 158       Fifteenmile… INSTREAM DETECTION ARR… Instream R… TRUE   TRUE       
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 158       Fifteenmile… INSTREAM DETECTION ARR… Instream R… TRUE   TRUE       
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 158       Fifteenmile… INSTREAM DETECTION ARR… Instream R… TRUE   TRUE       
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 158       Fifteenmile… INSTREAM DETECTION ARR… Instream R… TRUE   TRUE       
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 158       Fifteenmile… INSTREAM DETECTION ARR… Instream R… TRUE   TRUE       
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 158       Fifteenmile… INSTREAM DETECTION ARR… Instream R… TRUE   TRUE       
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 15D       Fifteenmile… INSTREAM DETECTION ARR… Instream R… FALSE  FALSE      
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 15D       Fifteenmile… INSTREAM DETECTION ARR… Instream R… FALSE  FALSE      
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 15D       Fifteenmile… INSTREAM DETECTION ARR… Instream R… FALSE  FALSE      
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 15D       Fifteenmile… INSTREAM DETECTION ARR… Instream R… FALSE  FALSE      
+#&gt; </span><span style='color: #949494;'># … with 6,724 more rows, and 32 more variables:</span><span>
+#&gt; </span><span style='color: #949494;'>#   operations_organization_name &lt;chr&gt;, operations_organization_code &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   latitude &lt;dbl&gt;, longitude &lt;dbl&gt;, rkm &lt;chr&gt;, rkm_total &lt;dbl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   first_year &lt;dbl&gt;, last_year &lt;dbl&gt;, first_date &lt;chr&gt;, last_date &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   operation_period &lt;chr&gt;, last_file_name &lt;chr&gt;, last_file_opened_on &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   last_file_closed_on &lt;chr&gt;, last_file_processed_on &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   last_tag_code &lt;chr&gt;, last_tag_time &lt;chr&gt;, configuration_sequence &lt;dbl&gt;,</span><span>
 #&gt; </span><span style='color: #949494;'>#   antenna_group_name &lt;chr&gt;, antenna_id &lt;chr&gt;, start_date &lt;dttm&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   end_date &lt;dttm&gt;, type &lt;chr&gt;, hu_c4code &lt;chr&gt;, coordinate_type &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   end_date &lt;dttm&gt;, type &lt;chr&gt;, hu_c8code &lt;chr&gt;, coordinate_type &lt;chr&gt;,</span><span>
 #&gt; </span><span style='color: #949494;'>#   min_km &lt;chr&gt;, max_km &lt;chr&gt;, is_mark_site_only &lt;lgl&gt;, changed_by &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   change_comments &lt;chr&gt;, change_date &lt;chr&gt;, point_location &lt;lgl&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   shape_type &lt;chr&gt;, location_id &lt;chr&gt;, fac_id &lt;int&gt;, poly_id &lt;int&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   line_id &lt;int&gt;</span><span></div><div class='input'>
+#&gt; </span><span style='color: #949494;'>#   change_comments &lt;chr&gt;, change_date &lt;lgl&gt;, point_location &lt;lgl&gt;</span><span></div><div class='input'>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

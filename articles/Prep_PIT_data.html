@@ -98,7 +98,7 @@
       <h1 data-toc-skip>Querying, Compressing, and Making Sense of PIT Tag Detection Data</h1>
                         <h4 class="author">Kevin See</h4>
             
-            <h4 class="date">18 May, 2021</h4>
+            <h4 class="date">15 June, 2021</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/BiomarkABS/PITcleanr/blob/master/vignettes/Prep_PIT_data.Rmd"><code>vignettes/Prep_PIT_data.Rmd</code></a></small>
       <div class="hidden name"><code>Prep_PIT_data.Rmd</code></div>
@@ -1059,24 +1059,26 @@
 
 <span class="co"># view first 6 records of PTAGIS site metadata using head() function</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ptagis_meta</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 32</span>
-<span class="co">#&gt;   site_code site_name   site_type   site_description     is_site_active latitude</span>
-<span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;       &lt;chr&gt;       &lt;chr&gt;                &lt;lgl&gt;             &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 158       Fifteenmil… Instream R… INSTREAM DETECTION … TRUE               45.6</span>
-<span class="co">#&gt; 2 158       Fifteenmil… Instream R… INSTREAM DETECTION … TRUE               45.6</span>
-<span class="co">#&gt; 3 158       Fifteenmil… Instream R… INSTREAM DETECTION … TRUE               45.6</span>
-<span class="co">#&gt; 4 158       Fifteenmil… Instream R… INSTREAM DETECTION … TRUE               45.6</span>
-<span class="co">#&gt; 5 158       Fifteenmil… Instream R… INSTREAM DETECTION … TRUE               45.6</span>
-<span class="co">#&gt; 6 158       Fifteenmil… Instream R… INSTREAM DETECTION … TRUE               45.6</span>
-<span class="co">#&gt; # … with 26 more variables: longitude &lt;dbl&gt;, rkm &lt;chr&gt;, rkm_total &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   operations_organization &lt;chr&gt;, first_year_operated &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   last_year_operated &lt;dbl&gt;, configuration_sequence &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   antenna_group_name &lt;chr&gt;, antenna_id &lt;chr&gt;, start_date &lt;dttm&gt;,</span>
-<span class="co">#&gt; #   end_date &lt;dttm&gt;, type &lt;chr&gt;, hu_c4code &lt;chr&gt;, coordinate_type &lt;chr&gt;,</span>
-<span class="co">#&gt; #   min_km &lt;chr&gt;, max_km &lt;chr&gt;, is_mark_site_only &lt;lgl&gt;, changed_by &lt;chr&gt;,</span>
-<span class="co">#&gt; #   change_comments &lt;chr&gt;, change_date &lt;chr&gt;, point_location &lt;lgl&gt;,</span>
-<span class="co">#&gt; #   shape_type &lt;chr&gt;, location_id &lt;chr&gt;, fac_id &lt;int&gt;, poly_id &lt;int&gt;,</span>
-<span class="co">#&gt; #   line_id &lt;int&gt;</span></code></pre></div>
+<span class="co">#&gt; # A tibble: 6 x 38</span>
+<span class="co">#&gt;   site_code site_name    site_description         site_type   active operational</span>
+<span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;                    &lt;chr&gt;       &lt;lgl&gt;  &lt;lgl&gt;      </span>
+<span class="co">#&gt; 1 158       Fifteenmile… INSTREAM DETECTION ARRA… Instream R… TRUE   TRUE       </span>
+<span class="co">#&gt; 2 158       Fifteenmile… INSTREAM DETECTION ARRA… Instream R… TRUE   TRUE       </span>
+<span class="co">#&gt; 3 158       Fifteenmile… INSTREAM DETECTION ARRA… Instream R… TRUE   TRUE       </span>
+<span class="co">#&gt; 4 158       Fifteenmile… INSTREAM DETECTION ARRA… Instream R… TRUE   TRUE       </span>
+<span class="co">#&gt; 5 158       Fifteenmile… INSTREAM DETECTION ARRA… Instream R… TRUE   TRUE       </span>
+<span class="co">#&gt; 6 158       Fifteenmile… INSTREAM DETECTION ARRA… Instream R… TRUE   TRUE       </span>
+<span class="co">#&gt; # … with 32 more variables: operations_organization_name &lt;chr&gt;,</span>
+<span class="co">#&gt; #   operations_organization_code &lt;chr&gt;, latitude &lt;dbl&gt;, longitude &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   rkm &lt;chr&gt;, rkm_total &lt;dbl&gt;, first_year &lt;dbl&gt;, last_year &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   first_date &lt;chr&gt;, last_date &lt;chr&gt;, operation_period &lt;chr&gt;,</span>
+<span class="co">#&gt; #   last_file_name &lt;chr&gt;, last_file_opened_on &lt;chr&gt;, last_file_closed_on &lt;chr&gt;,</span>
+<span class="co">#&gt; #   last_file_processed_on &lt;chr&gt;, last_tag_code &lt;chr&gt;, last_tag_time &lt;chr&gt;,</span>
+<span class="co">#&gt; #   configuration_sequence &lt;dbl&gt;, antenna_group_name &lt;chr&gt;, antenna_id &lt;chr&gt;,</span>
+<span class="co">#&gt; #   start_date &lt;dttm&gt;, end_date &lt;dttm&gt;, type &lt;chr&gt;, hu_c8code &lt;chr&gt;,</span>
+<span class="co">#&gt; #   coordinate_type &lt;chr&gt;, min_km &lt;chr&gt;, max_km &lt;chr&gt;, is_mark_site_only &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   changed_by &lt;chr&gt;, change_comments &lt;chr&gt;, change_date &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   point_location &lt;lgl&gt;</span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># write ptagis_meta to .csv file</span>
 <span class="fu">write_csv</span><span class="op">(</span><span class="va">ptagis_meta</span>,

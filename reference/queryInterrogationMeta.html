@@ -146,13 +146,13 @@
     <p>Query and download metadata for PTAGIS Interrogation sites</p>
     </div>
 
-    <pre class="usage"><span class='fu'>queryInterrogationMeta</span><span class='op'>(</span>site <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>queryInterrogationMeta</span><span class='op'>(</span>site_code <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>site</th>
+      <th>site_code</th>
       <td><p>PTAGIS site code. Default is <code>NULL</code> which will query all sites</p></td>
     </tr>
     </table>
@@ -165,13 +165,16 @@
     <p>Kevin See</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>queryInterrogationMeta</span><span class='op'>(</span>site <span class='op'>=</span> <span class='st'>'ZEN'</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 1 x 11</span><span>
-#&gt;   siteCode siteName  siteType  siteDescription   isSiteActive latitude longitude
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>             </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>           </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span> ZEN      Secesh R… Instream… This is an in-st… TRUE             45.0     -</span><span style='color: #BB0000;'>116.</span><span>
-#&gt; </span><span style='color: #949494;'># … with 4 more variables: rkm &lt;chr&gt;, operationsOrganization &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   firstYearOperated &lt;dbl&gt;, lastYearOperated &lt;dbl&gt;</span><span></div></span></pre>
+    <pre class="examples"><div class='input'><span class='fu'>queryInterrogationMeta</span><span class='op'>(</span>site_code <span class='op'>=</span> <span class='st'>'ZEN'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 1 x 21</span><span>
+#&gt;   siteCode name   description  siteType active operationsOrgan… operationsOrgan…
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;lgl&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>           
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> ZEN      Seces… This is an … Instrea… TRUE   Biomark          BIOMRK          
+#&gt; </span><span style='color: #949494;'># … with 14 more variables: latitude &lt;dbl&gt;, longitude &lt;dbl&gt;, rkm &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   firstYear &lt;dbl&gt;, lastYear &lt;dbl&gt;, firstDate &lt;chr&gt;, lastDate &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   operationPeriod &lt;chr&gt;, lastFileName &lt;chr&gt;, lastFileOpenedOn &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   lastFileClosedOn &lt;chr&gt;, lastFileProcessedOn &lt;chr&gt;, lastTagCode &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   lastTagTime &lt;chr&gt;</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

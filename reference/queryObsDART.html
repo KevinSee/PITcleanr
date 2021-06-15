@@ -184,24 +184,25 @@ as well as any subsequent detections upstream.</p>
     <pre class="examples"><div class='input'><span class='fu'>queryObsDART</span><span class='op'>(</span>species <span class='op'>=</span> <span class='st'>'Chinook'</span>,
                        loc <span class='op'>=</span> <span class='st'>"GRA"</span>,
                        spawn_year <span class='op'>=</span> <span class='fl'>2019</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 67,203 x 26</span><span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 67,203 x 30</span><span>
 #&gt;    tag_id      start_time          obs_time            obs_site coil_id obs_type
 #&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>       </span><span style='color: #949494;font-style: italic;'>&lt;dttm&gt;</span><span>              </span><span style='color: #949494;font-style: italic;'>&lt;dttm&gt;</span><span>              </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>   
 #&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> GRA      B4      INT     
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-02 </span><span style='color: #949494;'>18:25:00</span><span> GRA      14      INT     
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-02 </span><span style='color: #949494;'>18:25:00</span><span> GRA      12      INT     
 #&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-02 </span><span style='color: #949494;'>18:25:00</span><span> GRA      16      INT     
 #&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-02 </span><span style='color: #949494;'>18:25:00</span><span> GRA      18      INT     
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-02 </span><span style='color: #949494;'>18:25:00</span><span> GRA      12      INT     
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-02 </span><span style='color: #949494;'>18:25:00</span><span> GRA      14      INT     
 #&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-03 </span><span style='color: #949494;'>08:00:14</span><span> LGRLDR   </span><span style='color: #BB0000;'>NA</span><span>      REC     
 #&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-03 </span><span style='color: #949494;'>11:48:01</span><span> GRA      08      INT     
 #&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-03 </span><span style='color: #949494;'>11:48:02</span><span> GRA      08      INT     
 #&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-03 </span><span style='color: #949494;'>11:50:16</span><span> GRA      06      INT     
 #&gt; </span><span style='color: #BCBCBC;'>10</span><span> 3DD.007784… 2019-05-02 </span><span style='color: #949494;'>17:34:35</span><span> 2019-05-03 </span><span style='color: #949494;'>11:50:17</span><span> GRA      06      INT     
-#&gt; </span><span style='color: #949494;'># … with 67,193 more rows, and 20 more variables: stage &lt;chr&gt;, shuc &lt;dbl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'># … with 67,193 more rows, and 24 more variables: stage &lt;chr&gt;, shuc &lt;dbl&gt;,</span><span>
 #&gt; </span><span style='color: #949494;'>#   srkm &lt;chr&gt;, mark_date &lt;date&gt;, file_id &lt;chr&gt;, mark_site &lt;chr&gt;,</span><span>
 #&gt; </span><span style='color: #949494;'>#   rel_site &lt;chr&gt;, rel_date &lt;date&gt;, t_rear_type &lt;chr&gt;, t_species &lt;dbl&gt;,</span><span>
 #&gt; </span><span style='color: #949494;'>#   t_run &lt;dbl&gt;, length &lt;dbl&gt;, esu_type &lt;chr&gt;, rhuc &lt;dbl&gt;, rrkm &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   trans_status &lt;chr&gt;, trans_proj &lt;chr&gt;, trans_year &lt;dbl&gt;, config &lt;dbl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   flags &lt;chr&gt;, trans_status &lt;chr&gt;, trans_proj &lt;chr&gt;, trans_year &lt;dbl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   r_flag &lt;chr&gt;, r_rel_site &lt;chr&gt;, r_rel_time &lt;dttm&gt;, config &lt;dbl&gt;,</span><span>
 #&gt; </span><span style='color: #949494;'>#   antennagroupname &lt;chr&gt;</span><span></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

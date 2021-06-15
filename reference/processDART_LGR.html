@@ -201,9 +201,20 @@
 #&gt; <span class='message'>  length = </span><span style='color: #00BB00;'>col_double()</span><span>,</span>
 #&gt; <span class='message'>  rhuc = </span><span style='color: #00BB00;'>col_double()</span><span>,</span>
 #&gt; <span class='message'>  trans_year = </span><span style='color: #00BB00;'>col_double()</span><span>,</span>
+#&gt; <span class='message'>  r_flag = </span><span style='color: #BBBB00;'>col_logical()</span><span>,</span>
+#&gt; <span class='message'>  r_rel_site = </span><span style='color: #BBBB00;'>col_logical()</span><span>,</span>
+#&gt; <span class='message'>  r_rel_time = </span><span style='color: #BBBB00;'>col_logical()</span><span>,</span>
 #&gt; <span class='message'>  config = </span><span style='color: #00BB00;'>col_double()</span><span></span>
 #&gt; <span class='message'>)</span>
-#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> for the full column specifications.</span></div><div class='output co'>#&gt; <span class='error'>Error: Problem with `mutate()` input `ConfigID`.</span>
+#&gt; <span class='message'></span><span style='color: #00BBBB;'>ℹ</span><span> Use </span><span style='color: #262626;background-color: #DADADA;'>`spec()`</span><span> for the full column specifications.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: 617 parsing failures.</span>
+#&gt; <span class='warning'> row        col           expected              actual                                                                          file</span>
+#&gt; <span class='warning'>5017 r_rel_site 1/0/T/F/TRUE/FALSE YANKFK              'http://www.cbr.washington.edu/dart/cs/data/nezperce/nptspawn_GRA_2020_1.csv'</span>
+#&gt; <span class='warning'>5017 r_rel_time 1/0/T/F/TRUE/FALSE 2020-08-06 08:15:00 'http://www.cbr.washington.edu/dart/cs/data/nezperce/nptspawn_GRA_2020_1.csv'</span>
+#&gt; <span class='warning'>7775 r_flag     1/0/T/F/TRUE/FALSE AI MA RF            'http://www.cbr.washington.edu/dart/cs/data/nezperce/nptspawn_GRA_2020_1.csv'</span>
+#&gt; <span class='warning'>7775 r_rel_site 1/0/T/F/TRUE/FALSE JOHNSC              'http://www.cbr.washington.edu/dart/cs/data/nezperce/nptspawn_GRA_2020_1.csv'</span>
+#&gt; <span class='warning'>7775 r_rel_time 1/0/T/F/TRUE/FALSE 2020-07-12 09:24:00 'http://www.cbr.washington.edu/dart/cs/data/nezperce/nptspawn_GRA_2020_1.csv'</span>
+#&gt; <span class='warning'>.... .......... .................. ................... .............................................................................</span>
+#&gt; <span class='warning'>See problems(...) for more details.</span></div><div class='output co'>#&gt; <span class='error'>Error: Problem with `mutate()` input `ConfigID`.</span>
 #&gt; <span class='error'></span><span style='color: #BB0000;'>x</span><span> object 'ConfigID' not found</span>
 #&gt; <span class='error'></span><span style='color: #0000BB;'>ℹ</span><span> Input `ConfigID` is `as.character(ConfigID)`.</span></div></span></pre>
   </div>
