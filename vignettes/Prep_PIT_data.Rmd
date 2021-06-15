@@ -1,0 +1,286 @@
+---
+title: "Querying, Compressing, and Making Sense of PIT Tag Detection Data"
+author: Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Querying, Compressing, and Making Sense of PIT Tag Detection Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+
+library(knitr)
+library(here)
+```
+
+# Introduction
+
+This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data to either summarize detections or prepare the data for further analysis. `PITcleanr` can help import complete tag histories from [PTAGIS](https://ptagis.org/), build a configuration file to help assign each detection to a "node", and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table of locations, and assign directionality of movement between each detection site. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), `PITcleanr` can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept. 
+
+
+# Installation
+
+```{r child = here::here("man/fragments/install-inst.Rmd")}
+```
+
+Additionally, one function in `PITcleanr` allows the user to make a plot of how the detection sites or nodes are related to each other. To use this function, one will need the `ggraph` and `tidygraph` R packages. `tidygraph` is included with `ggraph`, so a user only needs to install `ggraph`. If the argument `dependencies` is set to `TRUE` in the code above, it should be installed automatically. Otherwise, run the following:
+
+```{r other-packages, eval = F}
+install.packages("ggraph")
+```
+
+Once `PITcleanr` is successfully installed, it can be loaded into the R session. In this vignette, we will also use many functions from the `tidyverse` [group of packages](https://www.tidyverse.org/), so load those as well:
+
+```{r load-package}
+library(PITcleanr)
+library(tidyverse)
+```
+
+Note that many of the various queries in `PITcleanr` require a connection to the internet. 
+
+# Querying Detection Data from PTAGIS
+
+```{r child = here::here("man/fragments/query-ptagis.Rmd")}
+```
+
+Congratulations! You now have complete tag histories for your tags of interest from [PTAGIS](https:://www.ptagis/org)! Next, we'll demonstrate how to perform some quick quality control checks and compress all of those records into a more manageable size. 
+
+## Quality Control
+
+Later, we'll demonstrate how `PITcleanr` can be used to compress the detections in your complete tag history output (`ptagis_file`) from [PTAGIS](https:://www.ptagis/org). Bur first, `PITcleanr` can help perform some basic quality control on the PTAGIS detections. The `qcTagHistory()` function returns a list including a vector of tags listed as "DISOWN" by PTAGIS, another vector of tags listed as "ORPHAN", and a data frame of release batches. A tag listed as "DISOWN" or "ORPHAN" indicates that PTAGIS has not received a valid mark file for that tag, which may prompt a user to upload such a file. This latter data frame can be used by the `compress()` function in `PITcleanr` to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination.
+
+Here, we'll run the `qcTagHistory()` function, again on the file path (`ptagis_file`) of the PTAGIS complete tag history query output, and save the results to an object `qc_detections`.
+
+```{r}
+qc_detections = qcTagHistory(ptagis_file)
+
+# view qc_detections
+qc_detections
+
+```
+
+To extract a single element from the `qc_detections`, the user can simply use the basic extraction operator `$` e.g., `qc_detections$orphan_tags`.
+
+# Compressing Detection Data
+
+```{r child = here::here("man/fragments/compress-data.Rmd")}
+```
+
+In our Tumwater Dam Chinook salmon example, the `compress()` function has scaled down the raw data from PTAGIS from `r prettyNum(nrow(raw_ptagis), big.mark = ",")` rows of data to a slightly more manageable `r prettyNum(nrow(comp_obs), big.mark = ",")` rows. At the same time, the sum of the `n_dets` column in `comp_obs` is `r prettyNum(sum(comp_obs$n_dets), big.mark = ",")`, showing that every detection from the raw data has been accounted for. For much of the remaining vignette, we will explore other functionality of `PITcleanr` and as it relates to this compressed data i.e., the `comp_obs` object.
+
+## PTAGIS Site Metadata
+
+`PITcleanr` includes a convenience function `queryPtagisMeta()` to query all the metadata associated with PTAGIS sites, including both Mark/Recapture/Recovery (MRR) and Interrogation (INT) sites. That metadata can also be found on the PTAGIS website [here](https://www.ptagis.org/sites). Many of the columns included in the output from `queryPtagisMeta()` are specific to either the INT or MRR site types, so you may notice that many values in the output, in our example below `ptagis_meta`, are `NA` depending on the site type and column. If desired, the user could write that file out to a .csv file or similar, using a function like `write_csv()` from the `readr` package..
+
+```{r}
+ptagis_meta = queryPtagisMeta()
+
+# view first 6 records of PTAGIS site metadata using head() function
+head(ptagis_meta)
+
+```
+
+```{r, eval = F}
+# write ptagis_meta to .csv file
+write_csv(ptagis_meta,
+          "C:/Users/usernamehere/Desktop/ptagis_metadata.csv")
+
+```
+
+
+## Site Configuration
+
+Note that each of the `r prettyNum(nrow(raw_ptagis), big.mark = ",")` rows in our complete tag history results corresponds to the detection of a given PIT tag on an individual antenna. Although informative, this may be excessive for your purposes e.g., a movement, survival, or mark-recapture analysis. Instead, the user might just be interested in which array (group of antennas) or group of arrays that a given PIT tag was detected on. In `PITcleanr`, we refer to each of these locations as a "node". Such information can be provided to the `configuration` argument of the `compress()` function; the configuration table or file contains all the information from PTAGIS to map each particular detection record to a node of interest. This mapping must include the site code, the antenna code, and the antenna configuration, all of which appear in both the PTAGIS complete tag query results and the PTAGIS metadata `ptagis_meta` above. That information can be found in the following:
+
+```{r, eval = F}
+# The PTAGIS complete tag history results
+# column `Event Site Code Value`               # site code
+# column `Antenna ID`                          # antenna code  
+# column `Antenna Group Configuration Value`   # antenna configuration
+
+# The PTAGIS site metadata
+ptagis_meta$site_code                          # site code
+ptagis_meta$antenna_id                         # antenna code
+ptagis_meta$configuration_sequence             # antenna configuration
+
+```
+
+```{r child = here::here("man/fragments/site-configuration.Rmd")}
+```
+
+Note that `buildConfig()` returns the same number of records as `queryPtagisMeta()`, except `buildConfig()` returns a more manageable number of columns (`r ncol(array_configuration)`) and provides the functionality of assigning each antenna to a node, based on the array it is part of.
+
+Alternately, the user could write the object `array_configuration` to file, modify values in the node column by hand, and then re-import the modified file, again to an object `configuration` which could be fed to `compress()`.
+
+```{r, eval = F}
+# write array_configuration to file
+write_csv(array_configuration,
+          "C:/Users/usernamehere/Desktop/array_configuration.csv")
+
+# MODIFY VALUES IN NODE COLUMN BY HAND
+
+# re-import file to object configuration
+configuration = read_csv("C:/Users/usernamehere/Desktop/array_configuration.csv")
+
+```
+
+For some purposes, this may be enough, and the user can take the compressed data, `comp_obs`, and summarize it as needed, or perform whatever analyses they would like. In other cases, if directionality of movement is required, `PITcleanr` provides additional functionality.
+
+
+# Mapping Detection Sites
+
+It can often be helpful to plot various detection locations; those locations can then be used to determine which locations are upstream or downstream relative to other locations. To accomplish this, `PITcleanr` provides a few additional functions described here:
+
+
+## Extract Sites of Interest
+
+```{r child = here::here("man/fragments/extract-sites.Rmd")}
+```
+
+
+## Query Flowlines
+
+```{r child = here::here("man/fragments/query-flowlines.Rmd")}
+```
+
+The following provides a nice example of how to plot the sites and flowlines using the `ggplot2` [R package](https://ggplot2.tidyverse.org/).
+
+```{r plot-flowlines, fig.dim = c(5,6), fig.align = "center"}
+# load ggplot2
+library(ggplot2)
+
+# plot the flowlines and the sites
+ggplot() +
+  geom_sf(data = flowlines,
+          aes(color = as.factor(StreamOrde),
+              size = StreamOrde)) +
+  scale_color_viridis_d(direction = -1,
+                        option = "D",
+                        end = 0.8) +
+  scale_size_continuous(range = c(0.2, 1.2),
+                        guide = 'none') +
+  geom_sf(data = nhd_list$basin,
+          fill = NA,
+          lwd = 2) +
+  geom_sf(data = sites_sf,
+          size = 4,
+          color = "black") +
+  geom_sf_label(data = sites_sf,
+                aes(label = site_code),
+                size = 2) +
+  theme_bw() +
+  theme(axis.title = element_blank()) +
+  labs(color = "Stream\nOrder")
+
+```
+
+If interested, the user can save this plot as a PDF (or similar), using the `ggsave()` function. `ggsave()` will simply save the last plot that was displayed.
+
+```{r save-map, eval = F}
+# save as PDF to Desktop, for example
+ggsave("C:/Users/usernamehere/Desktop/site_map.pdf")
+
+```
+
+
+# "Parent-Child" Relationships
+
+```{r child = here::here("man/fragments/parent-child.Rmd")}
+```
+
+
+## Movement Paths & Node Order
+
+`PITcleanr` provides a function to determine the detection locations a tag would pass between a starting point (e.g, a tagging or release location) and an ending point (e.g., a spawning location, in the case of adult salmon), based on the parent-child table. We refer to these detection locations as a movement path. 
+
+The function `buildPaths()` will provide the movement path leading to each node in a parent-child table. It provides a row for each node, and then provides the path that an individual would have to take to get to that given node. The `build_paths()` function could be performed on either our `parent_child` or `parent_child_nodes` objects.
+
+```{r build_paths}
+buildPaths(parent_child_nodes)
+
+```
+
+The `buildNodeOrder()` provides both the path and the node order of each node (starting from the root site and counting upwards past each node). Each of these functions currently has an argument, `direction` that provides paths and node orders based on upstream movement (the default) or downstream movement. For downstream movement, each node may appear in the resulting tibble multiple times, as there may be multiple ways to reach that node, from different starting points. Again, `buildNodeOrder()` could be performed on either `parent_child` or `parent_child_nodes`.
+
+```{r build-node-order}
+buildNodeOrder(parent_child)
+
+# to set direction to downstream, for example
+# buildNodeOrder(parent_child,
+#                direction = "d")
+
+```
+
+Sometimes it helps to visualize the paths that each tag could take. `PITcleanr` provides a function, `plotNodes()` that utilizes the `tidygraph` and `ggraph` packages to generate a plot of all the detection nodes and their connections based on the parent-child table. Within `plotNodes()`, there is a function called `buildNodeGraph()` that constructs the tidygraph `tbl_graph` object that is then used to make the plot. Users can call that `buildNodeGraph()` function themselves and use the output to make their own customizable graphs if they desire.
+
+For example, `plotNodes()` of the `parent_child`:
+
+```{r plot-nodes, fig.align="center"}
+plotNodes(parent_child,
+          layout = "tree")
+```
+
+And similarly for the `parent_child_nodes` object:
+
+```{r plot-more-nodes, fig.align = "center", fig.dim = c(4,4)}
+plotNodes(parent_child_nodes,
+          layout = "tree")
+```
+
+
+## Add Direction
+
+Users may be interested in the apparent movement directionality of a tag, based on its detections. For many analyses, it is necessary to assume a tag/individual undergoes only one-way travel (i.e., travel is either all upstream or all downstream). To meet this assumption, individual detections sometime need to be discarded. For example, an adult salmon undergoing an upstream spawning migration may move up a mainstem migration corridor (e.g., the Snake River), dip into a tributary (e.g., Selway River in the Clearwater), and then move back downstream and up another tributary (e.g., Salmon River) to their spawning location. In this case, any detections that occurred in the Clearwater River would need to be discarded if we believe the fish was destined for a location in the Salmon River. In other cases, more straightforward summaries of directional movements may be desired.
+
+To accommodate this, `PITcleanr` provides a function, `addDirection()`, to take the compressed observations from `compress()` and the parent-child table (`parent_child` or `parent_child_nodes`) and indicate the movement direction of each detection in relation to its previous detection. It may be useful to filter detections so they all start at a particular site for each tag before applying `addDirection()`. Currently this function only provides directions relative to an upstream movement (i.e. "forward" indicates upstream movement, "backward" indicates downstream movement). A direction of "unknown" indicates the tag has shifted to a different branch in the stream network. 
+
+```{r}
+# determine trap date, and remove detections prior to that
+obs_direct = comp_obs %>%
+  # get the first detection of each tag at Tumwater Dam
+  left_join(comp_obs %>%
+              filter(node == "TUM",
+                     event_type_name %in% c("Mark", "Recapture")) %>%
+              group_by(tag_code) %>%
+              filter(min_det == min(min_det)) %>%
+              summarise(start_date = min_det,
+                        .groups = "drop"),
+            by = "tag_code") %>%
+  # filter any detections before the "start_date"
+  filter(min_det >= start_date) %>%
+  group_by(tag_code) %>%
+  # re-calculate the "slots" for each tag_code
+  mutate(slot = slot - min(slot) + 1) %>%
+  ungroup() %>%
+  # add direction using "addDirection()
+  addDirection(parent_child = parent_child_nodes)
+
+# for example, let's look at directional observations for a single tag, and select certain columns
+obs_direct %>%
+  filter(tag_code == "3D9.1C2DE4B17E") %>%
+  select(tag_code, node, slot, min_det, direction)
+
+```
+
+# What Next?
+
+Congratulations, you've now finished the introductory vignette of the `PITcleanr` R package. One purpose of the `PITcleanr` package is to prepare and help clean PIT tag observations for the Dam Adult Branch Occupancy Model ([DABOM](https://github.com/BiomarkABS/DABOM)). For further information, consider browsing additional vignettes included with the `PITcleanr` package using:
+
+```{r browse-vignettes, eval = F}
+browseVignettes("PITcleanr")
+
+```
+
+#### End Vignette

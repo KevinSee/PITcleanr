@@ -4,26 +4,24 @@
 #'
 #' @author Kevin See
 #'
-#' @param site PTAGIS site code. Default is \code{NULL} which will query all sites
+#' @inheritParams queryInterrogationMeta
 #'
 #' @source \url{http://www.ptagis.org}
 #'
 #' @import dplyr httr purrr
 #' @export
 #' @return NULL
-#' @examples queryInterrogationConfig()
+#' @examples queryInterrogationConfig(site_code = "ZEN")
 
-queryInterrogationConfig = function(site = NULL) {
+queryInterrogationConfig = function(site_code = NULL) {
 
   # assign user agent to the GitHub repo for this package
   ua = httr::user_agent('https://github.com/BiomarkABS/PITcleanr')
 
   # compose url with query
-  url_req = 'http://api.ptagis.org/interrogationsites'
+  url_req = "https://webcore.ptagis.org/api/sites/interrogation/configuration"
 
-  if(!is.null(site)) url_req = paste(url_req, site, sep = '/')
-
-  url_req = paste(url_req, 'configurations', sep = '/')
+  if(!is.null(site_code)) url_req = paste(url_req, "current", site_code, sep = '/')
 
   # send query to PTAGIS
   web_req = httr::GET(url_req, ua)
@@ -36,19 +34,30 @@ queryInterrogationConfig = function(site = NULL) {
   parsed = httr::content(web_req,
                          'parsed')
 
-  res = parsed %>%
-    purrr::map(.f = function(x) {
-      purrr::map(.x = x,
-                 .f = function(y) {
-                   ifelse(is.null(y),
-                          NA,
-                          y)
-                 })
-    }) %>%
-    purrr::map_df(.f = identity) %>%
-    mutate(across(c(startDate,
-                    endDate),
-                  lubridate::ymd_hms))
+  if(!is.null(site_code)) {
+    res = parsed %>%
+      as_tibble() %>%
+      mutate(details = map(details,
+                           .f = as_tibble)) %>%
+      tidyr::unnest(cols = details) %>%
+      mutate(across(c(startDate),
+                    lubridate::ymd_hms)) %>%
+      tibble::add_column(endDate = NA,
+                         .after = "startDate") %>%
+      mutate(across(configurationSequence,
+                    as.numeric))
+  } else {
+
+    res = parsed %>%
+      map(.f = as_tibble) %>%
+      map_df(.f = identity) %>%
+      mutate(across(c(startDate,
+                      endDate),
+                    lubridate::ymd_hms)) %>%
+      mutate(across(configurationSequence,
+                    as.numeric))
+
+  }
 
   return(res)
 

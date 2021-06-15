@@ -22,28 +22,52 @@ Title <- "Title of your paper goes here"
 
 ## Description
 
-`PITcleanr` is an R package for preparing PIT tag data for further analysis. It was originally conceived as a companion to the [DABOM](https://github.com/BiomarkABS/DABOM) package for estimating abundance of returning anadromous adult fish moving upstream. `PITcleanr` was designed to prepare the raw PIT tag observations from [PTAGIS](http://www.ptagis.org) for use in the DABOM package.
+`PITcleanr` is an R package for preparing PIT tag data for further analysis. The package can help import complete tag histories from [PTAGIS](https://ptagis.org/), build a configuration file to help assign each detection to a "node", and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table describing whether detection locations are upstream or downstream in relation to each other, and assign directionality of movement between each detection location. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), `PITcleanr` can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept. 
 
-## Installation instructions
+It was originally conceived as a companion to the [DABOM](https://github.com/BiomarkABS/DABOM) package for estimating abundance of returning anadromous adult fish moving upstream. `PITcleanr` was designed to prepare the raw PIT tag observations from [PTAGIS](http://www.ptagis.org) for use in the `DABOM` package.
 
-To install `PITcleanr` you can use Hadley Wickham's `devtools` package. To install and load the devtools package use:
+The user can find more information related to installation and use of this package on the [package website](https://biomarkabs.github.io/PITcleanr/).
 
-```{r, eval = FALSE}
-install.packages("devtools")
-library(devtools)
+## Installation Instructions
+
+```{r child = "man/fragments/install-inst.Rmd"}
 ```
 
-NOTE: To use devtools, you may also have to download and install Rtools (although you shouldn't). The latest version on Rtools can be found at https://cran.r-project.org/bin/windows/Rtools/
-  
-You can download the compendium as a zip from from this URL: <https://github.com/BiomarkABS/PITcleanr/archive/master.zip>
+Be sure to use the `build_vignettes = TRUE` argument, as this will build all of the vignettes (i.e., user manuals) that are included with the package. Further instructions on how to use `PITcleanr` can be found in the vignettes, which can be accessed using:
 
-Or you can install this compendium as an R package, DABOM, from GitHub with:
-
-```{r gh-installation, eval = FALSE}
-# install.packages("devtools")
-remotes::install_github("BiomarkABS/PITcleanr", build_vignettes = TRUE)
+```{r}
+browseVignettes(package = "PITcleanr")
 ```
 
+
+
+## Compressing PTAGIS Detection Data
+
+```{r set-ptagis-file, echo = F}
+library(PITcleanr)
+ptagis_file = system.file("extdata", 
+                          "TUM_Chinook_2015.csv", 
+                          package = "PITcleanr",
+                          mustWork = TRUE)
+```
+
+
+```{r child = "man/fragments/compress-data.Rmd"}
+```
+
+## Other Functionality
+
+`PITcleanr` contains lots of additional functionality to help users summarize and further analyze the compressed PTAGIS observations. Find more details in the various vignettes.
+
+## Authors
+
+PITcleanr is a collaborative project, with the primary contributors being:
+
+* Kevin See (Biomark, Inc. - Applied Biological Services)
+* Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)
+* Rick Orme (Nez Perce Tribe - Fisheries Resources Management)
+* Mike Ackerman (Biomark, Inc. - Applied Biological Services)
+=======
 For the latest development version:
 
 ```{r develop-version, eval = FALSE}
@@ -58,7 +82,6 @@ To look at the various vignettes:
 browseVignettes("PITcleanr")
 ```
 
-
 ### Licenses
 
 **Text and figures :**  [CC-BY-4.0](http://creativecommons.org/licenses/by/4.0/)
@@ -70,4 +93,8 @@ browseVignettes("PITcleanr")
 ### Contributions
 
 We welcome contributions from everyone. Before you get started, please see our [contributor guidelines](CONTRIBUTING.md). Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
+
+## Questions?
+
+Please feel free to post an issue to this repository for requested features, bug fixes, errors in documentation, etc.
 

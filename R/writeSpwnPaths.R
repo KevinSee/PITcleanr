@@ -13,7 +13,6 @@
 #'
 #' @author Greg Kliewer, Ryan Kinzer, Kevin See
 #' @import dplyr purrr
-#' @export
 #' @return NULL
 #' @examples writeSpwnPaths()
 

@@ -7,7 +7,7 @@
 queryObsDART(
   species = c("Chinook", "Coho", "Steelhead", "Sockeye"),
   loc = c("GRA", "PRA"),
-  spawnYear = NULL
+  spawn_year = NULL
 )
 }
 \arguments{
@@ -15,18 +15,20 @@ queryObsDART(
 
 \item{loc}{code for initial location. Currently includes options for Lower Granite (\code{GRA}) and Priest Rapids (\code{PRA}) dams.}
 
-\item{spawnYear}{available years includes spawn year 2010 to present}
+\item{spawn_year}{available years includes spawn year 2010 to present}
+}
+\value{
+A tibble with particular information from a complete tag history PTAGIS query.
 }
 \description{
-For certain locations, query DART to return all PIT tags observed there from a given species in a given spawn year, as well as any subsequent detections upstream.
+For certain locations (currently Lower Granite Dam and Priest Rapids Dam),
+query DART to return all PIT tags observed there from a given species in a given spawn year,
+as well as any subsequent detections upstream.
 }
 \examples{
-
-my_config <- buildConfig()
-dart_obs <- queryObsDART(species = 'Chinook',
-                           spawnYear = 2020,
-                           configuration = my_config,
-                           truncate = T)
+queryObsDART(species = 'Chinook',
+                       loc = "GRA",
+                       spawn_year = 2019)
 }
 \author{
 Kevin See

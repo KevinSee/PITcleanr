@@ -13,7 +13,6 @@
 #' @param validTagDataFileNm if \code{saveCSV} is \code{TRUE}, this is the path and filename (including .csv) to save that file as.
 #'
 #' @import dplyr readr
-#' @export
 #' @return NULL
 #' @examples filterLGRtrapDB(trap_path = NULL, species == 'Chinook', spawnYear = 2015)
 

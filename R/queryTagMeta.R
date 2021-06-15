@@ -10,8 +10,8 @@
 #'
 #' @import dplyr httr
 #' @export
-#' @return NULL
-#' @examples queryTagMeta()
+#' @return From PTAGIS: WARNING: this feature has been disabled. Contact PTAGIS for more info. Gets mark event information for a given tag code.
+#' @examples queryTagMeta("3D9.1C2D929849")
 
 queryTagMeta = function(tagCode = NULL) {
 

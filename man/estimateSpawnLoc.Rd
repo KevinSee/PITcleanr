@@ -4,10 +4,18 @@
 \alias{estimateSpawnLoc}
 \title{Final spawning location}
 \usage{
-estimateSpawnLoc(capHist_proc = NULL)
+estimateSpawnLoc(filtered_obs = NULL, spawn_site = F, ptagis_file = NULL)
 }
 \arguments{
-\item{capHist_proc}{Dataframe returned by \code{processCapHist_LGD}, under the name \code{ProcCapHist}.}
+\item{filtered_obs}{Tibble returned by `filterDetections()`.}
+
+\item{spawn_site}{Should the PTAGIS site code of spawning detection be returned? Default is `FALSE`.}
+
+\item{ptagis_file}{is the path to the PTAGIS observation file downloaded as a csv from PTAGIS.
+This must be the output from a Complete Tag History query (part of the Advanced Reporting).
+This query should contain: Tag, Mark Species, Mark Rear Type, Event Type, Event Site Type,
+Event Site Code, Event Date Time, Antenna, Antenna Group Configuration,
+Event Release Site Code, and Event Release Date Time.}
 }
 \description{
 Based on cleaned capture history, determines further upstream location of each tag. Assumption is that this is the spawning location.

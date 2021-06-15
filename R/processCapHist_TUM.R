@@ -20,6 +20,7 @@ processCapHist_TUM = function(start_date = NULL,
                               observations = NULL,
                               last_obs_date = NULL,
                               truncate = T,
+                              site_df = NULL,
                               save_file = F,
                               file_name = NULL) {
 
@@ -87,6 +88,9 @@ processCapHist_TUM = function(start_date = NULL,
   cat('Creating node order\n')
   # construct valid paths
   valid_paths = getValidPaths(parent_child)
+  if(is.null(site_df)) {
+    site_df = writeTUMNodeNetwork_noUWE()
+  }
   node_order = createNodeOrder(valid_paths = valid_paths,
                                configuration = configuration,
                                site_df = site_df,

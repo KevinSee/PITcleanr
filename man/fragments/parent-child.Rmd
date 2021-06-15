@@ -1,0 +1,65 @@
+---
+output:
+  rmarkdown::html_vignette: default
+  html_document: default
+---
+
+When dealing with detections of individual tags, the user often is interested in which locations are connected to which other locations along the stream network. One way to capture this information is through the construction of a parent-child table describing the "relationships" among locations. In a parent-child table, each row consists of a parent location, and a child location that is connected directly to that parent location By default, `PITcleanr` assigns parent-child relationships as moving in an upstream direction, so a single parent may have multiple child locations upstream, if the stream network branches upstream of it. However, each child should only have a single parent, as we are assuming a lack of looped connections in our stream network. If the user is interested in a downstream parent-child relationship, the `parent` and `child` designations in the table can be manually switched. As an example, assuming only upstream movement, a weir may be considered a parent and each of its next upstream arrays considered children. A location with no detection sites further upstream has no children, but is presumably the child of a downstream location. All of the parent-child relationships among locations in a watershed can describe the potential movements by an individual tag (moving from parent to child, to the next child, etc.).
+
+To help illustrate, the following depicts the parent-child relationships among nodes in our Wenatchee River example, assuming only upriver movement from Tumwater Dam. More on this to follow...
+
+```{r parent-child-fig, echo = F, results = "hide", fig.align = "center"}
+parent_child = buildParentChild(sites_sf,
+                                flowlines)
+
+parent_child %>%
+  filter(!child %in% c("ICL", "PES", "LNF", "ICM", "TUM")) %>%
+  plotNodes(layout = "tree")
+```
+
+`PITcleanr` constructs this relationship by joining a spatial (`sf`) point object of sites with the flowlines queried via `queryFlowlines()`. The NHDPlus layer that is returned contains a unique identifier, or hydrosequence, for every segment, as well as the identifier of the hydrosequence immediately upstream and downstream. Using this information, `PITcleanr` can identify the next downstream site from every known location (using the `findDwnstrmSite()` function), and thus construct the parent child table through the `buildParentChild()` function. By default, `buildParentChild()` returns a tibble identifying every parent-child pair, as well as the hydrosequence joined to the parent and child location. If the argument `add_rkm` is set to `TRUE`, `PITcleanr` will query the PTAGIS metadata again, and attach the river kilometer (or rkm) for each parent and child location. 
+
+```{r parent-child}
+parent_child = buildParentChild(sites_sf,
+                                flowlines)
+parent_child
+
+```
+
+After initially building a parent-child table, there is usually some editing that needs to happen. This is necessary for a variety of reasons we've observed:
+
+* Perhaps the latitude and longitude of a site was not correct, and it was placed on the wrong hydrosequence of the flowlines. 
+* The flowlines layer from the USGS could be inaccurate around a particular area, causing the parent-child relationships to be incorrect. 
+* A site may be located at the mouth of a tributary was joined to the mainstem hydrosequence of the flowline, instead of the tributary, causing problems for sites upstream and downstream of that site. 
+
+For these reasons (or any others), `PITcleanr` provides a function to edit the parent-child table, `editParentChild()`. It requires a list the length of rows to be fixed (`fix_list`). Each element of this list is a vector of length 3, where the first two elements contain the parent and child locations to be edited, and the third element is the new (correct) parent location. As each child contains a single parent in the table, this is enough information to uniquely target individual rows of the parent-child table. 
+
+The user can also switch parent-child pairs, making the parent the child and vice versa, using the `switch_parent_child` argument. This is primarily intended to fix relationships between a root site and the initial downstream sites. If, by default, the parent child table is built assuming upstream movement, but the user would like to incorporate downstream movement from the root site to a location downstream, this argument will be useful. However, it will not "fix" associated parent-child relationships with the locations in the `switch_parent_child` list; those must be fixed through the `fix_list` argument. 
+
+In the example below, the original parent-child table had some problems with 2 sites (ICL and PES) downstream of the root site, TUM. In addition, the flowlines are not accurate near the confluence of Icicle Creek and the mainstem Wenatchee river, which has thrown off some of the relationships between ICL and surrounding sites. We would like to make TUM the parent of both ICL and PES, and ICL should be the parent of ICM, not LNF. In addition, ICL was placed on the mainstem river due to a mistake in the flowlines, and therefore listed as a parent of TUM, so we'd like to switch that. All of these corrections are implemented below using the `editParentChild()` function.
+
+```{r edit-pc-table}
+parent_child = editParentChild(parent_child,
+                               fix_list = list(c(NA, "ICL", "TUM"),
+                                               c(NA, "PES", "TUM"),
+                                               c(NA, "LNF", "ICL"),
+                                               c("LNF", 'ICM', 'ICL')),
+                               switch_parent_child = list(c("ICL", 'TUM')))
+
+# view corrected parent_child table
+parent_child
+
+```
+
+Note, if the configuration file contains multiple nodes for some sites (e.g., a node for each array at a site), then the parent-child table can be expanded to accommodate these nodes using the `addParentChildNodes()` function. The function essentially "expands" (adds rows) to the existing parent-child table to accommodate those additional nodes. Note: the `addParentChildNodes()` function assumes that the parent-child table is arranged so that children are upstream of parents, and nodes designated as `A0` are upstream of those designated `B0`. Currently, the function can only handle up to two nodes at each site.
+
+Here, we use the `addParentChildNodes()` function on our existing `parent_child` table, and provide our existing `configuration` tibble to the `configuration` argument to expand the tibble. Our results are saved to a new object `parent_child_nodes`.
+
+```{r}
+parent_child_nodes = addParentChildNodes(parent_child,
+                                         configuration = configuration)
+
+# view expanded parent-child table
+parent_child_nodes
+
+```

@@ -7,7 +7,6 @@
 #' @param valid_df dataframe of valid tags extracted from the trap database with the \code{filterLGRtrapDB} function
 #'
 #' @import dplyr
-#' @export
 #' @return NULL
 #' @examples summariseValidTagsLGR(filterLGRtrapDB(spawnYear = 2015))
 

@@ -13,7 +13,6 @@
 #' @author Kevin See
 #' @import dplyr readr openxlsx lubridate
 #' @importFrom tidyr replace_na
-#' @export
 
 writeCapHistOutput = function(valid_obs = NULL,
                               valid_paths = NULL,

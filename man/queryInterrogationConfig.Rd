@@ -7,16 +7,16 @@
 \url{http://www.ptagis.org}
 }
 \usage{
-queryInterrogationConfig(site = NULL)
+queryInterrogationConfig(site_code = NULL)
 }
 \arguments{
-\item{site}{PTAGIS site code. Default is \code{NULL} which will query all sites}
+\item{site_code}{PTAGIS site code. Default is \code{NULL} which will query all sites}
 }
 \description{
 Query and download configuration metadata for PTAGIS Interrogation sites
 }
 \examples{
-queryInterrogationConfig()
+queryInterrogationConfig(site_code = "ZEN")
 }
 \author{
 Kevin See

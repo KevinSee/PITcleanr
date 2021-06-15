@@ -6,7 +6,6 @@
 #'
 #'
 #' @import dplyr stringr
-#' @export
 #' @return NULL
 #' @examples writeLGRNodeNetwork()
 
@@ -247,8 +246,8 @@ writeLGRNodeNetwork = function() {
   site_df = site_df_init %>%
     bind_cols(network_descrip %>%
                 as.data.frame()) %>%
-    mutate_at(vars(matches('^Step')),
-              funs(as.character)) %>%
+    mutate(across(starts_with('Step'),
+                  as.character)) %>%
     mutate(SiteID = factor(SiteID,
                            levels = unique(site_df_init$SiteID))) %>%
     arrange(SiteID)
