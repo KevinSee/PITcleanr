@@ -27,7 +27,7 @@ library(here)
 
 # Introduction
 
-This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data to either summarize detections or prepare the data for further analysis. `PITcleanr` can help import complete tag histories from [PTAGIS](https://ptagis.org/), build a configuration file to help assign each detection to a "node", and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table of locations, and assign directionality of movement between each detection site. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), `PITcleanr` can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept. 
+This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data to either summarize detections or prepare the data for further analysis. `PITcleanr` can help import complete tag histories from [PTAGIS](https://www.ptagis.org/), build a configuration file to help assign each detection to a "node", and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table of locations, and assign directionality of movement between each detection site. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), `PITcleanr` can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept. 
 
 
 # Installation
@@ -55,11 +55,11 @@ Note that many of the various queries in `PITcleanr` require a connection to the
 ```{r child = here::here("man/fragments/query-ptagis.Rmd")}
 ```
 
-Congratulations! You now have complete tag histories for your tags of interest from [PTAGIS](https:://www.ptagis/org)! Next, we'll demonstrate how to perform some quick quality control checks and compress all of those records into a more manageable size. 
+Congratulations! You now have complete tag histories for your tags of interest from [PTAGIS](https://www.ptagis.org/)! Next, we'll demonstrate how to perform some quick quality control checks and compress all of those records into a more manageable size. 
 
 ## Quality Control
 
-Later, we'll demonstrate how `PITcleanr` can be used to compress the detections in your complete tag history output (`ptagis_file`) from [PTAGIS](https:://www.ptagis/org). Bur first, `PITcleanr` can help perform some basic quality control on the PTAGIS detections. The `qcTagHistory()` function returns a list including a vector of tags listed as "DISOWN" by PTAGIS, another vector of tags listed as "ORPHAN", and a data frame of release batches. A tag listed as "DISOWN" or "ORPHAN" indicates that PTAGIS has not received a valid mark file for that tag, which may prompt a user to upload such a file. This latter data frame can be used by the `compress()` function in `PITcleanr` to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination.
+Later, we'll demonstrate how `PITcleanr` can be used to compress the detections in your complete tag history output (`ptagis_file`) from [PTAGIS](https://www.ptagis.org/). Bur first, `PITcleanr` can help perform some basic quality control on the PTAGIS detections. The `qcTagHistory()` function returns a list including a vector of tags listed as "DISOWN" by PTAGIS, another vector of tags listed as "ORPHAN", and a data frame of release batches. A tag listed as "DISOWN" or "ORPHAN" indicates that PTAGIS has not received a valid mark file for that tag, which may prompt a user to upload such a file. This latter data frame can be used by the `compress()` function in `PITcleanr` to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination.
 
 Here, we'll run the `qcTagHistory()` function, again on the file path (`ptagis_file`) of the PTAGIS complete tag history query output, and save the results to an object `qc_detections`.
 
@@ -82,7 +82,7 @@ In our Tumwater Dam Chinook salmon example, the `compress()` function has scaled
 
 ## PTAGIS Site Metadata
 
-`PITcleanr` includes a convenience function `queryPtagisMeta()` to query all the metadata associated with PTAGIS sites, including both Mark/Recapture/Recovery (MRR) and Interrogation (INT) sites. That metadata can also be found on the PTAGIS website [here](https://www.ptagis.org/sites). Many of the columns included in the output from `queryPtagisMeta()` are specific to either the INT or MRR site types, so you may notice that many values in the output, in our example below `ptagis_meta`, are `NA` depending on the site type and column. If desired, the user could write that file out to a .csv file or similar, using a function like `write_csv()` from the `readr` package..
+`PITcleanr` includes a convenience function `queryPtagisMeta()` to query all the metadata associated with PTAGIS sites, including both Mark/Recapture/Recovery (MRR) and Interrogation (INT) sites. That metadata can also be found on the PTAGIS website [here](https://www.ptagis.org/Sites/Map). Many of the columns included in the output from `queryPtagisMeta()` are specific to either the INT or MRR site types, so you may notice that many values in the output, in our example below `ptagis_meta`, are `NA` depending on the site type and column. If desired, the user could write that file out to a .csv file or similar, using a function like `write_csv()` from the `readr` package..
 
 ```{r}
 ptagis_meta = queryPtagisMeta()
