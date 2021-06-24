@@ -25,7 +25,7 @@ filterDetections = function(compress_obs = NULL,
                             parent_child = parent_child)
 
   if(is.null(max_obs_date)) {
-    max_obs_date = (max(obs_direct$max_det, na.rm = T) + days(1)) %>%
+    max_obs_date = (max(obs_direct$max_det, na.rm = T) + lubridate::days(1)) %>%
       format("%Y%m%d") %>%
       as.character()
   }
@@ -110,6 +110,29 @@ filterDetections = function(compress_obs = NULL,
     keep_obs %>%
       mutate(res = map(proc,
                        "result")) %>%
+      mutate(res = map(res,
+                       .f = function(x) {
+                         if(sum(is.na(x$user_keep_obs)) == 0) {
+                           return(x)
+                         } else {
+                           same_nodes = x %>%
+                             summarise(keep_nodes = list(sort(unique(node[auto_keep_obs]))),
+                                       all_nodes = list(sort(unique(node)))) %>%
+                             mutate(same_nodes = map2_lgl(keep_nodes,
+                                                          all_nodes,
+                                                          .f = function(x, y) {
+                                                            identical(x, y)
+                                                          })) %>%
+                             pull(same_nodes)
+                           if(!same_nodes) {
+                             return(x)
+                           } else {
+                             x %>%
+                               mutate(user_keep_obs = auto_keep_obs) %>%
+                               return()
+                           }
+                         }
+                       })) %>%
       select(-c(data:proc)) %>%
       tidyr::unnest(res) %>%
       return()
