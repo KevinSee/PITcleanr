@@ -23,6 +23,7 @@ Imports:
     writexl (>= 1.3.1),
     progress (>= 1.2.2),
     ggraph (>= 2.0.3),
+    nhdplusTools (>= 0.3.15),
     here (>= 1.0.0)
 URL: https://github.com/BiomarkABS/PITcleanr,
     https://biomarkabs.github.io/PITcleanr/index.html
@@ -33,6 +34,5 @@ RoxygenNote: 7.1.1
 Suggests: 
     knitr,
     tidygraph (>= 1.2.0),
-    rmarkdown,
-    nhdplusTools (>= 0.3.15)
+    rmarkdown
 VignetteBuilder: knitr
