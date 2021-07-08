@@ -11,7 +11,7 @@
 #' @param file_name If \code{save_file == TRUE}, this is the file name (with possible extension) to be saved to.
 #'
 #' @author Kevin See
-#' @import dplyr readr openxlsx lubridate
+#' @import dplyr readr writexl lubridate
 #' @importFrom tidyr replace_na
 
 writeCapHistOutput = function(valid_obs = NULL,
@@ -84,33 +84,38 @@ writeCapHistOutput = function(valid_obs = NULL,
       #                    FreezeCol = 1,
       #                    FreezeRow = 1)
 
-      hs <- openxlsx::createStyle(textDecoration = "BOLD")
-      sht_nm = 'ProcCapHist'
-      wb = openxlsx::createWorkbook()
-      openxlsx::addWorksheet(wb,
-                             sheetName = sht_nm)
-      openxlsx::writeData(wb,
-                          sheet = sht_nm,
-                          x = save_df,
-                          withFilter = T,
-                          headerStyle = hs)
-      openxlsx::freezePane(wb,
-                           sheet = sht_nm,
-                           firstRow = T,
-                           firstCol = T)
-      setColWidths(wb,
-                   sheet = sht_nm,
-                   cols=1:ncol(save_df),
-                   widths = "auto")
-      openxlsx::setColWidths(wb,
-                             sheet = sht_nm,
-                             cols = c(grep("TagID", names(save_df)),
-                                      grep("Date", names(save_df)),
-                                      grep('Comment', names(save_df))),
-                             widths = c(15, rep(20, sum(grepl("Date", names(save_df)))), 100))
-      openxlsx::saveWorkbook(wb,
-                             file = file_name,
-                             overwrite = T)
+      # hs <- openxlsx::createStyle(textDecoration = "BOLD")
+      # sht_nm = 'ProcCapHist'
+      # wb = openxlsx::createWorkbook()
+      # openxlsx::addWorksheet(wb,
+      #                        sheetName = sht_nm)
+      # openxlsx::writeData(wb,
+      #                     sheet = sht_nm,
+      #                     x = save_df,
+      #                     withFilter = T,
+      #                     headerStyle = hs)
+      # openxlsx::freezePane(wb,
+      #                      sheet = sht_nm,
+      #                      firstRow = T,
+      #                      firstCol = T)
+      # setColWidths(wb,
+      #              sheet = sht_nm,
+      #              cols=1:ncol(save_df),
+      #              widths = "auto")
+      # openxlsx::setColWidths(wb,
+      #                        sheet = sht_nm,
+      #                        cols = c(grep("TagID", names(save_df)),
+      #                                 grep("Date", names(save_df)),
+      #                                 grep('Comment', names(save_df))),
+      #                        widths = c(15, rep(20, sum(grepl("Date", names(save_df)))), 100))
+      # openxlsx::saveWorkbook(wb,
+      #                        file = file_name,
+      #                        overwrite = T)
+      #
+      writexl::write_xlsx(x = list(ProcCapHist = save_df),
+                          path = file_name,
+                          col_names = T,
+                          format_headers = T)
 
     }
 
