@@ -35,7 +35,8 @@ queryObsDART <- function(species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
   # file path to query
   dart_path <- paste0("http://www.cbr.washington.edu/dart/cs/data/nezperce/", paste("nptspawn", loc, spawn_year, spp_code, sep = "_"), ".csv")
   # read in data from DART
-  dart_obs <- readr::read_csv(dart_path) %>%
+  dart_obs <- readr::read_csv(dart_path,
+                              guess_max = 1e6) %>%
     suppressMessages()
 
   return(dart_obs)
