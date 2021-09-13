@@ -16,10 +16,11 @@
 queryInterrogationConfig = function(site_code = NULL) {
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/BiomarkABS/PITcleanr')
+  ua = httr::user_agent('https://github.com/KevinSee/PITcleanr')
 
   # compose url with query
-  url_req = "https://webcore.ptagis.org/api/sites/interrogation/configuration"
+  # url_req = "https://webcore.ptagis.org/api/sites/interrogation/configuration"
+  url_req = "https://www.ptagis.org/api/sites/interrogation/configuration"
 
   if(!is.null(site_code)) url_req = paste(url_req, "current", site_code, sep = '/')
 

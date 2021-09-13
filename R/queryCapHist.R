@@ -28,7 +28,7 @@ queryCapHist = function(tag_code = NULL,
       rename(config_id = configuration_sequence)
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/BiomarkABS/PITcleanr')
+  ua = httr::user_agent('https://github.com/KevinSee/PITcleanr')
 
   # compose url with query
   url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_one_tag?tag_id='

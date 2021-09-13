@@ -36,7 +36,8 @@ queryPtagisMeta = function() {
                        dplyr::mutate(Type = 'MRR') %>%
                        dplyr::mutate(configurationSequence = 0,
                                      antennaID = as.character(NA)) %>%
-                       dplyr::rename(siteDescription = siteTypeDescription)) %>%
+                       dplyr::rename(siteDescription = type,
+                                     siteName = name)) %>%
     tibble::add_column("RKMTotal" = NA, .after = "rkm") %>%
     dplyr::mutate(RKMTotal = stringr::str_split(rkm, "\\.")) %>%
     dplyr::mutate(RKMTotal = purrr::map_dbl(RKMTotal,
