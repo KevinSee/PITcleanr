@@ -37,7 +37,7 @@ website](https://kevinsee.github.io/PITcleanr/).
 ## Installation Instructions
 
 The `PITcleanr` compendium can be downloaded as a zip from from this
-URL: <https://github.com/BiomarkABS/PITcleanr/archive/master.zip>
+URL: <https://github.com/KevinSee/PITcleanr/archive/master.zip>
 
 Or you can install the compendium as an R package from GitHub by using
 Hadley Wickham’s `devtools` package:
@@ -45,7 +45,7 @@ Hadley Wickham’s `devtools` package:
 ``` r
 # install and load remotes, if necessary
 install.packages("devtools")
-devtools::install_github("BiomarkABS/PITcleanr", 
+devtools::install_github("KevinSee/PITcleanr", 
                          build_vignettes = TRUE)
 ```
 
@@ -56,7 +56,7 @@ latest version of Rtools can be found
 For the latest development version:
 
 ``` r
-devtools::install_github("BiomarkABS/PITcleanr@develop")
+devtools::install_github("KevinSee/PITcleanr@develop")
 ```
 
 Be sure to use the `build_vignettes = TRUE` argument, as this will build
