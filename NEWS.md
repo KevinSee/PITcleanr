@@ -1,4 +1,11 @@
-# PITcleanr 2.0.0 (unreleased)
+# PITcleanr 2.0.1 (2021-09-13)
+
+## Minor Changes
+
+- Updated various query urls to match new PTAGIS API urls
+
+
+# PITcleanr 2.0.0 (2021-06-15)
 
 ## Major Changes
 
