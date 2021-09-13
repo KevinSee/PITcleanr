@@ -1,37 +1,38 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# PITcleanr <a href='https://github.com/BiomarkABS/PITcleanr'><img src='man/figures/logo.png' align="right" height="139" /></a>
+# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" height="139" /></a>
 
 <!-- badges: start -->
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BiomarkABS/PITcleanr/master?urlpath=rstudio)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KevinSee/PITcleanr/master?urlpath=rstudio)
 <!-- badges: end -->
 
 ## Description
 
 `PITcleanr` is an R package for preparing PIT tag data for further
 analysis. The package can help import complete tag histories from
-[PTAGIS](https://ptagis.org/), build a configuration file to help assign
-each detection to a “node”, and compress those detections into a smaller
-file. It contains functions to determine which detection locations are
-upstream or downstream of each other, build a parent-child relationship
-table describing whether detection locations are upstream or downstream
-in relation to each other, and assign directionality of movement between
-each detection location. For analyses that focus on one-way directional
-movement (e.g., straightforward CJS models), `PITcleanr` can help
-determine which detections fail to meet that one-way movement assumption
-and should be examined more closely, and which detections can be kept.
+[PTAGIS](https://www.ptagis.org/), build a configuration file to help
+assign each detection to a “node”, and compress those detections into a
+smaller file. It contains functions to determine which detection
+locations are upstream or downstream of each other, build a parent-child
+relationship table describing whether detection locations are upstream
+or downstream in relation to each other, and assign directionality of
+movement between each detection location. For analyses that focus on
+one-way directional movement (e.g., straightforward CJS models),
+`PITcleanr` can help determine which detections fail to meet that
+one-way movement assumption and should be examined more closely, and
+which detections can be kept.
 
 It was originally conceived as a companion to the
-[DABOM](https://github.com/BiomarkABS/DABOM) package for estimating
+[DABOM](https://github.com/KevinSee/DABOM) package for estimating
 abundance of returning anadromous adult fish moving upstream.
 `PITcleanr` was designed to prepare the raw PIT tag observations from
-[PTAGIS](http://www.ptagis.org) for use in the `DABOM` package.
+[PTAGIS](https://www.ptagis.org/) for use in the `DABOM` package.
 
 The user can find more information related to installation and use of
 this package on the [package
-website](https://biomarkabs.github.io/PITcleanr/).
+website](https://kevinsee.github.io/PITcleanr/).
 
 ## Installation Instructions
 
@@ -171,20 +172,6 @@ being:
   - Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)
   - Rick Orme (Nez Perce Tribe - Fisheries Resources Management)
   - Mike Ackerman (Biomark, Inc. - Applied Biological Services)
-=======
-For the latest development version:
-
-``` r
-remotes::install_github("BiomarkABS/PITcleanr@develop", 
-                        dependencies = TRUE,
-                        build_vignettes = TRUE)
-```
-
-To look at the various vignettes:
-
-``` r
-browseVignettes("PITcleanr")
-```
 
 ### Licenses
 
