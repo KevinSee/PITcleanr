@@ -77,7 +77,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/BiomarkABS/PITcleanr/">
+  <a href="https://github.com/KevinSee/PITcleanr/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -98,9 +98,9 @@
       <h1 data-toc-skip>Querying, Compressing, and Making Sense of PIT Tag Detection Data</h1>
                         <h4 class="author">Kevin See</h4>
             
-            <h4 class="date">15 June, 2021</h4>
+            <h4 class="date">13 September, 2021</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/BiomarkABS/PITcleanr/blob/master/vignettes/Prep_PIT_data.Rmd"><code>vignettes/Prep_PIT_data.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/master/vignettes/Prep_PIT_data.Rmd"><code>vignettes/Prep_PIT_data.Rmd</code></a></small>
       <div class="hidden name"><code>Prep_PIT_data.Rmd</code></div>
 
     </div>
@@ -110,28 +110,28 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>This vignette shows how to use the <code>PITcleanr</code> package to wrangle PIT tag data to either summarize detections or prepare the data for further analysis. <code>PITcleanr</code> can help import complete tag histories from <a href="https://ptagis.org/">PTAGIS</a>, build a configuration file to help assign each detection to a “node”, and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table of locations, and assign directionality of movement between each detection site. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), <code>PITcleanr</code> can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept.</p>
+<p>This vignette shows how to use the <code>PITcleanr</code> package to wrangle PIT tag data to either summarize detections or prepare the data for further analysis. <code>PITcleanr</code> can help import complete tag histories from <a href="https://www.ptagis.org/">PTAGIS</a>, build a configuration file to help assign each detection to a “node”, and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table of locations, and assign directionality of movement between each detection site. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), <code>PITcleanr</code> can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept.</p>
 </div>
 <div id="installation" class="section level1">
 <h1 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h1>
-<p>The <code>PITcleanr</code> compendium can be downloaded as a zip from from this URL: <a href="https://github.com/BiomarkABS/PITcleanr/archive/master.zip" class="uri">https://github.com/BiomarkABS/PITcleanr/archive/master.zip</a></p>
+<p>The <code>PITcleanr</code> compendium can be downloaded as a zip from from this URL: <a href="https://github.com/KevinSee/PITcleanr/archive/master.zip" class="uri">https://github.com/KevinSee/PITcleanr/archive/master.zip</a></p>
 <p>Or you can install the compendium as an R package from GitHub by using Hadley Wickham’s <code>devtools</code> package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install and load remotes, if necessary</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"BiomarkABS/PITcleanr"</span>, 
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr"</span>, 
                          build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><code>devtools</code> may require the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/">here</a>.</p>
 <p>For the latest development version:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"BiomarkABS/PITcleanr@develop"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr@develop"</span><span class="op">)</span></code></pre></div>
 <p>Additionally, one function in <code>PITcleanr</code> allows the user to make a plot of how the detection sites or nodes are related to each other. To use this function, one will need the <code>ggraph</code> and <code>tidygraph</code> R packages. <code>tidygraph</code> is included with <code>ggraph</code>, so a user only needs to install <code>ggraph</code>. If the argument <code>dependencies</code> is set to <code>TRUE</code> in the code above, it should be installed automatically. Otherwise, run the following:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"ggraph"</span><span class="op">)</span></code></pre></div>
 <p>Once <code>PITcleanr</code> is successfully installed, it can be loaded into the R session. In this vignette, we will also use many functions from the <code>tidyverse</code> <a href="https://www.tidyverse.org/">group of packages</a>, so load those as well:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/BiomarkABS/PITcleanr">PITcleanr</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/KevinSee/PITcleanr">PITcleanr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></code></pre></div>
 <p>Note that many of the various queries in <code>PITcleanr</code> require a connection to the internet.</p>
 </div>
@@ -958,11 +958,11 @@
 </tr>
 </tbody>
 </table>
-<p>Congratulations! You now have complete tag histories for your tags of interest from <a href="https:://www.ptagis/org">PTAGIS</a>! Next, we’ll demonstrate how to perform some quick quality control checks and compress all of those records into a more manageable size.</p>
+<p>Congratulations! You now have complete tag histories for your tags of interest from <a href="https://www.ptagis.org/">PTAGIS</a>! Next, we’ll demonstrate how to perform some quick quality control checks and compress all of those records into a more manageable size.</p>
 <div id="quality-control" class="section level2">
 <h2 class="hasAnchor">
 <a href="#quality-control" class="anchor"></a>Quality Control</h2>
-<p>Later, we’ll demonstrate how <code>PITcleanr</code> can be used to compress the detections in your complete tag history output (<code>ptagis_file</code>) from <a href="https:://www.ptagis/org">PTAGIS</a>. Bur first, <code>PITcleanr</code> can help perform some basic quality control on the PTAGIS detections. The <code><a href="../reference/qcTagHistory.html">qcTagHistory()</a></code> function returns a list including a vector of tags listed as “DISOWN” by PTAGIS, another vector of tags listed as “ORPHAN”, and a data frame of release batches. A tag listed as “DISOWN” or “ORPHAN” indicates that PTAGIS has not received a valid mark file for that tag, which may prompt a user to upload such a file. This latter data frame can be used by the <code><a href="../reference/compress.html">compress()</a></code> function in <code>PITcleanr</code> to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination.</p>
+<p>Later, we’ll demonstrate how <code>PITcleanr</code> can be used to compress the detections in your complete tag history output (<code>ptagis_file</code>) from <a href="https://www.ptagis.org/">PTAGIS</a>. Bur first, <code>PITcleanr</code> can help perform some basic quality control on the PTAGIS detections. The <code><a href="../reference/qcTagHistory.html">qcTagHistory()</a></code> function returns a list including a vector of tags listed as “DISOWN” by PTAGIS, another vector of tags listed as “ORPHAN”, and a data frame of release batches. A tag listed as “DISOWN” or “ORPHAN” indicates that PTAGIS has not received a valid mark file for that tag, which may prompt a user to upload such a file. This latter data frame can be used by the <code><a href="../reference/compress.html">compress()</a></code> function in <code>PITcleanr</code> to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination.</p>
 <p>Here, we’ll run the <code><a href="../reference/qcTagHistory.html">qcTagHistory()</a></code> function, again on the file path (<code>ptagis_file</code>) of the PTAGIS complete tag history query output, and save the results to an object <code>qc_detections</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">qc_detections</span> <span class="op">=</span> <span class="fu"><a href="../reference/qcTagHistory.html">qcTagHistory</a></span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span>
@@ -1050,7 +1050,7 @@
 <div id="ptagis-site-metadata" class="section level2">
 <h2 class="hasAnchor">
 <a href="#ptagis-site-metadata" class="anchor"></a>PTAGIS Site Metadata</h2>
-<p><code>PITcleanr</code> includes a convenience function <code><a href="../reference/queryPtagisMeta.html">queryPtagisMeta()</a></code> to query all the metadata associated with PTAGIS sites, including both Mark/Recapture/Recovery (MRR) and Interrogation (INT) sites. That metadata can also be found on the PTAGIS website <a href="https://www.ptagis.org/sites">here</a>. Many of the columns included in the output from <code><a href="../reference/queryPtagisMeta.html">queryPtagisMeta()</a></code> are specific to either the INT or MRR site types, so you may notice that many values in the output, in our example below <code>ptagis_meta</code>, are <code>NA</code> depending on the site type and column. If desired, the user could write that file out to a .csv file or similar, using a function like <code>write_csv()</code> from the <code>readr</code> package..</p>
+<p><code>PITcleanr</code> includes a convenience function <code><a href="../reference/queryPtagisMeta.html">queryPtagisMeta()</a></code> to query all the metadata associated with PTAGIS sites, including both Mark/Recapture/Recovery (MRR) and Interrogation (INT) sites. That metadata can also be found on the PTAGIS website <a href="https://www.ptagis.org/Sites/Map">here</a>. Many of the columns included in the output from <code><a href="../reference/queryPtagisMeta.html">queryPtagisMeta()</a></code> are specific to either the INT or MRR site types, so you may notice that many values in the output, in our example below <code>ptagis_meta</code>, are <code>NA</code> depending on the site type and column. If desired, the user could write that file out to a .csv file or similar, using a function like <code>write_csv()</code> from the <code>readr</code> package..</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ptagis_meta</span> <span class="op">=</span> <span class="fu"><a href="../reference/queryPtagisMeta.html">queryPtagisMeta</a></span><span class="op">(</span><span class="op">)</span>
 <span class="co">#&gt; Querying INT sites' metadata</span>
@@ -1059,7 +1059,7 @@
 
 <span class="co"># view first 6 records of PTAGIS site metadata using head() function</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ptagis_meta</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 38</span>
+<span class="co">#&gt; # A tibble: 6 x 42</span>
 <span class="co">#&gt;   site_code site_name    site_description         site_type   active operational</span>
 <span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;                    &lt;chr&gt;       &lt;lgl&gt;  &lt;lgl&gt;      </span>
 <span class="co">#&gt; 1 158       Fifteenmile… INSTREAM DETECTION ARRA… Instream R… TRUE   TRUE       </span>
@@ -1068,7 +1068,7 @@
 <span class="co">#&gt; 4 158       Fifteenmile… INSTREAM DETECTION ARRA… Instream R… TRUE   TRUE       </span>
 <span class="co">#&gt; 5 158       Fifteenmile… INSTREAM DETECTION ARRA… Instream R… TRUE   TRUE       </span>
 <span class="co">#&gt; 6 158       Fifteenmile… INSTREAM DETECTION ARRA… Instream R… TRUE   TRUE       </span>
-<span class="co">#&gt; # … with 32 more variables: operations_organization_name &lt;chr&gt;,</span>
+<span class="co">#&gt; # … with 36 more variables: operations_organization_name &lt;chr&gt;,</span>
 <span class="co">#&gt; #   operations_organization_code &lt;chr&gt;, latitude &lt;dbl&gt;, longitude &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   rkm &lt;chr&gt;, rkm_total &lt;dbl&gt;, first_year &lt;dbl&gt;, last_year &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   first_date &lt;chr&gt;, last_date &lt;chr&gt;, operation_period &lt;chr&gt;,</span>
@@ -1076,9 +1076,10 @@
 <span class="co">#&gt; #   last_file_processed_on &lt;chr&gt;, last_tag_code &lt;chr&gt;, last_tag_time &lt;chr&gt;,</span>
 <span class="co">#&gt; #   configuration_sequence &lt;dbl&gt;, antenna_group_name &lt;chr&gt;, antenna_id &lt;chr&gt;,</span>
 <span class="co">#&gt; #   start_date &lt;dttm&gt;, end_date &lt;dttm&gt;, type &lt;chr&gt;, hu_c8code &lt;chr&gt;,</span>
-<span class="co">#&gt; #   coordinate_type &lt;chr&gt;, min_km &lt;chr&gt;, max_km &lt;chr&gt;, is_mark_site_only &lt;lgl&gt;,</span>
-<span class="co">#&gt; #   changed_by &lt;chr&gt;, change_comments &lt;chr&gt;, change_date &lt;lgl&gt;,</span>
-<span class="co">#&gt; #   point_location &lt;lgl&gt;</span></code></pre></div>
+<span class="co">#&gt; #   coordinate_type &lt;chr&gt;, legacy_type &lt;chr&gt;, parent_location &lt;chr&gt;,</span>
+<span class="co">#&gt; #   min_km &lt;chr&gt;, max_km &lt;chr&gt;, mark_site_only &lt;lgl&gt;, point_location &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   shape_type &lt;chr&gt;, stream_location_id &lt;chr&gt;, spatial_line_id &lt;int&gt;,</span>
+<span class="co">#&gt; #   spatial_poly_id &lt;int&gt;, spatial_fac_id &lt;int&gt;</span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># write ptagis_meta to .csv file</span>
 <span class="fu">write_csv</span><span class="op">(</span><span class="va">ptagis_meta</span>,

@@ -77,7 +77,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/BiomarkABS/PITcleanr/">
+  <a href="https://github.com/KevinSee/PITcleanr/">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -98,9 +98,9 @@
       <h1 data-toc-skip>DABOM Data Prep ‘Cheatsheet’</h1>
                         <h4 class="author">Kevin See</h4>
             
-            <h4 class="date">15 June, 2021</h4>
+            <h4 class="date">13 September, 2021</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/BiomarkABS/PITcleanr/blob/master/vignettes/quick_prep.Rmd"><code>vignettes/quick_prep.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/master/vignettes/quick_prep.Rmd"><code>vignettes/quick_prep.Rmd</code></a></small>
       <div class="hidden name"><code>quick_prep.Rmd</code></div>
 
     </div>
@@ -110,7 +110,7 @@
 <div id="introduction" class="section level1">
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
-<p>The core of <code>PITcleanr</code>’s functionality relies on detections from <a href="https://ptagis.org/">PTAGIS</a>, a configuration file that maps those detections onto user-defined “nodes”, and a parent-child table showing how those nodes are related to each other on a stream network (i.e. which nodes are connected). <code>PITcleanr</code> contains several functions to help create the configuration file and the parent-child table, but the user can also create those files by hand, or use files from a previous analysis (e.g. last year). This vignette shows only the essential steps needed to make use of <code>PITcleanr</code> in preparing data for <code>DABOM</code>.</p>
+<p>The core of <code>PITcleanr</code>’s functionality relies on detections from <a href="https://www.ptagis.org/">PTAGIS</a>, a configuration file that maps those detections onto user-defined “nodes”, and a parent-child table showing how those nodes are related to each other on a stream network (i.e. which nodes are connected). <code>PITcleanr</code> contains several functions to help create the configuration file and the parent-child table, but the user can also create those files by hand, or use files from a previous analysis (e.g. last year). This vignette shows only the essential steps needed to make use of <code>PITcleanr</code> in preparing data for <code>DABOM</code>.</p>
 </div>
 <div id="minimal-r-script" class="section level1">
 <h1 class="hasAnchor">
@@ -118,7 +118,7 @@
 <p>If the user has file containing the complete tag histories for their tags of interest, plus the configuration file (<code>config_file</code>) and the parent-child file (<code>parent_child_file</code>) ready, the only script necessary to run in R (which will include saving the output as an Excel workbook) is:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># load the necessary packages</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/BiomarkABS/PITcleanr">PITcleanr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/KevinSee/PITcleanr">PITcleanr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 
