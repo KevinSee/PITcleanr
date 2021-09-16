@@ -19,7 +19,7 @@ queryInterrogationMeta = function(site_code = NULL) {
   ua = httr::user_agent('https://github.com/KevinSee/PITcleanr')
 
   # compose url with query
-  url_req = "https://www.ptagis.org/api/sites/interrogation"
+  url_req = "https://api.ptagis.org/sites/interrogation"
 
   if(!is.null(site_code)) url_req = paste(url_req, site_code, sep = '/')
 

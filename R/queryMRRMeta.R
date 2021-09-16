@@ -19,7 +19,7 @@ queryMRRMeta = function(site = NULL) {
   ua = httr::user_agent('https://github.com/KevinSee/PITcleanr')
 
   # compose url with query
-  url_req = "https://www.ptagis.org/api/sites/mrr"
+  url_req = "https://api.ptagis.org/sites/mrr"
 
   if(!is.null(site)) url_req = paste(url_req, site, sep = '/')
 
