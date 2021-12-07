@@ -12,6 +12,8 @@ prepWrapper(
   start_node = NULL,
   min_obs_date = NULL,
   max_obs_date = NULL,
+  ignore_event_vs_release = FALSE,
+  add_tag_detects = FALSE,
   save_file = F,
   file_name = NULL,
   ...
@@ -43,6 +45,13 @@ output will filter out observations prior to this date.}
 
 \item{max_obs_date}{Character string in the format "YYYYMMDD". If included, the
 output will suggest that observations after this date should be deleted.}
+
+\item{ignore_event_vs_release}{Should the function attempt to choose whether to use the event time value
+or the event release time value for different release batches? Default is `FALSE`. If set to `TRUE`,
+the event time value will be used}
+
+\item{add_tag_detects}{Should a column be added that lists all the sites a tag was
+detected on, regardless of node? Default is `FALSE`.}
 
 \item{save_file}{Should the output be saved to a csv or Excel workbook? Default
 is `FALSE`.}
