@@ -109,23 +109,23 @@ prepWrapper = function(compress_obs = NULL,
                               max_obs_date = max_obs_date)
 
   if(add_tag_detects) {
-    ptagis_obs = readCTH(ptagis_file)
+    ptagis_obs = PITcleanr::readCTH(ptagis_file)
     tag_obs = ptagis_obs %>%
-      left_join(obs %>%
-                  select(tag_code,
-                         start_date) %>%
-                  distinct(),
-                by = "tag_code") %>%
-      filter(event_date_time_value >= start_date |
-               event_release_date_time_value >= start_date) %>%
-      select(-start_date) %>%
-      extractTagObs()
+      dplyr::left_join(obs %>%
+                         dplyr::select(tag_code,
+                                       start_date) %>%
+                         distinct(),
+                       by = "tag_code") %>%
+      dplyr::filter(event_date_time_value >= start_date |
+                      event_release_date_time_value >= start_date) %>%
+      dplyr::select(-start_date) %>%
+      PITcleanr::extractTagObs()
 
     keep_obs = keep_obs %>%
-      left_join(tag_obs,
-                by = "tag_code") %>%
-      relocate(tag_detects,
-               .before = ends_with("keep_obs"))
+      dplyr::left_join(tag_obs,
+                       by = "tag_code") %>%
+      dplyr::relocate(tag_detects,
+                      .before = ends_with("keep_obs"))
   }
 
 
