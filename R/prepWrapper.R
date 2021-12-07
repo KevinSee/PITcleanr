@@ -111,7 +111,7 @@ prepWrapper = function(compress_obs = NULL,
   if(add_tag_detects) {
     ptagis_obs = readCTH(ptagis_file)
     tag_obs = ptagis_obs %>%
-      left_join(keep_obs %>%
+      left_join(obs %>%
                   select(tag_code,
                          start_date) %>%
                   distinct(),
@@ -123,7 +123,9 @@ prepWrapper = function(compress_obs = NULL,
 
     keep_obs = keep_obs %>%
       left_join(tag_obs,
-                by = "tag_code")
+                by = "tag_code") %>%
+      relocate(tag_detects,
+               .before = ends_with("keep_obs"))
   }
 
 
