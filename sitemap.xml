@@ -1,7 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/404.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/articles/DABOM_prep.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/articles/Prep_PIT_data.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/articles/quick_prep.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/authors.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/CONDUCT.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/CONTRIBUTING.html</loc>
+  </url>
+  <url>
     <loc>https://kevinsee.github.io/PITcleanr/index.html/index.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/news/index.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/addDirection.html</loc>
@@ -37,13 +67,16 @@
     <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/editParentChild.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/estNodeEff.html</loc>
-  </url>
-  <url>
     <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/estimateSpawnLoc.html</loc>
   </url>
   <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/estNodeEff.html</loc>
+  </url>
+  <url>
     <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/extractSites.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/extractTagObs.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/filterDetections.html</loc>
@@ -52,13 +85,16 @@
     <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/filterLGRtrapDB.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/findDwnStrmSite_RKM.html</loc>
-  </url>
-  <url>
     <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/findDwnstrmHydroseg.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/findDwnstrmSite.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/findDwnStrmSite_RKM.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/index.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/listParents.html</loc>
@@ -152,14 +188,5 @@
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/index.html/reference/writeTUMNodeNetwork_noUWE.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/index.html/articles/DABOM_prep.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/index.html/articles/Prep_PIT_data.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/index.html/articles/quick_prep.html</loc>
   </url>
 </urlset>

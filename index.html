@@ -26,6 +26,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -38,18 +40,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">PITcleanr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">2.0.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">2.0.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="reference/index.html">Functions</a>
 </li>
@@ -61,12 +57,14 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li class="divider">
-    <li class="dropdown-header">Getting Started</li>
+    </li>
+<li class="dropdown-header">Getting Started</li>
     <li>
       <a href="articles/Prep_PIT_data.html">Querying, Compressing, and Making Sense of PIT Tag Detection Data</a>
     </li>
     <li class="divider">
-    <li>
+    </li>
+<li>
       <a href="articles/index.html">More...</a>
     </li>
   </ul>
@@ -77,7 +75,7 @@
       </ul>
 <ul class="nav navbar-nav navbar-right">
 <li>
-  <a href="https://github.com/KevinSee/PITcleanr/">
+  <a href="https://github.com/KevinSee/PITcleanr/" class="external-link">
     <span class="fab fa-github fa-lg"></span>
      
   </a>
@@ -94,53 +92,53 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="pitcleanr-" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#pitcleanr-" class="anchor"></a>PITcleanr <a href="https://github.com/KevinSee/PITcleanr"><img src="reference/figures/logo.png" align="right" height="139"></a>
+<div class="section level1">
+<div class="page-header"><h1 id="pitcleanr-">PITcleanr <a href="https://github.com/KevinSee/PITcleanr" class="external-link"><img src="reference/figures/logo.png" align="right" height="20"></a>
+<a class="anchor" aria-label="anchor" href="#pitcleanr-"></a>
 </h1></div>
 <!-- badges: start -->
 
-<div id="description" class="section level2">
-<h2 class="hasAnchor">
-<a href="#description" class="anchor"></a>Description</h2>
-<p><code>PITcleanr</code> is an R package for preparing PIT tag data for further analysis. The package can help import complete tag histories from <a href="https://www.ptagis.org/">PTAGIS</a>, build a configuration file to help assign each detection to a “node”, and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table describing whether detection locations are upstream or downstream in relation to each other, and assign directionality of movement between each detection location. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), <code>PITcleanr</code> can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept.</p>
-<p>It was originally conceived as a companion to the <a href="https://github.com/KevinSee/DABOM">DABOM</a> package for estimating abundance of returning anadromous adult fish moving upstream. <code>PITcleanr</code> was designed to prepare the raw PIT tag observations from <a href="https://www.ptagis.org/">PTAGIS</a> for use in the <code>DABOM</code> package.</p>
-<p>The user can find more information related to installation and use of this package on the <a href="https://kevinsee.github.io/PITcleanr/">package website</a>.</p>
+<div class="section level2">
+<h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
+</h2>
+<p><code>PITcleanr</code> is an R package for preparing PIT tag data for further analysis. The package can help import complete tag histories from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a>, build a configuration file to help assign each detection to a “node”, and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table describing whether detection locations are upstream or downstream in relation to each other, and assign directionality of movement between each detection location. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), <code>PITcleanr</code> can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept.</p>
+<p>It was originally conceived as a companion to the <a href="https://github.com/KevinSee/DABOM" class="external-link">DABOM</a> package for estimating abundance of returning anadromous adult fish moving upstream. <code>PITcleanr</code> was designed to prepare the raw PIT tag observations from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a> for use in the <code>DABOM</code> package.</p>
+<p>The user can find more information related to installation and use of this package on the <a href="https://kevinsee.github.io/PITcleanr/" class="external-link">package website</a>.</p>
 </div>
-<div id="installation-instructions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation-instructions" class="anchor"></a>Installation Instructions</h2>
-<p>The <code>PITcleanr</code> compendium can be downloaded as a zip from from this URL: <a href="https://github.com/KevinSee/PITcleanr/archive/master.zip" class="uri">https://github.com/KevinSee/PITcleanr/archive/master.zip</a></p>
+<div class="section level2">
+<h2 id="installation-instructions">Installation Instructions<a class="anchor" aria-label="anchor" href="#installation-instructions"></a>
+</h2>
+<p>The <code>PITcleanr</code> compendium can be downloaded as a zip from from this URL: <a href="https://github.com/KevinSee/PITcleanr/archive/master.zip" class="external-link uri">https://github.com/KevinSee/PITcleanr/archive/master.zip</a></p>
 <p>Or you can install the compendium as an R package from GitHub by using Hadley Wickham’s <code>devtools</code> package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install and load remotes, if necessary</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr"</span>, 
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
+<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr"</span>, 
                          build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
-<p><code>devtools</code> may require the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/">here</a>.</p>
+<p><code>devtools</code> may require the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">here</a>.</p>
 <p>For the latest development version:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr@develop"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr@develop"</span><span class="op">)</span></code></pre></div>
 <p>Be sure to use the <code>build_vignettes = TRUE</code> argument, as this will build all of the vignettes (i.e., user manuals) that are included with the package. Further instructions on how to use <code>PITcleanr</code> can be found in the vignettes, which can be accessed using:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html">browseVignettes</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"PITcleanr"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"PITcleanr"</span><span class="op">)</span>
 <span class="co">#&gt; No vignettes found by browseVignettes(package = "PITcleanr")</span></code></pre></div>
 </div>
-<div id="compressing-ptagis-detection-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#compressing-ptagis-detection-data" class="anchor"></a>Compressing PTAGIS Detection Data</h2>
-<p>The complete tag history query output from <a href="https://ptagis.org/">PTAGIS</a> (e.g., <code>ptagis_file</code>) will provide a record for every detection of each tag code in the tag list. Again, this may include multiple detections on the same antenna, or the same site within a short period of time, leading to an unwieldy and perhaps messy dataset. One of the main purposes of <code>PITcleanr</code> is to compress that data into an initial summary using the function <code><a href="reference/compress.html">compress()</a></code>. At a minimum, this function requires a path e.g., <code>ptagis_file</code>, to the complete tag history query results downloaded from PTAGIS.</p>
+<div class="section level2">
+<h2 id="compressing-ptagis-detection-data">Compressing PTAGIS Detection Data<a class="anchor" aria-label="anchor" href="#compressing-ptagis-detection-data"></a>
+</h2>
+<p>The complete tag history query output from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> (e.g., <code>ptagis_file</code>) will provide a record for every detection of each tag code in the tag list. Again, this may include multiple detections on the same antenna, or the same site within a short period of time, leading to an unwieldy and perhaps messy dataset. One of the main purposes of <code>PITcleanr</code> is to compress that data into an initial summary using the function <code><a href="reference/compress.html">compress()</a></code>. At a minimum, this function requires a path e.g., <code>ptagis_file</code>, to the complete tag history query results downloaded from PTAGIS.</p>
 <p>In our example, we perform the <code><a href="reference/compress.html">compress()</a></code> function on the <code>ptagis_file</code> object containing the file path to our query results, and write the output to an object <code>comp_obs</code> containing the compressed observations.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># view path to example file, of course you can also set ptagis_file to your own PTAGIS query results</span>
 <span class="va">ptagis_file</span>
-<span class="co">#&gt; [1] "/Users/seek/Library/R/4.0/library/PITcleanr/extdata/TUM_Chinook_2015.csv"</span>
+<span class="co">#&gt; [1] "C:/Users/seek1477/OneDrive - Washington State Executive Branch Agencies/Documents/R/win-library/4.1/PITcleanr/extdata/TUM_Chinook_2015.csv"</span>
 
 <span class="co"># run compress() function on it</span>
 <span class="va">comp_obs</span> <span class="op">=</span> <span class="fu"><a href="reference/compress.html">compress</a></span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span>
 
 <span class="co"># look at first parts of resulting object</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">comp_obs</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_obs</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 9</span>
 <span class="co">#&gt;   tag_code       node    slot event_type_name n_dets min_det            </span>
 <span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;  &lt;int&gt; &lt;chr&gt;            &lt;int&gt; &lt;dttm&gt;             </span>
@@ -150,7 +148,8 @@
 <span class="co">#&gt; 4 384.3B239AD241 TD1        4 Observation          3 2015-05-16 11:15:40</span>
 <span class="co">#&gt; 5 384.3B239AD241 MC2        5 Observation         17 2015-05-19 17:01:15</span>
 <span class="co">#&gt; 6 384.3B239AD241 PRA        6 Observation          2 2015-05-24 13:51:16</span>
-<span class="co">#&gt; # … with 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></code></pre></div>
+<span class="co">#&gt; # ... with 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;,</span>
+<span class="co">#&gt; #   travel_time &lt;drtn&gt;</span></code></pre></div>
 <p>The output consists of a tibble containing columns for:</p>
 <ul>
 <li>
@@ -178,37 +177,37 @@
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="op">?</span><span class="fu">PITcleanr</span><span class="fu">::</span><span class="va"><a href="reference/compress.html">compress</a></span></code></pre></div>
 </div>
-<div id="other-functionality" class="section level2">
-<h2 class="hasAnchor">
-<a href="#other-functionality" class="anchor"></a>Other Functionality</h2>
+<div class="section level2">
+<h2 id="other-functionality">Other Functionality<a class="anchor" aria-label="anchor" href="#other-functionality"></a>
+</h2>
 <p><code>PITcleanr</code> contains lots of additional functionality to help users summarize and further analyze the compressed PTAGIS observations. Find more details in the various vignettes.</p>
 </div>
-<div id="authors" class="section level2">
-<h2 class="hasAnchor">
-<a href="#authors" class="anchor"></a>Authors</h2>
+<div class="section level2">
+<h2 id="authors">Authors<a class="anchor" aria-label="anchor" href="#authors"></a>
+</h2>
 <p>PITcleanr is a collaborative project, with the primary contributors being:</p>
 <ul>
-<li>Kevin See (Biomark, Inc. - Applied Biological Services)</li>
+<li>Kevin See (Washington Department of Fish &amp; Wildlife)</li>
 <li>Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)</li>
 <li>Rick Orme (Nez Perce Tribe - Fisheries Resources Management)</li>
-<li>Mike Ackerman (Biomark, Inc. - Applied Biological Services)</li>
+<li>Mike Ackerman (Mt Hood Environmental)</li>
 </ul>
-<div id="licenses" class="section level3">
-<h3 class="hasAnchor">
-<a href="#licenses" class="anchor"></a>Licenses</h3>
-<p><strong>Text and figures :</strong> <a href="http://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a></p>
+<div class="section level3">
+<h3 id="licenses">Licenses<a class="anchor" aria-label="anchor" href="#licenses"></a>
+</h3>
+<p><strong>Text and figures :</strong> <a href="http://creativecommons.org/licenses/by/4.0/" class="external-link">CC-BY-4.0</a></p>
 <p><strong>Code :</strong> See the <a href="DESCRIPTION">DESCRIPTION</a> file</p>
-<p><strong>Data :</strong> <a href="http://creativecommons.org/publicdomain/zero/1.0/">CC-0</a> attribution requested in reuse</p>
+<p><strong>Data :</strong> <a href="http://creativecommons.org/publicdomain/zero/1.0/" class="external-link">CC-0</a> attribution requested in reuse</p>
 </div>
-<div id="contributions" class="section level3">
-<h3 class="hasAnchor">
-<a href="#contributions" class="anchor"></a>Contributions</h3>
+<div class="section level3">
+<h3 id="contributions">Contributions<a class="anchor" aria-label="anchor" href="#contributions"></a>
+</h3>
 <p>We welcome contributions from everyone. Before you get started, please see our <a href="CONTRIBUTING.html">contributor guidelines</a>. Please note that this project is released with a <a href="CONDUCT.html">Contributor Code of Conduct</a>. By participating in this project you agree to abide by its terms.</p>
 </div>
 </div>
-<div id="questions" class="section level2">
-<h2 class="hasAnchor">
-<a href="#questions" class="anchor"></a>Questions?</h2>
+<div class="section level2">
+<h2 id="questions">Questions?<a class="anchor" aria-label="anchor" href="#questions"></a>
+</h2>
 <p>Please feel free to post an issue to this repository for requested features, bug fixes, errors in documentation, etc.</p>
 </div>
 </div>
@@ -216,50 +215,61 @@
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Browse source code at <br><a href="https://github.com/KevinSee/PITcleanr/">https://​github.com/​KevinSee/​PITcleanr/​</a>
-</li>
-<li>Report a bug at <br><a href="https://github.com/KevinSee/PITcleanr/issues">https://​github.com/​KevinSee/​PITcleanr/​issues</a>
-</li>
+<li><a href="https://github.com/KevinSee/PITcleanr/" class="external-link">Browse source code</a></li>
+<li><a href="https://github.com/KevinSee/PITcleanr/issues" class="external-link">Report a bug</a></li>
 </ul>
 </div>
+
 <div class="license">
-<h2>License</h2>
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
 <li><a href="LICENSE.html">Full license</a></li>
-<li><small><a href="https://creativecommons.org/licenses/by/4.0">CC BY 4.0</a></small></li>
+<li><small><a href="https://creativecommons.org/licenses/by/4.0" class="external-link">CC BY 4.0</a></small></li>
 </ul>
 </div>
+
 <div class="community">
-<h2>Community</h2>
+<h2 data-toc-skip>Community</h2>
 <ul class="list-unstyled">
 <li><a href="CONTRIBUTING.html">Contributing guide</a></li>
 </ul>
 </div>
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing PITcleanr</a></li>
+</ul>
+</div>
+
 <div class="developers">
-<h2>Developers</h2>
+<h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Kevin See <br><small class="roles"> Author, maintainer </small>  </li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://mybinder.org/v2/gh/KevinSee/PITcleanr/master?urlpath=rstudio"><img src="https://mybinder.org/badge_logo.svg" alt="Binder"></a></li>
+<li><a href="https://mybinder.org/v2/gh/KevinSee/PITcleanr/master?urlpath=rstudio" class="external-link"><img src="https://mybinder.org/badge_logo.svg" alt="Binder"></a></li>
 </ul>
 </div>
-</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Kevin See.</p>
+  <p></p>
+<p>Developed by Kevin See.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -267,6 +277,8 @@
 
   
 
+
+  
 
   </body>
 </html>

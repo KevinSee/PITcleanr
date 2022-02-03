@@ -1,11 +1,11 @@
-pandoc: 2.7.3
-pkgdown: 1.6.1
+pandoc: 2.14.0.3
+pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   DABOM_prep: DABOM_prep.html
   Prep_PIT_data: Prep_PIT_data.html
   quick_prep: quick_prep.html
-last_built: 2021-09-17T19:52Z
+last_built: 2022-02-03T20:43Z
 urls:
   reference: https://kevinsee.github.io/PITcleanr/index.html/reference
   article: https://kevinsee.github.io/PITcleanr/index.html/articles
