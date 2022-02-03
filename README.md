@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" height="139" /></a>
+# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" height="130" /></a>
 
 <!-- badges: start -->
 
@@ -45,7 +45,7 @@ Hadley Wickham’s `devtools` package:
 ``` r
 # install and load remotes, if necessary
 install.packages("devtools")
-devtools::install_github("KevinSee/PITcleanr", 
+remotes::install_github("KevinSee/PITcleanr", 
                          build_vignettes = TRUE)
 ```
 
@@ -56,7 +56,7 @@ latest version of Rtools can be found
 For the latest development version:
 
 ``` r
-devtools::install_github("KevinSee/PITcleanr@develop")
+remotes::install_github("KevinSee/PITcleanr@develop")
 ```
 
 Be sure to use the `build_vignettes = TRUE` argument, as this will build
@@ -89,7 +89,7 @@ observations.
 ``` r
 # view path to example file, of course you can also set ptagis_file to your own PTAGIS query results
 ptagis_file
-#> [1] "/Users/seek/Library/R/4.0/library/PITcleanr/extdata/TUM_Chinook_2015.csv"
+#> [1] "C:/Users/seek1477/OneDrive - Washington State Executive Branch Agencies/Documents/R/win-library/4.1/PITcleanr/extdata/TUM_Chinook_2015.csv"
 
 # run compress() function on it
 comp_obs = compress(ptagis_file)
@@ -105,25 +105,25 @@ head(comp_obs)
 #> 4 384.3B239AD241 TD1        4 Observation          3 2015-05-16 11:15:40
 #> 5 384.3B239AD241 MC2        5 Observation         17 2015-05-19 17:01:15
 #> 6 384.3B239AD241 PRA        6 Observation          2 2015-05-24 13:51:16
-#> # … with 3 more variables: max_det <dttm>, duration <drtn>, travel_time <drtn>
+#> # ... with 3 more variables: max_det <dttm>, duration <drtn>,
+#> #   travel_time <drtn>
 ```
 
 The output consists of a tibble containing columns for:
 
-  - **tag\_code:** The unique PIT tag ID.
-  - **node:** By default, each site code from PTAGIS is considered a
+-   **tag_code:** The unique PIT tag ID.
+-   **node:** By default, each site code from PTAGIS is considered a
     node. More on this below…
-  - **slot:** A detection “slot” for each tag, numbered in chronological
+-   **slot:** A detection “slot” for each tag, numbered in chronological
     order. Also more on this below…
-  - **event\_type\_name:** The type of “event”. Typically, mark,
+-   **event_type_name:** The type of “event”. Typically, mark,
     observation, recapture, or recovery.
-  - **n\_dets:** The number of detections that occurred within that
-    slot.
-  - **min\_det:** The time of the first (min) detection in the slot.
-  - **max\_det:** The time of the last (max) detection in the slot.
-  - **duration:** The duration of that slot (maximum - minimum detection
+-   **n_dets:** The number of detections that occurred within that slot.
+-   **min_det:** The time of the first (min) detection in the slot.
+-   **max_det:** The time of the last (max) detection in the slot.
+-   **duration:** The duration of that slot (maximum - minimum detection
     time).
-  - **travel\_time:** The travel time between the previous slot and that
+-   **travel_time:** The travel time between the previous slot and that
     one.
 
 ***A note on “nodes”***: A node is the spatial scale of interest for the
@@ -131,7 +131,7 @@ user. By default, the `compress()` function considers a site code from
 PTAGIS as a node. However, a node could be defined as the individual PIT
 antenna a detection was made on, or the array that antenna is a part of,
 or groups of arrays, or sites, or groups of sites, or possibly even
-larger (e.g, any detection in **this** tributary\!) depending on the
+larger (e.g, any detection in **this** tributary!) depending on the
 spatial scale desired. The user may decide to define some arrays at
 particular sites to be their own nodes, while simultaneously lumping all
 the sites in a particular watershed into a single node. To utilize this
@@ -145,10 +145,10 @@ Each slot in the output is defined as all detections on a particular
 node before the tag is detected on a different node. The user can define
 a maximum number of minutes between detections before a new slot should
 be defined by supplying a value to the `max_minutes` argument to
-`compress()`. The units of the duration and travel\_time columns can
-also be defined by the `units` argument. The default is minutes
-(`mins`). As an example, if a tag moves from node A to B and back to A,
-there will be three slots in the compressed data.
+`compress()`. The units of the duration and travel_time columns can also
+be defined by the `units` argument. The default is minutes (`mins`). As
+an example, if a tag moves from node A to B and back to A, there will be
+three slots in the compressed data.
 
 The help menu for `compress()`, or any function for that matter, can be
 accessed using:
@@ -168,10 +168,10 @@ more details in the various vignettes.
 PITcleanr is a collaborative project, with the primary contributors
 being:
 
-  - Kevin See (Biomark, Inc. - Applied Biological Services)
-  - Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)
-  - Rick Orme (Nez Perce Tribe - Fisheries Resources Management)
-  - Mike Ackerman (Biomark, Inc. - Applied Biological Services)
+-   Kevin See (Washington Department of Fish & Wildlife)
+-   Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)
+-   Rick Orme (Nez Perce Tribe - Fisheries Resources Management)
+-   Mike Ackerman (Mt Hood Environmental)
 
 ### Licenses
 
