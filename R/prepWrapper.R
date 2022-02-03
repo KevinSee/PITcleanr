@@ -16,6 +16,8 @@
 #' output will filter out observations prior to this date.
 #' @param max_obs_date Character string in the format "YYYYMMDD". If included, the
 #' output will suggest that observations after this date should be deleted.
+#' @param add_tag_detects Should a column be added that lists all the sites a tag was
+#' detected on, regardless of node? Default is `FALSE`.
 #' @param save_file Should the output be saved to a csv or Excel workbook? Default
 #' is `FALSE`.
 #' @param file_name if `save_file` is `TRUE`, the file name and path to save the
@@ -34,6 +36,8 @@ prepWrapper = function(compress_obs = NULL,
                        start_node = NULL,
                        min_obs_date = NULL,
                        max_obs_date = NULL,
+                       ignore_event_vs_release = FALSE,
+                       add_tag_detects = FALSE,
                        save_file = F,
                        file_name = NULL,
                        ...) {
@@ -42,6 +46,10 @@ prepWrapper = function(compress_obs = NULL,
     (!is.null(compress_obs)) | (!is.null(ptagis_file) & !is.null(configuration))
     !is.null(parent_child)
   })
+
+  if(add_tag_detects & is.null(ptagis_file)) {
+    stop("Original PTAGIS file needed to add tag detections.")
+  }
 
   if(is.null(compress_obs)) {
     cat("Compressing detections\n")
@@ -99,6 +107,26 @@ prepWrapper = function(compress_obs = NULL,
   keep_obs = filterDetections(compress_obs = obs,
                               parent_child = parent_child,
                               max_obs_date = max_obs_date)
+
+  if(add_tag_detects) {
+    ptagis_obs = PITcleanr::readCTH(ptagis_file)
+    tag_obs = ptagis_obs %>%
+      dplyr::left_join(obs %>%
+                         dplyr::select(tag_code,
+                                       start_date) %>%
+                         distinct(),
+                       by = "tag_code") %>%
+      dplyr::filter(event_date_time_value >= start_date |
+                      event_release_date_time_value >= start_date) %>%
+      dplyr::select(-start_date) %>%
+      PITcleanr::extractTagObs()
+
+    keep_obs = keep_obs %>%
+      dplyr::left_join(tag_obs,
+                       by = "tag_code") %>%
+      dplyr::relocate(tag_detects,
+                      .before = ends_with("keep_obs"))
+  }
 
 
   if(save_file) {
