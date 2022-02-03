@@ -63,10 +63,10 @@ ptagis_file = system.file("extdata",
 
 PITcleanr is a collaborative project, with the primary contributors being:
 
-* Kevin See (Biomark, Inc. - Applied Biological Services)
+* Kevin See (Washington Department of Fish & Wildlife)
 * Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)
 * Rick Orme (Nez Perce Tribe - Fisheries Resources Management)
-* Mike Ackerman (Biomark, Inc. - Applied Biological Services)
+* Mike Ackerman (Mt Hood Environmental)
 
 ### Licenses
 
