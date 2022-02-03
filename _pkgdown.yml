@@ -1,9 +1,7 @@
-url: https://kevinsee.github.io/PITcleanr/index.html
-
+url: https://kevinsee.github.io/PITcleanr
 template:
   params:
     bootswatch: sandstone
-
 navbar:
   title: ~
   type: default
@@ -33,30 +31,25 @@ navbar:
     news:
       text: News
       href: news/index.html
-
-
-
 reference:
-- title: "Compressing PTAGIS Data"
-  desc: >
+- title: Compressing PTAGIS Data
+  desc: |
     Functions for reading in complete capture histories from PTAGIS and compressing them
 - contents:
   - compress
   - readCTH
   - qcTagHistory
   - extractTagObs
-- title: "Querying Data"
-  desc: >
+- title: Querying Data
+  desc: |
     Functions for querying data from PTAGIS or NHDPlus
-- contents:
-  - starts_with("query")
-- title: "Building Configuration File"
-  desc: >
+- contents: starts_with("query")
+- title: Building Configuration File
+  desc: |
     Functions to help the user build a configuration file
-- contents:
-  - buildConfig
-- title: "Parent-Child Table"
-  desc: >
+- contents: buildConfig
+- title: Parent-Child Table
+  desc: |
     Functions to help the user build, edit and visualize a parent-child table
 - contents:
   - extractSites
@@ -70,8 +63,8 @@ reference:
   - buildPaths
   - plotNodes
   - buildNodeGraph
-- title: "Manipulate Data"
-  desc: >
+- title: Manipulate Data
+  desc: |
     Functions to help the user manipulate and summarize data
 - contents:
   - addDirection
@@ -81,8 +74,8 @@ reference:
   - prepWrapper
   - summarizeTagData
   - compressDART
-- title: "Deprecated functions"
-  desc: >
+- title: Deprecated functions
+  desc: |
     These functions have been superseded
 - contents:
   - obsNetwork
@@ -104,13 +97,11 @@ reference:
   - writePRONodeNetwork
   - writeTUMNodeNetwork
   - writeTUMNodeNetwork_noUWE
-
 articles:
 - title: Getting Started
-  contents:
-  - Prep_PIT_data
+  contents: Prep_PIT_data
 - title: DABOM
-  desc: >
+  desc: |
     Vignettes aimed at preparing data for DABOM
   contents:
   - DABOM_prep
