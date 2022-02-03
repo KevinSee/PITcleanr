@@ -44,6 +44,7 @@ reference:
   - compress
   - readCTH
   - qcTagHistory
+  - extractTagObs
 - title: "Querying Data"
   desc: >
     Functions for querying data from PTAGIS or NHDPlus
