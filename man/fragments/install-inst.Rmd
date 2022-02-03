@@ -4,14 +4,14 @@ output:
   html_document: default
 ---
 
-The `PITcleanr` compendium can be downloaded as a zip from from this URL: <https://github.com/BiomarkABS/PITcleanr/archive/master.zip>
+The `PITcleanr` compendium can be downloaded as a zip from from this URL: <https://github.com/KevinSee/PITcleanr/archive/master.zip>
 
 Or you can install the compendium as an R package from GitHub by using Hadley Wickham's `devtools` package:
 
 ```{r gh-installation, eval = FALSE}
 # install and load remotes, if necessary
 install.packages("devtools")
-devtools::install_github("BiomarkABS/PITcleanr", 
+remotes::install_github("KevinSee/PITcleanr", 
                          build_vignettes = TRUE)
 ```
 
@@ -20,5 +20,5 @@ devtools::install_github("BiomarkABS/PITcleanr",
 For the latest development version:
 
 ```{r develop-version, eval = FALSE}
-devtools::install_github("BiomarkABS/PITcleanr@develop")
+remotes::install_github("KevinSee/PITcleanr@develop")
 ```

@@ -1,42 +1,43 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# PITcleanr <a href='https://github.com/BiomarkABS/PITcleanr'><img src='man/figures/logo.png' align="right" height="139" /></a>
+# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" height="130" /></a>
 
 <!-- badges: start -->
 
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BiomarkABS/PITcleanr/master?urlpath=rstudio)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KevinSee/PITcleanr/master?urlpath=rstudio)
 <!-- badges: end -->
 
 ## Description
 
 `PITcleanr` is an R package for preparing PIT tag data for further
 analysis. The package can help import complete tag histories from
-[PTAGIS](https://ptagis.org/), build a configuration file to help assign
-each detection to a “node”, and compress those detections into a smaller
-file. It contains functions to determine which detection locations are
-upstream or downstream of each other, build a parent-child relationship
-table describing whether detection locations are upstream or downstream
-in relation to each other, and assign directionality of movement between
-each detection location. For analyses that focus on one-way directional
-movement (e.g., straightforward CJS models), `PITcleanr` can help
-determine which detections fail to meet that one-way movement assumption
-and should be examined more closely, and which detections can be kept.
+[PTAGIS](https://www.ptagis.org/), build a configuration file to help
+assign each detection to a “node”, and compress those detections into a
+smaller file. It contains functions to determine which detection
+locations are upstream or downstream of each other, build a parent-child
+relationship table describing whether detection locations are upstream
+or downstream in relation to each other, and assign directionality of
+movement between each detection location. For analyses that focus on
+one-way directional movement (e.g., straightforward CJS models),
+`PITcleanr` can help determine which detections fail to meet that
+one-way movement assumption and should be examined more closely, and
+which detections can be kept.
 
 It was originally conceived as a companion to the
-[DABOM](https://github.com/BiomarkABS/DABOM) package for estimating
+[DABOM](https://github.com/KevinSee/DABOM) package for estimating
 abundance of returning anadromous adult fish moving upstream.
 `PITcleanr` was designed to prepare the raw PIT tag observations from
-[PTAGIS](http://www.ptagis.org) for use in the `DABOM` package.
+[PTAGIS](https://www.ptagis.org/) for use in the `DABOM` package.
 
 The user can find more information related to installation and use of
 this package on the [package
-website](https://biomarkabs.github.io/PITcleanr/).
+website](https://kevinsee.github.io/PITcleanr/).
 
 ## Installation Instructions
 
 The `PITcleanr` compendium can be downloaded as a zip from from this
-URL: <https://github.com/BiomarkABS/PITcleanr/archive/master.zip>
+URL: <https://github.com/KevinSee/PITcleanr/archive/master.zip>
 
 Or you can install the compendium as an R package from GitHub by using
 Hadley Wickham’s `devtools` package:
@@ -44,7 +45,7 @@ Hadley Wickham’s `devtools` package:
 ``` r
 # install and load remotes, if necessary
 install.packages("devtools")
-devtools::install_github("BiomarkABS/PITcleanr", 
+remotes::install_github("KevinSee/PITcleanr", 
                          build_vignettes = TRUE)
 ```
 
@@ -55,7 +56,7 @@ latest version of Rtools can be found
 For the latest development version:
 
 ``` r
-devtools::install_github("BiomarkABS/PITcleanr@develop")
+remotes::install_github("KevinSee/PITcleanr@develop")
 ```
 
 Be sure to use the `build_vignettes = TRUE` argument, as this will build
@@ -88,7 +89,7 @@ observations.
 ``` r
 # view path to example file, of course you can also set ptagis_file to your own PTAGIS query results
 ptagis_file
-#> [1] "/Users/seek/Library/R/4.0/library/PITcleanr/extdata/TUM_Chinook_2015.csv"
+#> [1] "C:/Users/seek1477/OneDrive - Washington State Executive Branch Agencies/Documents/R/win-library/4.1/PITcleanr/extdata/TUM_Chinook_2015.csv"
 
 # run compress() function on it
 comp_obs = compress(ptagis_file)
@@ -104,25 +105,25 @@ head(comp_obs)
 #> 4 384.3B239AD241 TD1        4 Observation          3 2015-05-16 11:15:40
 #> 5 384.3B239AD241 MC2        5 Observation         17 2015-05-19 17:01:15
 #> 6 384.3B239AD241 PRA        6 Observation          2 2015-05-24 13:51:16
-#> # … with 3 more variables: max_det <dttm>, duration <drtn>, travel_time <drtn>
+#> # ... with 3 more variables: max_det <dttm>, duration <drtn>,
+#> #   travel_time <drtn>
 ```
 
 The output consists of a tibble containing columns for:
 
-  - **tag\_code:** The unique PIT tag ID.
-  - **node:** By default, each site code from PTAGIS is considered a
+-   **tag_code:** The unique PIT tag ID.
+-   **node:** By default, each site code from PTAGIS is considered a
     node. More on this below…
-  - **slot:** A detection “slot” for each tag, numbered in chronological
+-   **slot:** A detection “slot” for each tag, numbered in chronological
     order. Also more on this below…
-  - **event\_type\_name:** The type of “event”. Typically, mark,
+-   **event_type_name:** The type of “event”. Typically, mark,
     observation, recapture, or recovery.
-  - **n\_dets:** The number of detections that occurred within that
-    slot.
-  - **min\_det:** The time of the first (min) detection in the slot.
-  - **max\_det:** The time of the last (max) detection in the slot.
-  - **duration:** The duration of that slot (maximum - minimum detection
+-   **n_dets:** The number of detections that occurred within that slot.
+-   **min_det:** The time of the first (min) detection in the slot.
+-   **max_det:** The time of the last (max) detection in the slot.
+-   **duration:** The duration of that slot (maximum - minimum detection
     time).
-  - **travel\_time:** The travel time between the previous slot and that
+-   **travel_time:** The travel time between the previous slot and that
     one.
 
 ***A note on “nodes”***: A node is the spatial scale of interest for the
@@ -130,7 +131,7 @@ user. By default, the `compress()` function considers a site code from
 PTAGIS as a node. However, a node could be defined as the individual PIT
 antenna a detection was made on, or the array that antenna is a part of,
 or groups of arrays, or sites, or groups of sites, or possibly even
-larger (e.g, any detection in **this** tributary\!) depending on the
+larger (e.g, any detection in **this** tributary!) depending on the
 spatial scale desired. The user may decide to define some arrays at
 particular sites to be their own nodes, while simultaneously lumping all
 the sites in a particular watershed into a single node. To utilize this
@@ -144,10 +145,10 @@ Each slot in the output is defined as all detections on a particular
 node before the tag is detected on a different node. The user can define
 a maximum number of minutes between detections before a new slot should
 be defined by supplying a value to the `max_minutes` argument to
-`compress()`. The units of the duration and travel\_time columns can
-also be defined by the `units` argument. The default is minutes
-(`mins`). As an example, if a tag moves from node A to B and back to A,
-there will be three slots in the compressed data.
+`compress()`. The units of the duration and travel_time columns can also
+be defined by the `units` argument. The default is minutes (`mins`). As
+an example, if a tag moves from node A to B and back to A, there will be
+three slots in the compressed data.
 
 The help menu for `compress()`, or any function for that matter, can be
 accessed using:
@@ -167,24 +168,10 @@ more details in the various vignettes.
 PITcleanr is a collaborative project, with the primary contributors
 being:
 
-  - Kevin See (Biomark, Inc. - Applied Biological Services)
-  - Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)
-  - Rick Orme (Nez Perce Tribe - Fisheries Resources Management)
-  - Mike Ackerman (Biomark, Inc. - Applied Biological Services)
-=======
-For the latest development version:
-
-``` r
-remotes::install_github("BiomarkABS/PITcleanr@develop", 
-                        dependencies = TRUE,
-                        build_vignettes = TRUE)
-```
-
-To look at the various vignettes:
-
-``` r
-browseVignettes("PITcleanr")
-```
+-   Kevin See (Washington Department of Fish & Wildlife)
+-   Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)
+-   Rick Orme (Nez Perce Tribe - Fisheries Resources Management)
+-   Mike Ackerman (Mt Hood Environmental)
 
 ### Licenses
 

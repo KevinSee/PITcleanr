@@ -16,10 +16,10 @@
 queryInterrogationMeta = function(site_code = NULL) {
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/BiomarkABS/PITcleanr')
+  ua = httr::user_agent('https://github.com/KevinSee/PITcleanr')
 
   # compose url with query
-  url_req = "https://webcore.ptagis.org/api/sites/interrogation"
+  url_req = "https://api.ptagis.org/sites/interrogation"
 
   if(!is.null(site_code)) url_req = paste(url_req, site_code, sep = '/')
 

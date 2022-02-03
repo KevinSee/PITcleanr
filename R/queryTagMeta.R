@@ -19,7 +19,7 @@ queryTagMeta = function(tagCode = NULL) {
   stopifnot(!is.null(tagCode))
 
   # assign user agent to the GitHub repo for this package
-  ua = httr::user_agent('https://github.com/BiomarkABS/PITcleanr')
+  ua = httr::user_agent('https://github.com/KevinSee/PITcleanr')
 
   # compose url with query
   url_req = 'http://api.ptagis.org/tagdata'
