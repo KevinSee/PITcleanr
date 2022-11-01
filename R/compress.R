@@ -38,7 +38,8 @@ compress = function(ptagis_file = NULL,
                     units = c("mins",
                               "auto", "secs", "hours",
                               "days", "weeks"),
-                    ignore_event_vs_release = FALSE) {
+                    ignore_event_vs_release = FALSE,
+                    filter_orphan_disown_tags = TRUE) {
 
   stopifnot(!is.null(ptagis_file))
 
@@ -80,12 +81,21 @@ compress = function(ptagis_file = NULL,
            -use_release_time)
   }
 
-  # filter out disowned and orphan tags, and
   # put observations in correct order in time
   observations %<>%
-    filter(! tag_code %in% unique(c(qc_list$disown_tags,
-                                  qc_list$orphan_tags))) %>%
     arrange(tag_code, event_date_time_value)
+
+  # filter out disowned and orphan tags
+  if(filter_orphan_disown_tags) {
+  observations %<>%
+    filter(! tag_code %in% unique(c(qc_list$disown_tags,
+                                  qc_list$orphan_tags)))
+  } else {
+    # this only filters out the specific DISOWN or ORPHAN record from PTAGIS
+    observations %<>%
+      filter(! event_site_code_value %in% c("DISOWN",
+                                           "ORPHAN"))
+  }
 
   if(!is.null(configuration)) {
     observations %<>%
