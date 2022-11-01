@@ -1,4 +1,4 @@
-#' @title PTAGIS Interagation sites configuration
+#' @title PTAGIS Interrogation sites configuration
 #'
 #' @description Query and download configuration metadata for PTAGIS Interrogation sites
 #'
