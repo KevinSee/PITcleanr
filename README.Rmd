@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 Title <- "Title of your paper goes here"
 ```
 
-# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" height="130" /></a>
+# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" height="130" width="110" /></a>
 
 <!-- badges: start -->
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KevinSee/PITcleanr/master?urlpath=rstudio)
