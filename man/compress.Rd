@@ -9,7 +9,8 @@ compress(
   max_minutes = NA,
   configuration = NULL,
   units = c("mins", "auto", "secs", "hours", "days", "weeks"),
-  ignore_event_vs_release = FALSE
+  ignore_event_vs_release = FALSE,
+  filter_orphan_disown_tags = TRUE
 )
 }
 \arguments{
