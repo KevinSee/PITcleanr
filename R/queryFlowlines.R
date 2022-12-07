@@ -53,65 +53,69 @@ queryFlowlines = function(sites_sf = NULL,
   # a list to return
   # includes flowlines and polygon of basin
   return_list = list(flowlines = flowlines,
-                         basin = nngeo::st_remove_holes(nhd_lst$basin) %>%
+                     basin = nngeo::st_remove_holes(nhd_lst$basin) %>%
                        sf::st_zm() %>%
                        sf::st_transform(crs = sf::st_crs(sites_sf)))
 
   if(dwnstrm_sites) {
     cat("Calculating furthest mainstem point downstream \n")
     # get flowlines for downstream sites based on bounding box of all sites
-      nhd_lst_tmp = sites_sf %>%
-        sf::st_bbox() %>%
-        nhdplusTools::plot_nhdplus(bbox = .,
-                                   streamorder = max(min_strm_order, (max(flowlines$StreamOrde) - dwn_min_stream_order_diff)),
-                                   actually_plot = F)
+    nhd_lst_tmp = sites_sf %>%
+      sf::st_transform(crs = 3857) %>%
+      sf::st_bbox() %>%
+      nhdplusTools::plot_nhdplus(bbox = .,
+                                 streamorder = max(min_strm_order, (max(flowlines$StreamOrde) - dwn_min_stream_order_diff)),
+                                 actually_plot = F)
 
-      # pull out the comid for the largest stream order and furthest downstream segment
-      dwn_comid = nhd_lst_tmp$flowline %>%
-        filter(StreamOrde == max(StreamOrde)) %>%
-        filter(Hydroseq == min(Hydroseq)) %>%
-        pull(COMID)
+    # pull out the comid for the largest stream order and furthest downstream segment
+    dwn_comid = nhd_lst_tmp$flowline %>%
+      filter(StreamOrde == max(StreamOrde)) %>%
+      # filter(Hydroseq == min(Hydroseq)) %>%
+      filter(TotDASqKM == max(TotDASqKM)) %>%
+      pull(COMID)
 
-      cat(paste("Querying streams downstream of", root_site_code, "\n"))
-      nhd_lst_dwn = nhdplusTools::plot_nhdplus(outlets = list(dwn_comid),
-                                               # streamorder = max(flowlines$StreamOrde),
-                                               streamorder = max(min_strm_order, (max(flowlines$StreamOrde) - dwn_min_stream_order_diff)),
-                                               actually_plot = F)
+    cat(paste("Querying streams downstream of", root_site_code, "\n"))
+    # nhd_lst_dwn = nhdplusTools::plot_nhdplus(outlets = list(dwn_comid),
+    #                                          # streamorder = max(flowlines$StreamOrde),
+    #                                          streamorder = max(min_strm_order, (max(flowlines$StreamOrde) - dwn_min_stream_order_diff)),
+    #                                          actually_plot = F)
+
+    nhd_lst_dwn = nhd_lst_tmp
 
     # dwn_flowlines = nhd_lst_dwn$flowline %>%
     #   dplyr::filter(!COMID %in% flowlines$COMID) %>%
     #   sf::st_zm() %>%
     #   sf::st_transform(crs = sf::st_crs(sites_sf))
 
-      dwn_site_comids = nhd_lst_dwn$flowline %>%
-        sf::st_zm() %>%
-        sf::st_transform(crs = sf::st_crs(sites_sf)) %>%
-        select(COMID, Hydroseq) %>%
-        st_join(sites_sf,
-                .,
-                join = st_nearest_feature) %>%
-        filter(! COMID %in% flowlines$COMID) %>%
-        as_tibble() %>%
-        pull(COMID)
+    dwn_site_comids = nhd_lst_dwn$flowline %>%
+      sf::st_zm() %>%
+      sf::st_transform(crs = sf::st_crs(sites_sf)) %>%
+      select(COMID, Hydroseq) %>%
+      st_join(sites_sf,
+              .,
+              join = st_nearest_feature) %>%
+      filter(! COMID %in% flowlines$COMID) %>%
+      as_tibble() %>%
+      pull(COMID)
 
-      dwn_comids = c(start_comid,
-                     dwn_site_comids) %>%
-        as.list() %>%
-        map_df(.f = function(x) {
-          tibble(comid = nhdplusTools::get_DM(network = nhd_lst_dwn$flowline,
-                                              comid = x))
-        }) %>%
-        distinct() %>%
-        pull(comid)
+    dwn_comids = c(start_comid,
+                   dwn_site_comids) %>%
+      as.list() %>%
+      map_df(.f = function(x) {
+        tibble(comid = nhdplusTools::get_DM(network = nhd_lst_dwn$flowline,
+                                            comid = x))
+      }) %>%
+      distinct() %>%
+      pull(comid)
 
 
-#       dwn_comids = get_DM(nhd_lst_dwn$flowline,
-#                           start_comid)
+    # dwn_comids = get_DM(nhd_lst_dwn$flowline,
+    #                     start_comid)
 
-      dwn_flowlines = nhd_lst_dwn$flowline %>%
-        dplyr::filter(COMID %in% dwn_comids) %>%
-        sf::st_zm() %>%
-        sf::st_transform(crs = sf::st_crs(sites_sf))
+    dwn_flowlines = nhd_lst_dwn$flowline %>%
+      dplyr::filter(COMID %in% dwn_comids) %>%
+      sf::st_zm() %>%
+      sf::st_transform(crs = sf::st_crs(sites_sf))
 
     return_list$dwn_flowlines = dwn_flowlines
   }
