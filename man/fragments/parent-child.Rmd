@@ -43,7 +43,8 @@ parent_child = editParentChild(parent_child,
                                fix_list = list(c(NA, "ICL", "TUM"),
                                                c(NA, "PES", "TUM"),
                                                c(NA, "LNF", "ICL"),
-                                               c("LNF", 'ICM', 'ICL')),
+                                               c("LNF", 'ICM', 'ICL'),
+                                               c("PES", "ICL", "TUM")),
                                switch_parent_child = list(c("ICL", 'TUM')))
 
 # view corrected parent_child table
