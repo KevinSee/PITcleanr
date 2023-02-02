@@ -28,7 +28,7 @@ Imports:
     here (>= 1.0.0)
 URL: https://github.com/KevinSee/PITcleanr,
     https://kevinsee.github.io/PITcleanr/index.html,
-    https://kevinsee.github.io/PITcleanr
+    https://kevinsee.github.io/PITcleanr/
 BugReports: https://github.com/KevinSee/PITcleanr/issues
 Encoding: UTF-8
 LazyData: true
