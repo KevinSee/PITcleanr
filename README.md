@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" height="130" /></a>
+# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" height="130" width="110" /></a>
 
 <!-- badges: start -->
 
@@ -89,7 +89,7 @@ observations.
 ``` r
 # view path to example file, of course you can also set ptagis_file to your own PTAGIS query results
 ptagis_file
-#> [1] "C:/Users/seek1477/OneDrive - Washington State Executive Branch Agencies/Documents/R/win-library/4.1/PITcleanr/extdata/TUM_Chinook_2015.csv"
+#> [1] "C:/Rfolder/R/win-library/4.1/PITcleanr/extdata/TUM_Chinook_2015.csv"
 
 # run compress() function on it
 comp_obs = compress(ptagis_file)
