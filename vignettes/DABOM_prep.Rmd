@@ -190,7 +190,7 @@ prepped_df = prepWrapper(ptagis_file = ptagis_file,
 
 # What Next?
 
-Congratulations, you've now finished the vignette to prepare data for [DABOM](https://github.com/BiomarkABS/DABOM). For advanced users, or users that already have their PTAGIS query output, configuration file, and parent-child file ready, consider viewing the [DABOM Prep "Cheatsheet"](quick_prep.html) vignette, which can also be viewed using:
+Congratulations, you've now finished the vignette to prepare data for [DABOM](https://github.com/KevinSee/DABOM). For advanced users, or users that already have their PTAGIS query output, configuration file, and parent-child file ready, consider viewing the [DABOM Prep "Cheatsheet"](quick_prep.html) vignette, which can also be viewed using:
 
 ```{r, eval = F}
 vignette("quick_prep",
