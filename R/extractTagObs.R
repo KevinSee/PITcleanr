@@ -10,11 +10,15 @@
 #' @export
 #' @return NULL
 #'
-extractTagObs = function(ptagis_file = NULL) {
+extractTagObs = function(cth_file = NULL,
+                         file_type = c("PTAGIS",
+                                       "Biologic_csv",
+                                       "raw")) {
 
   stopifnot(!is.null(ptagis_file))
 
-  observations = PITcleanr::readCTH(ptagis_file)
+  observations = PITcleanr::readCTH(cth_file,
+                                    file_type = file_type)
 
   tag_obs = PITcleanr::compress(observations,
                                 configuration = PITcleanr::buildConfig() %>%

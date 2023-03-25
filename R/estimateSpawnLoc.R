@@ -16,7 +16,10 @@
 
 estimateSpawnLoc = function(filtered_obs = NULL,
                             spawn_site = F,
-                            ptagis_file = NULL) {
+                            cth_file = NULL,
+                            file_type = c("PTAGIS",
+                                          "Biologic_csv",
+                                          "raw")) {
 
   stopifnot(!is.null(filtered_obs))
 
@@ -53,12 +56,13 @@ estimateSpawnLoc = function(filtered_obs = NULL,
     arrange(tag_code)
 
   if(spawn_site) {
-    stopifnot(!is.null(ptagis_file))
+    stopifnot(!is.null(cth_file))
 
-    ptagis_obs = readCTH(ptagis_file)
+    observations = readCTH(cth_file,
+                         file_type = file_type)
 
     spawn_loc = spawn_loc %>%
-      left_join(ptagis_obs %>%
+      left_join(observations %>%
                   select(tag_code, event_type_name,
                          spawn_site = event_site_code_value,
                          matches('date_time_value')) %>%

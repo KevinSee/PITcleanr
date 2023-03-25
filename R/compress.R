@@ -29,10 +29,13 @@
 #' @export
 #' @return a tibble
 #' @examples
-#' ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
-#' compress(ptagis_file)
+#' cth_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+#' compress(cth_file)
 
-compress = function(ptagis_file = NULL,
+compress = function(cth_file = NULL,
+                    file_type = c("PTAGIS",
+                                  "Biologic_csv",
+                                  "raw"),
                     max_minutes = NA,
                     configuration = NULL,
                     units = c("mins",
@@ -41,11 +44,12 @@ compress = function(ptagis_file = NULL,
                     ignore_event_vs_release = FALSE,
                     filter_orphan_disown_tags = TRUE) {
 
-  stopifnot(!is.null(ptagis_file))
+  stopifnot(!is.null(cth_file))
 
   units = match.arg(units)
 
-  observations = readCTH(ptagis_file)
+  observations = readCTH(cth_file,
+                         file_type = file_type)
 
   # perform some QC checks
   qc_list = qcTagHistory(observations,

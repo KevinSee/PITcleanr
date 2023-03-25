@@ -17,15 +17,19 @@
 #' a tibble containing information about sites with release information to help the user
 #' determine with event time or release time should be used for those sites.
 #' @examples
-#' ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
-#' qcTagHistory(ptagis_file)
+#' cth_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+#' qcTagHistory(cth_file)
 
-qcTagHistory = function(ptagis_file = NULL,
+qcTagHistory = function(cth_file = NULL,
+                        file_type = c("PTAGIS",
+                                      "Biologic_csv",
+                                      "raw"),
                         ignore_event_vs_release = F) {
 
-  stopifnot(!is.null(ptagis_file))
+  stopifnot(!is.null(cth_file))
 
-  observations = readCTH(ptagis_file)
+  observations = readCTH(cth_file,
+                         file_type = file_type)
 
   # find all "disowned" tags
   disowned_tags = observations %>%

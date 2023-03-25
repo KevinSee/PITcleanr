@@ -30,7 +30,10 @@
 #' @examples prepWrapper()
 
 prepWrapper = function(compress_obs = NULL,
-                       ptagis_file = NULL,
+                       cth_file = NULL,
+                       file_type = c("PTAGIS",
+                                     "Biologic_csv",
+                                     "raw"),
                        configuration = NULL,
                        parent_child = NULL,
                        start_node = NULL,
@@ -43,17 +46,18 @@ prepWrapper = function(compress_obs = NULL,
                        ...) {
 
   stopifnot(exprs = {
-    (!is.null(compress_obs)) | (!is.null(ptagis_file) & !is.null(configuration))
+    (!is.null(compress_obs)) | (!is.null(cth_file) & !is.null(configuration))
     !is.null(parent_child)
   })
 
-  if(add_tag_detects & is.null(ptagis_file)) {
-    stop("Original PTAGIS file needed to add tag detections.")
+  if(add_tag_detects & is.null(cth_file)) {
+    stop("Original detection file needed to add tag detections.")
   }
 
   if(is.null(compress_obs)) {
     cat("Compressing detections\n")
-    compress_obs = compress(ptagis_file = ptagis_file,
+    compress_obs = compress(cth_file = cth_file,
+                            file_type = file_type,
                             configuration = configuration,
                             ...)
   }
