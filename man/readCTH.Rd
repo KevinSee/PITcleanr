@@ -4,7 +4,11 @@
 \alias{readCTH}
 \title{Read In Complete Tag History}
 \usage{
-readCTH(cth_file = NULL, file_type = c("PTAGIS", "Biologic_csv", "raw"))
+readCTH(
+  cth_file = NULL,
+  file_type = c("PTAGIS", "Biologic_csv", "raw"),
+  test_tag_prefix = "3E7"
+)
 }
 \arguments{
 \item{cth_file}{is the path to the complete tag history file}
@@ -20,6 +24,8 @@ Event Release Site Code, and Event Release Date Time.
 If \code{Biologic_csv}, that implies the data was downloaded from Biologic software in a .csv format.
 
 If \code{raw}, that implies the data was downloaded directly from the reader, in either a .log or .xlsx format. In this case, the largest string containing alphabetic characters in the file name will be assigned as the site code.}
+
+\item{test_tag_prefix}{The prefix that designates a tag code as a test tag. These detections are filtered out of the returned tibble}
 }
 \value{
 a tibble containing the data downloaded from PTAGIS through a complete capture history query.

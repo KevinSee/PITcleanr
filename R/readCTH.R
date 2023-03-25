@@ -18,6 +18,7 @@
 #' If \code{Biologic_csv}, that implies the data was downloaded from Biologic software in a .csv format.
 #'
 #' If \code{raw}, that implies the data was downloaded directly from the reader, in either a .log or .xlsx format. In this case, the largest string containing alphabetic characters in the file name will be assigned as the site code.
+#' @param test_tag_prefix The prefix that designates a tag code as a test tag. These detections are filtered out of the returned tibble
 
 #' @import dplyr lubridate readr readxl
 #' @importFrom janitor clean_names
@@ -30,7 +31,8 @@
 readCTH = function(cth_file = NULL,
                    file_type = c("PTAGIS",
                                  "Biologic_csv",
-                                 "raw")) {
+                                 "raw"),
+                   test_tag_prefix = "3E7") {
 
   file_type = match.arg(file_type)
 
@@ -185,6 +187,12 @@ readCTH = function(cth_file = NULL,
   } else {
     stop("Trouble reading in CTH file\n")
   }
+
+  # filter out test tags
+  observations <- observations |>
+    filter(str_detect(tag_code,
+                      paste0("^", test_tag_prefix),
+                      negate = T))
 
   return(observations)
 }
