@@ -32,8 +32,7 @@ a tibble containing the data downloaded from PTAGIS through a complete capture h
 }
 \description{
 The function reads in complete tag histories from either PTAGIS or Biologic that
-have been downloaded and coverts the date time values from character
-vectors into date-time vectors
+have been downloaded and coverts the date time values from character vectors into date-time vectors
 }
 \examples{
 ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
