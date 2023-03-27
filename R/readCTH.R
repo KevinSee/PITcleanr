@@ -20,7 +20,7 @@
 #' If \code{raw}, that implies the data was downloaded directly from the reader, in either a .log or .xlsx format. In this case, the largest string containing alphabetic characters in the file name will be assigned as the site code.
 #' @param test_tag_prefix The prefix that designates a tag code as a test tag. These detections are filtered out of the returned tibble
 
-#' @import dplyr lubridate readr readxl
+#' @import dplyr lubridate readr readxl stringr purrr
 #' @importFrom janitor clean_names
 #' @export
 #' @return a tibble containing the data downloaded from PTAGIS through a complete capture history query.
@@ -63,22 +63,27 @@ readCTH = function(cth_file = NULL,
       # determine format of event date time value
       n_colons <-
         observations %>%
-        mutate(event_time = str_split(event_date_time_value, " ", simplify = T)[,2],
-               n_colon = str_count(event_time, "\\:")) %>%
-        pull(n_colon) %>%
+        dplyr::mutate(event_time = stringr::str_split(event_date_time_value,
+                                                      " ",
+                                                      simplify = T)[,2],
+                      n_colon = stringr::str_count(event_time, "\\:")) %>%
+        dplyr::pull(n_colon) %>%
         max()
 
       if(n_colons == 2) {
         observations <- observations |>
-          mutate(across(
-            c(event_date_time_value,
-              event_release_date_time_value),
-            lubridate::mdy_hms))
+          dplyr::mutate(
+            dplyr::across(
+              dplyr::any_of(c(event_date_time_value,
+                              event_release_date_time_value)),
+              lubridate::mdy_hms))
       } else if(n_colons == 1) {
         observations <- observations |>
-          mutate(across(c(event_date_time_value,
-                          event_release_date_time_value),
-                        lubridate::mdy_hm))
+          dplyr::mutate(
+            dplyr::across(
+              dplyr::any_of(c(event_date_time_value,
+                              event_release_date_time_value)),
+              lubridate::mdy_hm))
       } else {
         warning("Event Date Time Value has strange format.")
       }
@@ -120,79 +125,79 @@ readCTH = function(cth_file = NULL,
                         antenna_number = X3,
                         event_date_time_value)
 
-        } else if(str_detect(cth_file, "\\.xlsx$")) {
-          observations <-
-            readxl::excel_sheets(cth_file) |>
-            map_df(.f = function(x) {
-              readxl::read_excel(cth_file,
-                                 sheet = x)
-            }) |>
-            dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(`Scan Date`, `Scan Time`))) |>
-            select(tag_code = `HEX Tag ID`,
-                   antenna_id = `Reader ID`,
-                   antenna_number = `Antenna ID`,
-                   event_date_time_value)
-        } else if(str_detect(cth_file, "\\.txt$")) {
-          observations <-
-            suppressWarnings(readr::read_delim(cth_file,
-                                               skip = 6,
-                                               delim = " ",
-                                               col_names = F,
-                                               col_select = c(1, 3, 5, 10, 17, 18, 38),
-                                               show_col_types = F)) |>
-            dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(X1, X3))) |>
-            dplyr::select(tag_code = X38,
-                          antenna_id = X17,
-                          antenna_number = X18,
-                          event_date_time_value)
+      } else if(str_detect(cth_file, "\\.xlsx$")) {
+        observations <-
+          readxl::excel_sheets(cth_file) |>
+          purrr::map_df(.f = function(x) {
+            readxl::read_excel(cth_file,
+                               sheet = x)
+          }) |>
+          dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(`Scan Date`, `Scan Time`))) |>
+          dplyr::select(tag_code = `HEX Tag ID`,
+                        antenna_id = `Reader ID`,
+                        antenna_number = `Antenna ID`,
+                        event_date_time_value)
+      } else if(str_detect(cth_file, "\\.txt$")) {
+        observations <-
+          suppressWarnings(readr::read_delim(cth_file,
+                                             skip = 6,
+                                             delim = " ",
+                                             col_names = F,
+                                             col_select = c(1, 3, 5, 10, 17, 18, 38),
+                                             show_col_types = F)) |>
+          dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(X1, X3))) |>
+          dplyr::select(tag_code = X38,
+                        antenna_id = X17,
+                        antenna_number = X18,
+                        event_date_time_value)
 
-        } else {
-          stop("File format not recognized")
-        }
-
-        # add a few other columns
-        observations <- observations |>
-          dplyr::mutate(event_type_name = "Observation",
-                        event_site_type_description = "Instream Remote Detection System",
-                        antenna_group_configuration_value = 100,
-                        cth_count = 1) |>
-          dplyr::select(dplyr::any_of(req_col_nms),
-                        dplyr::everything()) |>
-          dplyr::arrange(tag_code,
-                         event_date_time_value)
-
-        # determine site code based on file name
-        file_nm_strs <- stringr::str_split(cth_file, "/") |>
-          magrittr::extract2(1) %>%
-          magrittr::extract(length(.)) |>
-          stringr::str_split("_") |>
-          magrittr::extract2(1) |>
-          str_remove("\\.xlsx$") |>
-          str_remove("\\.log$") |>
-          str_remove("\\.csv$")
-        n_alpha = str_count(file_nm_strs, "[:alpha:]")
-        site_code <- file_nm_strs[which.max(n_alpha)]
-
-        observations$event_site_code_value = site_code
-
-        # add any missing columns
-        observations[,req_col_nms[!req_col_nms %in% names(observations)]] <- NA
-
-        observations <- observations[,req_col_nms]
+      } else {
+        stop("File format not recognized")
       }
+
+      # add a few other columns
+      observations <- observations |>
+        dplyr::mutate(event_type_name = "Observation",
+                      event_site_type_description = "Instream Remote Detection System",
+                      antenna_group_configuration_value = 100,
+                      cth_count = 1) |>
+        dplyr::select(dplyr::any_of(req_col_nms),
+                      dplyr::everything()) |>
+        dplyr::arrange(tag_code,
+                       event_date_time_value)
+
+      # determine site code based on file name
+      file_nm_strs <- stringr::str_split(cth_file, "/") |>
+        magrittr::extract2(1) %>%
+        magrittr::extract(length(.)) |>
+        stringr::str_split("_") |>
+        magrittr::extract2(1) |>
+        stringr::str_remove("\\.xlsx$") |>
+        stringr::str_remove("\\.log$") |>
+        stringr::str_remove("\\.csv$")
+      n_alpha = stringr::str_count(file_nm_strs, "[:alpha:]")
+      site_code <- file_nm_strs[which.max(n_alpha)]
+
+      observations$event_site_code_value = site_code
+
+      # add any missing columns
+      observations[,req_col_nms[!req_col_nms %in% names(observations)]] <- NA
+
+      observations <- observations[,req_col_nms]
+    }
 
   } else if(class(cth_file)[1] %in% c("spec_tbl_df", "tbl_df", "tbl", "data.frame")) {
     observations = cth_file %>%
-      as_tibble()
+      dplyr::as_tibble()
   } else {
     stop("Trouble reading in CTH file\n")
   }
 
   # filter out test tags
   observations <- observations |>
-    filter(str_detect(tag_code,
-                      paste0("^", test_tag_prefix),
-                      negate = T))
+    dplyr::filter(stringr::str_detect(tag_code,
+                                      paste0("^", test_tag_prefix),
+                                      negate = T))
 
   return(observations)
 }
