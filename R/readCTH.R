@@ -1,8 +1,7 @@
 #' @title Read In Complete Tag History
 #'
 #' @description The function reads in complete tag histories from either PTAGIS or Biologic that
-#' have been downloaded and coverts the date time values from character
-#' vectors into date-time vectors
+#' have been downloaded and coverts the date time values from character vectors into date-time vectors
 #'
 #' @author Kevin See
 #'
