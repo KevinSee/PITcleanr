@@ -1,0 +1,89 @@
+---
+title: "Compressing Non-PTAGIS PIT Tag Data"
+author: Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Compressing Non-PTAGIS PIT Tag Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+
+library(knitr)
+library(here)
+```
+
+```{r load-packages}
+library(tidyverse)
+# library(PITcleanr)
+devtools::load_all()
+```
+
+# Introduction
+
+```{r}
+data_path = "O:Documents/Git/Other/PITcleanr_lite/input/"
+
+# PTAGIS configuration
+org_config <- buildConfig()
+
+# Biologic configuration for Henry’s Ranch 
+bio_config <- read_csv("O:Documents/Git/Other/PITcleanr_lite/config/site_metadata_revised.csv",
+                        show_col_types = F) |> 
+  mutate(
+    across(
+      rkm,
+      as.character
+    )
+  ) |> 
+  mutate(
+    across(
+      site_code,
+      ~ recode(., 
+               "SUB" = "SUB2")
+    ),
+    node = paste(site_code, antenna_id,
+                 sep = "_")
+  )
+
+
+
+file_df <- tibble(file_nm = list.files(data_path)) |> 
+  filter(str_detect(file_nm, "\\.")) |> 
+  mutate(file_type = if_else(str_detect(file_nm, "BIOLOGIC"),
+                             "Biologic_csv",
+                             if_else(str_detect(file_nm, "PTAGIS"),
+                                     "PTAGIS",
+                                     "raw")))
+
+all_obs <-
+  file_df |> 
+  mutate(obs_df = map2(file_nm,
+                       file_type,
+                       .f = function(x, y) {
+                         readCTH(paste0(data_path, x), y)
+                       })) |> 
+  unnest(obs_df) |> 
+  distinct()
+
+test_comp <- compress(all_obs,
+                      configuration = org_config |> 
+                        bind_rows(bio_config))
+nrow(all_obs)
+nrow(test_comp)
+nrow(test_comp) / nrow(all_obs)
+
+```
+
