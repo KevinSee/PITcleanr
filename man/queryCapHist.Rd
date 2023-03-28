@@ -13,7 +13,7 @@ queryCapHist(tag_code = NULL, configuration = NULL)
 \item{tag_code}{PTAGIS tag code}
 }
 \description{
-Query and download complete capture history for one tag from PTAGIS. Due to
+Query and download complete capture history for one tag from PTAGIS (through DART). Due to
 PTAGIS no longer offering queries for the mark event information for a given tag code, only
 observations after the mark event are returned.
 }
