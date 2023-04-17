@@ -55,5 +55,19 @@ readCTH = function(ptagis_file = NULL) {
     stop("Trouble reading in ptagis_file.\n")
   }
 
+  # fix issues when Excel has converted antenna_id to numeric instead of character
+  # all antenna IDs should be at least 2 characters
+  observations %<>%
+    dplyr::mutate(
+      dplyr::across(
+        antenna_id,
+        ~ stringr::str_pad(.,
+                           pad = "0",
+                           width = 2,
+                           side = "left")
+      )
+    )
+
+
   return(observations)
 }
