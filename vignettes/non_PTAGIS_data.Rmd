@@ -36,6 +36,30 @@ devtools::load_all()
 ```{r}
 data_path = "O:Documents/Git/Other/PITcleanr_lite/input/"
 
+# what kind of files exist?
+file_df <- tibble(file_nm = list.files(data_path)) |> 
+  filter(str_detect(file_nm, "\\.")) |> 
+  mutate(file_type = if_else(str_detect(file_nm, "BIOLOGIC"),
+                             "Biologic_csv",
+                             if_else(str_detect(file_nm, "PTAGIS"),
+                                     "PTAGIS",
+                                     "raw")))
+
+# read them all in
+all_obs <-
+  file_df |> 
+  mutate(obs_df = map2(file_nm,
+                       file_type,
+                       .f = function(x, y) {
+                         try(readCTH(paste0(data_path, x), y))
+                       })) |> 
+  mutate(cls_obs = map_chr(obs_df, .f = function(x) class(x)[1])) |> 
+  filter(cls_obs != "try-error") |> 
+  select(-cls_obs) |> 
+  unnest(obs_df) |> 
+  distinct()
+
+
 # PTAGIS configuration
 org_config <- buildConfig()
 
@@ -60,23 +84,6 @@ bio_config <- read_csv("O:Documents/Git/Other/PITcleanr_lite/config/site_metadat
 
 
 
-file_df <- tibble(file_nm = list.files(data_path)) |> 
-  filter(str_detect(file_nm, "\\.")) |> 
-  mutate(file_type = if_else(str_detect(file_nm, "BIOLOGIC"),
-                             "Biologic_csv",
-                             if_else(str_detect(file_nm, "PTAGIS"),
-                                     "PTAGIS",
-                                     "raw")))
-
-all_obs <-
-  file_df |> 
-  mutate(obs_df = map2(file_nm,
-                       file_type,
-                       .f = function(x, y) {
-                         readCTH(paste0(data_path, x), y)
-                       })) |> 
-  unnest(obs_df) |> 
-  distinct()
 
 test_comp <- compress(all_obs,
                       configuration = org_config |> 
@@ -84,6 +91,18 @@ test_comp <- compress(all_obs,
 nrow(all_obs)
 nrow(test_comp)
 nrow(test_comp) / nrow(all_obs)
+
+
+test_comp |> 
+  select(tag_code,
+         node) |> 
+  distinct() |> 
+  mutate(seen = 1) |> 
+  pivot_wider(names_from = node,
+              values_from = seen,
+              values_fill = 0)
+
+  
 
 ```
 
