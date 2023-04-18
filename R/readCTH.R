@@ -80,8 +80,8 @@ readCTH = function(cth_file = NULL,
         observations <- observations |>
           dplyr::mutate(
             dplyr::across(
-              dplyr::any_of(c(event_date_time_value,
-                              event_release_date_time_value)),
+              dplyr::any_of(c("event_date_time_value",
+                              "event_release_date_time_value")),
               lubridate::mdy_hm))
       } else {
         warning("Event Date Time Value has strange format.")
