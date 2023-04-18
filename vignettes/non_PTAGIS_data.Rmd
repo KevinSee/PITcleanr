@@ -82,12 +82,12 @@ bio_config <- read_csv("O:Documents/Git/Other/PITcleanr_lite/config/site_metadat
                  sep = "_")
   )
 
-
+my_config <- org_config |> 
+  bind_rows(bio_config)
 
 
 test_comp <- compress(all_obs,
-                      configuration = org_config |> 
-                        bind_rows(bio_config))
+                      configuration = my_config)
 nrow(all_obs)
 nrow(test_comp)
 nrow(test_comp) / nrow(all_obs)
@@ -103,6 +103,60 @@ test_comp |>
               values_fill = 0)
 
   
+
+```
+
+```{r}
+sites_sf <- extractSites(all_obs,
+                         as_sf = T,
+                         configuration = my_config)
+
+dwn_flw = F
+nhd_list = queryFlowlines(sites_sf = sites_sf,
+                          root_site_code = "LLR",
+                          min_strm_order = 2,
+                          dwnstrm_sites = dwn_flw,
+                          dwn_min_stream_order_diff = 4)
+# compile the upstream and downstream flowlines
+flowlines = nhd_list$flowlines
+if(dwn_flw) {
+  flowlines %<>%
+    rbind(nhd_list$dwn_flowlines)
+}
+
+ggplot() +
+  geom_sf(data = flowlines,
+          aes(color = as.factor(StreamOrde),
+              size = StreamOrde)) +
+  scale_color_viridis_d(direction = -1,
+                        option = "D",
+                        name = "Stream\nOrder",
+                        end = 0.8) +
+  scale_size_continuous(range = c(0.2, 1.2),
+                        guide = 'none') +
+  geom_sf(data = nhd_list$basin,
+          fill = NA,
+          lwd = 2) +
+  geom_sf(data = sites_sf,
+          size = 4,
+          color = "black") +
+    ggrepel::geom_label_repel(
+    data = sites_sf,
+    aes(label = node_site, 
+        geometry = geometry),
+    size = 2,
+    stat = "sf_coordinates",
+    min.segment.length = 0,
+    max.overlaps = 50
+  ) +
+  # geom_sf_label(data = sites_sf,
+  #               aes(label = site_code)) +
+  # geom_sf_label(data = sites_sf %>%
+  #                 filter(site_code == root_site),
+  #               aes(label = site_code),
+  #               color = "red") +
+  theme_bw() +
+  theme(axis.title = element_blank())
 
 ```
 
