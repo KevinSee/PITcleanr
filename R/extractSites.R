@@ -35,12 +35,14 @@ extractSites = function(cth_file = NULL,
                         max_date = NULL,
                         configuration = NULL) {
 
-  stopifnot(!is.null(ptagis_file))
+  stopifnot(!is.null(cth_file))
+
+  file_type = match.arg(file_type)
 
   # read in observations
   observations = try(readCTH(cth_file,
-                         file_type = file_type))
-  if(class(observations) == "try-error") {
+                             file_type = file_type))
+  if(class(observations)[1] == "try-error") {
     stop("Trouble reading in cth_file\n")
   }
 
