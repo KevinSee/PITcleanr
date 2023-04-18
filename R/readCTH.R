@@ -87,6 +87,20 @@ readCTH = function(cth_file = NULL,
         warning("Event Date Time Value has strange format.")
       }
 
+      # fix issues when Excel has converted antenna_id to numeric instead of character
+      # all antenna IDs should be at least 2 characters for PTAGIS data
+      observations <- observations |>
+        dplyr::mutate(
+          dplyr::across(
+            antenna_id,
+            ~ stringr::str_pad(.,
+                               pad = "0",
+                               width = 2,
+                               side = "left")
+          )
+        )
+
+
     } else if(file_type == "Biologic_csv") {
       observations <-
         readr::read_csv(cth_file,
@@ -109,19 +123,78 @@ readCTH = function(cth_file = NULL,
       # add any missing columns
       observations[,req_col_nms[!req_col_nms %in% names(observations)]] <- NA
 
+      observations <- observations |>
+        dplyr::mutate(
+          dplyr::across(
+            antenna_id,
+            as.character))
+
       observations <- observations[,req_col_nms]
 
     } else if(file_type == "raw") {
       if(str_detect(cth_file, "\\.log$")) {
+        # observations <-
+        #   suppressWarnings(readr::read_table(cth_file,
+        #                                      col_names = F,
+        #                                      show_col_types = F)) |>
+        #   dplyr::filter(stringr::str_detect(X1, "TAG")) |>
+        #   dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(X4, X5))) |>
+        #   dplyr::select(tag_code = X6,
+        #                 antenna_id = X2,
+        #                 antenna_number = X3,
+        #                 event_date_time_value)
+
+        first_tag_row <- suppressWarnings(readr::read_table(cth_file,
+                                                            col_names = F,
+                                                            show_col_types = F)) |>
+          dplyr::mutate(row_num = 1:n(),
+                        tag_rows = stringr::str_detect(X1, "^TAG")) |>
+          dplyr::filter(tag_rows) |>
+          dplyr::pull(row_num) |>
+          min()
+
+
         observations <-
           suppressWarnings(readr::read_table(cth_file,
                                              col_names = F,
+                                             skip = first_tag_row - 1,
                                              show_col_types = F)) |>
-          dplyr::filter(stringr::str_detect(X1, "TAG")) |>
-          dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(X4, X5))) |>
-          dplyr::select(tag_code = X6,
-                        antenna_id = X2,
-                        antenna_number = X3,
+          dplyr::filter(stringr::str_detect(X1, "^TAG"))
+
+        first_obs_row <- observations |>
+          dplyr::slice(1) |>
+          dplyr::mutate(
+            dplyr::across(
+              dplyr::everything(),
+              as.character))
+
+        dash_cnts <- first_obs_row |>
+          stringr::str_count("/")
+        date_column <- which(dash_cnts == 2)
+
+        colon_cnts <- first_obs_row |>
+          stringr::str_count(":")
+        time_column <- which(colon_cnts == 2)
+
+        tag_column <- first_obs_row |>
+          stringr::str_detect("^[:alnum:][:alnum:][:alnum:]\\.") |>
+          which()
+
+        names(observations)[c(date_column, time_column, tag_column)] <- c("date", "time", "tag_code")
+
+        if("X3" %in% names(observations)) {
+          observations <- observations |>
+            dplyr::rename(antenna_number = X3)
+        } else {
+          observations <- observations |>
+            dplyr::mutate(antenna_number = NA_character_)
+        }
+
+        observations <- observations |>
+          dplyr::rename(antenna_id = X2) |>
+          dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(date, time))) |>
+          dplyr::select(tag_code,
+                        dplyr::starts_with("antenna"),
                         event_date_time_value)
 
       } else if(str_detect(cth_file, "\\.xlsx$")) {
@@ -182,12 +255,29 @@ readCTH = function(cth_file = NULL,
       # add any missing columns
       observations[,req_col_nms[!req_col_nms %in% names(observations)]] <- NA
 
+      observations <- observations |>
+        dplyr::mutate(
+          dplyr::across(
+            antenna_id,
+            as.character))
+
       observations <- observations[,req_col_nms]
     }
 
   } else if(class(cth_file)[1] %in% c("spec_tbl_df", "tbl_df", "tbl", "data.frame")) {
     observations = cth_file %>%
-      dplyr::as_tibble()
+      dplyr::as_tibble() |>
+      dplyr::select(dplyr::any_of(req_col_nms),
+                    dplyr::everything())
+
+    if(class(observations$antenna_id) != "character") {
+      observations <- observations |>
+        dplyr::mutate(
+          dplyr::across(
+            antenna_id,
+            as.character))
+    }
+
   } else {
     stop("Trouble reading in CTH file\n")
   }
