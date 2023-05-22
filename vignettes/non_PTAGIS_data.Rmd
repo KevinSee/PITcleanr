@@ -33,6 +33,11 @@ devtools::load_all()
 
 # Introduction
 
+Not all PIT tag data is in PTAGIS. 
+
+**Naming convention for files to determine what type they are**
+
+
 ```{r}
 data_path = "O:Documents/Git/Other/PITcleanr_lite/input/"
 
@@ -45,6 +50,11 @@ file_df <- tibble(file_nm = list.files(data_path)) |>
                                      "PTAGIS",
                                      "raw")))
 
+file_df
+```
+
+
+```{r}
 # read them all in
 all_obs <-
   file_df |> 
@@ -70,6 +80,13 @@ bio_config <- read_csv("O:Documents/Git/Other/PITcleanr_lite/config/site_metadat
     across(
       rkm,
       as.character
+    ),
+    across(
+      antenna_id,
+      ~ str_pad(., 
+                width = 2,
+                side = "left",
+                pad = "0")
     )
   ) |> 
   mutate(
@@ -92,6 +109,14 @@ nrow(all_obs)
 nrow(test_comp)
 nrow(test_comp) / nrow(all_obs)
 
+# put column names of capture history in correct order
+ch_col_nms <- my_config |> 
+  select(node, rkm, rkm_total) |> 
+  distinct() |> 
+  arrange(desc(rkm), desc(rkm_total), node) |> 
+  filter(node %in% unique(test_comp$node)) |> 
+  # as.data.frame()
+  pull(node)
 
 test_comp |> 
   select(tag_code,
@@ -100,8 +125,14 @@ test_comp |>
   mutate(seen = 1) |> 
   pivot_wider(names_from = node,
               values_from = seen,
-              values_fill = 0)
-
+              values_fill = 0) |> 
+  select(tag_code,
+         any_of(ch_col_nms)) |> 
+  # names()
+  unite(col = ch,
+        -tag_code, 
+        sep = "",
+        remove = T)
   
 
 ```
@@ -140,7 +171,7 @@ ggplot() +
   geom_sf(data = sites_sf,
           size = 4,
           color = "black") +
-    ggrepel::geom_label_repel(
+  ggrepel::geom_label_repel(
     data = sites_sf,
     aes(label = node_site, 
         geometry = geometry),
@@ -149,12 +180,6 @@ ggplot() +
     min.segment.length = 0,
     max.overlaps = 50
   ) +
-  # geom_sf_label(data = sites_sf,
-  #               aes(label = site_code)) +
-  # geom_sf_label(data = sites_sf %>%
-  #                 filter(site_code == root_site),
-  #               aes(label = site_code),
-  #               color = "red") +
   theme_bw() +
   theme(axis.title = element_blank())
 
