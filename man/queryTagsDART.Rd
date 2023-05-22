@@ -20,9 +20,6 @@ queryTagsDART(
 \description{
 For certain locations, query DART to return all PIT tags observed there from a given species in a given spawn year.
 }
-\examples{
-
-}
 \author{
 Kevin See
 }

@@ -17,7 +17,7 @@ findDwnstrmHydroseg(hydro_id, flow_lines, hydro_pause_ids)
 character of the nearest downstream HY segment to starting segment that falls within a list of possible stopping segments.
 }
 \description{
-
+Find Hydro Segment of Downstream Site
 }
 \author{
 Kevin See
