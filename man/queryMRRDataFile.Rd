@@ -7,12 +7,14 @@
 \url{http://www.ptagis.org}
 }
 \usage{
-queryMRRDataFile(file_nm = NULL, file_path = NULL)
+queryMRRDataFile(file_nm = NULL, file_path = NULL, text_only = FALSE)
 }
 \arguments{
 \item{file_nm}{PTAGIS file name.}
 
 \item{file_path}{if the user has downloaded the PTAGIS file, this function can read in the file, if the file path is included here. The default value, \code{NULL}, indicates that the file should be queried from the PTAGIS API interface.}
+
+\item{text_only}{should this function return a file only containing the text of the MRR file? Default is \code{FALSE}, which will parse the MRR data file into a data.frame.}
 }
 \description{
 Queries a raw MRR data file for PTAGIS MRR sites, based upon a known file name. NOTE: only the latest, corrected, version of a MRR file is returned
