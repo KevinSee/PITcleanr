@@ -27,8 +27,7 @@ Imports:
     nngeo (>= 0.4.4),
     here (>= 1.0.0),
     readxl,
-    tidygraph (>= 1.2.3)
-    here (>= 1.0.0),
+    tidygraph (>= 1.2.3),
     XML,
     xml2
 URL: https://github.com/KevinSee/PITcleanr,
