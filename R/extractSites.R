@@ -25,23 +25,25 @@
 #' @return a tibble
 #' @examples compress()
 
-extractSites = function(ptagis_file = NULL,
+extractSites = function(cth_file = NULL,
+                        file_type = c("PTAGIS",
+                                      "Biologic_csv",
+                                      "raw"),
                         as_sf = F,
                         crs = 5070,
                         min_date = NULL,
                         max_date = NULL,
                         configuration = NULL) {
 
-  stopifnot(!is.null(ptagis_file))
+  stopifnot(!is.null(cth_file))
+
+  file_type = match.arg(file_type)
 
   # read in observations
-  if(class(ptagis_file)[1] == "character") {
-    observations = readCTH(ptagis_file)
-  } else if(class(ptagis_file)[1] %in% c("spec_tbl_df", "tbl_df", "tbl", "data.frame")) {
-    observations = ptagis_file %>%
-      as_tibble()
-  } else {
-    stop("Trouble reading in ptagis_file.\n")
+  observations = try(readCTH(cth_file,
+                             file_type = file_type))
+  if(class(observations)[1] == "try-error") {
+    stop("Trouble reading in cth_file\n")
   }
 
   if(!is.null(min_date)) {

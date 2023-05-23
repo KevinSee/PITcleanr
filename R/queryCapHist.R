@@ -1,6 +1,6 @@
 #' @title PTAGIS Detection History
 #'
-#' @description Query and download complete capture history for one tag from PTAGIS. Due to
+#' @description Query and download complete capture history for one tag from PTAGIS (through DART). Due to
 #' PTAGIS no longer offering queries for the mark event information for a given tag code, only
 #' observations after the mark event are returned.
 #'
@@ -21,11 +21,12 @@ queryCapHist = function(tag_code = NULL,
   # need a tag code
   stopifnot(!is.null(tag_code))
 
-  # stopifnot(!is.null(configuration))
-  # if(is.null(configuration)) configuration = buildConfig() %>%
-  #     mutate(node = site_code)
-  if(is.null(configuration)) configuration = queryPtagisMeta() %>%
+  if(is.null(configuration)) {
+    message("No configuration file supplied; querying PTAGIS\n")
+
+    configuration = suppressMessages(queryPtagisMeta()) %>%
       rename(config_id = configuration_sequence)
+  }
 
   # assign user agent to the GitHub repo for this package
   ua = httr::user_agent('https://github.com/KevinSee/PITcleanr')
@@ -43,42 +44,42 @@ queryCapHist = function(tag_code = NULL,
 
 
   if(is.null(headers(web_req)$`content-length`)) {
-    print('Error with tag ID format')
+    message('Error with tag ID format')
     return(NULL)
-  } else if(headers(web_req)$`content-length` > 3) {
-    return(NULL)
-  } else if(headers(web_req)$`content-length` <= 3) {
+  } else {
     test = suppressMessages(httr::content(web_req,
                                           'parsed',
                                           encoding = 'UTF-8')) %>%
       names()
   }
+
   if(test[1] == '0') {
     # no observations found in DART
-    print(paste('Tag', tag_code, 'found in DART, but no detections exist'))
+    message(paste('Tag', tag_code, 'found in DART, but no detections exist\n'))
+    return(NULL)
 
-    # add the marking info (probably marked at LGR, never seen again)
-    tagMeta_org = suppressWarnings(queryTagMeta(tag_code))
-
-    tagMeta_df = tagMeta_org %>%
-      mutate(`Antenna ID` = as.character(NA),
-             `Antenna Group Configuration Value` = 0,
-             AntennaGroup = as.character(NA)) %>%
-      select(`Tag Code` = tag,
-             `Event Date Time Value` = markDate,
-             `Event Site Code Value` = markSiteCode,
-             `Antenna ID`,
-             `Antenna Group Configuration Value`,
-             AntennaGroup) %>%
-      left_join(configuration %>%
-                  select(`Event Site Code Value` = SiteID,
-                         SiteType) %>%
-                  distinct(),
-                by = c("Event Site Code Value"))
-
-    return(tagMeta_df)
+    # # add the marking info (probably marked at LGR, never seen again)
+    # tagMeta_org = suppressWarnings(queryTagMeta(tag_code))
+    #
+    # tagMeta_df = tagMeta_org %>%
+    #   mutate(`Antenna ID` = as.character(NA),
+    #          `Antenna Group Configuration Value` = 0,
+    #          AntennaGroup = as.character(NA)) %>%
+    #   select(`Tag Code` = tag,
+    #          `Event Date Time Value` = markDate,
+    #          `Event Site Code Value` = markSiteCode,
+    #          `Antenna ID`,
+    #          `Antenna Group Configuration Value`,
+    #          AntennaGroup) %>%
+    #   left_join(configuration %>%
+    #               select(`Event Site Code Value` = SiteID,
+    #                      SiteType) %>%
+    #               distinct(),
+    #             by = c("Event Site Code Value"))
+    #
+    # return(tagMeta_df)
   } else if(test[1] == '99') {
-    print(paste('Tag', tag_code, 'not found in DART'))
+    message(paste('Tag', tag_code, 'not found in DART\n'))
     return(NULL)
   } else {
 
@@ -86,37 +87,83 @@ queryCapHist = function(tag_code = NULL,
     parsed = suppressMessages(httr::content(web_req,
                                             'parsed',
                                             encoding = 'UTF-8')) %>%
-      rename(`Tag Code` = tag_id,
-             `Event Date Time Value` = eventdatetime,
-             `Event Site Code Value` = site_code,
-             `Antenna ID` = antenna_id,
-             `Antenna Group` = antenna_group,
-             SiteType = obs_type)
+      dplyr::rename(tag_code = tag_id,
+                    event_date_time_value = eventdatetime,
+                    event_site_code_value = site_code,
+                    site_type = obs_type) |>
+      dplyr::mutate(event_type_name = dplyr::recode(site_type,
+                                                    "INT" = "Observation",
+                                                    "REC" = "Recapture",
+                                                    "MRT" = "Recovery"))
 
     # get configuration ID
-    config_df = parsed %>%
-      mutate(date = lubridate::floor_date(`Event Date Time Value`,
+    config_df <- parsed %>%
+      mutate(date = lubridate::floor_date(event_date_time_value,
                                           'day')) %>%
-      select(site_code = `Event Site Code Value`,
-             antenna_id = `Antenna ID`,
+      select(site_code = event_site_code_value,
+             antenna_id,
              date) %>%
       distinct() %>%
       left_join(configuration,
                 by = c('site_code',
-                       'antenna_id')) %>%
+                       'antenna_id'),
+                multiple = "all") %>%
       filter((start_date <= date | (is.na(start_date) & is.na(end_date))),
              (end_date > date | is.na(end_date))) %>%
-      select(site_code, antenna_id, config_id) %>%
+      select(site_code, antenna_id,
+             antenna_group_configuration_value = config_id) %>%
       distinct()
 
-    parsed = parsed %>%
+    # add configuration id to each observation
+    parsed <- parsed %>%
       left_join(config_df,
-                by = c('Event Site Code Value' = 'site_code',
-                       'Antenna ID' = "antenna_id")) %>%
-      rename(`Antenna Group Configuration Value` = config_id) %>%
-      select(`Tag Code`:`Antenna ID`,
-             `Antenna Group Configuration Value`,
+                by = c('event_site_code_value' = 'site_code',
+                       "antenna_id")) %>%
+      select(tag_code,
+             event_site_code_value,
+             event_date_time_value,
+             antenna_id,
+             antenna_group_configuration_value,
              everything())
+
+
+    # query mark information
+
+    # compose url with query
+    mrk_url_req = 'https://api.ptagis.org/data/events/'
+
+    # send query to PTAGIS
+    mrk_web_req = httr::GET(paste0(mrk_url_req, tag_code),
+                        ua)
+
+    mrk_parsed <- httr::content(mrk_web_req,
+                  'parsed',
+                  encoding = 'UTF-8') |>
+      purrr::map_df(.f = as_tibble) |>
+      janitor::clean_names() |>
+      dplyr::select(tag_code,
+                    event_site_code_value = site_code,
+                    site_name,
+                    event_type_name = event_type,
+                    event_date_time_value = event_date,
+                    cth_count = event_count) |>
+      dplyr::mutate(
+        dplyr::across(
+          event_date_time_value,
+          lubridate::ymd_hms
+        )
+      ) |>
+      dplyr::filter(event_type_name == "Mark") |>
+      dplyr::select(dplyr::any_of(names(parsed)))
+
+    # add mark data to other detections
+    if(nrow(mrk_parsed) > 0) {
+      parsed <- parsed |>
+        dplyr::bind_rows(mrk_parsed) |>
+        dplyr::arrange(tag_code,
+                       event_date_time_value)
+    }
+
 
     return(parsed)
   }

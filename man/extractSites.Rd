@@ -5,7 +5,8 @@
 \title{Extract Sites}
 \usage{
 extractSites(
-  ptagis_file = NULL,
+  cth_file = NULL,
+  file_type = c("PTAGIS", "Biologic_csv", "raw"),
   as_sf = F,
   crs = 5070,
   min_date = NULL,
@@ -14,11 +15,19 @@ extractSites(
 )
 }
 \arguments{
-\item{ptagis_file}{is the path to the PTAGIS observation file downloaded as a csv from PTAGIS.
+\item{cth_file}{is the path to the complete tag history file}
+
+\item{file_type}{describes the source of the complete tag history file.
+
+If \code{PTAGIS}, then \code{cth_file} should be a PTAGIS observation file downloaded as a csv from PTAGIS.
 This must be the output from a Complete Tag History query (part of the Advanced Reporting).
 This query should contain: Tag, Mark Species, Mark Rear Type, Event Type, Event Site Type,
 Event Site Code, Event Date Time, Antenna, Antenna Group Configuration,
-Event Release Site Code, and Event Release Date Time.}
+Event Release Site Code, and Event Release Date Time.
+
+If \code{Biologic_csv}, that implies the data was downloaded from Biologic software in a .csv format.
+
+If \code{raw}, that implies the data was downloaded directly from the reader, in either a .log or .xlsx format. In this case, the largest string containing alphabetic characters in the file name will be assigned as the site code.}
 
 \item{as_sf}{Should the results be returned as an `sf` object (`TRUE`), or a tibble
 (`FALSE`, and the default)?}
