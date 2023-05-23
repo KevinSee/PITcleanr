@@ -5,7 +5,8 @@
 \title{Compress PTAGIS Data}
 \usage{
 compress(
-  ptagis_file = NULL,
+  cth_file = NULL,
+  file_type = c("PTAGIS", "Biologic_csv", "raw"),
   max_minutes = NA,
   configuration = NULL,
   units = c("mins", "auto", "secs", "hours", "days", "weeks"),
@@ -14,11 +15,19 @@ compress(
 )
 }
 \arguments{
-\item{ptagis_file}{is the path to the PTAGIS observation file downloaded as a csv from PTAGIS.
+\item{cth_file}{is the path to the complete tag history file}
+
+\item{file_type}{describes the source of the complete tag history file.
+
+If \code{PTAGIS}, then \code{cth_file} should be a PTAGIS observation file downloaded as a csv from PTAGIS.
 This must be the output from a Complete Tag History query (part of the Advanced Reporting).
 This query should contain: Tag, Mark Species, Mark Rear Type, Event Type, Event Site Type,
 Event Site Code, Event Date Time, Antenna, Antenna Group Configuration,
-Event Release Site Code, and Event Release Date Time.}
+Event Release Site Code, and Event Release Date Time.
+
+If \code{Biologic_csv}, that implies the data was downloaded from Biologic software in a .csv format.
+
+If \code{raw}, that implies the data was downloaded directly from the reader, in either a .log or .xlsx format. In this case, the largest string containing alphabetic characters in the file name will be assigned as the site code.}
 
 \item{max_minutes}{maximum number of minutes between detections of a tag before it's considered a
 different "slot" of detections. Default is `NA`, which means a new slot is only defined by
@@ -47,8 +56,8 @@ each node as well as how many detections were made during that slot. Slots can b
 defined to include a maximum number of minutes, or not.
 }
 \examples{
-ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
-compress(ptagis_file)
+cth_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+compress(cth_file)
 }
 \author{
 Kevin See

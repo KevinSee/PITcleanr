@@ -9,7 +9,6 @@
 #' @source \url{http://www.ptagis.org}
 #'
 #' @import dplyr httr
-#' @export
 #' @return From PTAGIS: WARNING: this feature has been disabled. Contact PTAGIS for more info. Gets mark event information for a given tag code.
 #' @examples queryTagMeta("3D9.1C2D929849")
 

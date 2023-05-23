@@ -27,23 +27,29 @@ system.file("extdata",
   readr::read_table(col_names = F)
 ```
 
-Once the user has created their own tag list, or located this example one, they can go to the [PTAGIS homepage](https:://www.ptagis/org) to query the complete tag histories for those tags. To do so, navigate the the [homepage](https:://www.ptagis/org) and go to the [Advanced Reporting](https://www.ptagis.org/data/advanced-reporting) page, which can also be found under the Data tab on the homepage. To access Advanced Reporting, the user will need a free account from PTAGIS, and to be logged in. Once on the Advanced Reporting page, select "Launch" and create a custom query by selecting "Create Query Builder2 Report", and choosing the "Complete Tag History" query type.  
+Once the user has created their own tag list, or located this example one, they can go to the [PTAGIS homepage](https:://www.ptagis/org) to query the complete tag histories for those tags. The complete tag history query is available to under [Advanced Reporting](https://www.ptagis.org/Data/AdvancedReporting), which requires a free account from PTAGIS. From the [homepage](https:://www.ptagis/org), click on "Login/Register", and either login to your existing account, or click "Create a new account" to create one. 
 
-There are several query indices on the left side of the query builder, but for the purposes of `PITcleanr` only a few are needed. First, under "1 Select Attributes" the following fields are required to work with `PITcleanr`:
+Once logged into your account, scroll down the dashboard page to the Advanced Reporting Links section. PTAGIS allows users to save reports/queries to be run again. If you've created one for PITcleanr in the past, and saved it, you can locate it by clicking on the "My Reports" link. If you'd like to create a new query, click on "Query Builder", or "Advanced Reporting Home Page" and then ""Create Query Builder2 Report". From here, choose "Complete Tag History" from the list of possible reports.
+
+There are several query indices on the left side of the query builder, but for the purposes of `PITcleanr` only a few are needed. First, under "1 Select Attributes" the following attributes are required to work with `PITcleanr`:
 
 * Tag
-* Mark Species
-* Mark Rear Type
-* Event Type
-* Event Site Type
 * Event Site Code
 * Event Date Time
 * Antenna
 * Antenna Group Configuration
+
+This next group of attributes are not required, but are highly recommended:
+
+* Mark Species
+* Mark Rear Type
+* Event Type
+* Event Site Type
 * Event Release Site Code
 * Event Release Date Time
 
-Simply move these fields over to the "Selected:" column on the page. Other fields may be included as well, but the ones listed above must be added. Any additional fields will just be included as extra columns in the query output. 
+
+Simply move these attributes over from the "Available" column to the "Selected:" column on the page. Other fields of interest to the user may be included as well (e.g. Event Length), but the ones listed above must be added. Any additional attributes will just be included as extra columns in the query output. 
 
 The only other required index is "2 Select Metrics", but that can remain as the default, "CTH Count", which provides one record for each event recorded per tag.
 
@@ -75,7 +81,8 @@ ptagis_file = "C:/Users/usernamehere/Downloads/TUM_Chinook_2015.csv"
 ```
 
 ```{r raw-ptagis-data, echo = F}
-raw_ptagis = readr::read_csv(ptagis_file)
+raw_ptagis = readr::read_csv(ptagis_file,
+                             show_col_types = F)
 n_raw_tags = n_distinct(raw_ptagis$`Tag Code`)
 
 mark_only_tags = raw_ptagis %>%
@@ -89,16 +96,17 @@ mark_only_tags = raw_ptagis %>%
 
 ```
 
-Note that in our example file, there are `r nrow(raw_ptagis)` detections (rows) for `r n_raw_tags` unique tags, matching the number of tags in our example tag list "tag_list_TUM_2015.txt". For a handful of those tags, in our case `r nrow(mark_only_tags)`, there is only a "Mark" detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining, there are many tags often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of the raw data for a single tag:
+Note that in our example file, there are `r nrow(raw_ptagis)` detections (rows) for `r n_raw_tags` unique tags, matching the number of tags in our example tag list "tag_list_TUM_2015.txt". For a handful of those tags, in our case `r nrow(mark_only_tags)`, there is only a "Mark" detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining tags, many of them were often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of some of the raw data for a single tag:
 
 ```{r, echo = F}
 raw_ptagis %>%
   select(`Tag Code`) %>%
   distinct() %>%
-  # slice(1:3) %>%
   slice(2) %>%
-  left_join(raw_ptagis) %>%
-  kable()
-  # DT::datatable()
-
+  left_join(raw_ptagis,
+            by = join_by(`Tag Code`),
+            multiple = "all") %>%
+  slice(c(1:15)) %>%
+  kable() %>%
+  kableExtra::kable_styling()
 ```

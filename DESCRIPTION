@@ -26,6 +26,9 @@ Imports:
     nhdplusTools (>= 0.3.15),
     nngeo (>= 0.4.4),
     here (>= 1.0.0),
+    readxl,
+    tidygraph (>= 1.2.3)
+    here (>= 1.0.0),
     XML,
     xml2
 URL: https://github.com/KevinSee/PITcleanr,
@@ -37,6 +40,5 @@ LazyData: true
 RoxygenNote: 7.2.3
 Suggests: 
     knitr,
-    tidygraph (>= 1.2.0),
     rmarkdown
 VignetteBuilder: knitr

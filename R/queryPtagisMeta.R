@@ -15,14 +15,14 @@
 queryPtagisMeta = function() {
 
   # get metadata for interrogation sites
-  cat('Querying INT sites\' metadata\n')
+  message('Querying INT sites\' metadata\n')
   int_meta = queryInterrogationMeta()
   # get configuration details for interrogation sites
-  cat('Querying INT sites\' configuration information\n')
+  message('Querying INT sites\' configuration information\n')
   int_config = queryInterrogationConfig()
 
   # get metadata for MRR sites
-  cat('Querying MRR sites\' metadata\n')
+  message('Querying MRR sites\' metadata\n')
   mrr_meta = queryMRRMeta()
 
   # put it all together

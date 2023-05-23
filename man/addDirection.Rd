@@ -4,7 +4,7 @@
 \alias{addDirection}
 \title{Add Direction}
 \usage{
-addDirection(compress_obs = NULL, parent_child = NULL)
+addDirection(compress_obs = NULL, parent_child = NULL, direction = "u")
 }
 \arguments{
 \item{compress_obs}{The result of `compress()`.}
