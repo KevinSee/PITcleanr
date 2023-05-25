@@ -74,6 +74,7 @@ reference:
   - prepWrapper
   - summarizeTagData
   - compressDART
+  - readTestTag
 - title: Deprecated functions
   desc: |
     These functions have been superseded
@@ -99,7 +100,8 @@ reference:
   - writeTUMNodeNetwork_noUWE
 articles:
 - title: Getting Started
-  contents: Prep_PIT_data
+  contents:
+  - Prep_PIT_data
 - title: DABOM
   desc: |
     Vignettes aimed at preparing data for DABOM
