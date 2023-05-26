@@ -30,7 +30,7 @@ library(PITcleanr)
 
 # Introduction
 
-Not all PIT tag data is in PTAGIS.This vignette will show the user how to read in PIT tag data from a variety of other sources, including Biologic csv files as well as raw files (e.g. .xlsx, .log and .txt file extensions) downloaded directly from PIT tag readers. The `r readCTH()` function is able to read in all of these formats, but the user must indicate what format each file is in. 
+Not all PIT tag data is in PTAGIS.This vignette will show the user how to read in PIT tag data from a variety of other sources, including Biologic csv files as well as raw files (e.g. .xlsx, .log and .txt file extensions) downloaded directly from PIT tag readers. The `readCTH()` function is able to read in all of these formats, but the user must indicate what format each file is in. 
 
 There are many ways a user might store their various files, and many ways to script how to read them into R. In this vignette, we will suggest one way to do this, but alternatives certainly exist.
 
@@ -38,13 +38,14 @@ There are many ways a user might store their various files, and many ways to scr
 
 In this example, we have accumulated a number of different PIT tag detection files, in a variety of formats. We have saved them all in the same folder, and used some naming convention to indicate what format they are. Files from PTAGIS have "PTAGIS" in the file name somewhere, Biologic csv files have "BIOLOGIC" in the file name somewhere, and we assume the other files are raw files (with a mixture of .xlsx, .log and .txt file extensions).
 
-We set the name and path of the folder with all the detection data (`r detection_folder`), and used the following script to compile a data.frame of various file names and file types. A user can set the `r detection_folder` path to point to where they have stored all their detection files.
+We set the name and path of the folder with all the detection data (`detection_folder`), and used the following script to compile a data.frame of various file names and file types. A user can set the `detection_folder` path to point to where they have stored all their detection files.
 
 ```{r}
 detection_folder = system.file("extdata", 
                                 "non_ptagis",
                                 package = "PITcleanr",
-                                mustWork = TRUE)
+                                mustWork = TRUE) |> 
+  paste0("/")
 
 file_df <- tibble(file_nm = list.files(detection_folder)) |> 
   filter(str_detect(file_nm, "\\.")) |> 
@@ -59,7 +60,8 @@ file_df
 
 # Reading in Detections
 
-The following script uses the path of the `r detection_folder`, the various file names inside that folder, the file type associated with each file, and the `r readCTH()` function to read all the detections into R and consolidate them into a single data.frame, `r all_obs`. It contains a quick check (`r try` and `r "try-error"`) to ensure that if any particular file has trouble being read, the others are still included. 
+The following script uses the path of the `detection_folder`, the various file names inside that folder, the file type associated with each file, and the `readCTH()` function to read all the detections into R and consolidate them into a single data.frame, `all_obs`. It contains a quick check (`try` and `"try-error"`) to ensure that if any particular file has trouble being read, the others are still included. 
+
 ```{r}
 # read them all in
 all_obs <-
@@ -67,7 +69,8 @@ all_obs <-
   mutate(obs_df = map2(file_nm,
                        file_type,
                        .f = function(x, y) {
-                         try(readCTH(paste0(detection_folder, x), y))
+                         try(readCTH(cth_file = paste0(detection_folder, x), 
+                                     file_type = y))
                        })) |> 
   mutate(cls_obs = map_chr(obs_df, .f = function(x) class(x)[1])) |> 
   filter(cls_obs != "try-error") |> 
