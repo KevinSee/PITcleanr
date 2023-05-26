@@ -19,7 +19,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Cleans up PIT tag capture histories">
 <meta property="og:description" content="This package takes a complete tag history file from PTAGIS and cleans it, compresses it and makes it ready for summaries or analyses.">
-<meta property="og:image" content="https://kevinsee.github.io/PITcleanr/index.html/logo.png">
+<meta property="og:image" content="https://kevinsee.github.io/PITcleanr/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -50,7 +50,7 @@
   <a href="reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -93,36 +93,35 @@
       </header><div class="row">
   <div class="contents col-md-9">
 <div class="section level1">
-<div class="page-header"><h1 id="pitcleanr-">PITcleanr <a href="https://github.com/KevinSee/PITcleanr" class="external-link"><img src="reference/figures/logo.png" align="right" height="130"></a>
+<div class="page-header"><h1 id="pitcleanr-">PITcleanr <a href="https://github.com/KevinSee/PITcleanr" class="external-link"><img src="reference/figures/logo.png" align="right" width="110"></a>
 <a class="anchor" aria-label="anchor" href="#pitcleanr-"></a>
 </h1></div>
 <!-- badges: start -->
-
 <div class="section level2">
 <h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
 <p><code>PITcleanr</code> is an R package for preparing PIT tag data for further analysis. The package can help import complete tag histories from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a>, build a configuration file to help assign each detection to a “node”, and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table describing whether detection locations are upstream or downstream in relation to each other, and assign directionality of movement between each detection location. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), <code>PITcleanr</code> can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept.</p>
 <p>It was originally conceived as a companion to the <a href="https://github.com/KevinSee/DABOM" class="external-link">DABOM</a> package for estimating abundance of returning anadromous adult fish moving upstream. <code>PITcleanr</code> was designed to prepare the raw PIT tag observations from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a> for use in the <code>DABOM</code> package.</p>
-<p>The user can find more information related to installation and use of this package on the <a href="https://kevinsee.github.io/PITcleanr/" class="external-link">package website</a>.</p>
+<p>The user can find more information related to installation and use of this package on the <a href="https://kevinsee.github.io/PITcleanr/">package website</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="installation-instructions">Installation Instructions<a class="anchor" aria-label="anchor" href="#installation-instructions"></a>
 </h2>
-<p>The <code>PITcleanr</code> compendium can be downloaded as a zip from from this URL: <a href="https://github.com/KevinSee/PITcleanr/archive/master.zip" class="external-link uri">https://github.com/KevinSee/PITcleanr/archive/master.zip</a></p>
-<p>Or you can install the compendium as an R package from GitHub by using Hadley Wickham’s <code>devtools</code> package:</p>
+<p>The <code>PITcleanr</code> package can be installed as an R package from GitHub by using Hadley Wickham’s <code>devtools</code> package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install and load remotes, if necessary</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr"</span>, 
-                         build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install and load remotes, if necessary</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr"</span>, </span>
+<span>                         build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><code>devtools</code> may require the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">here</a>.</p>
 <p>For the latest development version:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr@develop"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr@develop"</span><span class="op">)</span></span></code></pre></div>
+<p>Alternatively, the <code>PITcleanr</code> compendium can be downloaded as a zip file from from this URL: <a href="https://github.com/KevinSee/PITcleanr/archive/master.zip" class="external-link uri">https://github.com/KevinSee/PITcleanr/archive/master.zip</a> Once extracted, the functions can be sourced individually, or a user can build the R package locally.</p>
 <p>Be sure to use the <code>build_vignettes = TRUE</code> argument, as this will build all of the vignettes (i.e., user manuals) that are included with the package. Further instructions on how to use <code>PITcleanr</code> can be found in the vignettes, which can be accessed using:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"PITcleanr"</span><span class="op">)</span>
-<span class="co">#&gt; No vignettes found by browseVignettes(package = "PITcleanr")</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"PITcleanr"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; starting httpd help server ... done</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="compressing-ptagis-detection-data">Compressing PTAGIS Detection Data<a class="anchor" aria-label="anchor" href="#compressing-ptagis-detection-data"></a>
@@ -130,26 +129,25 @@
 <p>The complete tag history query output from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> (e.g., <code>ptagis_file</code>) will provide a record for every detection of each tag code in the tag list. Again, this may include multiple detections on the same antenna, or the same site within a short period of time, leading to an unwieldy and perhaps messy dataset. One of the main purposes of <code>PITcleanr</code> is to compress that data into an initial summary using the function <code><a href="reference/compress.html">compress()</a></code>. At a minimum, this function requires a path e.g., <code>ptagis_file</code>, to the complete tag history query results downloaded from PTAGIS.</p>
 <p>In our example, we perform the <code><a href="reference/compress.html">compress()</a></code> function on the <code>ptagis_file</code> object containing the file path to our query results, and write the output to an object <code>comp_obs</code> containing the compressed observations.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># view path to example file, of course you can also set ptagis_file to your own PTAGIS query results</span>
-<span class="va">ptagis_file</span>
-<span class="co">#&gt; [1] "C:/Users/seek1477/OneDrive - Washington State Executive Branch Agencies/Documents/R/win-library/4.1/PITcleanr/extdata/TUM_Chinook_2015.csv"</span>
-
-<span class="co"># run compress() function on it</span>
-<span class="va">comp_obs</span> <span class="op">=</span> <span class="fu"><a href="reference/compress.html">compress</a></span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span>
-
-<span class="co"># look at first parts of resulting object</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_obs</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 9</span>
-<span class="co">#&gt;   tag_code       node    slot event_type_name n_dets min_det            </span>
-<span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;  &lt;int&gt; &lt;chr&gt;            &lt;int&gt; &lt;dttm&gt;             </span>
-<span class="co">#&gt; 1 384.3B239AD241 NASONC     1 Mark                 1 2013-11-04 16:45:00</span>
-<span class="co">#&gt; 2 384.3B239AD241 JDJ        2 Observation         12 2014-05-25 11:14:29</span>
-<span class="co">#&gt; 3 384.3B239AD241 BO4        3 Observation         11 2015-05-14 16:41:24</span>
-<span class="co">#&gt; 4 384.3B239AD241 TD1        4 Observation          3 2015-05-16 11:15:40</span>
-<span class="co">#&gt; 5 384.3B239AD241 MC2        5 Observation         17 2015-05-19 17:01:15</span>
-<span class="co">#&gt; 6 384.3B239AD241 PRA        6 Observation          2 2015-05-24 13:51:16</span>
-<span class="co">#&gt; # ... with 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;,</span>
-<span class="co">#&gt; #   travel_time &lt;drtn&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># view path to example file, of course you can also set ptagis_file to your own PTAGIS query results</span></span>
+<span><span class="va">ptagis_file</span></span>
+<span><span class="co">#&gt; [1] "C:/Rfolder/R/win-library/4.1/PITcleanr/extdata/TUM_Chinook_2015.csv"</span></span>
+<span></span>
+<span><span class="co"># run compress() function on it</span></span>
+<span><span class="va">comp_obs</span> <span class="op">=</span> <span class="fu"><a href="reference/compress.html">compress</a></span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># look at first parts of resulting object</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_obs</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 x 9</span></span>
+<span><span class="co">#&gt;   tag_code       node    slot event_type_name n_dets min_det            </span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;  &lt;int&gt; &lt;chr&gt;            &lt;int&gt; &lt;dttm&gt;             </span></span>
+<span><span class="co">#&gt; 1 384.3B239AD241 NASONC     1 Mark                 1 2013-11-04 16:45:00</span></span>
+<span><span class="co">#&gt; 2 384.3B239AD241 JDJ        2 Observation         12 2014-05-25 11:14:29</span></span>
+<span><span class="co">#&gt; 3 384.3B239AD241 BO4        3 Observation         11 2015-05-14 16:41:24</span></span>
+<span><span class="co">#&gt; 4 384.3B239AD241 TD1        4 Observation          3 2015-05-16 11:15:40</span></span>
+<span><span class="co">#&gt; 5 384.3B239AD241 MC2        5 Observation         17 2015-05-19 17:01:15</span></span>
+<span><span class="co">#&gt; 6 384.3B239AD241 PRA        6 Observation          2 2015-05-24 13:51:16</span></span>
+<span><span class="co">#&gt; # i 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></span></code></pre></div>
 <p>The output consists of a tibble containing columns for:</p>
 <ul>
 <li>
@@ -175,7 +173,7 @@
 <p>Each slot in the output is defined as all detections on a particular node before the tag is detected on a different node. The user can define a maximum number of minutes between detections before a new slot should be defined by supplying a value to the <code>max_minutes</code> argument to <code><a href="reference/compress.html">compress()</a></code>. The units of the duration and travel_time columns can also be defined by the <code>units</code> argument. The default is minutes (<code>mins</code>). As an example, if a tag moves from node A to B and back to A, there will be three slots in the compressed data.</p>
 <p>The help menu for <code><a href="reference/compress.html">compress()</a></code>, or any function for that matter, can be accessed using:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">?</span><span class="fu">PITcleanr</span><span class="fu">::</span><span class="va"><a href="reference/compress.html">compress</a></span></code></pre></div>
+<code class="sourceCode R"><span><span class="op">?</span><span class="fu">PITcleanr</span><span class="fu">::</span><span class="va"><a href="reference/compress.html">compress</a></span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="other-functionality">Other Functionality<a class="anchor" aria-label="anchor" href="#other-functionality"></a>
@@ -190,7 +188,7 @@
 <li>Kevin See (Washington Department of Fish &amp; Wildlife)</li>
 <li>Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)</li>
 <li>Rick Orme (Nez Perce Tribe - Fisheries Resources Management)</li>
-<li>Mike Ackerman (Mt Hood Environmental)</li>
+<li>Mike Ackerman (Nez Perce Tribe - Fisheries Resources Management)</li>
 </ul>
 <div class="section level3">
 <h3 id="licenses">Licenses<a class="anchor" aria-label="anchor" href="#licenses"></a>
@@ -269,7 +267,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

@@ -19,7 +19,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><meta property="og:title" content="Querying, Compressing, and Making Sense of PIT Tag Detection Data">
 <meta property="og:description" content="PITcleanr">
-<meta property="og:image" content="https://kevinsee.github.io/PITcleanr/index.html/logo.png">
+<meta property="og:image" content="https://kevinsee.github.io/PITcleanr/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -50,7 +50,7 @@
   <a href="../reference/index.html">Functions</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Vignettes
      
     <span class="caret"></span>
@@ -90,13 +90,14 @@
 
       
 
-      </header><div class="row">
+      </header><script src="Prep_PIT_data_files/kePrint-0.0.1/kePrint.js"></script><link href="Prep_PIT_data_files/lightable-0.0.1/lightable.css" rel="stylesheet">
+<div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Querying, Compressing, and Making Sense of PIT Tag Detection Data</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">03 February, 2022</h4>
+            <h4 data-toc-skip class="date">26 May, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/Prep_PIT_data.Rmd" class="external-link"><code>vignettes/Prep_PIT_data.Rmd</code></a></small>
       <div class="hidden name"><code>Prep_PIT_data.Rmd</code></div>
@@ -113,68 +114,76 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>The <code>PITcleanr</code> compendium can be downloaded as a zip from from this URL: <a href="https://github.com/KevinSee/PITcleanr/archive/master.zip" class="external-link uri">https://github.com/KevinSee/PITcleanr/archive/master.zip</a></p>
-<p>Or you can install the compendium as an R package from GitHub by using Hadley Wickham’s <code>devtools</code> package:</p>
+<p>The <code>PITcleanr</code> package can be installed as an R package from GitHub by using Hadley Wickham’s <code>devtools</code> package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install and load remotes, if necessary</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr"</span>, 
-                         build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install and load remotes, if necessary</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr"</span>, </span>
+<span>                         build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><code>devtools</code> may require the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">here</a>.</p>
 <p>For the latest development version:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr@develop"</span><span class="op">)</span></code></pre></div>
-<p>Additionally, one function in <code>PITcleanr</code> allows the user to make a plot of how the detection sites or nodes are related to each other. To use this function, one will need the <code>ggraph</code> and <code>tidygraph</code> R packages. <code>tidygraph</code> is included with <code>ggraph</code>, so a user only needs to install <code>ggraph</code>. If the argument <code>dependencies</code> is set to <code>TRUE</code> in the code above, it should be installed automatically. Otherwise, run the following:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"ggraph"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr@develop"</span><span class="op">)</span></span></code></pre></div>
+<p>Alternatively, the <code>PITcleanr</code> compendium can be downloaded as a zip file from from this URL: <a href="https://github.com/KevinSee/PITcleanr/archive/master.zip" class="external-link uri">https://github.com/KevinSee/PITcleanr/archive/master.zip</a> Once extracted, the functions can be sourced individually, or a user can build the R package locally.</p>
+<!-- Additionally, one function in `PITcleanr` allows the user to make a plot of how the detection sites or nodes are related to each other. To use this function, one will need the `ggraph` and `tidygraph` R packages. `tidygraph` is included with `ggraph`, so a user only needs to install `ggraph`. If the argument `dependencies` is set to `TRUE` in the code above, it should be installed automatically. Otherwise, run the following: -->
+<!-- ```{r other-packages, eval = F} -->
+<!-- install.packages("ggraph") -->
+<!-- ``` -->
 <p>Once <code>PITcleanr</code> is successfully installed, it can be loaded into the R session. In this vignette, we will also use many functions from the <code>tidyverse</code> <a href="https://www.tidyverse.org/" class="external-link">group of packages</a>, so load those as well:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/KevinSee/PITcleanr" class="external-link">PITcleanr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/KevinSee/PITcleanr" class="external-link">PITcleanr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
 <p>Note that many of the various queries in <code>PITcleanr</code> require a connection to the internet.</p>
 </div>
 <div class="section level2">
-<h2 id="querying-detection-data-from-ptagis">Querying Detection Data from PTAGIS<a class="anchor" aria-label="anchor" href="#querying-detection-data-from-ptagis"></a>
+<h2 id="querying-detection-data">Querying Detection Data<a class="anchor" aria-label="anchor" href="#querying-detection-data"></a>
 </h2>
+<div class="section level3">
+<h3 id="from-ptagis">From PTAGIS<a class="anchor" aria-label="anchor" href="#from-ptagis"></a>
+</h3>
 <p>The Columbia Basin PIT Tag Information System (<a href="https://ptagis.org/" class="external-link">PTAGIS</a>) is the centralized regional database for PIT-tag detections within the Columbia River Basin. It contains a record of each detection of every PIT tag, including the initial detection, or “mark”, when the tag is implanted in the fish, detections on PIT-tag antennas, recaptures (e.g. at weirs) and recoveries (e.g. carcass surveys). It contains a record of every individual detection, which means potentially multiple records of a tag being detected on the same antenna over and over e.g., in the case that it is not moving. Therefore, querying PTAGIS for all of these detections leads to a wealth of data, which can be unwieldy for the user. <code>PITcleanr</code> aims to compress that data to a more manageable size, without losing any of the information contained in that dataset.</p>
 <p><code>PITcleanr</code> starts with a complete capture history query from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> for a select group of tags of interest. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query.</p>
 <p>For convenience, we’ve included one such file with <code>PITcleanr</code>. The following code can be used to find the path to that example file that was installed with the package, titled “tag_list_TUM_2015.txt”, containing IDs for Chinook salmon adults implanted with PIT tags at Tumwater Dam in 2015. Feel free to copy/paste that file to use as a template for creating your own tag list, in which case, you can follow along with your own tags of interest.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, 
-            <span class="st">"tag_list_TUM_2015.txt"</span>, 
-            package <span class="op">=</span> <span class="st">"PITcleanr"</span>,
-            mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
+<span>            <span class="st">"tag_list_TUM_2015.txt"</span>, </span>
+<span>            package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
+<span>            mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The example file of tag codes is very simple:</p>
-<pre><code><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2,019 x 1</span></span>
-<span class="co">#&gt;    X1            </span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 384.3B239AD241</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 3D9.1BF24B20F5</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 3D9.1C2D76FB78</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 3D9.1C2D770193</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3D9.1C2D91B3DE</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3D9.1C2D925C52</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 3D9.1C2D929849</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3D9.1C2D93282A</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3D9.1C2DB9A65E</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3D9.1C2DC026E4</span>
-<span class="co">#&gt; <span style="color: #949494;"># ... with 2,009 more rows</span></span></code></pre>
-<p>Once the user has created their own tag list, or located this example one, they can go to the <a href="https:://www.ptagis/org">PTAGIS homepage</a> to query the complete tag histories for those tags. To do so, navigate the the <a href="https:://www.ptagis/org">homepage</a> and go to the <a href="https://www.ptagis.org/data/advanced-reporting" class="external-link">Advanced Reporting</a> page, which can also be found under the Data tab on the homepage. To access Advanced Reporting, the user will need a free account from PTAGIS, and to be logged in. Once on the Advanced Reporting page, select “Launch” and create a custom query by selecting “Create Query Builder2 Report”, and choosing the “Complete Tag History” query type.</p>
-<p>There are several query indices on the left side of the query builder, but for the purposes of <code>PITcleanr</code> only a few are needed. First, under “1 Select Attributes” the following fields are required to work with <code>PITcleanr</code>:</p>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2,019 x 1</span></span></span>
+<span><span class="co">#&gt;    X1            </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 384.3B239AD241</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 3D9.1BF24B20F5</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 3D9.1C2D76FB78</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 3D9.1C2D770193</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3D9.1C2D91B3DE</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3D9.1C2D925C52</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 3D9.1C2D929849</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3D9.1C2D93282A</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3D9.1C2DB9A65E</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3D9.1C2DC026E4</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i 2,009 more rows</span></span></span></code></pre>
+<p>Once the user has created their own tag list, or located this example one, they can go to the <a href="https:://www.ptagis/org">PTAGIS homepage</a> to query the complete tag histories for those tags. The complete tag history query is available to under <a href="https://www.ptagis.org/Data/AdvancedReporting" class="external-link">Advanced Reporting</a>, which requires a free account from PTAGIS. From the <a href="https:://www.ptagis/org">homepage</a>, click on “Login/Register”, and either login to your existing account, or click “Create a new account” to create one.</p>
+<p>Once logged into your account, scroll down the dashboard page to the Advanced Reporting Links section. PTAGIS allows users to save reports/queries to be run again. If you’ve created one for PITcleanr in the past, and saved it, you can locate it by clicking on the “My Reports” link. If you’d like to create a new query, click on “Query Builder”, or “Advanced Reporting Home Page” and then ““Create Query Builder2 Report”. From here, choose “Complete Tag History” from the list of possible reports.</p>
+<p>There are several query indices on the left side of the query builder, but for the purposes of <code>PITcleanr</code> only a few are needed. First, under “1 Select Attributes” the following attributes are required to work with <code>PITcleanr</code>:</p>
 <ul>
 <li>Tag</li>
-<li>Mark Species</li>
-<li>Mark Rear Type</li>
-<li>Event Type</li>
-<li>Event Site Type</li>
 <li>Event Site Code</li>
 <li>Event Date Time</li>
 <li>Antenna</li>
 <li>Antenna Group Configuration</li>
+</ul>
+<p>This next group of attributes are not required, but are highly recommended:</p>
+<ul>
+<li>Mark Species</li>
+<li>Mark Rear Type</li>
+<li>Event Type</li>
+<li>Event Site Type</li>
 <li>Event Release Site Code</li>
 <li>Event Release Date Time</li>
 </ul>
-<p>Simply move these fields over to the “Selected:” column on the page. Other fields may be included as well, but the ones listed above must be added. Any additional fields will just be included as extra columns in the query output.</p>
+<p>Simply move these attributes over from the “Available” column to the “Selected:” column on the page. Other fields of interest to the user may be included as well (e.g. Event Length), but the ones listed above must be added. Any additional attributes will just be included as extra columns in the query output.</p>
 <p>The only other required index is “2 Select Metrics”, but that can remain as the default, “CTH Count”, which provides one record for each event recorded per tag.</p>
 <p>Set up a filter for specific tags by next navigating to the “29 Tag Code - List or Text File” on the left. And then, after selecting “Tag” under “Attributes:”, click on “Import file…”. Simply upload the .txt file containing your PIT tag codes of interest, or alternatively, feel free to use the “tag_list_TUM_2015.txt” file provided with <code>PITcleanr</code>. After choosing the file, click on “Import” and the tag list will be loaded (delimited by semi-colons). Click “OK”.</p>
 <p>Under “Report Message Name:” near the bottom, name the query something appropriate, such as “TUM_Chinook_2015”, and select “Run Report”. Once the query has successfully completed, the output can be exported as a .csv file (e.g. “TUM_Chinook_2015.csv”). Simply click on the “Export” icon near the top, which will open a new page, and select the default settings:</p>
@@ -186,811 +195,669 @@
 <li>Remove extra column: Yes</li>
 </ul>
 <p>And click “Export”, again. We have included an example of data downloaded from PTAGIS with the <code>PITcleanr</code> package. The user can identify where that example file has been saved by running the following code. The file path will be stored as a new object <code>ptagis_file</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ptagis_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, 
-                          <span class="st">"TUM_Chinook_2015.csv"</span>, 
-                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,
-                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
+<span>                          <span class="st">"TUM_Chinook_2015.csv"</span>, </span>
+<span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
+<span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, if the user has run a query from PTAGIS as described above, they could set <code>ptagis_file</code> to the path and file name of the .csv they downloaded.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># As an example, set path to PTAGIS query output</span>
-<span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/usernamehere/Downloads/TUM_Chinook_2015.csv"</span></code></pre></div>
-<p>Note that in our example file, there are 24938 detections (rows) for 2019 unique tags, matching the number of tags in our example tag list “tag_list_TUM_2015.txt”. For a handful of those tags, in our case 178, there is only a “Mark” detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining, there are many tags often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of the raw data for a single tag:</p>
-<table class="table">
-<colgroup>
-<col width="5%">
-<col width="6%">
-<col width="7%">
-<col width="6%">
-<col width="12%">
-<col width="8%">
-<col width="8%">
-<col width="4%">
-<col width="13%">
-<col width="11%">
-<col width="11%">
-<col width="3%">
-</colgroup>
-<thead><tr class="header">
-<th align="left">Tag Code</th>
-<th align="left">Mark Species Name</th>
-<th align="left">Mark Rear Type Name</th>
-<th align="left">Event Type Name</th>
-<th align="left">Event Site Type Description</th>
-<th align="left">Event Site Code Value</th>
-<th align="left">Event Date Time Value</th>
-<th align="left">Antenna ID</th>
-<th align="right">Antenna Group Configuration Value</th>
-<th align="left">Event Release Site Code Code</th>
-<th align="left">Event Release Date Time Value</th>
-<th align="right">CTH Count</th>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># As an example, set path to PTAGIS query output</span></span>
+<span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/usernamehere/Downloads/TUM_Chinook_2015.csv"</span></span></code></pre></div>
+<p>Note that in our example file, there are 24938 detections (rows) for 2019 unique tags, matching the number of tags in our example tag list “tag_list_TUM_2015.txt”. For a handful of those tags, in our case 178, there is only a “Mark” detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining tags, many of them were often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of some of the raw data for a single tag:</p>
+<table class="table table" style="margin-left: auto; margin-right: auto;">
+<thead><tr>
+<th style="text-align:left;">
+Tag Code
+</th>
+<th style="text-align:left;">
+Mark Species Name
+</th>
+<th style="text-align:left;">
+Mark Rear Type Name
+</th>
+<th style="text-align:left;">
+Event Type Name
+</th>
+<th style="text-align:left;">
+Event Site Type Description
+</th>
+<th style="text-align:left;">
+Event Site Code Value
+</th>
+<th style="text-align:left;">
+Event Date Time Value
+</th>
+<th style="text-align:left;">
+Antenna ID
+</th>
+<th style="text-align:right;">
+Antenna Group Configuration Value
+</th>
+<th style="text-align:left;">
+Event Release Site Code Code
+</th>
+<th style="text-align:left;">
+Event Release Date Time Value
+</th>
+<th style="text-align:right;">
+CTH Count
+</th>
 </tr></thead>
 <tbody>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Mark</td>
-<td align="left">River Segment</td>
-<td align="left">COLR2</td>
-<td align="left">5/14/2015 8:10:00 AM</td>
-<td align="left">NA</td>
-<td align="right">0</td>
-<td align="left">COLR2</td>
-<td align="left">5/14/2015 12:14:00 PM</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Mark
+</td>
+<td style="text-align:left;">
+River Segment
+</td>
+<td style="text-align:left;">
+COLR2
+</td>
+<td style="text-align:left;">
+5/14/2015 8:10:00 AM
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+COLR2
+</td>
+<td style="text-align:left;">
+5/14/2015 12:14:00 PM
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Instream Remote Detection System</td>
-<td align="left">CHL</td>
-<td align="left">8/30/2015 9:24:46 PM</td>
-<td align="left">85</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+CHL
+</td>
+<td style="text-align:left;">
+8/30/2015 9:24:46 PM
+</td>
+<td style="text-align:left;">
+85
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Instream Remote Detection System</td>
-<td align="left">LWE</td>
-<td align="left">6/6/2015 7:28:38 AM</td>
-<td align="left">09</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">3</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+LWE
+</td>
+<td style="text-align:left;">
+6/6/2015 7:28:38 AM
+</td>
+<td style="text-align:left;">
+09
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+3
+</td>
 </tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Instream Remote Detection System</td>
-<td align="left">WTL</td>
-<td align="left">6/22/2015 9:04:18 PM</td>
-<td align="left">03</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+WTL
+</td>
+<td style="text-align:left;">
+6/22/2015 9:04:18 PM
+</td>
+<td style="text-align:left;">
+03
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:01:16 PM</td>
-<td align="left">17</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Adult Fishway
+</td>
+<td style="text-align:left;">
+BO3
+</td>
+<td style="text-align:left;">
+5/26/2015 1:01:16 PM
+</td>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:05:58 PM</td>
-<td align="left">14</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Adult Fishway
+</td>
+<td style="text-align:left;">
+BO3
+</td>
+<td style="text-align:left;">
+5/26/2015 1:05:58 PM
+</td>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:05:59 PM</td>
-<td align="left">14</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Adult Fishway
+</td>
+<td style="text-align:left;">
+BO3
+</td>
+<td style="text-align:left;">
+5/26/2015 1:05:59 PM
+</td>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:06:06 PM</td>
-<td align="left">12</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Adult Fishway
+</td>
+<td style="text-align:left;">
+BO3
+</td>
+<td style="text-align:left;">
+5/26/2015 1:06:06 PM
+</td>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:06:07 PM</td>
-<td align="left">12</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Adult Fishway
+</td>
+<td style="text-align:left;">
+BO3
+</td>
+<td style="text-align:left;">
+5/26/2015 1:06:07 PM
+</td>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:41:54 PM</td>
-<td align="left">10</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Adult Fishway
+</td>
+<td style="text-align:left;">
+BO3
+</td>
+<td style="text-align:left;">
+5/26/2015 1:41:54 PM
+</td>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:41:55 PM</td>
-<td align="left">10</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Adult Fishway
+</td>
+<td style="text-align:left;">
+BO3
+</td>
+<td style="text-align:left;">
+5/26/2015 1:41:55 PM
+</td>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:44:18 PM</td>
-<td align="left">0E</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Adult Fishway
+</td>
+<td style="text-align:left;">
+BO3
+</td>
+<td style="text-align:left;">
+5/26/2015 1:44:18 PM
+</td>
+<td style="text-align:left;">
+0E
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:44:19 PM</td>
-<td align="left">0E</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Adult Fishway
+</td>
+<td style="text-align:left;">
+BO3
+</td>
+<td style="text-align:left;">
+5/26/2015 1:44:19 PM
+</td>
+<td style="text-align:left;">
+0E
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:44:20 PM</td>
-<td align="left">0E</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Adult Fishway
+</td>
+<td style="text-align:left;">
+BO3
+</td>
+<td style="text-align:left;">
+5/26/2015 1:44:20 PM
+</td>
+<td style="text-align:left;">
+0E
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:44:25 PM</td>
-<td align="left">0C</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:48:14 PM</td>
-<td align="left">0A</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:48:15 PM</td>
-<td align="left">0A</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:48:22 PM</td>
-<td align="left">08</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:48:23 PM</td>
-<td align="left">08</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:51:39 PM</td>
-<td align="left">08</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:51:40 PM</td>
-<td align="left">08</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO3</td>
-<td align="left">5/26/2015 1:56:13 PM</td>
-<td align="left">04</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO4</td>
-<td align="left">5/26/2015 2:47:32 PM</td>
-<td align="left">04</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO4</td>
-<td align="left">5/26/2015 2:47:33 PM</td>
-<td align="left">04</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO4</td>
-<td align="left">5/26/2015 2:50:26 PM</td>
-<td align="left">03</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO4</td>
-<td align="left">5/26/2015 2:50:27 PM</td>
-<td align="left">03</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO4</td>
-<td align="left">5/26/2015 2:51:48 PM</td>
-<td align="left">02</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO4</td>
-<td align="left">5/26/2015 2:51:49 PM</td>
-<td align="left">02</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">BO4</td>
-<td align="left">5/26/2015 2:51:50 PM</td>
-<td align="left">02</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 8:24:45 AM</td>
-<td align="left">13</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 8:24:46 AM</td>
-<td align="left">13</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 8:25:12 AM</td>
-<td align="left">10</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 8:29:36 AM</td>
-<td align="left">0F</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 8:30:02 AM</td>
-<td align="left">0D</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 8:30:03 AM</td>
-<td align="left">0D</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 8:33:26 AM</td>
-<td align="left">0B</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 8:35:04 AM</td>
-<td align="left">08</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 8:38:53 AM</td>
-<td align="left">06</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 8:38:54 AM</td>
-<td align="left">06</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 8:40:20 AM</td>
-<td align="left">04</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 9:15:49 AM</td>
-<td align="left">03</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 9:15:50 AM</td>
-<td align="left">02</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 9:15:51 AM</td>
-<td align="left">02</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">MC2</td>
-<td align="left">5/31/2015 9:15:55 AM</td>
-<td align="left">01</td>
-<td align="right">120</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">PRA</td>
-<td align="left">6/3/2015 8:01:42 AM</td>
-<td align="left">04</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">PRA</td>
-<td align="left">6/3/2015 8:08:53 AM</td>
-<td align="left">01</td>
-<td align="right">110</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">TD2</td>
-<td align="left">5/27/2015 10:12:50 PM</td>
-<td align="left">02</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">TD2</td>
-<td align="left">5/27/2015 10:12:51 PM</td>
-<td align="left">02</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">TD2</td>
-<td align="left">5/27/2015 10:13:03 PM</td>
-<td align="left">01</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">TUF</td>
-<td align="left">6/14/2015 8:11:21 PM</td>
-<td align="left">A2</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="odd">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Observation</td>
-<td align="left">Adult Fishway</td>
-<td align="left">TUF</td>
-<td align="left">6/14/2015 9:00:23 PM</td>
-<td align="left">A1</td>
-<td align="right">100</td>
-<td align="left">NA</td>
-<td align="left">NA</td>
-<td align="right">1</td>
-</tr>
-<tr class="even">
-<td align="left">3D9.1BF24B20F5</td>
-<td align="left">Chinook</td>
-<td align="left">Unknown</td>
-<td align="left">Recapture</td>
-<td align="left">Dam</td>
-<td align="left">TUM</td>
-<td align="left">3/6/2015 2:05:00 PM</td>
-<td align="left">NA</td>
-<td align="right">0</td>
-<td align="left">TUMFBY</td>
-<td align="left">6/14/2015 11:59:00 PM</td>
-<td align="right">1</td>
+<tr>
+<td style="text-align:left;">
+3D9.1BF24B20F5
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Unknown
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Adult Fishway
+</td>
+<td style="text-align:left;">
+BO3
+</td>
+<td style="text-align:left;">
+5/26/2015 1:44:25 PM
+</td>
+<td style="text-align:left;">
+0C
+</td>
+<td style="text-align:right;">
+110
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 </tbody>
 </table>
-<p>Congratulations! You now have complete tag histories for your tags of interest from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a>! Next, we’ll demonstrate how to perform some quick quality control checks and compress all of those records into a more manageable size.</p>
-<div class="section level3">
-<h3 id="quality-control">Quality Control<a class="anchor" aria-label="anchor" href="#quality-control"></a>
-</h3>
-<p>Later, we’ll demonstrate how <code>PITcleanr</code> can be used to compress the detections in your complete tag history output (<code>ptagis_file</code>) from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a>. Bur first, <code>PITcleanr</code> can help perform some basic quality control on the PTAGIS detections. The <code><a href="../reference/qcTagHistory.html">qcTagHistory()</a></code> function returns a list including a vector of tags listed as “DISOWN” by PTAGIS, another vector of tags listed as “ORPHAN”, and a data frame of release batches. A tag listed as “DISOWN” or “ORPHAN” indicates that PTAGIS has not received a valid mark file for that tag, which may prompt a user to upload such a file. This latter data frame can be used by the <code><a href="../reference/compress.html">compress()</a></code> function in <code>PITcleanr</code> to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination.</p>
+<div class="section level4">
+<h4 id="quality-control">Quality Control<a class="anchor" aria-label="anchor" href="#quality-control"></a>
+</h4>
+<p><code>PITcleanr</code> can help perform some basic quality control on the PTAGIS detections. The <code><a href="../reference/qcTagHistory.html">qcTagHistory()</a></code> function returns a list including a vector of tags listed as “DISOWN” by PTAGIS, another vector of tags listed as “ORPHAN”, and a data frame of release batches. A tag listed as “DISOWN” or “ORPHAN” indicates that PTAGIS has not received a valid mark file for that tag, which may prompt a user to upload such a file. The release batches data frame can be used by the <code><a href="../reference/compress.html">compress()</a></code> function in <code>PITcleanr</code> to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination. However, to extract that information, the user will have needed to include the attributes “Mark Species”, “Event Release Site Code” and “Event Release Date Time” in their PTAGIS query.</p>
 <p>Here, we’ll run the <code><a href="../reference/qcTagHistory.html">qcTagHistory()</a></code> function, again on the file path (<code>ptagis_file</code>) of the PTAGIS complete tag history query output, and save the results to an object <code>qc_detections</code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">qc_detections</span> <span class="op">=</span> <span class="fu"><a href="../reference/qcTagHistory.html">qcTagHistory</a></span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span>
-
-<span class="co"># view qc_detections</span>
-<span class="va">qc_detections</span>
-<span class="co">#&gt; $disown_tags</span>
-<span class="co">#&gt; character(0)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $orphan_tags</span>
-<span class="co">#&gt; character(0)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; $rel_time_batches</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 23 x 11</span></span>
-<span class="co">#&gt;    mark_species_name  year event_site_type_de~ event_type_name event_site_code_~</span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>           <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Chinook            <span style="text-decoration: underline;">2</span>011 Hatchery            Mark            EBNK             </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Chinook            <span style="text-decoration: underline;">2</span>012 Hatchery            Mark            CLEE             </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Chinook            <span style="text-decoration: underline;">2</span>012 Hatchery            Mark            EBNK             </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Chinook            <span style="text-decoration: underline;">2</span>012 River               Mark            NASONC           </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Chinook            <span style="text-decoration: underline;">2</span>012 Trap or Weir        Mark            CHIWAT           </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Chinook            <span style="text-decoration: underline;">2</span>013 Acclimation Pond    Recapture       CHIP             </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Chinook            <span style="text-decoration: underline;">2</span>013 Hatchery            Mark            LWSH             </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Chinook            <span style="text-decoration: underline;">2</span>013 River               Mark            CHIWAR           </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Chinook            <span style="text-decoration: underline;">2</span>013 River               Mark            NASONC           </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Chinook            <span style="text-decoration: underline;">2</span>013 River               Mark            WHITER           </span>
-<span class="co">#&gt; <span style="color: #949494;"># ... with 13 more rows, and 6 more variables: n_tags &lt;int&gt;, n_events &lt;int&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   n_release &lt;int&gt;, rel_greq_event &lt;int&gt;, rel_ls_event &lt;int&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   event_rel_ratio &lt;dbl&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">qc_detections</span> <span class="op">=</span> <span class="fu"><a href="../reference/qcTagHistory.html">qcTagHistory</a></span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># view qc_detections</span></span>
+<span><span class="va">qc_detections</span></span>
+<span><span class="co">#&gt; $disown_tags</span></span>
+<span><span class="co">#&gt; character(0)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $orphan_tags</span></span>
+<span><span class="co">#&gt; character(0)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $rel_time_batches</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 23 x 11</span></span></span>
+<span><span class="co">#&gt;    mark_species_name  year event_site_type_description event_type_name</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Chinook            <span style="text-decoration: underline;">2</span>011 Hatchery                    Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Chinook            <span style="text-decoration: underline;">2</span>012 Hatchery                    Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Chinook            <span style="text-decoration: underline;">2</span>012 Hatchery                    Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Chinook            <span style="text-decoration: underline;">2</span>012 River                       Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Chinook            <span style="text-decoration: underline;">2</span>012 Trap or Weir                Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Chinook            <span style="text-decoration: underline;">2</span>013 Acclimation Pond            Recapture      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Chinook            <span style="text-decoration: underline;">2</span>013 Hatchery                    Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Chinook            <span style="text-decoration: underline;">2</span>013 River                       Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Chinook            <span style="text-decoration: underline;">2</span>013 River                       Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Chinook            <span style="text-decoration: underline;">2</span>013 River                       Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i 13 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i 7 more variables: event_site_code_value &lt;chr&gt;, n_tags &lt;int&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   n_events &lt;int&gt;, n_release &lt;int&gt;, rel_greq_event &lt;int&gt;, rel_ls_event &lt;int&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   event_rel_ratio &lt;dbl&gt;</span></span></span></code></pre></div>
 <p>To extract a single element from the <code>qc_detections</code>, the user can simply use the basic extraction operator <code>$</code> e.g., <code>qc_detections$orphan_tags</code>.</p>
+</div>
+</div>
+<div class="section level3">
+<h3 id="from-elsewhere">From Elsewhere<a class="anchor" aria-label="anchor" href="#from-elsewhere"></a>
+</h3>
+<p>If your data does not reside in PTAGIS, please see this <a href="%22non_PTAGIS_data.html%22">other vignette</a> about reading in data from other sources.</p>
 </div>
 </div>
 <div class="section level2">
@@ -998,27 +865,26 @@
 </h2>
 <p>The complete tag history query output from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> (e.g., <code>ptagis_file</code>) will provide a record for every detection of each tag code in the tag list. Again, this may include multiple detections on the same antenna, or the same site within a short period of time, leading to an unwieldy and perhaps messy dataset. One of the main purposes of <code>PITcleanr</code> is to compress that data into an initial summary using the function <code><a href="../reference/compress.html">compress()</a></code>. At a minimum, this function requires a path e.g., <code>ptagis_file</code>, to the complete tag history query results downloaded from PTAGIS.</p>
 <p>In our example, we perform the <code><a href="../reference/compress.html">compress()</a></code> function on the <code>ptagis_file</code> object containing the file path to our query results, and write the output to an object <code>comp_obs</code> containing the compressed observations.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># view path to example file, of course you can also set ptagis_file to your own PTAGIS query results</span>
-<span class="va">ptagis_file</span>
-<span class="co">#&gt; [1] "C:/Users/seek1477/OneDrive - Washington State Executive Branch Agencies/Documents/R/win-library/4.1/PITcleanr/extdata/TUM_Chinook_2015.csv"</span>
-
-<span class="co"># run compress() function on it</span>
-<span class="va">comp_obs</span> <span class="op">=</span> <span class="fu"><a href="../reference/compress.html">compress</a></span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span>
-
-<span class="co"># look at first parts of resulting object</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_obs</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 x 9</span></span>
-<span class="co">#&gt;   tag_code       node    slot event_type_name n_dets min_det            </span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 384.3B239AD241 NASONC     1 Mark                 1 2013-11-04 <span style="color: #949494;">16:45:00</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 384.3B239AD241 JDJ        2 Observation         12 2014-05-25 <span style="color: #949494;">11:14:29</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 384.3B239AD241 BO4        3 Observation         11 2015-05-14 <span style="color: #949494;">16:41:24</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 384.3B239AD241 TD1        4 Observation          3 2015-05-16 <span style="color: #949494;">11:15:40</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 384.3B239AD241 MC2        5 Observation         17 2015-05-19 <span style="color: #949494;">17:01:15</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 384.3B239AD241 PRA        6 Observation          2 2015-05-24 <span style="color: #949494;">13:51:16</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># ... with 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   travel_time &lt;drtn&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># view path to example file, of course you can also set ptagis_file to your own PTAGIS query results</span></span>
+<span><span class="va">ptagis_file</span></span>
+<span><span class="co">#&gt; [1] "C:/Rfolder/R/win-library/4.1/PITcleanr/extdata/TUM_Chinook_2015.csv"</span></span>
+<span></span>
+<span><span class="co"># run compress() function on it</span></span>
+<span><span class="va">comp_obs</span> <span class="op">=</span> <span class="fu"><a href="../reference/compress.html">compress</a></span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># look at first parts of resulting object</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_obs</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 x 9</span></span></span>
+<span><span class="co">#&gt;   tag_code       node    slot event_type_name n_dets min_det            </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 384.3B239AD241 NASONC     1 Mark                 1 2013-11-04 <span style="color: #949494;">16:45:00</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 384.3B239AD241 JDJ        2 Observation         12 2014-05-25 <span style="color: #949494;">11:14:29</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 384.3B239AD241 BO4        3 Observation         11 2015-05-14 <span style="color: #949494;">16:41:24</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 384.3B239AD241 TD1        4 Observation          3 2015-05-16 <span style="color: #949494;">11:15:40</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 384.3B239AD241 MC2        5 Observation         17 2015-05-19 <span style="color: #949494;">17:01:15</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 384.3B239AD241 PRA        6 Observation          2 2015-05-24 <span style="color: #949494;">13:51:16</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></span></span></code></pre></div>
 <p>The output consists of a tibble containing columns for:</p>
 <ul>
 <li>
@@ -1043,128 +909,121 @@
 <p><strong><em>A note on “nodes”</em></strong>: A node is the spatial scale of interest for the user. By default, the <code><a href="../reference/compress.html">compress()</a></code> function considers a site code from PTAGIS as a node. However, a node could be defined as the individual PIT antenna a detection was made on, or the array that antenna is a part of, or groups of arrays, or sites, or groups of sites, or possibly even larger (e.g, any detection in <strong>this</strong> tributary!) depending on the spatial scale desired. The user may decide to define some arrays at particular sites to be their own nodes, while simultaneously lumping all the sites in a particular watershed into a single node. To utilize this kind of grouping, a configuration file or table must be supplied to the <code>configuration</code> argument in the <code><a href="../reference/compress.html">compress()</a></code> function. This configuration file helps map what node each antenna or MRR site corresponds to. By default, <code>compress</code> assigns each site code to its own node.</p>
 <p>Each slot in the output is defined as all detections on a particular node before the tag is detected on a different node. The user can define a maximum number of minutes between detections before a new slot should be defined by supplying a value to the <code>max_minutes</code> argument to <code><a href="../reference/compress.html">compress()</a></code>. The units of the duration and travel_time columns can also be defined by the <code>units</code> argument. The default is minutes (<code>mins</code>). As an example, if a tag moves from node A to B and back to A, there will be three slots in the compressed data.</p>
 <p>The help menu for <code><a href="../reference/compress.html">compress()</a></code>, or any function for that matter, can be accessed using:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="op">?</span><span class="fu">PITcleanr</span><span class="fu">::</span><span class="va"><a href="../reference/compress.html">compress</a></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="op">?</span><span class="fu">PITcleanr</span><span class="fu">::</span><span class="va"><a href="../reference/compress.html">compress</a></span></span></code></pre></div>
 <p>In our Tumwater Dam Chinook salmon example, the <code><a href="../reference/compress.html">compress()</a></code> function has scaled down the raw data from PTAGIS from 24,938 rows of data to a slightly more manageable 7,086 rows. At the same time, the sum of the <code>n_dets</code> column in <code>comp_obs</code> is 24,938, showing that every detection from the raw data has been accounted for. For much of the remaining vignette, we will explore other functionality of <code>PITcleanr</code> and as it relates to this compressed data i.e., the <code>comp_obs</code> object.</p>
 <div class="section level3">
 <h3 id="ptagis-site-metadata">PTAGIS Site Metadata<a class="anchor" aria-label="anchor" href="#ptagis-site-metadata"></a>
 </h3>
 <p><code>PITcleanr</code> includes a convenience function <code><a href="../reference/queryPtagisMeta.html">queryPtagisMeta()</a></code> to query all the metadata associated with PTAGIS sites, including both Mark/Recapture/Recovery (MRR) and Interrogation (INT) sites. That metadata can also be found on the PTAGIS website <a href="https://www.ptagis.org/Sites/Map" class="external-link">here</a>. Many of the columns included in the output from <code><a href="../reference/queryPtagisMeta.html">queryPtagisMeta()</a></code> are specific to either the INT or MRR site types, so you may notice that many values in the output, in our example below <code>ptagis_meta</code>, are <code>NA</code> depending on the site type and column. If desired, the user could write that file out to a .csv file or similar, using a function like <code><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv()</a></code> from the <code>readr</code> package..</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ptagis_meta</span> <span class="op">=</span> <span class="fu"><a href="../reference/queryPtagisMeta.html">queryPtagisMeta</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># view first 6 records of PTAGIS site metadata using head() function</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ptagis_meta</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 x 42</span></span></span>
+<span><span class="co">#&gt;   site_code site_name   site_description site_type active operations_organizat~1</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 0HR       Henrys Ins~ <span style="color: #949494;">"</span>This site is 3~ Instream~ TRUE   Biomark               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 0HR       Henrys Ins~ <span style="color: #949494;">"</span>This site is 3~ Instream~ TRUE   Biomark               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 0HR       Henrys Ins~ <span style="color: #949494;">"</span>This site is 3~ Instream~ TRUE   Biomark               </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 158       Fifteenmil~ <span style="color: #949494;">"</span>Instream detec~ Instream~ TRUE   Oregon Dept. of Fish ~</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 158       Fifteenmil~ <span style="color: #949494;">"</span>Instream detec~ Instream~ TRUE   Oregon Dept. of Fish ~</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 158       Fifteenmil~ <span style="color: #949494;">"</span>Instream detec~ Instream~ TRUE   Oregon Dept. of Fish ~</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i abbreviated name: 1: operations_organization_name</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i 36 more variables: operations_organization_code &lt;chr&gt;, latitude &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   longitude &lt;dbl&gt;, rkm &lt;chr&gt;, rkm_total &lt;dbl&gt;, first_year &lt;dbl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   last_year &lt;dbl&gt;, operation_period &lt;chr&gt;, operational &lt;lgl&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   first_date &lt;chr&gt;, last_date &lt;chr&gt;, last_file_name &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   last_file_opened_on &lt;chr&gt;, last_file_closed_on &lt;chr&gt;,</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;">#   last_file_processed_on &lt;chr&gt;, last_tag_code &lt;chr&gt;, last_tag_time &lt;chr&gt;, ...</span></span></span></code></pre></div>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ptagis_meta</span> <span class="op">=</span> <span class="fu"><a href="../reference/queryPtagisMeta.html">queryPtagisMeta</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; Querying INT sites' metadata</span>
-<span class="co">#&gt; Querying INT sites' configuration information</span>
-<span class="co">#&gt; Querying MRR sites' metadata</span>
-
-<span class="co"># view first 6 records of PTAGIS site metadata using head() function</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ptagis_meta</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 x 42</span></span>
-<span class="co">#&gt;   site_code site_name    site_description         site_type   active operational</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>      </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 158       Fifteenmile~ INSTREAM DETECTION ARRA~ Instream R~ TRUE   TRUE       </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 158       Fifteenmile~ INSTREAM DETECTION ARRA~ Instream R~ TRUE   TRUE       </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 158       Fifteenmile~ INSTREAM DETECTION ARRA~ Instream R~ TRUE   TRUE       </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 158       Fifteenmile~ INSTREAM DETECTION ARRA~ Instream R~ TRUE   TRUE       </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 158       Fifteenmile~ INSTREAM DETECTION ARRA~ Instream R~ TRUE   TRUE       </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 158       Fifteenmile~ INSTREAM DETECTION ARRA~ Instream R~ TRUE   TRUE       </span>
-<span class="co">#&gt; <span style="color: #949494;"># ... with 36 more variables: operations_organization_name &lt;chr&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   operations_organization_code &lt;chr&gt;, latitude &lt;dbl&gt;, longitude &lt;dbl&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   rkm &lt;chr&gt;, rkm_total &lt;dbl&gt;, first_year &lt;dbl&gt;, last_year &lt;dbl&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   first_date &lt;chr&gt;, last_date &lt;chr&gt;, operation_period &lt;chr&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   last_file_name &lt;chr&gt;, last_file_opened_on &lt;chr&gt;, last_file_closed_on &lt;chr&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   last_file_processed_on &lt;chr&gt;, last_tag_code &lt;chr&gt;, last_tag_time &lt;chr&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   configuration_sequence &lt;dbl&gt;, antenna_group_name &lt;chr&gt;, ...</span></span></code></pre></div>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># write ptagis_meta to .csv file</span>
-<span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">ptagis_meta</span>,
-          <span class="st">"C:/Users/usernamehere/Desktop/ptagis_metadata.csv"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># write ptagis_meta to .csv file</span></span>
+<span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">ptagis_meta</span>,</span>
+<span>          <span class="st">"C:/Users/usernamehere/Desktop/ptagis_metadata.csv"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="site-configuration">Site Configuration<a class="anchor" aria-label="anchor" href="#site-configuration"></a>
 </h3>
 <p>Note that each of the 24,938 rows in our complete tag history results corresponds to the detection of a given PIT tag on an individual antenna. Although informative, this may be excessive for your purposes e.g., a movement, survival, or mark-recapture analysis. Instead, the user might just be interested in which array (group of antennas) or group of arrays that a given PIT tag was detected on. In <code>PITcleanr</code>, we refer to each of these locations as a “node”. Such information can be provided to the <code>configuration</code> argument of the <code><a href="../reference/compress.html">compress()</a></code> function; the configuration table or file contains all the information from PTAGIS to map each particular detection record to a node of interest. This mapping must include the site code, the antenna code, and the antenna configuration, all of which appear in both the PTAGIS complete tag query results and the PTAGIS metadata <code>ptagis_meta</code> above. That information can be found in the following:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># The PTAGIS complete tag history results</span>
-<span class="co"># column `Event Site Code Value`               # site code</span>
-<span class="co"># column `Antenna ID`                          # antenna code  </span>
-<span class="co"># column `Antenna Group Configuration Value`   # antenna configuration</span>
-
-<span class="co"># The PTAGIS site metadata</span>
-<span class="va">ptagis_meta</span><span class="op">$</span><span class="va">site_code</span>                          <span class="co"># site code</span>
-<span class="va">ptagis_meta</span><span class="op">$</span><span class="va">antenna_id</span>                         <span class="co"># antenna code</span>
-<span class="va">ptagis_meta</span><span class="op">$</span><span class="va">configuration_sequence</span>             <span class="co"># antenna configuration</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># The PTAGIS complete tag history results</span></span>
+<span><span class="co"># column `Event Site Code Value`               # site code</span></span>
+<span><span class="co"># column `Antenna ID`                          # antenna code  </span></span>
+<span><span class="co"># column `Antenna Group Configuration Value`   # antenna configuration</span></span>
+<span></span>
+<span><span class="co"># The PTAGIS site metadata</span></span>
+<span><span class="va">ptagis_meta</span><span class="op">$</span><span class="va">site_code</span>                          <span class="co"># site code</span></span>
+<span><span class="va">ptagis_meta</span><span class="op">$</span><span class="va">antenna_id</span>                         <span class="co"># antenna code</span></span>
+<span><span class="va">ptagis_meta</span><span class="op">$</span><span class="va">configuration_sequence</span>             <span class="co"># antenna configuration</span></span></code></pre></div>
 <p><code>PITcleanr</code> includes a function <code><a href="../reference/buildConfig.html">buildConfig()</a></code> that maps each array (row of antennas) at a site onto a node. Using <code><a href="../reference/buildConfig.html">buildConfig()</a></code>, the upstream arrays are labeled with the site code plus <code>A0</code> and the downstream arrays are assigned <code>B0</code>. For sites with three arrays, the middle array is grouped with the upstream array. For sites with four arrays, the upper two arrays are mapped to <code>A0</code> and the lower two arrays are mapped to <code>B0</code>. Alternatively, the user could use <a href="https://ptagis.org/sites" class="external-link">metadata from PTAGIS</a> (also see <code><a href="../reference/queryPtagisMeta.html">?queryPtagisMeta</a></code>) and construct this mapping any way they choose. This type of configuration file (or tibble or data frame) can be provided to the <code>configuration</code> argument in <code><a href="../reference/compress.html">compress()</a></code> to assign each detection to it’s associated node.</p>
 <p>In the following example, we use the <code><a href="../reference/buildConfig.html">buildConfig()</a></code> function to generate a default configuration and save it as <code>array_configuration</code>. Several sites are then consolidated into a single node (e.g. LNF, TUM), and some mark-recovery-recapture sites are merged with upstream array nodes, and the modified configuration is saved as <code>configuration</code> which can then be fed to the <code><a href="../reference/compress.html">compress()</a></code> function.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">array_configuration</span> <span class="op">=</span> <span class="fu"><a href="../reference/buildConfig.html">buildConfig</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; Querying INT sites' metadata</span>
-<span class="co">#&gt; Querying INT sites' configuration information</span>
-<span class="co">#&gt; Querying MRR sites' metadata</span>
-
-<span class="co"># customize some pieces</span>
-<span class="va">configuration</span> <span class="op">=</span> <span class="va">array_configuration</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="co"># first, for example, 'LNF' and 'LEAV' are re-coded into a single node 'LNF'</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'LNF'</span>, <span class="st">'LEAV'</span><span class="op">)</span>,
-                       <span class="st">'LNF'</span>,
-                       <span class="va">node</span><span class="op">)</span>,
-         <span class="co"># these three nodes are all re-coded to a single 'TUM'</span>
-         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'TUF'</span>, <span class="st">'TUMFBY'</span>, <span class="st">'TUM'</span><span class="op">)</span>,
-                       <span class="st">'TUM'</span>,
-                       <span class="va">node</span><span class="op">)</span>,
-         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'CHIWAC'</span>,
-                       <span class="st">'CHWA0'</span>,
-                       <span class="va">node</span><span class="op">)</span>,
-         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'CHIWAR'</span>, <span class="st">'CHIWAT'</span><span class="op">)</span>,
-                       <span class="st">'CHLA0'</span>,
-                       <span class="va">node</span><span class="op">)</span>,
-         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'CHIW'</span>,
-                       <span class="st">'CHLA0'</span>,
-                       <span class="va">node</span><span class="op">)</span>,
-         <span class="co"># In this case, PIT tags from carcass recoveries in the Chikamin River are</span>
-         <span class="co"># grouped with the upper 'CHU' array</span>
-         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'CHIKAC'</span>,
-                       <span class="st">'CHUA0'</span>,
-                       <span class="va">node</span><span class="op">)</span>,
-         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'NASONC'</span>,
-                       <span class="st">'NALA0'</span>,
-                       <span class="va">node</span><span class="op">)</span>,
-         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'WHITER'</span>,
-                       <span class="st">'WTLA0'</span>,
-                       <span class="va">node</span><span class="op">)</span>,
-         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'LWENAT'</span>,
-                       <span class="st">'LWNA0'</span>,
-                       <span class="va">node</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">array_configuration</span> <span class="op">=</span> <span class="fu"><a href="../reference/buildConfig.html">buildConfig</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># customize some pieces</span></span>
+<span><span class="va">configuration</span> <span class="op">=</span> <span class="va">array_configuration</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="co"># first, for example, 'LNF' and 'LEAV' are re-coded into a single node 'LNF'</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'LNF'</span>, <span class="st">'LEAV'</span><span class="op">)</span>,</span>
+<span>                       <span class="st">'LNF'</span>,</span>
+<span>                       <span class="va">node</span><span class="op">)</span>,</span>
+<span>         <span class="co"># these three nodes are all re-coded to a single 'TUM'</span></span>
+<span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'TUF'</span>, <span class="st">'TUMFBY'</span>, <span class="st">'TUM'</span><span class="op">)</span>,</span>
+<span>                       <span class="st">'TUM'</span>,</span>
+<span>                       <span class="va">node</span><span class="op">)</span>,</span>
+<span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'CHIWAC'</span>,</span>
+<span>                       <span class="st">'CHWA0'</span>,</span>
+<span>                       <span class="va">node</span><span class="op">)</span>,</span>
+<span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'CHIWAR'</span>, <span class="st">'CHIWAT'</span><span class="op">)</span>,</span>
+<span>                       <span class="st">'CHLA0'</span>,</span>
+<span>                       <span class="va">node</span><span class="op">)</span>,</span>
+<span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'CHIW'</span>,</span>
+<span>                       <span class="st">'CHLA0'</span>,</span>
+<span>                       <span class="va">node</span><span class="op">)</span>,</span>
+<span>         <span class="co"># In this case, PIT tags from carcass recoveries in the Chikamin River are</span></span>
+<span>         <span class="co"># grouped with the upper 'CHU' array</span></span>
+<span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'CHIKAC'</span>,</span>
+<span>                       <span class="st">'CHUA0'</span>,</span>
+<span>                       <span class="va">node</span><span class="op">)</span>,</span>
+<span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'NASONC'</span>,</span>
+<span>                       <span class="st">'NALA0'</span>,</span>
+<span>                       <span class="va">node</span><span class="op">)</span>,</span>
+<span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'WHITER'</span>,</span>
+<span>                       <span class="st">'WTLA0'</span>,</span>
+<span>                       <span class="va">node</span><span class="op">)</span>,</span>
+<span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'LWENAT'</span>,</span>
+<span>                       <span class="st">'LWNA0'</span>,</span>
+<span>                       <span class="va">node</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Now, re-run the <code><a href="../reference/compress.html">compress()</a></code> function, except supplying a <code>configuration</code>:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># re-run compress(), providing configuration</span>
-<span class="va">comp_obs</span> <span class="op">=</span> <span class="fu"><a href="../reference/compress.html">compress</a></span><span class="op">(</span><span class="va">ptagis_file</span>,
-                    configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span>
-
-<span class="co"># look at first part of comp_obs</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_obs</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 x 9</span></span>
-<span class="co">#&gt;   tag_code       node   slot event_type_name n_dets min_det            </span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 384.3B239AD241 NALA0     1 Mark                 1 2013-11-04 <span style="color: #949494;">16:45:00</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 384.3B239AD241 JDJ       2 Observation         12 2014-05-25 <span style="color: #949494;">11:14:29</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 384.3B239AD241 BO4       3 Observation         11 2015-05-14 <span style="color: #949494;">16:41:24</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 384.3B239AD241 TD1       4 Observation          3 2015-05-16 <span style="color: #949494;">11:15:40</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 384.3B239AD241 MC2       5 Observation         17 2015-05-19 <span style="color: #949494;">17:01:15</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 384.3B239AD241 PRA       6 Observation          2 2015-05-24 <span style="color: #949494;">13:51:16</span></span>
-<span class="co">#&gt; <span style="color: #949494;"># ... with 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;,</span></span>
-<span class="co">#&gt; <span style="color: #949494;">#   travel_time &lt;drtn&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># re-run compress(), providing configuration</span></span>
+<span><span class="va">comp_obs</span> <span class="op">=</span> <span class="fu"><a href="../reference/compress.html">compress</a></span><span class="op">(</span><span class="va">ptagis_file</span>,</span>
+<span>                    configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># look at first part of comp_obs</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_obs</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 x 9</span></span></span>
+<span><span class="co">#&gt;   tag_code       node   slot event_type_name n_dets min_det            </span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 384.3B239AD241 NALA0     1 Mark                 1 2013-11-04 <span style="color: #949494;">16:45:00</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 384.3B239AD241 JDJ       2 Observation         12 2014-05-25 <span style="color: #949494;">11:14:29</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 384.3B239AD241 BO4       3 Observation         11 2015-05-14 <span style="color: #949494;">16:41:24</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 384.3B239AD241 TD1       4 Observation          3 2015-05-16 <span style="color: #949494;">11:15:40</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 384.3B239AD241 MC2       5 Observation         17 2015-05-19 <span style="color: #949494;">17:01:15</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 384.3B239AD241 PRA       6 Observation          2 2015-05-24 <span style="color: #949494;">13:51:16</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></span></span></code></pre></div>
 <p>Note that <code><a href="../reference/buildConfig.html">buildConfig()</a></code> returns the same number of records as <code><a href="../reference/queryPtagisMeta.html">queryPtagisMeta()</a></code>, except <code><a href="../reference/buildConfig.html">buildConfig()</a></code> returns a more manageable number of columns (15) and provides the functionality of assigning each antenna to a node, based on the array it is part of.</p>
 <p>Alternately, the user could write the object <code>array_configuration</code> to file, modify values in the node column by hand, and then re-import the modified file, again to an object <code>configuration</code> which could be fed to <code><a href="../reference/compress.html">compress()</a></code>.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># write array_configuration to file</span>
-<span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">array_configuration</span>,
-          <span class="st">"C:/Users/usernamehere/Desktop/array_configuration.csv"</span><span class="op">)</span>
-
-<span class="co"># MODIFY VALUES IN NODE COLUMN BY HAND</span>
-
-<span class="co"># re-import file to object configuration</span>
-<span class="va">configuration</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"C:/Users/usernamehere/Desktop/array_configuration.csv"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># write array_configuration to file</span></span>
+<span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">array_configuration</span>,</span>
+<span>          <span class="st">"C:/Users/usernamehere/Desktop/array_configuration.csv"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># MODIFY VALUES IN NODE COLUMN BY HAND</span></span>
+<span></span>
+<span><span class="co"># re-import file to object configuration</span></span>
+<span><span class="va">configuration</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="st">"C:/Users/usernamehere/Desktop/array_configuration.csv"</span><span class="op">)</span></span></code></pre></div>
 <p>For some purposes, this may be enough, and the user can take the compressed data, <code>comp_obs</code>, and summarize it as needed, or perform whatever analyses they would like. In other cases, if directionality of movement is required, <code>PITcleanr</code> provides additional functionality.</p>
 </div>
 </div>
@@ -1177,17 +1036,17 @@
 </h3>
 <p>The <code><a href="../reference/queryPtagisMeta.html">queryPtagisMeta()</a></code> and <code><a href="../reference/buildConfig.html">buildConfig()</a></code> functions in <code>PITcleanr</code> return information from <strong>all</strong> INT and MRR sites in PTAGIS. However, the user may only be interested in detections from site codes found within their complete tag history output downloaded from PTAGIS e.g., your <code>ptagis_file</code>. The <code><a href="../reference/extractSites.html">extractSites()</a></code> function does just that: extracts the site codes found in the complete tag history. In addition, the detections can be filtered by a minimum and/or maximum detection date, and the results are returned as either a tibble, or as a simple (spatial) feature <code>sf</code> object. Setting the <code>min_date</code> argument could be useful if the user is not interested in detections at sites prior to your study period e.g., detections that occur prior to fish arriving at your tagging or release location.</p>
 <p>In this example, we create a new object <code>sites_sf</code>, return it as an <code>sf</code> object (by setting <code>as_sf = T</code>) and only return sites from those detections that occurred after May 1, 2015. We also extract sites only from the Wenatchee subbasin and remove a couple sites that we perhaps don’t care about. More information on simple features (<code>sf</code> objects) can be found <a href="https://r-spatial.github.io/sf/" class="external-link">here</a>.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">sites_sf</span> <span class="op">=</span> <span class="fu"><a href="../reference/extractSites.html">extractSites</a></span><span class="op">(</span><span class="va">ptagis_file</span>,
-                        as_sf <span class="op">=</span> <span class="cn">T</span>,
-                        min_date <span class="op">=</span> <span class="st">"20150501"</span>,
-                        configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span>
-<span class="co"># focus on sites within Wenatchee subbasin</span>
-<span class="va">sites_sf</span> <span class="op">=</span> <span class="va">sites_sf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="co"># all sites in the Wenatchee have a river kilometer that starts with 754</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"754."</span>, <span class="va">rkm</span><span class="op">)</span>,
-         <span class="co"># remove a few sites we don't care about</span>
-         <span class="op">!</span><span class="va">site_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LWE"</span>, <span class="st">"ICICLC"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sites_sf</span> <span class="op">=</span> <span class="fu"><a href="../reference/extractSites.html">extractSites</a></span><span class="op">(</span><span class="va">ptagis_file</span>,</span>
+<span>                        as_sf <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>                        min_date <span class="op">=</span> <span class="st">"20150501"</span>,</span>
+<span>                        configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span></span>
+<span><span class="co"># focus on sites within Wenatchee subbasin</span></span>
+<span><span class="va">sites_sf</span> <span class="op">=</span> <span class="va">sites_sf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="co"># all sites in the Wenatchee have a river kilometer that starts with 754</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"754."</span>, <span class="va">rkm</span><span class="op">)</span>,</span>
+<span>         <span class="co"># remove a few sites we don't care about</span></span>
+<span>         <span class="op">!</span><span class="va">site_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LWE"</span>, <span class="st">"ICICLC"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="query-flowlines">Query Flowlines<a class="anchor" aria-label="anchor" href="#query-flowlines"></a>
@@ -1196,52 +1055,58 @@
 <p>If flowlines downstream of the <code>root_site_code</code> site are required, set the argument <code>dwnstrm_sites = TRUE</code> (default is <code>FALSE</code>). This might be useful if the user is interesting in analyzing or modeling sites downstream of the release site. If you’re not interested in analyzing/modeling downstream sites you can set <code>dwnstrm_sites = FALSE</code> which may speed up the function considerably.</p>
 <p>The user can also control the minimum stream order of the downstream flowlines by setting the <code>dwn_min_stream_order_diff</code> argument. Note: smaller stream orders = smaller streams. This can be useful if the user is not interested or wants to prevent downloading all sorts of tiny streams downstream of a tagging or release location; the <code>dwn_min_stream_order_diff</code> is an attempt to constrain the amount of flowlines downloaded downstream of the <code>root_site_code</code> which can be sizable. The <code>dwn_min_stream_order_diff</code> corresponds to the difference between the stream order of the <code>root_site_code</code> site and the minimum stream order desired in the downstream flowlines. In our example, our <code>root_site_code</code> is located on a stream order of 5 (Wenatchee River) and <code>dwn_min_stream_order_diff = 2</code>, in this case only downstream flowlines of at least 5-2 = <strong>3</strong> will be downloaded. The extent of the downstream flowlines is further constrained by the <code>sites_sf</code> object. The <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> function returns a list consisting of: * <code>flowlines</code>: the flowlines upstream of the <code>root_site_code</code> * <code>basin</code>: the polygon containing the upstream flowlines * <code>dwn_flowlines</code>: the flowlines downstream of the <code>root_site_code</code>, if <code>dwnstrm_sites = T</code></p>
 <p>Note, depending on the spatial extent of your flowlines, the <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> function may take awhile. Here we create a list of objects, <code>nhd_list</code>. We then use the function <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> to combine the <code>nhd$flowlines</code> and <code>nhd$dwn_flowlines</code> into a single <code>flowlines</code> simple feature object. More information on the <code>nhdplusTools</code> R package can be found <a href="https://cran.r-project.org/web/packages/nhdplusTools/index.html" class="external-link">here</a>.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># query the flowlines</span>
-<span class="va">nhd_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/queryFlowlines.html">queryFlowlines</a></span><span class="op">(</span>sites_sf <span class="op">=</span> <span class="va">sites_sf</span>,
-                          root_site_code <span class="op">=</span> <span class="st">"TUM"</span>,
-                          min_strm_order <span class="op">=</span> <span class="fl">2</span>,
-                          dwnstrm_sites <span class="op">=</span> <span class="cn">T</span>,
-                          dwn_min_stream_order_diff <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>
-<span class="co">#&gt; Querying streams upstream of TUM </span>
-<span class="co">#&gt; Calculating furthest mainstem point downstream </span>
-<span class="co">#&gt; Querying streams downstream of TUM</span>
-
-<span class="co"># compile the upstream and downstream flowlines</span>
-<span class="va">flowlines</span> <span class="op">=</span> <span class="va">nhd_list</span><span class="op">$</span><span class="va">flowlines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-    <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">nhd_list</span><span class="op">$</span><span class="va">dwn_flowlines</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># query the flowlines</span></span>
+<span><span class="va">nhd_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/queryFlowlines.html">queryFlowlines</a></span><span class="op">(</span>sites_sf <span class="op">=</span> <span class="va">sites_sf</span>,</span>
+<span>                          root_site_code <span class="op">=</span> <span class="st">"TUM"</span>,</span>
+<span>                          min_strm_order <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                          dwnstrm_sites <span class="op">=</span> <span class="cn">T</span>,</span>
+<span>                          dwn_min_stream_order_diff <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Querying streams upstream of TUM </span></span>
+<span><span class="co">#&gt; Calculating furthest mainstem point downstream </span></span>
+<span><span class="co">#&gt; Querying streams downstream of TUM</span></span>
+<span></span>
+<span><span class="co"># compile the upstream and downstream flowlines</span></span>
+<span><span class="va">flowlines</span> <span class="op">=</span> <span class="va">nhd_list</span><span class="op">$</span><span class="va">flowlines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">nhd_list</span><span class="op">$</span><span class="va">dwn_flowlines</span><span class="op">)</span></span></code></pre></div>
 <p>The following provides a nice example of how to plot the sites and flowlines using the <code>ggplot2</code> <a href="https://ggplot2.tidyverse.org/" class="external-link">R package</a>.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># load ggplot2</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
-
-<span class="co"># plot the flowlines and the sites</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">flowlines</span>,
-          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">StreamOrde</span><span class="op">)</span>,
-              size <span class="op">=</span> <span class="va">StreamOrde</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_color_viridis_d</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,
-                        option <span class="op">=</span> <span class="st">"D"</span>,
-                        end <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_size.html" class="external-link">scale_size_continuous</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">1.2</span><span class="op">)</span>,
-                        guide <span class="op">=</span> <span class="st">'none'</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">nhd_list</span><span class="op">$</span><span class="va">basin</span>,
-          fill <span class="op">=</span> <span class="cn">NA</span>,
-          lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">sites_sf</span>,
-          size <span class="op">=</span> <span class="fl">4</span>,
-          color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf_label</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">sites_sf</span>,
-                <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">site_code</span><span class="op">)</span>,
-                size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"Stream\nOrder"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># load ggplot2</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># plot the flowlines and the sites</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">flowlines</span>,</span>
+<span>          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">StreamOrde</span><span class="op">)</span>,</span>
+<span>              size <span class="op">=</span> <span class="va">StreamOrde</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_color_viridis_d</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,</span>
+<span>                        option <span class="op">=</span> <span class="st">"D"</span>,</span>
+<span>                        end <span class="op">=</span> <span class="fl">0.8</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_size.html" class="external-link">scale_size_continuous</a></span><span class="op">(</span>range <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">1.2</span><span class="op">)</span>,</span>
+<span>                        guide <span class="op">=</span> <span class="st">'none'</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">nhd_list</span><span class="op">$</span><span class="va">basin</span>,</span>
+<span>          fill <span class="op">=</span> <span class="cn">NA</span>,</span>
+<span>          lwd <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">sites_sf</span>,</span>
+<span>          size <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>          color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">ggrepel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html" class="external-link">geom_label_repel</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">sites_sf</span>,</span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">site_code</span>, </span>
+<span>        geometry <span class="op">=</span> <span class="va">geometry</span><span class="op">)</span>,</span>
+<span>    size <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>    stat <span class="op">=</span> <span class="st">"sf_coordinates"</span>,</span>
+<span>    min.segment.length <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>    max.overlaps <span class="op">=</span> <span class="fl">50</span></span>
+<span>  <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">"Stream\nOrder"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Prep_PIT_data_files/figure-html/plot-flowlines-1.png" width="480" style="display: block; margin: auto;"></p>
 <p>If interested, the user can save this plot as a PDF (or similar), using the <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave()</a></code> function. <code><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave()</a></code> will simply save the last plot that was displayed.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># save as PDF to Desktop, for example</span>
-<span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"C:/Users/usernamehere/Desktop/site_map.pdf"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># save as PDF to Desktop, for example</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsave.html" class="external-link">ggsave</a></span><span class="op">(</span><span class="st">"C:/Users/usernamehere/Desktop/site_map.pdf"</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -1251,34 +1116,31 @@
 <p>To help illustrate, the following depicts the parent-child relationships among nodes in our Wenatchee River example, assuming only upriver movement from Tumwater Dam. More on this to follow…</p>
 <p><img src="Prep_PIT_data_files/figure-html/parent-child-fig-1.png" width="700" style="display: block; margin: auto;"></p>
 <p><code>PITcleanr</code> constructs this relationship by joining a spatial (<code>sf</code>) point object of sites with the flowlines queried via <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code>. The NHDPlus layer that is returned contains a unique identifier, or hydrosequence, for every segment, as well as the identifier of the hydrosequence immediately upstream and downstream. Using this information, <code>PITcleanr</code> can identify the next downstream site from every known location (using the <code><a href="../reference/findDwnstrmSite.html">findDwnstrmSite()</a></code> function), and thus construct the parent child table through the <code><a href="../reference/buildParentChild.html">buildParentChild()</a></code> function. By default, <code><a href="../reference/buildParentChild.html">buildParentChild()</a></code> returns a tibble identifying every parent-child pair, as well as the hydrosequence joined to the parent and child location. If the argument <code>add_rkm</code> is set to <code>TRUE</code>, <code>PITcleanr</code> will query the PTAGIS metadata again, and attach the river kilometer (or rkm) for each parent and child location.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">parent_child</span> <span class="op">=</span> <span class="fu"><a href="../reference/buildParentChild.html">buildParentChild</a></span><span class="op">(</span><span class="va">sites_sf</span>,
-                                <span class="va">flowlines</span><span class="op">)</span>
-<span class="co">#&gt; Error in findDwnstrmHydroseg(hydro_dn, flow_lines, hydro_pause_ids) : </span>
-<span class="co">#&gt;   HydroSeq 50011087 not found within flow lines.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Error in findDwnstrmHydroseg(hydro_dn, flow_lines, hydro_pause_ids) : </span>
-<span class="co">#&gt;   HydroSeq 50016572 not found within flow lines.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Error in findDwnstrmHydroseg(hydro_dn, flow_lines, hydro_pause_ids) : </span>
-<span class="co">#&gt;   HydroSeq 50011087 not found within flow lines.</span>
-<span class="va">parent_child</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 x 4</span></span>
-<span class="co">#&gt;    parent child parent_hydro child_hydro</span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL    TUM       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">013</span>200</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICL    ICM       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">017</span>117</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TUM    CHL       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TUM    CHW       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> UWE    LWN       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>585</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> UWE    WTL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">026</span>363</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> UWE    NAL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">028</span>949</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CHL    CHU       50<span style="text-decoration: underline;">022</span>268    50<span style="text-decoration: underline;">023</span>868</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> NAL    NAU       50<span style="text-decoration: underline;">028</span>949    50<span style="text-decoration: underline;">034</span>395</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">11</span> <span style="color: #BB0000;">NA</span>     ICL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">012</span>366</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">12</span> <span style="color: #BB0000;">NA</span>     LNF             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>752</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">13</span> <span style="color: #BB0000;">NA</span>     PES             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">024</span>786</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">parent_child</span> <span class="op">=</span> <span class="fu"><a href="../reference/buildParentChild.html">buildParentChild</a></span><span class="op">(</span><span class="va">sites_sf</span>,</span>
+<span>                                <span class="va">flowlines</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in findDwnstrmHydroseg(hydro_dn, flow_lines, hydro_pause_ids) : </span></span>
+<span><span class="co">#&gt;   HydroSeq 50016572 not found within flow lines.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Error in findDwnstrmHydroseg(hydro_dn, flow_lines, hydro_pause_ids) : </span></span>
+<span><span class="co">#&gt;   HydroSeq 50011492 not found within flow lines.</span></span>
+<span><span class="va">parent_child</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 x 4</span></span></span>
+<span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> PES    ICL       50<span style="text-decoration: underline;">011</span>578    50<span style="text-decoration: underline;">012</span>366</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICL    TUM       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">013</span>200</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ICL    ICM       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">017</span>117</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TUM    CHL       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TUM    CHW       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> UWE    LWN       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>585</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> UWE    WTL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">026</span>363</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> UWE    NAL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">028</span>949</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CHL    CHU       50<span style="text-decoration: underline;">022</span>268    50<span style="text-decoration: underline;">023</span>868</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> NAL    NAU       50<span style="text-decoration: underline;">028</span>949    50<span style="text-decoration: underline;">034</span>395</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> <span style="color: #BB0000;">NA</span>     PES             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">011</span>578</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> <span style="color: #BB0000;">NA</span>     LNF             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>752</span></span></code></pre></div>
 <p>After initially building a parent-child table, there is usually some editing that needs to happen. This is necessary for a variety of reasons we’ve observed:</p>
 <ul>
 <li>Perhaps the latitude and longitude of a site was not correct, and it was placed on the wrong hydrosequence of the flowlines.</li>
@@ -1288,107 +1150,108 @@
 <p>For these reasons (or any others), <code>PITcleanr</code> provides a function to edit the parent-child table, <code><a href="../reference/editParentChild.html">editParentChild()</a></code>. It requires a list the length of rows to be fixed (<code>fix_list</code>). Each element of this list is a vector of length 3, where the first two elements contain the parent and child locations to be edited, and the third element is the new (correct) parent location. As each child contains a single parent in the table, this is enough information to uniquely target individual rows of the parent-child table.</p>
 <p>The user can also switch parent-child pairs, making the parent the child and vice versa, using the <code>switch_parent_child</code> argument. This is primarily intended to fix relationships between a root site and the initial downstream sites. If, by default, the parent child table is built assuming upstream movement, but the user would like to incorporate downstream movement from the root site to a location downstream, this argument will be useful. However, it will not “fix” associated parent-child relationships with the locations in the <code>switch_parent_child</code> list; those must be fixed through the <code>fix_list</code> argument.</p>
 <p>In the example below, the original parent-child table had some problems with 2 sites (ICL and PES) downstream of the root site, TUM. In addition, the flowlines are not accurate near the confluence of Icicle Creek and the mainstem Wenatchee river, which has thrown off some of the relationships between ICL and surrounding sites. We would like to make TUM the parent of both ICL and PES, and ICL should be the parent of ICM, not LNF. In addition, ICL was placed on the mainstem river due to a mistake in the flowlines, and therefore listed as a parent of TUM, so we’d like to switch that. All of these corrections are implemented below using the <code><a href="../reference/editParentChild.html">editParentChild()</a></code> function.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">parent_child</span> <span class="op">=</span> <span class="fu"><a href="../reference/editParentChild.html">editParentChild</a></span><span class="op">(</span><span class="va">parent_child</span>,
-                               fix_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"ICL"</span>, <span class="st">"TUM"</span><span class="op">)</span>,
-                                               <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"PES"</span>, <span class="st">"TUM"</span><span class="op">)</span>,
-                                               <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"LNF"</span>, <span class="st">"ICL"</span><span class="op">)</span>,
-                                               <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LNF"</span>, <span class="st">'ICM'</span>, <span class="st">'ICL'</span><span class="op">)</span><span class="op">)</span>,
-                               switch_parent_child <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ICL"</span>, <span class="st">'TUM'</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-
-<span class="co"># view corrected parent_child table</span>
-<span class="va">parent_child</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 x 4</span></span>
-<span class="co">#&gt;    parent child parent_hydro child_hydro</span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL    LNF       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">016</span>752</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICL    ICM       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">017</span>117</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TUM    ICL       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">012</span>366</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TUM    CHL       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TUM    PES       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">024</span>786</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TUM    CHW       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> UWE    LWN       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>585</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> UWE    WTL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">026</span>363</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> UWE    NAL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">028</span>949</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">11</span> CHL    CHU       50<span style="text-decoration: underline;">022</span>268    50<span style="text-decoration: underline;">023</span>868</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">12</span> NAL    NAU       50<span style="text-decoration: underline;">028</span>949    50<span style="text-decoration: underline;">034</span>395</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">parent_child</span> <span class="op">=</span> <span class="fu"><a href="../reference/editParentChild.html">editParentChild</a></span><span class="op">(</span><span class="va">parent_child</span>,</span>
+<span>                               fix_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"ICL"</span>, <span class="st">"TUM"</span><span class="op">)</span>,</span>
+<span>                                               <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"PES"</span>, <span class="st">"TUM"</span><span class="op">)</span>,</span>
+<span>                                               <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"LNF"</span>, <span class="st">"ICL"</span><span class="op">)</span>,</span>
+<span>                                               <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"LNF"</span>, <span class="st">'ICM'</span>, <span class="st">'ICL'</span><span class="op">)</span>,</span>
+<span>                                               <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PES"</span>, <span class="st">"ICL"</span>, <span class="st">"TUM"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                               switch_parent_child <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ICL"</span>, <span class="st">'TUM'</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># view corrected parent_child table</span></span>
+<span><span class="va">parent_child</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 x 4</span></span></span>
+<span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL    LNF       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">016</span>752</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICL    ICM       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">017</span>117</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TUM    PES       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">011</span>578</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TUM    ICL       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">012</span>366</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TUM    CHL       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TUM    CHW       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> UWE    LWN       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>585</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> UWE    WTL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">026</span>363</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> UWE    NAL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">028</span>949</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> CHL    CHU       50<span style="text-decoration: underline;">022</span>268    50<span style="text-decoration: underline;">023</span>868</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> NAL    NAU       50<span style="text-decoration: underline;">028</span>949    50<span style="text-decoration: underline;">034</span>395</span></span></code></pre></div>
 <p>Note, if the configuration file contains multiple nodes for some sites (e.g., a node for each array at a site), then the parent-child table can be expanded to accommodate these nodes using the <code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code> function. The function essentially “expands” (adds rows) to the existing parent-child table to accommodate those additional nodes. Note: the <code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code> function assumes that the parent-child table is arranged so that children are upstream of parents, and nodes designated as <code>A0</code> are upstream of those designated <code>B0</code>. Currently, the function can only handle up to two nodes at each site.</p>
 <p>Here, we use the <code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code> function on our existing <code>parent_child</code> table, and provide our existing <code>configuration</code> tibble to the <code>configuration</code> argument to expand the tibble. Our results are saved to a new object <code>parent_child_nodes</code>.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">parent_child_nodes</span> <span class="op">=</span> <span class="fu"><a href="../reference/addParentChildNodes.html">addParentChildNodes</a></span><span class="op">(</span><span class="va">parent_child</span>,
-                                         configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span>
-
-<span class="co"># view expanded parent-child table</span>
-<span class="va">parent_child_nodes</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 22 x 4</span></span>
-<span class="co">#&gt;    parent child parent_hydro child_hydro</span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICLB0  ICLA0     50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">012</span>366</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICLA0  LNF       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">016</span>752</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ICLA0  ICMB0     50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">017</span>117</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TUM    ICLB0     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">012</span>366</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TUM    CHLB0     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TUM    PESB0     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">024</span>786</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TUM    CHWB0     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ICMB0  ICMA0     50<span style="text-decoration: underline;">017</span>117    50<span style="text-decoration: underline;">017</span>117</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> UWE    LWNB0     50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>585</span>
-<span class="co">#&gt; <span style="color: #949494;"># ... with 12 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">parent_child_nodes</span> <span class="op">=</span> <span class="fu"><a href="../reference/addParentChildNodes.html">addParentChildNodes</a></span><span class="op">(</span><span class="va">parent_child</span>,</span>
+<span>                                         configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># view expanded parent-child table</span></span>
+<span><span class="va">parent_child_nodes</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 22 x 4</span></span></span>
+<span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> PESB0  PESA0     50<span style="text-decoration: underline;">011</span>578    50<span style="text-decoration: underline;">011</span>578</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICLB0  ICLA0     50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">012</span>366</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ICLA0  LNF       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">016</span>752</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ICLA0  ICMB0     50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">017</span>117</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TUM    PESB0     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">011</span>578</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TUM    ICLB0     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">012</span>366</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> TUM    CHLB0     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> TUM    CHWB0     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ICMB0  ICMA0     50<span style="text-decoration: underline;">017</span>117    50<span style="text-decoration: underline;">017</span>117</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i 12 more rows</span></span></span></code></pre></div>
 <div class="section level3">
 <h3 id="movement-paths-node-order">Movement Paths &amp; Node Order<a class="anchor" aria-label="anchor" href="#movement-paths-node-order"></a>
 </h3>
 <p><code>PITcleanr</code> provides a function to determine the detection locations a tag would pass between a starting point (e.g, a tagging or release location) and an ending point (e.g., a spawning location, in the case of adult salmon), based on the parent-child table. We refer to these detection locations as a movement path.</p>
 <p>The function <code><a href="../reference/buildPaths.html">buildPaths()</a></code> will provide the movement path leading to each node in a parent-child table. It provides a row for each node, and then provides the path that an individual would have to take to get to that given node. The <code>build_paths()</code> function could be performed on either our <code>parent_child</code> or <code>parent_child_nodes</code> objects.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/buildPaths.html">buildPaths</a></span><span class="op">(</span><span class="va">parent_child_nodes</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 22 x 2</span></span>
-<span class="co">#&gt;    end_loc path                       </span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICLA0   TUM ICLB0 ICLA0            </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> LNF     TUM ICLB0 ICLA0 LNF        </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ICMB0   TUM ICLB0 ICLA0 ICMB0      </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ICLB0   TUM ICLB0                  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> UWE     TUM UWE                    </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CHLB0   TUM CHLB0                  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> PESB0   TUM PESB0                  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CHWB0   TUM CHWB0                  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ICMA0   TUM ICLB0 ICLA0 ICMB0 ICMA0</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> LWNB0   TUM UWE LWNB0              </span>
-<span class="co">#&gt; <span style="color: #949494;"># ... with 12 more rows</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/buildPaths.html">buildPaths</a></span><span class="op">(</span><span class="va">parent_child_nodes</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 22 x 2</span></span></span>
+<span><span class="co">#&gt;    end_loc path                       </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> PESA0   TUM PESB0 PESA0            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICLA0   TUM ICLB0 ICLA0            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> LNF     TUM ICLB0 ICLA0 LNF        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ICMB0   TUM ICLB0 ICLA0 ICMB0      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> PESB0   TUM PESB0                  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> ICLB0   TUM ICLB0                  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> UWE     TUM UWE                    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CHLB0   TUM CHLB0                  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CHWB0   TUM CHWB0                  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ICMA0   TUM ICLB0 ICLA0 ICMB0 ICMA0</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i 12 more rows</span></span></span></code></pre></div>
 <p>The <code><a href="../reference/buildNodeOrder.html">buildNodeOrder()</a></code> provides both the path and the node order of each node (starting from the root site and counting upwards past each node). Each of these functions currently has an argument, <code>direction</code> that provides paths and node orders based on upstream movement (the default) or downstream movement. For downstream movement, each node may appear in the resulting tibble multiple times, as there may be multiple ways to reach that node, from different starting points. Again, <code><a href="../reference/buildNodeOrder.html">buildNodeOrder()</a></code> could be performed on either <code>parent_child</code> or <code>parent_child_nodes</code>.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/buildNodeOrder.html">buildNodeOrder</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 x 3</span></span>
-<span class="co">#&gt;    node  node_order path           </span>
-<span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TUM            1 TUM            </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CHL            2 TUM CHL        </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CHU            3 TUM CHL CHU    </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CHW            2 TUM CHW        </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> ICL            2 TUM ICL        </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> ICM            3 TUM ICL ICM    </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> LNF            3 TUM ICL LNF    </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> PES            2 TUM PES        </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> UWE            2 TUM UWE        </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">10</span> LWN            3 TUM UWE LWN    </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">11</span> NAL            3 TUM UWE NAL    </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">12</span> NAU            4 TUM UWE NAL NAU</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">13</span> WTL            3 TUM UWE WTL</span>
-
-<span class="co"># to set direction to downstream, for example</span>
-<span class="co"># buildNodeOrder(parent_child,</span>
-<span class="co">#                direction = "d")</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/buildNodeOrder.html">buildNodeOrder</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 x 3</span></span></span>
+<span><span class="co">#&gt;    node  node_order path           </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TUM            1 TUM            </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CHL            2 TUM CHL        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CHU            3 TUM CHL CHU    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CHW            2 TUM CHW        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> ICL            2 TUM ICL        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> ICM            3 TUM ICL ICM    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> LNF            3 TUM ICL LNF    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> PES            2 TUM PES        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> UWE            2 TUM UWE        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> LWN            3 TUM UWE LWN    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> NAL            3 TUM UWE NAL    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> NAU            4 TUM UWE NAL NAU</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> WTL            3 TUM UWE WTL</span></span>
+<span></span>
+<span><span class="co"># to set direction to downstream, for example</span></span>
+<span><span class="co"># buildNodeOrder(parent_child,</span></span>
+<span><span class="co">#                direction = "d")</span></span></code></pre></div>
 <p>Sometimes it helps to visualize the paths that each tag could take. <code>PITcleanr</code> provides a function, <code><a href="../reference/plotNodes.html">plotNodes()</a></code> that utilizes the <code>tidygraph</code> and <code>ggraph</code> packages to generate a plot of all the detection nodes and their connections based on the parent-child table. Within <code><a href="../reference/plotNodes.html">plotNodes()</a></code>, there is a function called <code><a href="../reference/buildNodeGraph.html">buildNodeGraph()</a></code> that constructs the tidygraph <code>tbl_graph</code> object that is then used to make the plot. Users can call that <code><a href="../reference/buildNodeGraph.html">buildNodeGraph()</a></code> function themselves and use the output to make their own customizable graphs if they desire.</p>
 <p>For example, <code><a href="../reference/plotNodes.html">plotNodes()</a></code> of the <code>parent_child</code>:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child</span>,
-          layout <span class="op">=</span> <span class="st">"tree"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child</span>,</span>
+<span>          layout <span class="op">=</span> <span class="st">"tree"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Prep_PIT_data_files/figure-html/plot-nodes-1.png" width="700" style="display: block; margin: auto;"></p>
 <p>And similarly for the <code>parent_child_nodes</code> object:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child_nodes</span>,
-          layout <span class="op">=</span> <span class="st">"tree"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child_nodes</span>,</span>
+<span>          layout <span class="op">=</span> <span class="st">"tree"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Prep_PIT_data_files/figure-html/plot-more-nodes-1.png" width="384" style="display: block; margin: auto;"></p>
 </div>
 <div class="section level3">
@@ -1396,51 +1259,51 @@
 </h3>
 <p>Users may be interested in the apparent movement directionality of a tag, based on its detections. For many analyses, it is necessary to assume a tag/individual undergoes only one-way travel (i.e., travel is either all upstream or all downstream). To meet this assumption, individual detections sometime need to be discarded. For example, an adult salmon undergoing an upstream spawning migration may move up a mainstem migration corridor (e.g., the Snake River), dip into a tributary (e.g., Selway River in the Clearwater), and then move back downstream and up another tributary (e.g., Salmon River) to their spawning location. In this case, any detections that occurred in the Clearwater River would need to be discarded if we believe the fish was destined for a location in the Salmon River. In other cases, more straightforward summaries of directional movements may be desired.</p>
 <p>To accommodate this, <code>PITcleanr</code> provides a function, <code><a href="../reference/addDirection.html">addDirection()</a></code>, to take the compressed observations from <code><a href="../reference/compress.html">compress()</a></code> and the parent-child table (<code>parent_child</code> or <code>parent_child_nodes</code>) and indicate the movement direction of each detection in relation to its previous detection. It may be useful to filter detections so they all start at a particular site for each tag before applying <code><a href="../reference/addDirection.html">addDirection()</a></code>. Currently this function only provides directions relative to an upstream movement (i.e. “forward” indicates upstream movement, “backward” indicates downstream movement). A direction of “unknown” indicates the tag has shifted to a different branch in the stream network.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># determine trap date, and remove detections prior to that</span>
-<span class="va">obs_direct</span> <span class="op">=</span> <span class="va">comp_obs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="co"># get the first detection of each tag at Tumwater Dam</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">comp_obs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">node</span> <span class="op">==</span> <span class="st">"TUM"</span>,
-                     <span class="va">event_type_name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Mark"</span>, <span class="st">"Recapture"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">tag_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">min_det</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">min_det</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>start_date <span class="op">=</span> <span class="va">min_det</span>,
-                        .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span>,
-            by <span class="op">=</span> <span class="st">"tag_code"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="co"># filter any detections before the "start_date"</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">min_det</span> <span class="op">&gt;=</span> <span class="va">start_date</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">tag_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="co"># re-calculate the "slots" for each tag_code</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>slot <span class="op">=</span> <span class="va">slot</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">slot</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="co"># add direction using "addDirection()</span>
-  <span class="fu"><a href="../reference/addDirection.html">addDirection</a></span><span class="op">(</span>parent_child <span class="op">=</span> <span class="va">parent_child_nodes</span><span class="op">)</span>
-
-<span class="co"># for example, let's look at directional observations for a single tag, and select certain columns</span>
-<span class="va">obs_direct</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tag_code</span> <span class="op">==</span> <span class="st">"3D9.1C2DE4B17E"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">tag_code</span>, <span class="va">node</span>, <span class="va">slot</span>, <span class="va">min_det</span>, <span class="va">direction</span><span class="op">)</span>
-<span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 x 5</span></span>
-<span class="co">#&gt;   tag_code       node   slot min_det             direction</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 3D9.1C2DE4B17E TUM       1 2015-06-10 <span style="color: #949494;">23:59:00</span> start    </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 3D9.1C2DE4B17E CHLB0     2 2015-06-15 <span style="color: #949494;">22:56:59</span> forward  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3D9.1C2DE4B17E CHLA0     3 2015-06-15 <span style="color: #949494;">22:57:53</span> forward  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 3D9.1C2DE4B17E CHLB0     4 2015-06-16 <span style="color: #949494;">22:14:25</span> backward </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 3D9.1C2DE4B17E CHLA0     5 2015-06-16 <span style="color: #949494;">22:15:09</span> forward  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 3D9.1C2DE4B17E CHLB0     6 2015-06-17 <span style="color: #949494;">00:48:51</span> backward </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">7</span> 3D9.1C2DE4B17E CHLA0     7 2015-06-17 <span style="color: #949494;">08:00:00</span> forward  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">8</span> 3D9.1C2DE4B17E WTLA0     8 2015-07-15 <span style="color: #949494;">10:00:00</span> unknown  </span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">9</span> 3D9.1C2DE4B17E WTLB0     9 2015-09-06 <span style="color: #949494;">19:17:56</span> backward</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># determine trap date, and remove detections prior to that</span></span>
+<span><span class="va">obs_direct</span> <span class="op">=</span> <span class="va">comp_obs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="co"># get the first detection of each tag at Tumwater Dam</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">comp_obs</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">node</span> <span class="op">==</span> <span class="st">"TUM"</span>,</span>
+<span>                     <span class="va">event_type_name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Mark"</span>, <span class="st">"Recapture"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">tag_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">min_det</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">min_det</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>start_date <span class="op">=</span> <span class="va">min_det</span>,</span>
+<span>                        .groups <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span>,</span>
+<span>            by <span class="op">=</span> <span class="st">"tag_code"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="co"># filter any detections before the "start_date"</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">min_det</span> <span class="op">&gt;=</span> <span class="va">start_date</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">tag_code</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="co"># re-calculate the "slots" for each tag_code</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>slot <span class="op">=</span> <span class="va">slot</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">slot</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="co"># add direction using "addDirection()</span></span>
+<span>  <span class="fu"><a href="../reference/addDirection.html">addDirection</a></span><span class="op">(</span>parent_child <span class="op">=</span> <span class="va">parent_child_nodes</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># for example, let's look at directional observations for a single tag, and select certain columns</span></span>
+<span><span class="va">obs_direct</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tag_code</span> <span class="op">==</span> <span class="st">"3D9.1C2DE4B17E"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">tag_code</span>, <span class="va">node</span>, <span class="va">slot</span>, <span class="va">min_det</span>, <span class="va">direction</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 9 x 5</span></span></span>
+<span><span class="co">#&gt;   tag_code       node   slot min_det             direction</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 3D9.1C2DE4B17E TUM       1 2015-06-10 <span style="color: #949494;">23:59:00</span> start    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> 3D9.1C2DE4B17E CHLB0     2 2015-06-15 <span style="color: #949494;">22:56:59</span> forward  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> 3D9.1C2DE4B17E CHLA0     3 2015-06-15 <span style="color: #949494;">22:57:53</span> forward  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> 3D9.1C2DE4B17E CHLB0     4 2015-06-16 <span style="color: #949494;">22:14:25</span> backward </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> 3D9.1C2DE4B17E CHLA0     5 2015-06-16 <span style="color: #949494;">22:15:09</span> forward  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> 3D9.1C2DE4B17E CHLB0     6 2015-06-17 <span style="color: #949494;">00:48:51</span> backward </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">7</span> 3D9.1C2DE4B17E CHLA0     7 2015-06-17 <span style="color: #949494;">08:00:00</span> forward  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">8</span> 3D9.1C2DE4B17E WTLA0     8 2015-07-15 <span style="color: #949494;">10:00:00</span> unknown  </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">9</span> 3D9.1C2DE4B17E WTLB0     9 2015-09-06 <span style="color: #949494;">19:17:56</span> backward</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
 <h2 id="what-next">What Next?<a class="anchor" aria-label="anchor" href="#what-next"></a>
 </h2>
 <p>Congratulations, you’ve now finished the introductory vignette of the <code>PITcleanr</code> R package. One purpose of the <code>PITcleanr</code> package is to prepare and help clean PIT tag observations for the Dam Adult Branch Occupancy Model (<a href="https://github.com/BiomarkABS/DABOM" class="external-link">DABOM</a>). For further information, consider browsing additional vignettes included with the <code>PITcleanr</code> package using:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span><span class="st">"PITcleanr"</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span><span class="st">"PITcleanr"</span><span class="op">)</span></span></code></pre></div>
 <div class="section level5">
 <h5 id="end-vignette">End Vignette<a class="anchor" aria-label="anchor" href="#end-vignette"></a>
 </h5>
@@ -1465,7 +1328,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
