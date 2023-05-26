@@ -17,6 +17,9 @@ usethis::use_pkgdown_github_pages()
 # Run once to configure your package to use pkgdown
 usethis::use_pkgdown()
 
+# check that _pkgdown.yml looks good
+pkgdown::check_pkgdown()
+
 # Run to build the website
 pkgdown::build_site()
 
