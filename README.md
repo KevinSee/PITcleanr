@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" height="130" width="110" /></a>
+# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" width="110" /></a>
 
 <!-- badges: start -->
 
@@ -36,11 +36,8 @@ website](https://kevinsee.github.io/PITcleanr/).
 
 ## Installation Instructions
 
-The `PITcleanr` compendium can be downloaded as a zip from from this
-URL: <https://github.com/KevinSee/PITcleanr/archive/master.zip>
-
-Or you can install the compendium as an R package from GitHub by using
-Hadley Wickham’s `devtools` package:
+The `PITcleanr` package can be installed as an R package from GitHub by
+using Hadley Wickham’s `devtools` package:
 
 ``` r
 # install and load remotes, if necessary
@@ -58,6 +55,12 @@ For the latest development version:
 ``` r
 remotes::install_github("KevinSee/PITcleanr@develop")
 ```
+
+Alternatively, the `PITcleanr` compendium can be downloaded as a zip
+file from from this URL:
+<https://github.com/KevinSee/PITcleanr/archive/master.zip> Once
+extracted, the functions can be sourced individually, or a user can
+build the R package locally.
 
 Be sure to use the `build_vignettes = TRUE` argument, as this will build
 all of the vignettes (i.e., user manuals) that are included with the
@@ -105,8 +108,7 @@ head(comp_obs)
 #> 4 384.3B239AD241 TD1        4 Observation          3 2015-05-16 11:15:40
 #> 5 384.3B239AD241 MC2        5 Observation         17 2015-05-19 17:01:15
 #> 6 384.3B239AD241 PRA        6 Observation          2 2015-05-24 13:51:16
-#> # ... with 3 more variables: max_det <dttm>, duration <drtn>,
-#> #   travel_time <drtn>
+#> # i 3 more variables: max_det <dttm>, duration <drtn>, travel_time <drtn>
 ```
 
 The output consists of a tibble containing columns for:
@@ -171,7 +173,7 @@ being:
 -   Kevin See (Washington Department of Fish & Wildlife)
 -   Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)
 -   Rick Orme (Nez Perce Tribe - Fisheries Resources Management)
--   Mike Ackerman (Mt Hood Environmental)
+-   Mike Ackerman (Nez Perce Tribe - Fisheries Resources Management)
 
 ### Licenses
 
