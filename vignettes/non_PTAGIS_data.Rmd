@@ -25,7 +25,6 @@ knitr::opts_chunk$set(
 ```{r load-packages}
 library(tidyverse)
 library(PITcleanr)
-# devtools::load_all()
 ```
 
 # Introduction
