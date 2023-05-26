@@ -102,6 +102,7 @@ articles:
 - title: Getting Started
   contents:
   - Prep_PIT_data
+  - non_PTAGIS_data
 - title: DABOM
   desc: |
     Vignettes aimed at preparing data for DABOM
