@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 Title <- "Title of your paper goes here"
 ```
 
-# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" height="130" width="110" /></a>
+# PITcleanr <a href='https://github.com/KevinSee/PITcleanr'><img src='man/figures/logo.png' align="right" width="110" /></a>
 
 <!-- badges: start -->
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/KevinSee/PITcleanr/master?urlpath=rstudio)
@@ -30,7 +30,7 @@ The user can find more information related to installation and use of this packa
 
 ## Installation Instructions
 
-```{r child = "man/fragments/install-inst.Rmd"}
+```{r child = "vignettes/child_docs/install-inst.Rmd"}
 ```
 
 Be sure to use the `build_vignettes = TRUE` argument, as this will build all of the vignettes (i.e., user manuals) that are included with the package. Further instructions on how to use `PITcleanr` can be found in the vignettes, which can be accessed using:
@@ -52,7 +52,7 @@ ptagis_file = system.file("extdata",
 ```
 
 
-```{r child = "man/fragments/compress-data.Rmd"}
+```{r child = "vignettes/child_docs/compress-data.Rmd"}
 ```
 
 ## Other Functionality
@@ -66,7 +66,7 @@ PITcleanr is a collaborative project, with the primary contributors being:
 * Kevin See (Washington Department of Fish & Wildlife)
 * Ryan N. Kinzer (Nez Perce Tribe - Fisheries Resources Management)
 * Rick Orme (Nez Perce Tribe - Fisheries Resources Management)
-* Mike Ackerman (Mt Hood Environmental)
+* Mike Ackerman (Nez Perce Tribe - Fisheries Resources Management)
 
 ### Licenses
 

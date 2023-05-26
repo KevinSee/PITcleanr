@@ -1,0 +1,25 @@
+---
+output:
+  rmarkdown::html_vignette: default
+  html_document: default
+---
+
+The `PITcleanr` package can be installed as an R package from GitHub by using Hadley Wickham's `devtools` package:
+
+```{r gh-installation, eval = FALSE}
+# install and load remotes, if necessary
+install.packages("devtools")
+remotes::install_github("KevinSee/PITcleanr", 
+                         build_vignettes = TRUE)
+```
+
+`devtools` may require the downloading and installation of Rtools. The latest version of Rtools can be found [here](https://cran.r-project.org/bin/windows/Rtools/).
+
+For the latest development version:
+
+```{r develop-version, eval = FALSE}
+remotes::install_github("KevinSee/PITcleanr@develop")
+```
+
+Alternatively, the `PITcleanr` compendium can be downloaded as a zip file from from this URL: <https://github.com/KevinSee/PITcleanr/archive/master.zip>
+Once extracted, the functions can be sourced individually, or a user can build the R package locally.
