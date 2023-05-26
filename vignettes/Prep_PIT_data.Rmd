@@ -32,7 +32,7 @@ This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data t
 
 # Installation
 
-```{r child = here::here("man/fragments/install-inst.Rmd")}
+```{r child = "child_docs/install-inst.Rmd"}
 ```
 
 <!-- Additionally, one function in `PITcleanr` allows the user to make a plot of how the detection sites or nodes are related to each other. To use this function, one will need the `ggraph` and `tidygraph` R packages. `tidygraph` is included with `ggraph`, so a user only needs to install `ggraph`. If the argument `dependencies` is set to `TRUE` in the code above, it should be installed automatically. Otherwise, run the following: -->
@@ -54,7 +54,7 @@ Note that many of the various queries in `PITcleanr` require a connection to the
 
 ## From PTAGIS
 
-```{r child = here::here("man/fragments/query-ptagis.Rmd")}
+```{r child = "child_docs/query-ptagis.Rmd"}
 ```
 
 ### Quality Control
@@ -80,7 +80,7 @@ If your data does not reside in PTAGIS, please see this [other vignette]("non_PT
 
 # Compressing Detection Data
 
-```{r child = here::here("man/fragments/compress-data.Rmd")}
+```{r child = "child_docs/compress-data.Rmd"}
 ```
 
 In our Tumwater Dam Chinook salmon example, the `compress()` function has scaled down the raw data from PTAGIS from `r prettyNum(nrow(raw_ptagis), big.mark = ",")` rows of data to a slightly more manageable `r prettyNum(nrow(comp_obs), big.mark = ",")` rows. At the same time, the sum of the `n_dets` column in `comp_obs` is `r prettyNum(sum(comp_obs$n_dets), big.mark = ",")`, showing that every detection from the raw data has been accounted for. For much of the remaining vignette, we will explore other functionality of `PITcleanr` and as it relates to this compressed data i.e., the `comp_obs` object.
@@ -122,7 +122,7 @@ ptagis_meta$configuration_sequence             # antenna configuration
 
 ```
 
-```{r child = here::here("man/fragments/site-configuration.Rmd")}
+```{r child = "child_docs/site-configuration.Rmd"}
 ```
 
 Note that `buildConfig()` returns the same number of records as `queryPtagisMeta()`, except `buildConfig()` returns a more manageable number of columns (`r ncol(array_configuration)`) and provides the functionality of assigning each antenna to a node, based on the array it is part of.
@@ -151,13 +151,13 @@ It can often be helpful to plot various detection locations; those locations can
 
 ## Extract Sites of Interest
 
-```{r child = here::here("man/fragments/extract-sites.Rmd")}
+```{r child = "child_docs/extract-sites.Rmd"}
 ```
 
 
 ## Query Flowlines
 
-```{r child = here::here("man/fragments/query-flowlines.Rmd")}
+```{r child = "child_docs/query-flowlines.Rmd"}
 ```
 
 The following provides a nice example of how to plot the sites and flowlines using the `ggplot2` [R package](https://ggplot2.tidyverse.org/).
@@ -182,9 +182,15 @@ ggplot() +
   geom_sf(data = sites_sf,
           size = 4,
           color = "black") +
-  geom_sf_label(data = sites_sf,
-                aes(label = site_code),
-                size = 2) +
+  ggrepel::geom_label_repel(
+    data = sites_sf,
+    aes(label = site_code, 
+        geometry = geometry),
+    size = 2,
+    stat = "sf_coordinates",
+    min.segment.length = 0,
+    max.overlaps = 50
+  ) +
   theme_bw() +
   theme(axis.title = element_blank()) +
   labs(color = "Stream\nOrder")
@@ -202,7 +208,7 @@ ggsave("C:/Users/usernamehere/Desktop/site_map.pdf")
 
 # "Parent-Child" Relationships
 
-```{r child = here::here("man/fragments/parent-child.Rmd")}
+```{r child = "child_docs/parent-child.Rmd"}
 ```
 
 

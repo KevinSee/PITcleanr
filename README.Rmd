@@ -30,7 +30,7 @@ The user can find more information related to installation and use of this packa
 
 ## Installation Instructions
 
-```{r child = "man/fragments/install-inst.Rmd"}
+```{r child = "vignettes/child_docs/install-inst.Rmd"}
 ```
 
 Be sure to use the `build_vignettes = TRUE` argument, as this will build all of the vignettes (i.e., user manuals) that are included with the package. Further instructions on how to use `PITcleanr` can be found in the vignettes, which can be accessed using:
@@ -52,7 +52,7 @@ ptagis_file = system.file("extdata",
 ```
 
 
-```{r child = "man/fragments/compress-data.Rmd"}
+```{r child = "vignettes/child_docs/compress-data.Rmd"}
 ```
 
 ## Other Functionality

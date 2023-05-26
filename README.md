@@ -69,7 +69,7 @@ the vignettes, which can be accessed using:
 
 ``` r
 browseVignettes(package = "PITcleanr")
-#> No vignettes found by browseVignettes(package = "PITcleanr")
+#> starting httpd help server ... done
 ```
 
 ## Compressing PTAGIS Detection Data

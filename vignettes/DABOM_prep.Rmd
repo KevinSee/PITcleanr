@@ -61,19 +61,30 @@ Good luck!
 
 ## Querying Detection Data from PTAGIS
 
-```{r child = here::here("man/fragments/query-ptagis.Rmd")}
+```{r eval = F, child = here::here("man/fragments/query-ptagis.Rmd")}
 ```
+
+```{r eval = T, child = "child_docs/query-ptagis.Rmd"}
+```
+
 
 Congratulations! You now have complete tag histories for your tags of interest from [PTAGIS](https://www.ptagis.org/)! Next, we'll demonstrate how to compress all of those records into a more manageable size. 
 
 ## Compressing Data
 
-```{r child = here::here("man/fragments/compress-data.Rmd")}
+```{r eval = F, child = here::here("man/fragments/compress-data.Rmd")}
 ```
+
+```{r child = "child_docs/compress-data.Rmd"}
+```
+
 
 ## Site Configuration
 
-```{r child = here::here("man/fragments/site-configuration.Rmd")}
+```{r eval = F, child = here::here("man/fragments/site-configuration.Rmd")}
+```
+
+```{r eval = T, child = "child_docs/site-configuration.Rmd"}
 ```
 
 Note: If the user has their own site configuration file ready or would like a template to create their own configuration file, those directions can be found in [this](quick_prep.Rmd) vignette.
@@ -85,13 +96,13 @@ At this point you've queried all of the PTAGIS detections for your tags of inter
 
 ### Extract Sites of Interest
 
-```{r child = here::here("man/fragments/extract-sites.Rmd")}
+```{r child = "child_docs/extract-sites.Rmd"}
 ```
 
 
 ### Query Flowlines
 
-```{r child = here::here("man/fragments/query-flowlines.Rmd")}
+```{r child = "child_docs/query-flowlines.Rmd"}
 ```
 
 You've now extracted your sites of interest and downloaded the flowlines that connect them. These two pieces of information can then be used to determine the "parent-child" relationships among your sites.
@@ -99,7 +110,7 @@ You've now extracted your sites of interest and downloaded the flowlines that co
 
 ### "Parent-Child" Relationships
 
-```{r child = here::here("man/fragments/parent-child.Rmd")}
+```{r child = "child_docs/parent-child.Rmd"}
 ```
 
 
