@@ -34,6 +34,8 @@ readCTH = function(cth_file = NULL,
                                  "raw"),
                    test_tag_prefix = "3E7") {
 
+  stopifnot(!is.null(cth_file))
+
   file_type = match.arg(file_type)
 
   # vector of required column names. These should all be included in a PTAGIS data request
