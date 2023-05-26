@@ -83,16 +83,16 @@ ptagis_file = "C:/Users/usernamehere/Downloads/TUM_Chinook_2015.csv"
 ```{r raw-ptagis-data, echo = F}
 raw_ptagis = readr::read_csv(ptagis_file,
                              show_col_types = F)
-n_raw_tags = n_distinct(raw_ptagis$`Tag Code`)
+n_raw_tags = dplyr::n_distinct(raw_ptagis$`Tag Code`)
 
 mark_only_tags = raw_ptagis %>%
-  select(`Tag Code`, `Event Type Name`) %>%
-  count(`Tag Code`, `Event Type Name`) %>%
-  pivot_wider(names_from = `Event Type Name`,
-              values_from = n,
-              values_fill = 0) %>%
+  dplyr::select(`Tag Code`, `Event Type Name`) %>%
+  dplyr::count(`Tag Code`, `Event Type Name`) %>%
+  tidyr::pivot_wider(names_from = `Event Type Name`,
+                     values_from = n,
+                     values_fill = 0) %>%
   #mutate(nDetections = rowSums(across(where(is.numeric)))) %>%
-  filter(Observation == 0 & Recapture == 0 & Recovery == 0)
+  dplyr::filter(Observation == 0 & Recapture == 0 & Recovery == 0)
 
 ```
 
@@ -100,13 +100,13 @@ Note that in our example file, there are `r nrow(raw_ptagis)` detections (rows) 
 
 ```{r, echo = F}
 raw_ptagis %>%
-  select(`Tag Code`) %>%
-  distinct() %>%
-  slice(2) %>%
-  left_join(raw_ptagis,
+  dplyr::select(`Tag Code`) %>%
+  dplyr::distinct() %>%
+  dplyr::slice(2) %>%
+  dplyr::left_join(raw_ptagis,
             by = join_by(`Tag Code`),
             multiple = "all") %>%
-  slice(c(1:15)) %>%
-  kable() %>%
+  dplyr::slice(c(1:15)) %>%
+  knitr::kable() %>%
   kableExtra::kable_styling()
 ```
