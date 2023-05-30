@@ -270,6 +270,7 @@ readCTH = function(cth_file = NULL,
   } else if(class(cth_file)[1] %in% c("spec_tbl_df", "tbl_df", "tbl", "data.frame")) {
     observations = cth_file %>%
       dplyr::as_tibble() |>
+      janitor::clean_names() |>
       dplyr::select(dplyr::any_of(req_col_nms),
                     dplyr::everything())
 
