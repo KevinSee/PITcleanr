@@ -285,6 +285,37 @@ readCTH = function(cth_file = NULL,
                     dplyr::any_of(sug_col_nms),
                     dplyr::everything())
 
+    if(class(observations$event_date_time_value)[1] == "character") {
+      # determine format of event date time value
+      n_colons <-
+        observations %>%
+        dplyr::mutate(event_time = stringr::str_split(event_date_time_value,
+                                                      " ",
+                                                      simplify = T)[,2],
+                      n_colon = stringr::str_count(event_time, "\\:")) %>%
+        dplyr::pull(n_colon) %>%
+        max()
+
+      if(n_colons == 2) {
+        observations <- observations |>
+          dplyr::mutate(
+            dplyr::across(
+              dplyr::any_of(c("event_date_time_value",
+                              "event_release_date_time_value")),
+              lubridate::mdy_hms))
+      } else if(n_colons == 1) {
+        observations <- observations |>
+          dplyr::mutate(
+            dplyr::across(
+              dplyr::any_of(c("event_date_time_value",
+                              "event_release_date_time_value")),
+              lubridate::mdy_hm))
+      } else {
+        warning("Event Date Time Value has strange format.")
+      }
+    }
+
+
     if(class(observations$antenna_id) != "character") {
       observations <- observations |>
         dplyr::mutate(
@@ -292,6 +323,19 @@ readCTH = function(cth_file = NULL,
             antenna_id,
             as.character))
     }
+
+    # fix issues when Excel has converted antenna_id to numeric instead of character
+    # all antenna IDs should be at least 2 characters for PTAGIS data
+    observations <- observations |>
+      dplyr::mutate(
+        dplyr::across(
+          antenna_id,
+          ~ stringr::str_pad(.,
+                             pad = "0",
+                             width = 2,
+                             side = "left")
+        )
+      )
 
   } else {
     stop("Trouble reading in CTH file\n")
