@@ -4,6 +4,7 @@
 #'
 #' @author Kevin See
 #'
+#' @param node_assign should nodes by assigned by \code{array}, \code{site} or \code{antenna}? Default is \code{array}.
 #'
 #' @source \url{http://www.ptagis.org}
 #'
@@ -12,14 +13,18 @@
 #' @return NULL
 #' @examples buildConfig()
 #'
-buildConfig = function() {
+buildConfig = function(node_assign = c("array",
+                                       "site",
+                                       "antenna")) {
+
+  node_assign = match.arg(node_assign)
 
   config_all = queryPtagisMeta()
 
 
   # clean things up a bit
   configuration = config_all %>%
-    mutate(node = NA) %>%
+    mutate(node = NA_character_) %>%
     rename(site_type_name = site_type,
            site_type = type,
            config_id = configuration_sequence,
@@ -38,7 +43,10 @@ buildConfig = function() {
            rkm,
            rkm_total,
            latitude,
-           longitude) %>%
+           longitude)
+
+  if(node_assign == "array") {
+    configuration <- configuration %>%
     mutate(node = ifelse(grepl('^LGR', site_code),
                          'GRA',
                          node),
@@ -72,6 +80,20 @@ buildConfig = function() {
     ungroup() %>%
     select(-node_site,
            -node_site_b0)
+
+  } else if(node_assign == "antenna") {
+    configuration <- configuration %>%
+      rowwise() |>
+      mutate(node = paste(site_code,
+                          antenna_id,
+                          sep = "_")) |>
+      ungroup()
+
+  } else if(node_assign == "site") {
+    configuration <- configuration %>%
+      mutate(node = site_code)
+
+  }
 
   return(configuration)
 }
