@@ -56,7 +56,9 @@ information from PTAGIS metadata, being sure to pull the metadata from the
 correct configuration file.
 }
 \examples{
-compress()
+ptagis_file = system.file("extdata", "TUM_Chinook_2015.csv", package = "PITcleanr", mustWork = TRUE)
+ptagis_cth = readCTH(ptagis_file)
+extractSites(ptagis_cth)
 }
 \author{
 Kevin See
