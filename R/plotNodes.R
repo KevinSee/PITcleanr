@@ -31,20 +31,21 @@ plotNodes = function(parent_child = NULL,
 
   # create ggraph plot
   node_p = node_graph %>%
-    ggraph(layout = layout) +
-    geom_edge_diagonal(...) +
-    geom_node_point(size = point_size,
-                    ...) +
-    theme_graph(base_family = 'Times') +
-    theme(legend.position = 'bottom')
+    ggraph::ggraph(layout = layout) +
+    ggraph::geom_edge_diagonal(...) +
+    ggraph::geom_node_point(size = point_size,
+                            ...) +
+    ggraph::theme_graph(base_family = 'Times') +
+    ggplot2::theme(legend.position = 'bottom')
 
   if(label_points) {
     node_p = node_p +
-      geom_node_label(aes(label = label),
-                      size = label_size,
-                      label.padding = unit(0.1, 'lines'),
-                      label.size = 0.1,
-                      ...)
+      ggraph::geom_node_label(
+        ggplot2::aes(label = label),
+        size = label_size,
+        label.padding = ggplot2::unit(0.1, 'lines'),
+        label.size = 0.1,
+        ...)
   }
 
   return(node_p)

@@ -37,6 +37,8 @@ There are many ways a user might store their various files, and many ways to scr
 
 In this example, we have accumulated a number of different PIT tag detection files, in a variety of formats. We have saved them all in the same folder, and used some naming convention to indicate what format they are. Files from PTAGIS have "PTAGIS" in the file name somewhere, Biologic csv files have "BIOLOGIC" in the file name somewhere, and we assume the other files are raw files (with a mixture of .xlsx, .log and .txt file extensions).
 
+For raw detection files, which usually come from a single reader, the file does not contain information about what site code those observations come from. The user can add that themselves within R, or the `readCTH()` function will assume the site code is the first part of the file name before the first underscore, `_`. Therefore, if the user adopts a naming convention that includes the site code at the beginning of every raw detection file, `PITcleanr` will assign the correct site code. 
+
 We set the name and path of the folder with all the detection data (`detection_folder`), and used the following script to compile a data.frame of various file names and file types. A user can set the `detection_folder` path to point to where they have stored all their detection files.
 
 ```{r}

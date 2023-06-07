@@ -18,12 +18,11 @@
 #' If supplied, sites with detections after this date will be excluded from the results.
 #'
 #' @import dplyr lubridate
-#' @importFrom janitor clean_names
-#' @importFrom readr read_csv
-#' @importFrom magrittr %<>%
 #' @export
 #' @return a tibble
-#' @examples compress()
+#' @examples ptagis_file = system.file("extdata", "TUM_Chinook_2015.csv", package = "PITcleanr", mustWork = TRUE)
+#' ptagis_cth = readCTH(ptagis_file)
+#' extractSites(ptagis_cth)
 
 extractSites = function(cth_file = NULL,
                         file_type = c("PTAGIS",
@@ -47,12 +46,12 @@ extractSites = function(cth_file = NULL,
   }
 
   if(!is.null(min_date)) {
-    observations %<>%
+    observations <- observations %>%
       filter(event_date_time_value >= lubridate::ymd(min_date))
   }
 
   if(!is.null(max_date)) {
-    observations %<>%
+    observations <- observations %>%
       filter(event_date_time_value <= lubridate::ymd(max_date))
   }
 
@@ -67,17 +66,18 @@ extractSites = function(cth_file = NULL,
              configuration_sequence = antenna_group_configuration_value) %>%
       distinct() %>%
       left_join(all_meta %>%
-                  select(site_code,
-                         site_name,
-                         site_type,
-                         type,
-                         configuration_sequence,
-                         antenna_id,
-                         antenna_group_name,
-                         latitude,
-                         longitude,
-                         rkm,
-                         site_description)) %>%
+                  select(all_of(c("site_code",
+                                  "configuration_sequence",
+                                  "antenna_id")),
+                         any_of(c("site_name",
+                                  "site_type",
+                                  "type",
+                                  "antenna_group_name",
+                                  "latitude",
+                                  "longitude",
+                                  "rkm",
+                                  "site_description"))),
+                by = join_by(site_code, antenna_id, configuration_sequence)) %>%
       select(-antenna_id,
              -configuration_sequence,
              -antenna_group_name) %>%
@@ -89,17 +89,18 @@ extractSites = function(cth_file = NULL,
              config_id = antenna_group_configuration_value) %>%
       distinct() %>%
       left_join(configuration %>%
-                  select(site_code,
-                         site_name,
-                         site_type = site_type_name,
-                         type = site_type,
-                         config_id,
-                         antenna_id,
-                         node,
-                         latitude,
-                         longitude,
-                         rkm,
-                         site_description)) %>%
+                  select(all_of(c("site_code",
+                                  "config_id",
+                                  "antenna_id")),
+                         any_of(c("site_name",
+                                  site_type = "site_type_name",
+                                  type = "site_type",
+                                  "node",
+                                  "latitude",
+                                  "longitude",
+                                  "rkm",
+                                  "site_description"))),
+                by = join_by(site_code, antenna_id, config_id)) %>%
       select(-antenna_id,
              -config_id) %>%
       distinct() %>%
@@ -127,6 +128,7 @@ extractSites = function(cth_file = NULL,
       filter(obs_site,
              is.na(latitude)) %>%
       pull(site_code)
+
     if(length(no_lat_sites) > 0) {
       no_lat_sites %>%
         paste(collapse = ',') %>%
