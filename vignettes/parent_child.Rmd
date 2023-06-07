@@ -1,0 +1,238 @@
+---
+title: "Parent-Child Tables"
+author: Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Parent-Child Tables}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+
+library(knitr)
+library(kableExtra)
+
+library(dplyr)
+library(readr)
+library(stringr)
+library(PITcleanr)
+
+devtools::load_all()
+```
+
+# Description
+
+When dealing with detections of individual tags, the user often is interested in which locations are connected to which other locations along the stream network. One way to capture this information is through the construction of a parent-child table describing the "relationships" among locations. In a parent-child table, each row consists of a parent location, and a child location that is connected directly to that parent location. By default, `PITcleanr` assigns parent-child relationships as moving in an upstream direction, so a single parent may have multiple child locations upstream, if the stream network branches upstream of it. However, each child should only have a single parent, as we are assuming a lack of looped connections in our stream network. If the user is interested in a downstream parent-child relationship, the `parent` and `child` designations in the table can be manually switched. As an example, assuming only upstream movement, a weir may be considered a parent and each of its next upstream arrays considered children. A location with no detection sites further upstream has no children, but is presumably the child of a downstream location. All of the parent-child relationships among locations in a watershed can describe the potential movements by an individual tag (moving from parent to child, to the next child, etc.).
+
+For example, in the Wenatchee River example, the parent-child table looks like this.
+
+```{r parent-child-fig, echo = F, results = "hide", fig.align = "center"}
+parent_child <- system.file("extdata", 
+                            "parent_child_TUM.csv", 
+                            package = "PITcleanr",
+                            mustWork = TRUE) |> 
+  read_csv(show_col_types = F) |> 
+  arrange(parent_rkm,
+          child_rkm) |> 
+  select(parent, 
+         child)
+```
+
+```{r}
+parent_child
+```
+
+`PITcleanr` can plot these relationships graphically, showing the relationships between parent and child sites and which ones are connected along a single "path". This is done using the `plotNodes()` function.
+
+```{r fig-examp-plot-nodes}
+parent_child %>%
+  plotNodes()
+```
+
+# Constructing a Parent-Child Table
+
+## By Hand
+
+A user can construct a parent-child table by hand, using a .csv file with column names `parent` and `child`. Each line in the figure above is represented by one row in the parent-child table listing the parent site and child site. If the user is interested in upstream movement, the parent will be the downstream site, and every child will have a single parent (although a parent may have multiple children sites). If the interest is in downstream movement, then the parent will be the upstream site. 
+
+## Through Functions
+
+When dealing with large number of sites, and many possible connections, it can be useful to take advantage of some of `PITcleanr`'s functions to construct a parent-child table. These functions include:
+
+* `extractSites()`: based on the complete tag history (either file path and name, or the result of `readCTH()`), pulls out which sites had detections. If sites are not in PTAGIS, a configuration file should be supplied with latitude and longitudes.
+* `queryFlowlines()`: using an `sf` point object of sites, queries the NHDPlusv2 stream layers that connect those sites.
+* `buildParentChild`: Based on the output from `extractSites()` and `queryFlowlines()`, this function constructs the parent-child table using information in the NHDPlusv2 layer about which hydrosequences are downstream of one another.
+
+`PITcleanr` constructs the parent-child relationship by joining a spatial (`sf`) point object of sites with the flowlines queried via `queryFlowlines()`. The NHDPlus layer that is returned contains a unique identifier, or hydrosequence, for every segment, as well as the identifier of the hydrosequence immediately upstream and downstream. Using this information, `PITcleanr` can identify the next downstream site from every known location (using the `findDwnstrmSite()` function), and thus construct the parent child table through the `buildParentChild()` function. By default, `buildParentChild()` returns a tibble identifying every parent-child pair, as well as the hydrosequence joined to the parent and child location. If the argument `add_rkm` is set to `TRUE`, `PITcleanr` will query the PTAGIS metadata again, and attach the river kilometer (or rkm) for each parent and child location. If the sites are not in PTAGIS, the user can join any attributes they wish using their own configuration file. 
+
+### Extracting Sites
+
+```{r}
+cth_file = system.file("extdata", 
+                       "TUM_Chinook_2015.csv", 
+                       package = "PITcleanr",
+                       mustWork = TRUE)
+
+cth_df <- readCTH(cth_file)
+```
+
+```{r child = "child_docs/_extract-sites.Rmd"}
+```
+
+### Querying Flowlines
+
+```{r child = "child_docs/_query-flowlines.Rmd"}
+```
+
+### Mapping Sites
+
+To visualize the sites and stream, the user can make a plot, such as the one in Figure \@ref(fig:fig-basin-map)
+
+```{r fig-basin-map}
+library(ggplot2)
+
+ggplot() +
+  geom_sf(data = flowlines,
+          aes(color = as.factor(StreamOrde),
+              size = StreamOrde)) +
+  scale_color_viridis_d(direction = -1,
+                        option = "D",
+                        name = "Stream\nOrder",
+                        end = 0.8) +
+  scale_size_continuous(range = c(0.2, 1.2),
+                        guide = 'none') +
+  geom_sf(data = nhd_list$basin,
+          fill = NA,
+          lwd = 2) +
+  geom_sf(data = sites_sf,
+          size = 4,
+          color = "black") +
+  ggrepel::geom_label_repel(
+    data = sites_sf,
+    aes(label = site_code, 
+        geometry = geometry),
+    size = 2,
+    stat = "sf_coordinates",
+    min.segment.length = 0,
+    max.overlaps = 50
+  ) +
+  theme_bw() +
+  theme(axis.title = element_blank())
+```
+
+```{r, eval = F, echo = F}
+cth_file = system.file("extdata", 
+                       "TUM_Chinook_2015.csv", 
+                       package = "PITcleanr",
+                       mustWork = TRUE)
+
+cth_df <- readCTH(cth_file)
+
+# my_configuration <- system.file("extdata", 
+#                                 "configuration_TUM.csv", 
+#                                 package = "PITcleanr",
+#                                 mustWork = TRUE) |> 
+#   read_csv(show_col_types = F)
+
+sites_sf <- extractSites(cth_file = cth_df,
+                         as_sf = T)
+
+# drop a few sites
+sites_sf <- sites_sf |> 
+  filter(str_detect(rkm, "^754."),
+         type != "MRR",
+         site_code != "LWE") |> 
+  mutate(across(site_code,
+                ~ recode(.,
+                         "TUF" = "TUM")))
+
+# query the flowlines
+nhd_list = queryFlowlines(sites_sf = sites_sf,
+                          root_site_code = "TUM",
+                          min_strm_order = 2,
+                          dwnstrm_sites = T,
+                          dwn_min_stream_order_diff = 2)
+
+# compile the upstream and downstream flowlines
+flowlines = nhd_list$flowlines %>%
+    rbind(nhd_list$dwn_flowlines)
+
+```
+
+### Build Parent-Child Table
+
+Once the user has an `sf` object with the spatial locations of their sites, and a NHDPlusv2 layer of flowlines, they can use the `buildParentChild()` function to construct a parent-child table.
+
+```{r parent-child}
+parent_child = buildParentChild(sites_sf,
+                                flowlines)
+parent_child
+
+```
+
+## Editing Parent-Child Table
+
+After initially building a parent-child table, there is usually some editing that needs to happen. This is necessary for a variety of reasons we've observed:
+
+* Perhaps the latitude and longitude of a site was not correct, and it was placed on the wrong hydrosequence of the flowlines. 
+* The flowlines layer from the USGS could be inaccurate around a particular area, causing the parent-child relationships to be incorrect. 
+* A site may be located at the mouth of a tributary was joined to the mainstem hydrosequence of the flowline, instead of the tributary, causing problems for sites upstream and downstream of that site. 
+
+For these reasons (or any others), `PITcleanr` provides a function to edit the parent-child table, `editParentChild()`. It requires a list the length of rows to be fixed (`fix_list`). Each element of this list is a vector of length 3, where the first two elements contain the parent and child locations to be edited, and the third element is the new (correct) parent location. As each child contains a single parent in the table, this is enough information to uniquely target individual rows of the parent-child table. 
+
+The user can also switch parent-child pairs, making the parent the child and vice versa, using the `switch_parent_child` argument. This is primarily intended to fix relationships between a root site and the initial downstream sites. If, by default, the parent child table is built assuming upstream movement, but the user would like to incorporate downstream movement from the root site to a location downstream, this argument will be useful. However, it will not "fix" associated parent-child relationships with the locations in the `switch_parent_child` list; those must be fixed through the `fix_list` argument. 
+
+Often, a good place to start will be to examine the current parent-child relationships using the function `plotNodes()`. This can help visually identify pathways that need editing.
+
+```{r}
+plotNodes(parent_child)
+```
+
+From the figure above, the original parent-child table has some problems with 2 sites (ICL and PES) downstream of the root site, TUM. In addition, the flowlines are not accurate near the LNF site, or the spatial location of that site is incorrect. We would like to make TUM the parent of both ICL and PES, and ICL should be the parent of LNF. All of these corrections are implemented below using the `editParentChild()` function.
+
+```{r edit-pc-table}
+parent_child = editParentChild(parent_child,
+                               fix_list = list(c(NA, "PES", "TUM"),
+                                               c(NA, "LNF", "ICL"),
+                                               c("PES", "ICL", "TUM")),
+                               switch_parent_child = list(c("ICL", 'TUM')))
+
+# view corrected parent_child table
+parent_child
+
+```
+
+## Incorporating Nodes
+
+If the configuration file contains multiple nodes for some sites (e.g., a node for each array at a site), then the parent-child table can be expanded to accommodate these nodes using the `addParentChildNodes()` function. The function essentially "expands" (adds rows) to the existing parent-child table to accommodate those additional nodes. Note: the `addParentChildNodes()` function assumes that the parent-child table is arranged so that children are upstream of parents, and nodes designated as `A0` are upstream of those designated `B0`. Currently, the function can only handle up to two nodes at each site.
+
+Here, we use the `addParentChildNodes()` function on our existing `parent_child` table, and provide our existing `configuration` tibble to the `configuration` argument to expand the tibble. Our results are saved to a new object `parent_child_nodes`.
+
+```{r}
+# read in configuration file
+my_configuration <- system.file("extdata",
+                                "configuration_TUM.csv",
+                                package = "PITcleanr",
+                                mustWork = TRUE) |>
+  read_csv(show_col_types = F)
+
+# expand the parent-child table to include nodes
+parent_child_nodes = addParentChildNodes(parent_child,
+                                         configuration = my_configuration)
+
+# view expanded parent-child table
+parent_child_nodes
+
+```

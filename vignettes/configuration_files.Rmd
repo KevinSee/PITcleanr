@@ -1,0 +1,174 @@
+---
+title: "Configuration Files"
+author: Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Configuration Files}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+
+library(knitr)
+```
+
+
+```{r load-packages}
+library(dplyr)
+library(PITcleanr)
+devtools::load_all()
+```
+
+A major part of `PITcleanr`'s functionality is mapping detections from various antennas and sites onto user defined nodes. A **node** could be an individual antenna, a row (or rows) of antennas (i.e. an array), an entire site, or entire groups of sites. This mapping is accomplished using a configuration file that contains metadata about each antenna. The user can build their own (as detailed [below](#nonptagis)), or start with information from PTAGIS. 
+
+## PTAGIS
+
+`PITcleanr` includes a function `queryPtagisMeta()` that queries PTAGIS for metadata about every antenna in their system, including both interrogation and MRR (mark, recapture, recovery) sites. Another function, `buildConfig()` calls `queryPtagisMeta()` internally, selects certain columns of data, and assigns nodes. 
+
+The crucial components for `PITcleanr` are (with their column names after running `buildConfig()`):
+
+* Site Code: `site_code`
+* Antenna ID: `antenna_id`
+* Configuration ID: `config_id`
+* Node: `node`
+
+Detection data from PTAGIS contains the first three, and what "node" those detections are mapped to can be set by the user. The configuration ID identifies the specific arrangement of antennas during a certain period of time. For example, if a site initially contains a single row (i.e. array) of antennas, labeled 01, 02 and 03, but later a second row is added (antennas 04, 05, 06), the configuration ID will change. Sometimes the location of certain antenna (e.g. 01) changes when a site is reconfigured, and the configuration ID helps track those changes. 
+
+The PTAGIS metadata also contains additional information such as:
+
+* The start and end dates of that configuration: `start_date` and `end_date`
+* The site type (INT for interrogation and MRR for mark/recapture/recovery): `site_type`
+* The site name: `site_name`
+* The name of an antenna group that an antenna is part of: `antenna_group`
+* The site description: `site_description`
+* A more descriptive name for the type of site : `site_type_name`
+* River kilometer: `rkm`
+* Total river kilometers to that site: `rkm_total`
+* Latitude and longitude: `latitude` and `longitude`
+
+All of this would be submitted to PTAGIS by individuals when setting up sites, and not every site will have all of that information. 
+
+`buildConfig()` defaults to assigning nodes based on the array, or group of antennas (`node_assign = array`). Searching the antenna group description for words like "upstream", "upper", or "top", it will assign those antennas to the upstream node, which is the site code plus `A0` (e.g. `CHLA0`). Similarly, if the antenna group description contains words like "downstream", "lower", or "bottom", it assigns it to the downstream node, which is the site code plus `B0`. If a site contains a middle array, those antennas are assigned to the `A0` node. For sites with four arrays, the upper two arrays are mapped to `A0` and the lower two arrays are mapped to `B0`. 
+
+If the user chooses to set the `node_assign` argument in `buildConfig()` to "site", the node will be identical to the site code, so all detections at a site will be mapped to the same node. If, however, the `node_assign` argument is set to "antenna", each antenna is defined as a separate node, and those nodes are labeled as the site code and the antenna ID, separated by "_". 
+
+Once that initial configuration file is built, the user may edit it however they wish, either within R, or by saving it as a .csv file and editing it by hand, then reading it back into R. Examples of this kind of editing might include assigning all the antennas at a particular dam to the same node, or mapping all the sites upstream (or downstream) of a certain point to the same node, based on river kilometer or some other criteria. 
+
+In the following example, we use the `buildConfig()` function to generate a default configuration and save it as `array_configuration`. 
+
+```{r, message = FALSE}
+array_configuration = buildConfig(node_assign = "array")
+```
+
+Several sites are then consolidated into a single node (e.g. LNF, TUM), and some mark-recovery-recapture sites are merged with upstream array nodes, and the modified configuration is saved as `my_configuration`. 
+
+```{r}
+# customize some pieces
+my_configuration = array_configuration %>%
+  # first, for example, 'LNF' and 'LEAV' are re-coded into a single node 'LNF'
+  mutate(node = ifelse(site_code %in% c('LNF', 'LEAV'),
+                       'LNF',
+                       node),
+         # these three nodes are all re-coded to a single 'TUM'
+         node = ifelse(site_code %in% c('TUF', 'TUMFBY', 'TUM'),
+                       'TUM',
+                       node),
+         node = ifelse(site_code == 'CHIWAC',
+                       'CHWA0',
+                       node),
+         node = ifelse(site_code %in% c('CHIWAR', 'CHIWAT'),
+                       'CHLA0',
+                       node),
+         node = ifelse(site_code == 'CHIW',
+                       'CHLA0',
+                       node),
+         # In this case, PIT tags from carcass recoveries in the Chikamin River are
+         # grouped with the upper 'CHU' array
+         node = ifelse(site_code == 'CHIKAC',
+                       'CHUA0',
+                       node),
+         node = ifelse(site_code == 'NASONC',
+                       'NALA0',
+                       node),
+         node = ifelse(site_code == 'WHITER',
+                       'WTLA0',
+                       node),
+         node = ifelse(site_code == 'LWENAT',
+                       'LWNA0',
+                       node)) %>%
+  distinct()
+```
+
+## Non-PTAGIS {#nonptagis}
+
+For non-PTAGIS data, the user must supply their own configuration file. This can be easily constructed in a spreadsheet or csv, making sure to include these crucial columns (and naming them carefully):
+
+* Site Code: `site_code`
+* Antenna ID: `antenna_id`
+* Configuration ID: `config_id`
+* Node: `node`
+
+For mapping purposes, or determining which sites are upstream or downstream of one another, the user may also want to include columns for `latitude` and `longitude`. Of course, any other metadata the user finds useful may also be included. 
+
+`PITcleanr` provides a template which can be used as a starting point for building a custom configuration file. The following code shows how to find it in the package, save it as a .csv on the user's desktop (or wherever they would like) and read it back into R after the user has added all the relevant metadata to it. 
+
+```{r, eval=FALSE, echo=FALSE}
+library(here)
+
+config_template <- tibble(site_code = NA_character_,
+                          antenna_id = NA_character_,
+                          config_id = NA_character_,
+                          node = NA_character_,
+                          latitude = NA_real_,
+                          longituide = NA_real_)
+
+write_csv(config_template,
+          file = here("inst/extdata",
+                      "configuration_template.csv"))
+
+
+```
+
+```{r, eval = F}
+library(readr)
+
+config_template <- system.file("extdata", 
+                          "configuration_template.csv", 
+                          package = "PITcleanr",
+                          mustWork = TRUE) |> 
+  read_csv(show_col_types = F)
+
+# where will this template be saved?
+config_file <- "C:/Users/usernamehere/Desktop/configuration_file.csv"
+
+write_csv(config_template,
+          config_file)
+
+# after editing the file, read it back in
+my_configuration <- read_csv(config_file)
+
+```
+
+
+```{r echo = F, eval = F}
+ptagis_file = system.file("extdata", 
+                          "TUM_Chinook_2015.csv", 
+                          package = "PITcleanr",
+                          mustWork = TRUE)
+
+ptagis_cth = readCTH(ptagis_file)
+extractSites(ptagis_cth,
+             configuration = my_configuration)
+```

@@ -1,0 +1,104 @@
+---
+title: "Compressing PIT Tag Data"
+author: Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Compressing PIT Tag Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+
+library(knitr)
+library(kableExtra)
+```
+
+
+```{r echo = F}
+library(PITcleanr)
+
+# find the example file
+cth_file = system.file("extdata", 
+                       "TUM_Chinook_2015.csv", 
+                       package = "PITcleanr",
+                       mustWork = TRUE)
+
+# cth_df = readCTH(cth_file)
+```
+
+The heart of `PITcleanr`'s utility is taking all the various detections from a multitude of antennas and compressing them into a more manageable chunk of data. It does this with the `compress()` function by mapping each detection onto a user defined node, using a user-supplied (or PTAGIS default) configuration file, and then combining detections on the same node into a single row of data. 
+
+The complete tag history query output, either from [PTAGIS](https://ptagis.org/) or from other non-PTAGIS data (e.g., `cth_file`), will provide a record for every detection of each tag code in the tag list. Again, this may include multiple detections on the same antenna, or the same site within a short period of time, leading to an unwieldy and perhaps messy dataset. 
+
+The `compress()` function will work on a capture history that's been read into R using `readCTH()`. Alternatively, the user can provide only the file name and path to where that data is stored (e.g. `cth_file`), and `compress()` will call `readCTH()` internally. In this example, we use the `compress()` function on the `cth_file` object containing the file path to our PTAGIS query results, and write the output to an object `comp_obs` containing the compressed observations.
+
+```{r, eval = T}
+# view path to example file, of course you can also set cth_file to your own PTAGIS query results
+cth_file
+
+# run compress() function on it
+comp_obs = compress(cth_file)
+
+# look at first parts of resulting object
+head(comp_obs, 10)
+
+# in another format
+head(comp_obs, 10) |> 
+  kable() |> 
+  kable_styling()
+
+```
+
+The output consists of a tibble containing columns for:
+
+* **tag_code:** The unique PIT tag ID.
+* **node:** By default, each site code from PTAGIS is considered a node. More on this below... 
+* **slot:** A detection "slot" for each tag, numbered in chronological order. Also more on this below... 
+* **event_type_name:** The type of "event". Typically, mark, observation, recapture, or recovery.
+* **n_dets:** The number of detections that occurred within that slot.
+* **min_det:** The time of the first (min) detection in the slot.
+* **max_det:** The time of the last (max) detection in the slot.
+* **duration:** The duration of that slot (maximum - minimum detection time). 
+* **travel_time:** The travel time between the previous slot and that one. 
+
+***A note on "nodes"***: A node is the spatial scale of interest for the user. If a configuration file is not supplied, then by default the `compress()` function considers the site code as the node. However, a node could be defined as the individual PIT antenna a detection was made on, or the array that antenna is a part of, or groups of arrays, or sites, or groups of sites, or possibly even larger (e.g, any detection in a particular tributary) depending on the spatial scale desired. The user may decide to define some arrays at particular sites to be their own nodes, while simultaneously lumping all the sites in a particular watershed into a single node. To utilize this kind of grouping, a configuration file or table must be supplied to the `configuration` argument in the `compress()` function. For more information about configuration files, see [this vignette](configuration_files.Rmd)
+
+Each slot in the output is defined as all detections on a particular node before the tag is detected on a different node. As an example, if a tag moves from node A to B and back to A, there will be three slots in the compressed data. The user can define a maximum number of minutes between detections before a new slot should be defined by supplying a value to the `max_minutes` argument to `compress()`. The units of the `duration` and `travel_time` columns can also be defined by the `units` argument. The default is minutes (`mins`). The user can translate the output to numeric values by running `as.numeric()` on those columns later. 
+
+The help menu for `compress()`, or any function for that matter, can be accessed using:
+```{r, eval = F}
+?PITcleanr::compress
+```
+
+Now, re-run the `compress()` function, except supplying a `configuration`:
+
+```{r}
+library(readr)
+my_configuration <- system.file("extdata", 
+                                "configuration_TUM.csv", 
+                                package = "PITcleanr",
+                                mustWork = TRUE) |> 
+  read_csv(show_col_types = F)
+
+# re-run compress(), providing configuration
+comp_obs2 = compress(cth_file,
+                     configuration = my_configuration)
+
+# look at first part of comp_obs
+head(comp_obs2, 10)
+```
+
+```
+

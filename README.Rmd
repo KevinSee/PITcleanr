@@ -30,34 +30,32 @@ The user can find more information related to installation and use of this packa
 
 ## Installation Instructions
 
-```{r child = "vignettes/child_docs/install-inst.Rmd"}
+```{r child = "vignettes/child_docs/_install-inst.Rmd"}
 ```
 
 Be sure to use the `build_vignettes = TRUE` argument, as this will build all of the vignettes (i.e., user manuals) that are included with the package. Further instructions on how to use `PITcleanr` can be found in the vignettes, which can be accessed using:
 
-```{r}
+```{r, eval = F}
 browseVignettes(package = "PITcleanr")
 ```
 
+<!-- ## Compressing PTAGIS Detection Data -->
+
+<!-- ```{r set-ptagis-file, echo = F} -->
+<!-- library(PITcleanr) -->
+<!-- ptagis_file = system.file("extdata",  -->
+<!--                           "TUM_Chinook_2015.csv",  -->
+<!--                           package = "PITcleanr", -->
+<!--                           mustWork = TRUE) -->
+<!-- ``` -->
 
 
-## Compressing PTAGIS Detection Data
+<!-- ```{r, eval = T, child = "vignettes/compress_data.Rmd"} -->
+<!-- ``` -->
 
-```{r set-ptagis-file, echo = F}
-library(PITcleanr)
-ptagis_file = system.file("extdata", 
-                          "TUM_Chinook_2015.csv", 
-                          package = "PITcleanr",
-                          mustWork = TRUE)
-```
+<!-- ## Other Functionality -->
 
-
-```{r child = "vignettes/child_docs/compress-data.Rmd"}
-```
-
-## Other Functionality
-
-`PITcleanr` contains lots of additional functionality to help users summarize and further analyze the compressed PTAGIS observations. Find more details in the various vignettes.
+<!-- `PITcleanr` contains lots of additional functionality to help users summarize and further analyze the compressed PTAGIS observations. Find more details in the various vignettes. -->
 
 ## Authors
 

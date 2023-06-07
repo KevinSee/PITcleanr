@@ -35,7 +35,7 @@ The function reads in complete tag histories from either PTAGIS or Biologic that
 have been downloaded and coverts the date time values from character vectors into date-time vectors
 }
 \examples{
-ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+ptagis_file = system.file("extdata", "TUM_Chinook_2015.csv", package = "PITcleanr")
 readCTH(ptagis_file)
 }
 \author{

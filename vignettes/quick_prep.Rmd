@@ -107,7 +107,7 @@ config_template = buildConfig() %>%
 
 The user may save this template to a .csv file, and then edit it by hand, deleting sites they are not interested in, and filling in the `node` information for all other rows they are interested in.
 
-```{r}
+```{r, eval = F}
 # tell R where to save the csv file
 config_file = "configuration.csv"
 
@@ -128,7 +128,8 @@ config_file = system.file("extdata",
 
 ```{r load-config}
 # read in configuration file
-my_config = read_csv(config_file)
+my_configuration = read_csv(config_file,
+                            show_col_types = F)
 ```
 
 
@@ -149,7 +150,8 @@ parent_child_file = system.file("extdata",
 
 ```{r load-parent-child}
 # read in parent_child file
-parent_child = read_csv(parent_child_file)
+parent_child = read_csv(parent_child_file,
+                        show_col_types = F)
 ```
 
 The path to an example parent-child file included with `PITcleanr` can be found by running the following. The user could copy/paste that file to use as a template. Again, only the `parent` and `child` columns are necessary, although other columns may be useful.
@@ -166,7 +168,7 @@ The user may choose to only include site codes in the parent and child columns, 
 
 ```{r add-nodes}
 parent_child_nodes = addParentChildNodes(parent_child = parent_child,
-                                         configuration = my_config)
+                                         configuration = my_configuration)
 ```
 
 
@@ -175,15 +177,16 @@ parent_child_nodes = addParentChildNodes(parent_child = parent_child,
 Finally, the user must download complete tag histories from PTAGIS for the tags of interest, ensuring that the following attributes are selected to be included in the output:
 
 * Tag
-* Mark Species
-* Mark Rear Type
-* Event Type
 * Event Site Code
 * Event Date Time
 * Antenna
 * Antenna Group Configuration
-* Event Release Date Time
-* Event Release Site Code
+
+<!-- * Mark Species -->
+<!-- * Mark Rear Type -->
+<!-- * Event Type -->
+<!-- * Event Release Date Time -->
+<!-- * Event Release Site Code -->
 
 ```{r, echo = F}
 # find file with PTAGIS observations
@@ -198,8 +201,8 @@ Now the user can assign those detections to a "node", compress that data, assign
 ```{r}
 # read in PTAGIS observations and compress them,
 # then prep data for choice of which detections to keep
-prepped_df = prepWrapper(ptagis_file = ptagis_file,
-                         configuration = my_config,
+prepped_df = prepWrapper(cth_file = ptagis_file,
+                         configuration = my_configuration,
                          parent_child = parent_child_nodes,
                          min_obs_date = "20150301",
                          max_obs_date = "20150930")

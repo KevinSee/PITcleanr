@@ -25,7 +25,7 @@
 #' @export
 #' @return a tibble containing the data downloaded from PTAGIS through a complete capture history query.
 #' @examples
-#' ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+#' ptagis_file = system.file("extdata", "TUM_Chinook_2015.csv", package = "PITcleanr")
 #' readCTH(ptagis_file)
 
 readCTH = function(cth_file = NULL,
@@ -40,14 +40,16 @@ readCTH = function(cth_file = NULL,
 
   # vector of required column names. These should all be included in a PTAGIS data request
   req_col_nms <- c("tag_code",
-                   "mark_species_name",
-                   "mark_rear_type_name",
-                   "event_type_name",
-                   "event_site_type_description",
                    "event_site_code_value",
                    "event_date_time_value",
                    "antenna_id",
-                   "antenna_group_configuration_value",
+                   "antenna_group_configuration_value")
+
+  # vector of other suggested column names
+  sug_col_nms <- c("mark_species_name",
+                   "mark_rear_type_name",
+                   "event_type_name",
+                   "event_site_type_description",
                    "event_release_site_code_code",
                    "event_release_date_time_value",
                    "cth_count")
@@ -59,7 +61,8 @@ readCTH = function(cth_file = NULL,
         readr::read_csv(cth_file,
                         show_col_types = F) %>%
         janitor::clean_names() |>
-        dplyr::select(dplyr::any_of(req_col_nms),
+        dplyr::select(dplyr::all_of(req_col_nms),
+                      dplyr::any_of(sug_col_nms),
                       dplyr::everything())
 
       # determine format of event date time value
@@ -119,12 +122,14 @@ readCTH = function(cth_file = NULL,
                       antenna_group_configuration_value = 100,
                       cth_count = 1) |>
         dplyr::select(dplyr::any_of(req_col_nms),
+                      dplyr::any_of(sug_col_nms),
                       dplyr::everything()) |>
         dplyr::arrange(tag_code,
                        event_date_time_value)
 
       # add any missing columns
       observations[,req_col_nms[!req_col_nms %in% names(observations)]] <- NA
+      # observations[,sug_col_nms[!sug_col_nms %in% names(observations)]] <- NA
 
       observations <- observations |>
         dplyr::mutate(
@@ -132,7 +137,9 @@ readCTH = function(cth_file = NULL,
             antenna_id,
             as.character))
 
-      observations <- observations[,req_col_nms]
+      observations <- observations |>
+        dplyr::select(dplyr::all_of(req_col_nms),
+                      dplyr::any_of(sug_col_nms))
 
     } else if(file_type == "raw") {
       if(str_detect(cth_file, "\\.log$")) {
@@ -237,6 +244,7 @@ readCTH = function(cth_file = NULL,
                       antenna_group_configuration_value = 100,
                       cth_count = 1) |>
         dplyr::select(dplyr::any_of(req_col_nms),
+                      dplyr::any_of(sug_col_nms),
                       dplyr::everything()) |>
         dplyr::arrange(tag_code,
                        event_date_time_value)
@@ -264,14 +272,49 @@ readCTH = function(cth_file = NULL,
             antenna_id,
             as.character))
 
-      observations <- observations[,req_col_nms]
+      observations <- observations |>
+        dplyr::select(dplyr::all_of(req_col_nms),
+                      dplyr::any_of(sug_col_nms))
     }
 
   } else if(class(cth_file)[1] %in% c("spec_tbl_df", "tbl_df", "tbl", "data.frame")) {
     observations = cth_file %>%
       dplyr::as_tibble() |>
-      dplyr::select(dplyr::any_of(req_col_nms),
+      janitor::clean_names() |>
+      dplyr::select(dplyr::all_of(req_col_nms),
+                    dplyr::any_of(sug_col_nms),
                     dplyr::everything())
+
+    if(class(observations$event_date_time_value)[1] == "character") {
+      # determine format of event date time value
+      n_colons <-
+        observations %>%
+        dplyr::mutate(event_time = stringr::str_split(event_date_time_value,
+                                                      " ",
+                                                      simplify = T)[,2],
+                      n_colon = stringr::str_count(event_time, "\\:")) %>%
+        dplyr::pull(n_colon) %>%
+        max()
+
+      if(n_colons == 2) {
+        observations <- observations |>
+          dplyr::mutate(
+            dplyr::across(
+              dplyr::any_of(c("event_date_time_value",
+                              "event_release_date_time_value")),
+              lubridate::mdy_hms))
+      } else if(n_colons == 1) {
+        observations <- observations |>
+          dplyr::mutate(
+            dplyr::across(
+              dplyr::any_of(c("event_date_time_value",
+                              "event_release_date_time_value")),
+              lubridate::mdy_hm))
+      } else {
+        warning("Event Date Time Value has strange format.")
+      }
+    }
+
 
     if(class(observations$antenna_id) != "character") {
       observations <- observations |>
@@ -280,6 +323,19 @@ readCTH = function(cth_file = NULL,
             antenna_id,
             as.character))
     }
+
+    # fix issues when Excel has converted antenna_id to numeric instead of character
+    # all antenna IDs should be at least 2 characters for PTAGIS data
+    observations <- observations |>
+      dplyr::mutate(
+        dplyr::across(
+          antenna_id,
+          ~ stringr::str_pad(.,
+                             pad = "0",
+                             width = 2,
+                             side = "left")
+        )
+      )
 
   } else {
     stop("Trouble reading in CTH file\n")

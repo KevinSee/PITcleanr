@@ -1,0 +1,201 @@
+---
+output:
+  rmarkdown::html_vignette: default
+  html_document: default
+---
+
+```{r echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+library(dplyr)
+library(stringr)
+library(PITcleanr)
+library(knitr)
+library(kableExtra)
+```
+
+
+The Columbia Basin PIT Tag Information System ([PTAGIS](https://ptagis.org/)) is the centralized regional database for PIT-tag detections within the Columbia River Basin. It contains a record of each detection of every PIT tag, including the initial detection, or "mark", when the tag is implanted in the fish, detections on PIT-tag antennas, recaptures (e.g. at weirs) and recoveries (e.g. carcass surveys). It contains a record of every individual detection, which means potentially multiple records of a tag being detected on the same antenna over and over e.g., in the case that it is not moving. Therefore, querying PTAGIS for all of these detections leads to a wealth of data, which can be unwieldy for the user. `PITcleanr` aims to compress that data to a more manageable size, without losing any of the information contained in that dataset. 
+
+## Complete Capture History
+
+`PITcleanr` starts with a complete capture history query from [PTAGIS](https://ptagis.org/) for a select group of tags of interest. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query. 
+
+For convenience, we've included one such file with `PITcleanr`, which is saved to the user's computer when `PITcleanr` is installed. The file, "tag_list_TUM_2015.txt", contains tag IDs for Chinook salmon adults implanted with PIT tags at Tumwater Dam in 2015. The following code can be used to find the path to this example file. The user can use this as a template for creating their own tag list as well.
+
+```{r tag-list-file, eval = F}
+system.file("extdata", 
+            "tag_list_TUM_2015.txt", 
+            package = "PITcleanr",
+            mustWork = TRUE)
+```
+
+The example file of tag codes is very simple:
+
+```{r, echo = F}
+system.file("extdata", 
+            "tag_list_TUM_2015.txt", 
+            package = "PITcleanr",
+            mustWork = TRUE) %>%
+  readr::read_table(col_names = F)
+```
+
+Once the user has created their own tag list, or located this example one, they can go to the [PTAGIS homepage](https:://www.ptagis/org) to query the complete tag histories for those tags. The complete tag history query is available under [Advanced Reporting](https://www.ptagis.org/Data/AdvancedReporting), which requires a free account from PTAGIS. From the [homepage](https:://www.ptagis/org), click on "Login/Register", and either login to an existing account, or click "Create a new account" to create one. 
+Once logged in, scroll down the dashboard page to the Advanced Reporting Links section. PTAGIS allows users to save reports/queries to be run again. For users who plan to utilize `PITcleanr` more than once, it saves a lot of time to build the initial query and then save it into the user's PTAGIS account. It is then available through the "My Reports" link. To create a new query, click on "Query Builder", or "Advanced Reporting Home Page" and then ""Create Query Builder2 Report". From here, choose "Complete Tag History" from the list of possible reports.
+
+There are several query indices on the left side of the query builder, but for the purposes of `PITcleanr` only a few are needed. First, under "1 Select Attributes" the following attributes are required to work with `PITcleanr`:
+
+* Tag
+* Event Site Code
+* Event Date Time
+* Antenna
+* Antenna Group Configuration
+
+This next group of attributes are not required, but are highly recommended:
+
+* Mark Species
+* Mark Rear Type
+* Event Type
+* Event Site Type
+* Event Release Site Code
+* Event Release Date Time
+
+
+Simply move these attributes over from the "Available" column to the "Selected:" column on the page by selecting them and clicking on the right arrow between the "Available" and "Selected" boxes. Other fields of interest to the user may be included as well (e.g. Event Length), and will be included as extra columns in the query output. 
+
+The only other required index is "2 Select Metrics", but that can remain as the default, "CTH Count", which provides one record for each event recorded per tag.
+
+Set up a filter for specific tags by next navigating to the "27 Tag Code - List or Text File" on the left. After selecting "Tag" under "Attributes:", click on "Import file...". Simply upload the .txt file containing your PIT tag codes of interest, or alternatively, feel free to use the "tag_list_TUM_2015.txt" file provided with `PITcleanr`. After choosing the file, click on "Import" and the tag list will be loaded (delimited by semi-colons). Click "OK". 
+
+Under "Report Message Name:" near the bottom, name the query something appropriate, such as "TUM_Chinook_2015", and select "Run Report". Once the query has successfully completed, the output can be exported as a .csv file (e.g. "TUM_Chinook_2015.csv"). Simply click on the "Export" icon near the top, which will open a new page, and select the default settings:
+
+* Export: Whole report
+* CSV file format
+* Export Report Title: unchecked
+* Export filter details: unchecked
+* Remove extra column: Yes
+
+And click "Export", again. `PITcleanr` includes an example of PTAGIS output for the Tumwater Chinook tags from 2015. Using similar code (`system.file`), the user can set the file path to this file, ans store it as a new object `ptagis_file`.
+
+```{r}
+ptagis_file = system.file("extdata", 
+                          "TUM_Chinook_2015.csv", 
+                          package = "PITcleanr",
+                          mustWork = TRUE)
+```
+
+Alternatively, if the user has run a query from PTAGIS as described above, they could set `ptagis_file` to the path and file name of the .csv they downloaded.
+
+```{r, eval = F}
+# As an example, set path to PTAGIS query output
+ptagis_file = "C:/Users/usernamehere/Downloads/TUM_Chinook_2015.csv"
+
+```
+
+```{r raw-ptagis-data, echo = F}
+raw_ptagis = readr::read_csv(ptagis_file,
+                             show_col_types = F)
+n_raw_tags = dplyr::n_distinct(raw_ptagis$`Tag Code`)
+
+mark_only_tags = raw_ptagis %>%
+  dplyr::select(`Tag Code`, `Event Type Name`) %>%
+  dplyr::count(`Tag Code`, `Event Type Name`) %>%
+  tidyr::pivot_wider(names_from = `Event Type Name`,
+                     values_from = n,
+                     values_fill = 0) %>%
+  #mutate(nDetections = rowSums(across(where(is.numeric)))) %>%
+  dplyr::filter(Observation == 0 & Recapture == 0 & Recovery == 0)
+
+```
+
+Note that in our example file, there are `r nrow(raw_ptagis)` detections (rows) for `r n_raw_tags` unique tags, matching the number of tags in our example tag list "tag_list_TUM_2015.txt". For a handful of those tags, in our case `r nrow(mark_only_tags)`, there is only a "Mark" detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining tags, many of them were often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of some of the raw data for a single tag:
+
+```{r, echo = F}
+raw_ptagis %>%
+  select(`Tag Code`) %>%
+  distinct() %>%
+  slice(1) %>%
+  left_join(raw_ptagis,
+                   by = join_by(`Tag Code`),
+                   multiple = "all") %>%
+  slice(c(1:20)) %>%
+  kable() %>%
+  kable_styling()
+```
+
+`PITcleanr` provides a function to read in this kind of complete capture history, called `readCTH()`. This function ensures the column names are consistent for subsequent `PITcleanr` functions, and provides one function to read in PTAGIS and non-PTAGIS data and return similarly formatted output. 
+
+```{r}
+ptagis_cth <- readCTH(ptagis_file,
+                      file_type = "PTAGIS")
+```
+
+```{r echo = F, eval = F}
+# example using only required columns
+readr::read_csv(ptagis_file,
+                show_col_types = F) |>
+  select(`Tag Code`,
+         `Event Site Code Value`,
+         `Event Date Time Value`,
+         `Antenna ID`,
+         `Antenna Group Configuration Value`) |>
+  readCTH(file_type = "PTAGIS") |>
+  compress()
+
+```
+
+
+## Mark Data File
+
+`PITcleanr` also allows the user to query PTAGIS for an MRR data file. Many projects are set up to record all the tagging information for an entire season, or part of a season from a single site in one file, which is uploaded to PTAGIS. This file can be used to determine the list of tag codes a user may be interested in. The `queryMRRDataFile` will pull this information from PTAGIS, using either the XML information contained in P4 files, or the older file structure (text file with various possible file extensions). The only requirement is the file name. For example, to pull this data for tagging at Tumwater in 2015, use the following code:
+
+```{r}
+tum_2015_mrr <- queryMRRDataFile("NBD15065.TUM")
+```
+
+Depending on how comprehensive that MRR data file is, a user might filter this data.frame for Spring Chinook by focusing on the species run rear type of "11", and tags that were not collected for broodstock, or otherwise killed. An example of some of the data contained in MRR files like this is shown below.
+
+```{r}
+tum_2015_mrr |> 
+    # filter for Spring Chinook tags
+  filter(str_detect(species_run_rear_type, 
+                    "^11"),
+         # filter out fish removed for broodstock collection
+         str_detect(conditional_comments,
+                    "BR",
+                    negate = T),
+         # filter out fish with other mortality
+         str_detect(conditional_comments,
+                    "[:space:]M[:space:]",
+                    negate = T),
+         str_detect(conditional_comments,
+                    "[:space:]M$",
+                    negate = T)) |> 
+  slice(1:10) |> 
+  kable() |> 
+  kable_styling()
+```
+
+```{r, eval = F, echo = F}
+tum_2015_mrr |> 
+  # filter for Spring Chinook tags
+  filter(str_detect(species_run_rear_type, 
+                    "^11"),
+         # filter out fish removed for broodstock collection
+         str_detect(conditional_comments,
+                    "BR",
+                    negate = T),
+         # filter out fish with other mortality
+         str_detect(conditional_comments,
+                    "[:space:]M[:space:]",
+                    negate = T),
+         str_detect(conditional_comments,
+                    "[:space:]M$",
+                    negate = T)) |>
+  filter(!pit_tag %in% raw_ptagis$`Tag Code`) |>
+  slice(1:5) |> as.data.frame()
+  select(pit_tag) |>
+  distinct()
+  
+raw_ptagis |> 
+  filter(!`Tag Code` %in% tum_2015_mrr$pit_tag)
+```
+

@@ -7,7 +7,10 @@
 \url{http://www.ptagis.org}
 }
 \usage{
-buildConfig()
+buildConfig(node_assign = c("array", "site", "antenna"))
+}
+\arguments{
+\item{node_assign}{should nodes by assigned by \code{array}, \code{site} or \code{antenna}? Default is \code{array}.}
 }
 \description{
 Compile metadata from all MRR and interogation sites from PTAGIS
