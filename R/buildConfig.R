@@ -47,39 +47,39 @@ buildConfig = function(node_assign = c("array",
 
   if(node_assign == "array") {
     configuration <- configuration %>%
-    mutate(node = ifelse(grepl('^LGR', site_code),
-                         'GRA',
-                         node),
-           node = ifelse(grepl('UPSTREAM', antenna_group, ignore.case = T) |
-                           grepl('UPPER', antenna_group, ignore.case = T) |
-                           grepl('TOP', antenna_group, ignore.case = T),
-                         paste0(site_code, 'A0'),
-                         node),
-           node = ifelse(grepl('DOWNSTREAM', antenna_group, ignore.case = T) |
-                           grepl('DNSTREAM', antenna_group, ignore.case = T) |
-                           grepl('LOWER', antenna_group, ignore.case = T) |
-                           grepl('BOTTOM', antenna_group, ignore.case = T),
-                         paste0(site_code, 'B0'),
-                         node),
-           node = ifelse(grepl('MIDDLE', antenna_group, ignore.case = T) |
-                           grepl('MIDDLE', antenna_group, ignore.case = T),
-                         paste0(site_code, 'A0'),
-                         node),
-           node = ifelse(is.na(node), site_code, node))
+      mutate(node = ifelse(grepl('^LGR', site_code),
+                           'GRA',
+                           node),
+             node = ifelse(grepl('UPSTREAM', antenna_group, ignore.case = T) |
+                             grepl('UPPER', antenna_group, ignore.case = T) |
+                             grepl('TOP', antenna_group, ignore.case = T),
+                           paste0(site_code, 'A0'),
+                           node),
+             node = ifelse(grepl('DOWNSTREAM', antenna_group, ignore.case = T) |
+                             grepl('DNSTREAM', antenna_group, ignore.case = T) |
+                             grepl('LOWER', antenna_group, ignore.case = T) |
+                             grepl('BOTTOM', antenna_group, ignore.case = T),
+                           paste0(site_code, 'B0'),
+                           node),
+             node = ifelse(grepl('MIDDLE', antenna_group, ignore.case = T) |
+                             grepl('MIDDLE', antenna_group, ignore.case = T),
+                           paste0(site_code, 'A0'),
+                           node),
+             node = ifelse(is.na(node), site_code, node))
 
-  # for any site that has some nodes with "A0", "B0", but some configurations with a single node, make that node "B0"
-  configuration = configuration %>%
-    group_by(site_code) %>%
-    mutate(node_site = sum(node == site_code),
-           node_site_b0 = sum(node == paste0(site_code, "B0"))) %>%
-    ungroup() %>%
-    rowwise() %>%
-    mutate(node = if_else(node_site > 0 & node_site_b0 > 0 & !(grepl("A0$", node) | grepl("B0$", node)),
-                          paste0(site_code, 'B0'),
-                          node)) %>%
-    ungroup() %>%
-    select(-node_site,
-           -node_site_b0)
+    # for any site that has some nodes with "A0", "B0", but some configurations with a single node, make that node "B0"
+    configuration = configuration %>%
+      group_by(site_code) %>%
+      mutate(node_site = sum(node == site_code),
+             node_site_b0 = sum(node == paste0(site_code, "B0"))) %>%
+      ungroup() %>%
+      rowwise() %>%
+      mutate(node = if_else(node_site > 0 & node_site_b0 > 0 & !(grepl("A0$", node) | grepl("B0$", node)),
+                            paste0(site_code, 'B0'),
+                            node)) %>%
+      ungroup() %>%
+      select(-node_site,
+             -node_site_b0)
 
   } else if(node_assign == "antenna") {
     configuration <- configuration %>%
