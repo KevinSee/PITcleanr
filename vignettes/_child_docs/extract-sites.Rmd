@@ -4,20 +4,34 @@ output:
   html_document: default
 ---
 
-The `queryPtagisMeta()` and `buildConfig()` functions in `PITcleanr` return information from **all** INT and MRR sites in PTAGIS. However, the user may only be interested in detections from site codes found within their complete tag history output downloaded from PTAGIS e.g., your `ptagis_file`. The `extractSites()` function does just that: extracts the site codes found in the complete tag history. In addition, the detections can be filtered by a minimum and/or maximum detection date, and the results are returned as either a tibble, or as a simple (spatial) feature `sf` object. Setting the `min_date` argument could be useful if the user is not interested in detections at sites prior to your study period e.g., detections that occur prior to fish arriving at your tagging or release location.
+The `queryPtagisMeta()` and `buildConfig()` functions in `PITcleanr` return information from **all** INT and MRR sites in PTAGIS. However, the user may only be interested in detections from site codes found within their complete tag history output, e.g., your `cth_file`. The `extractSites()` function does just that: extracts the site codes found in the complete tag history. In addition, the detections can be filtered by a minimum and/or maximum detection date, and the results are returned as either a tibble, or as a simple (spatial) feature `sf` object. Setting the `min_date` argument could be useful if the user is not interested in detections at sites prior to your study period e.g., detections that occur prior to fish arriving at your tagging or release location.
 
 In this example, we create a new object `sites_sf`, return it as an `sf` object (by setting `as_sf = T`) and only return sites from those detections that occurred after May 1, 2015. We also extract sites only from the Wenatchee subbasin and remove a couple sites that we perhaps don't care about. More information on simple features (`sf` objects) can be found [here](https://r-spatial.github.io/sf/).
 
 ```{r extract-sites}
-sites_sf = extractSites(ptagis_file,
+sites_sf = extractSites(cth_file,
                         as_sf = T,
-                        min_date = "20150501",
-                        configuration = configuration)
-# focus on sites within Wenatchee subbasin
-sites_sf = sites_sf %>%
+                        min_date = "20150501")
+
+# focus on sites within Wenatchee subbasin, and drop a few sites we don't care about
+sites_sf <- sites_sf %>%
   # all sites in the Wenatchee have a river kilometer that starts with 754
-  filter(grepl("754.", rkm),
-         # remove a few sites we don't care about
-         !site_code %in% c("LWE", "ICICLC"))
+  filter(str_detect(rkm, "^754."),
+         type != "MRR",
+         site_code != "LWE") |> 
+  mutate(across(site_code,
+                ~ recode(.,
+                         "TUF" = "TUM")))
 
 ```
+
+The user could create their own `sf` object of detection sites, either by hand in R, or by using GIS software to create a shapefile or geopackage that can then be read into R using the `st_read()` function in the `sf` package. If the user chooses this path, the file must contain at least a column called `site_code`, whose values should be the same site codes found in the configuration file. Other columns are optional. The `extractSites()` function returns an `sf` object with the following columns (gleaned from the configuration file):
+
+* `site_code`
+* `site_name`
+* `site_type`
+* `type`
+* `rkm`
+* `site_description`
+
+`extractSites()` will also accept a configuration file as an argument, if the user wants to pass one of their own in. Such a file should contain all the columns listed above.

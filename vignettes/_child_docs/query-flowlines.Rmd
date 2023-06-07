@@ -8,12 +8,13 @@ The user may also be interested in getting the flowlines (i.e., the stream or ri
 
 If flowlines downstream of the `root_site_code` site are required, set the argument `dwnstrm_sites = TRUE` (default is `FALSE`). This might be useful if the user is interesting in analyzing or modeling sites downstream of the release site. If you're not interested in analyzing/modeling downstream sites you can set `dwnstrm_sites = FALSE` which may speed up the function considerably.
 
-The user can also control the minimum stream order of the downstream flowlines by setting the `dwn_min_stream_order_diff` argument. Note: smaller stream orders = smaller streams. This can be useful if the user is not interested or wants to prevent downloading all sorts of tiny streams downstream of a tagging or release location; the `dwn_min_stream_order_diff` is an attempt to constrain the amount of flowlines downloaded downstream of the `root_site_code` which can be sizable. The `dwn_min_stream_order_diff` corresponds to the difference between the stream order of the `root_site_code` site and the minimum stream order desired in the downstream flowlines. In our example, our `root_site_code` is located on a stream order of 5 (Wenatchee River) and `dwn_min_stream_order_diff = 2`, in this case only downstream flowlines of at least 5-2 = **3** will be downloaded. The extent of the downstream flowlines is further constrained by the `sites_sf` object. The `queryFlowlines()` function returns a list consisting of:
-  * `flowlines`: the flowlines upstream of the `root_site_code`
-  * `basin`: the polygon containing the upstream flowlines
-  * `dwn_flowlines`: the flowlines downstream of the `root_site_code`, if `dwnstrm_sites = T`
+The user can also control the minimum stream order of the downstream flowlines by setting the `dwn_min_stream_order_diff` argument. Note: smaller stream orders correspond to smaller streams. This can be useful if the user is not interested or wants to prevent downloading all sorts of tiny streams downstream of a tagging or release location; the `dwn_min_stream_order_diff` is an attempt to constrain the amount of flowlines downloaded downstream of the `root_site_code` which can be sizable. The `dwn_min_stream_order_diff` corresponds to the difference between the stream order of the `root_site_code` site and the minimum stream order desired in the downstream flowlines. In our example, our `root_site_code` is located on a stream order of 5 (Wenatchee River) and `dwn_min_stream_order_diff = 2`, in this case only downstream flowlines of at least 5-2 = **3** will be downloaded. The extent of the downstream flowlines is further constrained by the `sites_sf` object. The `queryFlowlines()` function returns a list consisting of:
 
-Note, depending on the spatial extent of your flowlines, the `queryFlowlines()` function may take awhile. Here we create a list of objects, `nhd_list`. We then use the function `rbind()` to combine the `nhd$flowlines` and `nhd$dwn_flowlines` into a single `flowlines` simple feature object. More information on the `nhdplusTools` R package can be found [here](https://cran.r-project.org/web/packages/nhdplusTools/index.html).
+* `flowlines`: the flowlines upstream of the `root_site_code`
+* `basin`: the polygon containing the upstream flowlines
+* `dwn_flowlines`: the flowlines downstream of the `root_site_code`, if `dwnstrm_sites = T`
+
+Depending on the spatial extent of your flowlines, the `queryFlowlines()` function may take awhile. Here we create a list of objects, `nhd_list`. We then use the function `rbind()` to combine the `nhd$flowlines` and `nhd$dwn_flowlines` into a single `flowlines` simple feature object. More information on the `nhdplusTools` R package can be found [here](https://cran.r-project.org/web/packages/nhdplusTools/index.html).
 
 ```{r get-flowlines}
 # query the flowlines
@@ -23,8 +24,9 @@ nhd_list = queryFlowlines(sites_sf = sites_sf,
                           dwnstrm_sites = T,
                           dwn_min_stream_order_diff = 2)
 
-# compile the upstream and downstream flowlines
+# join the upstream and downstream flowlines
 flowlines = nhd_list$flowlines %>%
     rbind(nhd_list$dwn_flowlines)
 
 ```
+

@@ -1,0 +1,42 @@
+---
+title: "Reading PIT Tag Data Into R"
+author: Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Reading PIT Tag Data Into R}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+
+library(knitr)
+library(here)
+```
+
+# Introduction
+
+Raw PIT tag detections contain a record of every detection of a tag code on an individual antenna, with the associate time-stamp. This data may be queried in primarily two different ways: 1) all of the tag codes detected at a site or antenna, or 2) all the detections of a particular tag code at a variety of sites or antennas. Regardless of what type of query is used, the user is generally dealing with a row of data for every single detection, identified by tag code, site, antenna and date/time (and detections may contain additional data as well).
+
+This data may be stored in a variety of formats or databases. Often these can be broken out into data stored in [PTAGIS](https://ptagis.org/) (The Columbia Basin PIT Tag Information System), and data stored in non-PTAGIS databases (e.g. BioLogic) or local formats (e.g. .xlsx, .txt, .log). One of the first steps in analyzing this data is to read it into R and standardize the format. `PITcleanr` contains a workhorse function, `readCTH()` (for "read complete tag history"), that can accomplish this across many data formats.
+
+# PTAGIS Data
+
+```{r child = "_child_docs/query-ptagis.Rmd"}
+```
+
+# Non-PTAGIS Data
+
+```{r child = "_child_docs/query-non-ptagis.Rmd"}
+```

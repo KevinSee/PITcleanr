@@ -34,7 +34,7 @@ A major part of `PITcleanr`'s functionality is mapping detections from various a
 
 ## PTAGIS
 
-`PITcleanr` includes a function `queryPtagisMeta()` that queries PTAGIS for metadata about every antenna in their system, including both interrogation and MRR (mark, recapture, recovery) sites. Another function, `buildConfig()` includes `queryPtagisMeta()`, selects certain columns of data, and assigns nodes. 
+`PITcleanr` includes a function `queryPtagisMeta()` that queries PTAGIS for metadata about every antenna in their system, including both interrogation and MRR (mark, recapture, recovery) sites. Another function, `buildConfig()` calls `queryPtagisMeta()` internally, selects certain columns of data, and assigns nodes. 
 
 The crucial components for `PITcleanr` are (with their column names after running `buildConfig()`):
 

@@ -1,16 +1,34 @@
 ---
-output:
-  rmarkdown::html_vignette: default
-  html_document: default
+title: "Compressing PIT Tag Data"
+author: Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Compressing PIT Tag Data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
-```{r echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
-library(dplyr)
-library(PITcleanr)
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+
+library(knitr)
+library(kableExtra)
 ```
 
 
 ```{r echo = F}
+library(PITcleanr)
+
 # find the example file
 cth_file = system.file("extdata", 
                        "TUM_Chinook_2015.csv", 
@@ -38,8 +56,8 @@ head(comp_obs, 10)
 
 # in another format
 head(comp_obs, 10) |> 
-  knitr::kable() |> 
-  kableExtra::kable_styling()
+  kable() |> 
+  kable_styling()
 
 ```
 
@@ -67,6 +85,7 @@ The help menu for `compress()`, or any function for that matter, can be accessed
 Now, re-run the `compress()` function, except supplying a `configuration`:
 
 ```{r}
+library(readr)
 my_configuration <- system.file("extdata", 
                                 "configuration_TUM.csv", 
                                 package = "PITcleanr",
