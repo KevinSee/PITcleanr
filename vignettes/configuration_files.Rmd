@@ -28,6 +28,7 @@ library(knitr)
 ```{r load-packages}
 library(dplyr)
 library(PITcleanr)
+devtools::load_all()
 ```
 
 A major part of `PITcleanr`'s functionality is mapping detections from various antennas and sites onto user defined nodes. A **node** could be an individual antenna, a row (or rows) of antennas (i.e. an array), an entire site, or entire groups of sites. This mapping is accomplished using a configuration file that contains metadata about each antenna. The user can build their own (as detailed [below](#nonptagis)), or start with information from PTAGIS. 

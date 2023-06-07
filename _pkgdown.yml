@@ -102,11 +102,16 @@ articles:
 - title: Getting Started
   contents:
   - Prep_PIT_data
-  - non_PTAGIS_data
+- title: Specific components
+  contents:
+  - read_in_data
+  - configuration_files
+  - compress_data
+  - parent_child
 - title: DABOM
   desc: |
     Vignettes aimed at preparing data for DABOM
   contents:
-  - DABOM_prep
+  # - DABOM_prep
   - quick_prep
 

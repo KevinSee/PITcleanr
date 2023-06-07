@@ -88,12 +88,12 @@ cth_file = system.file("extdata",
 cth_df <- readCTH(cth_file)
 ```
 
-```{r child = "_child_docs/extract-sites.Rmd"}
+```{r child = "child_docs/_extract-sites.Rmd"}
 ```
 
 ### Querying Flowlines
 
-```{r child = "_child_docs/query-flowlines.Rmd"}
+```{r child = "child_docs/_query-flowlines.Rmd"}
 ```
 
 ### Mapping Sites

@@ -61,7 +61,7 @@ Good luck!
 
 ## Querying Detection Data from PTAGIS
 
-```{r child = "_child_docs/query-ptagis.Rmd"}
+```{r child = "child_docs/_query-ptagis.Rmd"}
 ```
 
 
@@ -69,7 +69,7 @@ Congratulations! You now have complete tag histories for your tags of interest f
 
 ## Compressing Data
 
-```{r child = "_child_docs/compress-data.Rmd"}
+```{r child = "child_docs/_compress-data.Rmd"}
 ```
 
 
@@ -87,13 +87,13 @@ At this point you've queried all of the PTAGIS detections for your tags of inter
 
 ### Extract Sites of Interest
 
-```{r child = "_child_docs/extract-sites.Rmd"}
+```{r child = "child_docs/_extract-sites.Rmd"}
 ```
 
 
 ### Query Flowlines
 
-```{r child = "_child_docs/query-flowlines.Rmd"}
+```{r child = "child_docs/_query-flowlines.Rmd"}
 ```
 
 You've now extracted your sites of interest and downloaded the flowlines that connect them. These two pieces of information can then be used to determine the "parent-child" relationships among your sites.

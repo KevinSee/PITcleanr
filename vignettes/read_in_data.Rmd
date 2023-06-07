@@ -33,10 +33,10 @@ This data may be stored in a variety of formats or databases. Often these can be
 
 # PTAGIS Data
 
-```{r child = "_child_docs/query-ptagis.Rmd"}
+```{r child = "child_docs/_query-ptagis.Rmd"}
 ```
 
 # Non-PTAGIS Data
 
-```{r child = "_child_docs/query-non-ptagis.Rmd"}
+```{r child = "child_docs/_query-non-ptagis.Rmd"}
 ```
