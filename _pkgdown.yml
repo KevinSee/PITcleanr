@@ -34,10 +34,10 @@ navbar:
 reference:
 - title: Compressing PTAGIS Data
   desc: |
-    Functions for reading in complete capture histories from PTAGIS and compressing them
+    Functions for reading in complete capture histories and compressing them
 - contents:
-  - compress
   - readCTH
+  - compress
   - qcTagHistory
   - extractTagObs
 - title: Querying Data
