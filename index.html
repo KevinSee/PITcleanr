@@ -120,65 +120,8 @@
 <p>Alternatively, the <code>PITcleanr</code> compendium can be downloaded as a zip file from from this URL: <a href="https://github.com/KevinSee/PITcleanr/archive/master.zip" class="external-link uri">https://github.com/KevinSee/PITcleanr/archive/master.zip</a> Once extracted, the functions can be sourced individually, or a user can build the R package locally.</p>
 <p>Be sure to use the <code>build_vignettes = TRUE</code> argument, as this will build all of the vignettes (i.e., user manuals) that are included with the package. Further instructions on how to use <code>PITcleanr</code> can be found in the vignettes, which can be accessed using:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"PITcleanr"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; starting httpd help server ... done</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="compressing-ptagis-detection-data">Compressing PTAGIS Detection Data<a class="anchor" aria-label="anchor" href="#compressing-ptagis-detection-data"></a>
-</h2>
-<p>The complete tag history query output from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> (e.g., <code>ptagis_file</code>) will provide a record for every detection of each tag code in the tag list. Again, this may include multiple detections on the same antenna, or the same site within a short period of time, leading to an unwieldy and perhaps messy dataset. One of the main purposes of <code>PITcleanr</code> is to compress that data into an initial summary using the function <code><a href="reference/compress.html">compress()</a></code>. At a minimum, this function requires a path e.g., <code>ptagis_file</code>, to the complete tag history query results downloaded from PTAGIS.</p>
-<p>In our example, we perform the <code><a href="reference/compress.html">compress()</a></code> function on the <code>ptagis_file</code> object containing the file path to our query results, and write the output to an object <code>comp_obs</code> containing the compressed observations.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># view path to example file, of course you can also set ptagis_file to your own PTAGIS query results</span></span>
-<span><span class="va">ptagis_file</span></span>
-<span><span class="co">#&gt; [1] "C:/Rfolder/R/win-library/4.1/PITcleanr/extdata/TUM_Chinook_2015.csv"</span></span>
-<span></span>
-<span><span class="co"># run compress() function on it</span></span>
-<span><span class="va">comp_obs</span> <span class="op">=</span> <span class="fu"><a href="reference/compress.html">compress</a></span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># look at first parts of resulting object</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_obs</span><span class="op">)</span></span>
-<span><span class="co">#&gt; # A tibble: 6 x 9</span></span>
-<span><span class="co">#&gt;   tag_code       node    slot event_type_name n_dets min_det            </span></span>
-<span><span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;  &lt;int&gt; &lt;chr&gt;            &lt;int&gt; &lt;dttm&gt;             </span></span>
-<span><span class="co">#&gt; 1 384.3B239AD241 NASONC     1 Mark                 1 2013-11-04 16:45:00</span></span>
-<span><span class="co">#&gt; 2 384.3B239AD241 JDJ        2 Observation         12 2014-05-25 11:14:29</span></span>
-<span><span class="co">#&gt; 3 384.3B239AD241 BO4        3 Observation         11 2015-05-14 16:41:24</span></span>
-<span><span class="co">#&gt; 4 384.3B239AD241 TD1        4 Observation          3 2015-05-16 11:15:40</span></span>
-<span><span class="co">#&gt; 5 384.3B239AD241 MC2        5 Observation         17 2015-05-19 17:01:15</span></span>
-<span><span class="co">#&gt; 6 384.3B239AD241 PRA        6 Observation          2 2015-05-24 13:51:16</span></span>
-<span><span class="co">#&gt; # i 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></span></code></pre></div>
-<p>The output consists of a tibble containing columns for:</p>
-<ul>
-<li>
-<strong>tag_code:</strong> The unique PIT tag ID.</li>
-<li>
-<strong>node:</strong> By default, each site code from PTAGIS is considered a node. More on this below…</li>
-<li>
-<strong>slot:</strong> A detection “slot” for each tag, numbered in chronological order. Also more on this below…</li>
-<li>
-<strong>event_type_name:</strong> The type of “event”. Typically, mark, observation, recapture, or recovery.</li>
-<li>
-<strong>n_dets:</strong> The number of detections that occurred within that slot.</li>
-<li>
-<strong>min_det:</strong> The time of the first (min) detection in the slot.</li>
-<li>
-<strong>max_det:</strong> The time of the last (max) detection in the slot.</li>
-<li>
-<strong>duration:</strong> The duration of that slot (maximum - minimum detection time).</li>
-<li>
-<strong>travel_time:</strong> The travel time between the previous slot and that one.</li>
-</ul>
-<p><strong><em>A note on “nodes”</em></strong>: A node is the spatial scale of interest for the user. By default, the <code><a href="reference/compress.html">compress()</a></code> function considers a site code from PTAGIS as a node. However, a node could be defined as the individual PIT antenna a detection was made on, or the array that antenna is a part of, or groups of arrays, or sites, or groups of sites, or possibly even larger (e.g, any detection in <strong>this</strong> tributary!) depending on the spatial scale desired. The user may decide to define some arrays at particular sites to be their own nodes, while simultaneously lumping all the sites in a particular watershed into a single node. To utilize this kind of grouping, a configuration file or table must be supplied to the <code>configuration</code> argument in the <code><a href="reference/compress.html">compress()</a></code> function. This configuration file helps map what node each antenna or MRR site corresponds to. By default, <code>compress</code> assigns each site code to its own node.</p>
-<p>Each slot in the output is defined as all detections on a particular node before the tag is detected on a different node. The user can define a maximum number of minutes between detections before a new slot should be defined by supplying a value to the <code>max_minutes</code> argument to <code><a href="reference/compress.html">compress()</a></code>. The units of the duration and travel_time columns can also be defined by the <code>units</code> argument. The default is minutes (<code>mins</code>). As an example, if a tag moves from node A to B and back to A, there will be three slots in the compressed data.</p>
-<p>The help menu for <code><a href="reference/compress.html">compress()</a></code>, or any function for that matter, can be accessed using:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="op">?</span><span class="fu">PITcleanr</span><span class="fu">::</span><span class="va"><a href="reference/compress.html">compress</a></span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="other-functionality">Other Functionality<a class="anchor" aria-label="anchor" href="#other-functionality"></a>
-</h2>
-<p><code>PITcleanr</code> contains lots of additional functionality to help users summarize and further analyze the compressed PTAGIS observations. Find more details in the various vignettes.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"PITcleanr"</span><span class="op">)</span></span></code></pre></div>
+<!-- ## Compressing PTAGIS Detection Data --><!-- ```{r set-ptagis-file, echo = F} --><!-- library(PITcleanr) --><!-- ptagis_file = system.file("extdata",  --><!--                           "TUM_Chinook_2015.csv",  --><!--                           package = "PITcleanr", --><!--                           mustWork = TRUE) --><!-- ``` --><!-- ```{r, eval = T, child = "vignettes/compress_data.Rmd"} --><!-- ``` --><!-- ## Other Functionality --><!-- `PITcleanr` contains lots of additional functionality to help users summarize and further analyze the compressed PTAGIS observations. Find more details in the various vignettes. -->
 </div>
 <div class="section level2">
 <h2 id="authors">Authors<a class="anchor" aria-label="anchor" href="#authors"></a>

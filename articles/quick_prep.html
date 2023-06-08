@@ -96,7 +96,7 @@
       <h1 data-toc-skip>DABOM Data Prep ‘Cheatsheet’</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">26 May, 2023</h4>
+            <h4 data-toc-skip class="date">07 June, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/quick_prep.Rmd" class="external-link"><code>vignettes/quick_prep.Rmd</code></a></small>
       <div class="hidden name"><code>quick_prep.Rmd</code></div>
@@ -183,7 +183,8 @@
 <p>Once the user has finished editing it, they may read it back into R:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in configuration file</span></span>
-<span><span class="va">my_config</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="va">config_file</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">my_configuration</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="va">config_file</span>,</span>
+<span>                            show_col_types <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="parent-child-relationships">“Parent-Child” Relationships<a class="anchor" aria-label="anchor" href="#parent-child-relationships"></a>
@@ -192,7 +193,8 @@
 <p>If the user wishes to create a parent-child table by hand, the file must contain at a minimum the columns <code>parent</code> and <code>child</code>. This file can then be read into R.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in parent_child file</span></span>
-<span><span class="va">parent_child</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="va">parent_child_file</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">parent_child</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="va">parent_child_file</span>,</span>
+<span>                        show_col_types <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
 <p>The path to an example parent-child file included with <code>PITcleanr</code> can be found by running the following. The user could copy/paste that file to use as a template. Again, only the <code>parent</code> and <code>child</code> columns are necessary, although other columns may be useful.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># path to example parent-child table</span></span>
@@ -203,7 +205,7 @@
 <p>The user may choose to only include site codes in the parent and child columns, and then use their configuration file to build out the parent child table to include nodes. To add nodes, use the <code>addParentChildNodes</code> function:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parent_child_nodes</span> <span class="op">=</span> <span class="fu"><a href="../reference/addParentChildNodes.html">addParentChildNodes</a></span><span class="op">(</span>parent_child <span class="op">=</span> <span class="va">parent_child</span>,</span>
-<span>                                         configuration <span class="op">=</span> <span class="va">my_config</span><span class="op">)</span></span></code></pre></div>
+<span>                                         configuration <span class="op">=</span> <span class="va">my_configuration</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="preparing-for-dabom">Preparing for DABOM<a class="anchor" aria-label="anchor" href="#preparing-for-dabom"></a>
@@ -211,22 +213,17 @@
 <p>Finally, the user must download complete tag histories from PTAGIS for the tags of interest, ensuring that the following attributes are selected to be included in the output:</p>
 <ul>
 <li>Tag</li>
-<li>Mark Species</li>
-<li>Mark Rear Type</li>
-<li>Event Type</li>
 <li>Event Site Code</li>
 <li>Event Date Time</li>
 <li>Antenna</li>
 <li>Antenna Group Configuration</li>
-<li>Event Release Date Time</li>
-<li>Event Release Site Code</li>
 </ul>
-<p>Now the user can assign those detections to a “node”, compress that data, assign directionality and determine which observations should be retained for DABOM, all using the <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function. The <code>min_obs_date</code> argument will filter out observations prior to that date, while the <code>max_obs_date</code> argument will ensure that all detections after that date are not retained.</p>
+<!-- * Mark Species --><!-- * Mark Rear Type --><!-- * Event Type --><!-- * Event Release Date Time --><!-- * Event Release Site Code --><p>Now the user can assign those detections to a “node”, compress that data, assign directionality and determine which observations should be retained for DABOM, all using the <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function. The <code>min_obs_date</code> argument will filter out observations prior to that date, while the <code>max_obs_date</code> argument will ensure that all detections after that date are not retained.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in PTAGIS observations and compress them,</span></span>
 <span><span class="co"># then prep data for choice of which detections to keep</span></span>
-<span><span class="va">prepped_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/prepWrapper.html">prepWrapper</a></span><span class="op">(</span>ptagis_file <span class="op">=</span> <span class="va">ptagis_file</span>,</span>
-<span>                         configuration <span class="op">=</span> <span class="va">my_config</span>,</span>
+<span><span class="va">prepped_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/prepWrapper.html">prepWrapper</a></span><span class="op">(</span>cth_file <span class="op">=</span> <span class="va">ptagis_file</span>,</span>
+<span>                         configuration <span class="op">=</span> <span class="va">my_configuration</span>,</span>
 <span>                         parent_child <span class="op">=</span> <span class="va">parent_child_nodes</span>,</span>
 <span>                         min_obs_date <span class="op">=</span> <span class="st">"20150301"</span>,</span>
 <span>                         max_obs_date <span class="op">=</span> <span class="st">"20150930"</span><span class="op">)</span></span></code></pre></div>

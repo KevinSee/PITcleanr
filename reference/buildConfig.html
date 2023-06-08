@@ -69,13 +69,19 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">buildConfig</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">buildConfig</span><span class="op">(</span>node_assign <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"array"</span>, <span class="st">"site"</span>, <span class="st">"antenna"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="source">
     <h2>Source</h2>
     <p><a href="http://www.ptagis.org" class="external-link">http://www.ptagis.org</a></p>
     </div>
+    <div id="arguments">
+    <h2>Arguments</h2>
+    <dl><dt>node_assign</dt>
+<dd><p>should nodes by assigned by <code>array</code>, <code>site</code> or <code>antenna</code>? Default is <code>array</code>.</p></dd>
+
+</dl></div>
     <div id="author">
     <h2>Author</h2>
     <p>Kevin See</p>
@@ -87,12 +93,12 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying INT sites' metadata</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying INT sites' configuration information</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Querying MRR sites' metadata</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7,170 x 15</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7,194 x 15</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    site_code config_id antenna_id node  start_date          end_date           </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 0HR             100 01         0HR   2022-07-27 <span style="color: #949494;">00:00:00</span> <span style="color: #BB0000;">NA</span>                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 0HR             100 02         0HR   2022-07-27 <span style="color: #949494;">00:00:00</span> <span style="color: #BB0000;">NA</span>                 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 0HR             100 03         0HR   2022-07-27 <span style="color: #949494;">00:00:00</span> <span style="color: #BB0000;">NA</span>                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 0HR             100 01         0HR   2022-07-26 <span style="color: #949494;">00:00:00</span> <span style="color: #BB0000;">NA</span>                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 0HR             100 02         0HR   2022-07-26 <span style="color: #949494;">00:00:00</span> <span style="color: #BB0000;">NA</span>                 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 0HR             100 03         0HR   2022-07-26 <span style="color: #949494;">00:00:00</span> <span style="color: #BB0000;">NA</span>                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 158             100 D1         158A0 2011-11-29 <span style="color: #949494;">00:00:00</span> <span style="color: #BB0000;">NA</span>                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 158             100 D2         158A0 2011-11-29 <span style="color: #949494;">00:00:00</span> <span style="color: #BB0000;">NA</span>                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 158             100 D3         158B0 2011-11-29 <span style="color: #949494;">00:00:00</span> <span style="color: #BB0000;">NA</span>                 </span>
@@ -100,7 +106,7 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 158             100 D5         158A0 2011-11-29 <span style="color: #949494;">00:00:00</span> <span style="color: #BB0000;">NA</span>                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 158             100 D6         158B0 2011-11-29 <span style="color: #949494;">00:00:00</span> <span style="color: #BB0000;">NA</span>                 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 15D             100 C1         15DA0 2012-03-15 <span style="color: #949494;">00:00:00</span> 2019-06-30 <span style="color: #949494;">12:00:00</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 7,160 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 7,184 more rows</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 9 more variables: site_type &lt;chr&gt;, site_name &lt;chr&gt;, antenna_group &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   site_description &lt;chr&gt;, site_type_name &lt;chr&gt;, rkm &lt;chr&gt;, rkm_total &lt;dbl&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   latitude &lt;dbl&gt;, longitude &lt;dbl&gt;</span></span>

@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Querying, Compressing, and Making Sense of PIT Tag Detection Data • PITcleanr</title>
+<title>Reading PIT Tag Data Into R • PITcleanr</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -17,7 +17,7 @@
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Querying, Compressing, and Making Sense of PIT Tag Detection Data">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Reading PIT Tag Data Into R">
 <meta property="og:description" content="PITcleanr">
 <meta property="og:image" content="https://kevinsee.github.io/PITcleanr/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -90,17 +90,17 @@
 
       
 
-      </header><script src="Prep_PIT_data_files/kePrint-0.0.1/kePrint.js"></script><link href="Prep_PIT_data_files/lightable-0.0.1/lightable.css" rel="stylesheet">
+      </header><script src="read_in_data_files/kePrint-0.0.1/kePrint.js"></script><link href="read_in_data_files/lightable-0.0.1/lightable.css" rel="stylesheet">
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Querying, Compressing, and Making Sense of PIT Tag Detection Data</h1>
+      <h1 data-toc-skip>Reading PIT Tag Data Into R</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
             <h4 data-toc-skip class="date">07 June, 2023</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/Prep_PIT_data.Rmd" class="external-link"><code>vignettes/Prep_PIT_data.Rmd</code></a></small>
-      <div class="hidden name"><code>Prep_PIT_data.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/read_in_data.Rmd" class="external-link"><code>vignettes/read_in_data.Rmd</code></a></small>
+      <div class="hidden name"><code>read_in_data.Rmd</code></div>
 
     </div>
 
@@ -109,49 +109,19 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>For more detailed explanations of the following topics, we encourage users to read through these vignettes:</p>
-<ul>
-<li><a href="read_in_data.Rmd">Reading in data</a></li>
-<li><a href="configuration_files.Rmd">Configuration files</a></li>
-<li><a href="compress_data.Rmd">Compressing data</a></li>
-<li><a href="parent_child.Rmd">Parent-Child Tables</a></li>
-</ul>
-<p>This vignette shows how to use the <code>PITcleanr</code> package to wrangle PIT tag data to either summarize detections or prepare the data for further analysis. <code>PITcleanr</code> can help import complete tag histories from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a>, build a configuration file to help assign each detection to a “node”, and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table of locations, and assign directionality of movement between each detection site. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), <code>PITcleanr</code> can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept.</p>
+<p>Raw PIT tag detections contain a record of every detection of a tag code on an individual antenna, with the associate time-stamp. This data may be queried in primarily two different ways: 1) all of the tag codes detected at a site or antenna, or 2) all the detections of a particular tag code at a variety of sites or antennas. Regardless of what type of query is used, the user is generally dealing with a row of data for every single detection, identified by tag code, site, antenna and date/time (and detections may contain additional data as well).</p>
+<p>This data may be stored in a variety of formats or databases. Often these can be broken out into data stored in <a href="https://ptagis.org/" class="external-link">PTAGIS</a> (The Columbia Basin PIT Tag Information System), and data stored in non-PTAGIS databases (e.g. BioLogic) or local formats (e.g. .xlsx, .txt, .log). One of the first steps in analyzing this data is to read it into R and standardize the format. <code>PITcleanr</code> contains a workhorse function, <code><a href="../reference/readCTH.html">readCTH()</a></code> (for “read complete tag history”), that can accomplish this across many data formats.</p>
 </div>
 <div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+<h2 id="ptagis-data">PTAGIS Data<a class="anchor" aria-label="anchor" href="#ptagis-data"></a>
 </h2>
-<p>The <code>PITcleanr</code> package can be installed as an R package from GitHub by using Hadley Wickham’s <code>devtools</code> package:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># install and load remotes, if necessary</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr"</span>, </span>
-<span>                         build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><code>devtools</code> may require the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">here</a>.</p>
-<p>For the latest development version:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr@develop"</span><span class="op">)</span></span></code></pre></div>
-<p>Alternatively, the <code>PITcleanr</code> compendium can be downloaded as a zip file from from this URL: <a href="https://github.com/KevinSee/PITcleanr/archive/master.zip" class="external-link uri">https://github.com/KevinSee/PITcleanr/archive/master.zip</a> Once extracted, the functions can be sourced individually, or a user can build the R package locally.</p>
-<p>Once <code>PITcleanr</code> is successfully installed, it can be loaded into the R session. In this vignette, we will also use many functions from the <code>tidyverse</code> <a href="https://www.tidyverse.org/" class="external-link">group of packages</a>, so load those as well:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/KevinSee/PITcleanr" class="external-link">PITcleanr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
-<p>Note that many of the various queries in <code>PITcleanr</code> require a connection to the internet.</p>
-</div>
-<div class="section level2">
-<h2 id="querying-detection-data">Querying Detection Data<a class="anchor" aria-label="anchor" href="#querying-detection-data"></a>
-</h2>
-<div class="section level3">
-<h3 id="from-ptagis">From PTAGIS<a class="anchor" aria-label="anchor" href="#from-ptagis"></a>
-</h3>
 <p>The Columbia Basin PIT Tag Information System (<a href="https://ptagis.org/" class="external-link">PTAGIS</a>) is the centralized regional database for PIT-tag detections within the Columbia River Basin. It contains a record of each detection of every PIT tag, including the initial detection, or “mark”, when the tag is implanted in the fish, detections on PIT-tag antennas, recaptures (e.g. at weirs) and recoveries (e.g. carcass surveys). It contains a record of every individual detection, which means potentially multiple records of a tag being detected on the same antenna over and over e.g., in the case that it is not moving. Therefore, querying PTAGIS for all of these detections leads to a wealth of data, which can be unwieldy for the user. <code>PITcleanr</code> aims to compress that data to a more manageable size, without losing any of the information contained in that dataset.</p>
-</div>
 <div class="section level3">
 <h3 id="complete-capture-history">Complete Capture History<a class="anchor" aria-label="anchor" href="#complete-capture-history"></a>
 </h3>
 <p><code>PITcleanr</code> starts with a complete capture history query from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> for a select group of tags of interest. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query.</p>
 <p>For convenience, we’ve included one such file with <code>PITcleanr</code>, which is saved to the user’s computer when <code>PITcleanr</code> is installed. The file, “tag_list_TUM_2015.txt”, contains tag IDs for Chinook salmon adults implanted with PIT tags at Tumwater Dam in 2015. The following code can be used to find the path to this example file. The user can use this as a template for creating their own tag list as well.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
 <span>            <span class="st">"tag_list_TUM_2015.txt"</span>, </span>
 <span>            package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
@@ -201,13 +171,13 @@
 <li>Remove extra column: Yes</li>
 </ul>
 <p>And click “Export”, again. <code>PITcleanr</code> includes an example of PTAGIS output for the Tumwater Chinook tags from 2015. Using similar code (<code>system.file</code>), the user can set the file path to this file, ans store it as a new object <code>ptagis_file</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
 <span>                          <span class="st">"TUM_Chinook_2015.csv"</span>, </span>
 <span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
 <span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, if the user has run a query from PTAGIS as described above, they could set <code>ptagis_file</code> to the path and file name of the .csv they downloaded.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># As an example, set path to PTAGIS query output</span></span>
 <span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/usernamehere/Downloads/TUM_Chinook_2015.csv"</span></span></code></pre></div>
 <p>Note that in our example file, there are 24938 detections (rows) for 2019 unique tags, matching the number of tags in our example tag list “tag_list_TUM_2015.txt”. For a handful of those tags, in our case 178, there is only a “Mark” detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining tags, many of them were often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of some of the raw data for a single tag:</p>
@@ -1014,7 +984,7 @@ NA
 </tbody>
 </table>
 <p><code>PITcleanr</code> provides a function to read in this kind of complete capture history, called <code><a href="../reference/readCTH.html">readCTH()</a></code>. This function ensures the column names are consistent for subsequent <code>PITcleanr</code> functions, and provides one function to read in PTAGIS and non-PTAGIS data and return similarly formatted output.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ptagis_cth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readCTH.html">readCTH</a></span><span class="op">(</span><span class="va">ptagis_file</span>,</span>
 <span>                      file_type <span class="op">=</span> <span class="st">"PTAGIS"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -1022,10 +992,10 @@ NA
 <h3 id="mark-data-file">Mark Data File<a class="anchor" aria-label="anchor" href="#mark-data-file"></a>
 </h3>
 <p><code>PITcleanr</code> also allows the user to query PTAGIS for an MRR data file. Many projects are set up to record all the tagging information for an entire season, or part of a season from a single site in one file, which is uploaded to PTAGIS. This file can be used to determine the list of tag codes a user may be interested in. The <code>queryMRRDataFile</code> will pull this information from PTAGIS, using either the XML information contained in P4 files, or the older file structure (text file with various possible file extensions). The only requirement is the file name. For example, to pull this data for tagging at Tumwater in 2015, use the following code:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tum_2015_mrr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryMRRDataFile.html">queryMRRDataFile</a></span><span class="op">(</span><span class="st">"NBD15065.TUM"</span><span class="op">)</span></span></code></pre></div>
 <p>Depending on how comprehensive that MRR data file is, a user might filter this data.frame for Spring Chinook by focusing on the species run rear type of “11”, and tags that were not collected for broodstock, or otherwise killed. An example of some of the data contained in MRR files like this is shown below.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tum_2015_mrr</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="co"># filter for Spring Chinook tags</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">species_run_rear_type</span>, </span>
@@ -1895,59 +1865,20 @@ TUMFBY
 </tr>
 </tbody>
 </table>
-<div class="section level4">
-<h4 id="quality-control">Quality Control<a class="anchor" aria-label="anchor" href="#quality-control"></a>
-</h4>
-<p><code>PITcleanr</code> can help perform some basic quality control on the PTAGIS detections. The <code><a href="../reference/qcTagHistory.html">qcTagHistory()</a></code> function returns a list including a vector of tags listed as “DISOWN” by PTAGIS, another vector of tags listed as “ORPHAN”, and a data frame of release batches.</p>
-<p>An “ORPHAN” tag indicates that PTAGIS has received a detection either at an interrogation site or through a recapture or recovery, but marking information has not yet been submitted for that tag. Once marking data is submitted, that tag will no longer appear as an “ORPHAN” tag.</p>
-<p>“DISOWN” records occur when a previously loaded mark record is changed to a recapture or recovery event. Now that tag no longer has a valid mark record. Once new marking data is submitted, that tag will no longer appear as a “DISOWN”ed tag. For more information, see the <a href="https://www.ptagis.org/faq#11" class="external-link">PTAGIS FAQ website</a>.</p>
-<p>The release batches data frame can be used by the <code><a href="../reference/compress.html">compress()</a></code> function in <code>PITcleanr</code> to determine whether to use the event time or the event release time as reported by PTAGIS for a particular site/year/species combination. However, to extract that information, the user will have needed to include the attributes “Mark Species”, “Event Release Site Code” and “Event Release Date Time” in their PTAGIS query.</p>
-<p>Here, we’ll run the <code><a href="../reference/qcTagHistory.html">qcTagHistory()</a></code> function, again on the file path (<code>ptagis_file</code>) of the PTAGIS complete tag history query output, and save the results to an object <code>qc_detections</code>.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">qc_detections</span> <span class="op">=</span> <span class="fu"><a href="../reference/qcTagHistory.html">qcTagHistory</a></span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># view qc_detections</span></span>
-<span><span class="va">qc_detections</span></span>
-<span><span class="co">#&gt; $disown_tags</span></span>
-<span><span class="co">#&gt; character(0)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $orphan_tags</span></span>
-<span><span class="co">#&gt; character(0)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $rel_time_batches</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 23 x 11</span></span></span>
-<span><span class="co">#&gt;    mark_species_name  year event_site_type_description event_type_name</span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Chinook            <span style="text-decoration: underline;">2</span>011 Hatchery                    Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Chinook            <span style="text-decoration: underline;">2</span>012 Hatchery                    Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Chinook            <span style="text-decoration: underline;">2</span>012 Hatchery                    Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Chinook            <span style="text-decoration: underline;">2</span>012 River                       Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Chinook            <span style="text-decoration: underline;">2</span>012 Trap or Weir                Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Chinook            <span style="text-decoration: underline;">2</span>013 Acclimation Pond            Recapture      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Chinook            <span style="text-decoration: underline;">2</span>013 Hatchery                    Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Chinook            <span style="text-decoration: underline;">2</span>013 River                       Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Chinook            <span style="text-decoration: underline;">2</span>013 River                       Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Chinook            <span style="text-decoration: underline;">2</span>013 River                       Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># i 13 more rows</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># i 7 more variables: event_site_code_value &lt;chr&gt;, n_tags &lt;int&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   n_events &lt;int&gt;, n_release &lt;int&gt;, rel_greq_event &lt;int&gt;, rel_ls_event &lt;int&gt;,</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;">#   event_rel_ratio &lt;dbl&gt;</span></span></span></code></pre></div>
-<p>To extract a single element from the <code>qc_detections</code>, the user can simply use the basic extraction operator <code>$</code> e.g., <code>qc_detections$orphan_tags</code>.</p>
 </div>
 </div>
-<div class="section level3">
-<h3 id="non-ptagis-data">Non-PTAGIS data<a class="anchor" aria-label="anchor" href="#non-ptagis-data"></a>
-</h3>
+<div class="section level2">
+<h2 id="non-ptagis-data">Non-PTAGIS Data<a class="anchor" aria-label="anchor" href="#non-ptagis-data"></a>
+</h2>
 <p>Not all PIT tag data is in PTAGIS. This section will show the user how to read in PIT tag data from a variety of other sources, including BioLogic csv files as well as raw files (e.g. .xlsx, .log and .txt file extensions) downloaded directly from PIT tag readers. The <code><a href="../reference/readCTH.html">readCTH()</a></code> function is able to read in all of these formats, but the user must indicate what format each file is in.</p>
 <p>There are many ways a user might store their various files, and many ways to script how to read them into R. In this vignette, we will suggest one way to do this, but alternatives certainly exist.</p>
-</div>
 <div class="section level3">
 <h3 id="storing-data-files">Storing Data Files<a class="anchor" aria-label="anchor" href="#storing-data-files"></a>
 </h3>
 <p>In this example, we have accumulated a number of different PIT tag detection files, in a variety of formats. We have saved them all in the same folder, and used some naming convention to indicate what format they are. Files from PTAGIS have “PTAGIS” in the file name somewhere, Biologic csv files have “BIOLOGIC” in the file name somewhere, and we assume the other files are raw files (with a mixture of .xlsx, .log and .txt file extensions).</p>
 <p>For raw detection files, which usually come from a single reader, the file does not contain information about what site code those observations come from. The user can add that themselves within R, or the <code><a href="../reference/readCTH.html">readCTH()</a></code> function will assume the site code is the first part of the file name before the first underscore, <code>_</code>. Therefore, if the user adopts a naming convention that includes the site code at the beginning of every raw detection file, <code>PITcleanr</code> will assign the correct site code. Otherwise, the user can overwrite the site codes manually after running <code><a href="../reference/readCTH.html">readCTH()</a></code>.</p>
 <p>We set the name and path of the folder with all the detection data (<code>detection_folder</code>), and used the following script to compile a data.frame of various file names and file types. A user can set the <code>detection_folder</code> path to point to where they have stored all their detection files.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">detection_folder</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
 <span>                                <span class="st">"non_ptagis"</span>,</span>
 <span>                                package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
@@ -1976,7 +1907,7 @@ TUMFBY
 <h3 id="reading-in-detections">Reading in Detections<a class="anchor" aria-label="anchor" href="#reading-in-detections"></a>
 </h3>
 <p>The following script uses the path of the <code>detection_folder</code>, the various file names inside that folder, the file type associated with each file, and the <code><a href="../reference/readCTH.html">readCTH()</a></code> function to read all the detections into R and consolidate them into a single data.frame, <code>all_obs</code>. It contains a quick check (<code>try</code> and <code>"try-error"</code>) to ensure that if any particular file has trouble being read, the others are still included.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read them all in</span></span>
 <span><span class="va">all_obs</span> <span class="op">&lt;-</span></span>
 <span>  <span class="va">file_df</span> <span class="op">|&gt;</span> </span>
@@ -1994,341 +1925,6 @@ TUMFBY
 <p>Alternatively, the user can run <code><a href="../reference/readCTH.html">readCTH()</a></code> on each detection file, saving each R object separately, and then use <code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows()</a></code> to merge all the detections together. One reason to do this might be to manipulate or filter certain files before merging them.</p>
 <p>The <code><a href="../reference/readCTH.html">readCTH()</a></code> also contains an argument to filter out test tags, so their detection is not included in the results. This option involves setting the <code>test_tag_prefix</code> argument to the initial alphanumeric characters in the test tags. By default, this is set to “3E7”. If the user wishes to keep all test tag detections, set <code>test_tag_prefix = NA</code>. If the user wishes to pull out <em>only</em> test tag detections, they can use the function <code><a href="../reference/readTestTag.html">readTestTag()</a></code> instead of <code><a href="../reference/readCTH.html">readCTH()</a></code>, and set the <code>test_tag_prefix</code> to the appropriate code (e.g. “3E7”).</p>
 </div>
-</div>
-<div class="section level2">
-<h2 id="compressing-detection-data">Compressing Detection Data<a class="anchor" aria-label="anchor" href="#compressing-detection-data"></a>
-</h2>
-<p>In this vignette, we will use an example dataset of Spring Chinook Salmon tagged as adults at Tumwater dam in 2015. <code>PITcleanr</code> includes the <a href="read_in_data.Rmd">complete tag history</a> downloaded from PTAGIS, the <a href="configuration_files.Rmd">configuration file</a> and the <a href="parent_child.Rmd">parent-child table</a> for this particular analysis. However, if the user needs to consult how to query or construct any of those, please read the appropriate vignette.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># the complete tag history file from PTAGIS</span></span>
-<span><span class="va">ptagis_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>                          <span class="st">"TUM_Chinook_2015.csv"</span>, </span>
-<span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
-<span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># read the complete tag history file into R, and filter detections before a certain date</span></span>
-<span><span class="va">cth_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readCTH.html">readCTH</a></span><span class="op">(</span><span class="va">ptagis_file</span>,</span>
-<span>                  file_type <span class="op">=</span> <span class="st">"PTAGIS"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">event_date_time_value</span> <span class="op">&gt;=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html" class="external-link">ymd</a></span><span class="op">(</span><span class="fl">20150301</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># the pre-built configuration file</span></span>
-<span><span class="va">configuration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>                          <span class="st">"configuration_TUM.csv"</span>, </span>
-<span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
-<span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span>show_col_types <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># the pre-built parent-child table</span></span>
-<span><span class="va">parent_child</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>                          <span class="st">"parent_child_TUM.csv"</span>, </span>
-<span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
-<span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span>show_col_types <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
-<p>The first step is to <a href="compress_data.Rmd">compress</a> the raw detection data. This maps each detection on an individual antenna to a node, defined in the <code>configuration</code> file, and combines detections on the same node to a single row.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">comp_obs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compress.html">compress</a></span><span class="op">(</span><span class="va">cth_df</span>,</span>
-<span>                     configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span></span></code></pre></div>
-<p>In our Tumwater Dam Spring Chinook Salmon example, the <code><a href="../reference/compress.html">compress()</a></code> function has scaled down the raw data from PTAGIS from 24,662 rows of data to a slightly more manageable 13,231 rows. At the same time, the sum of the <code>n_dets</code> column in <code>comp_obs</code> is 24,662, showing that every detection from the raw data has been accounted for. For much of the remaining vignette, we will explore other functionality of <code>PITcleanr</code> and as it relates to this compressed data i.e., the <code>comp_obs</code> object.</p>
-</div>
-<div class="section level2">
-<h2 id="parent-child-table">Parent-Child Table<a class="anchor" aria-label="anchor" href="#parent-child-table"></a>
-</h2>
-<p>A parent-child table describes the relationship between detection sites, showing possible movement paths of the tagged fish. Tags must move from a parent site to a child site (although they may not necessarily be detected at either). Graphically, this can be displayed using the <code><a href="../reference/plotNodes.html">plotNodes()</a></code> function.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Prep_PIT_data_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
-<p>The initial parent-child table only contains entire sites. However, in our configuration file we have defined the nodes to be distinct arrays (e.g. rows of antennas), and most sites in this example contain multiple arrays (and therefore two nodes). We can expand the parent-child table by using the configuration file, and the <code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code> function. The graph of nodes expands.</p>
-<p>Note that in <code>PITcleanr</code>’s default settings, nodes that end in <code>B0</code> are generally the downstream array, while nodes that end in <code>A0</code> are the upstream array. For more information about that, see the <a href="configuration_files.Rmd">configuration files</a> vignette.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">parent_child_nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addParentChildNodes.html">addParentChildNodes</a></span><span class="op">(</span>parent_child <span class="op">=</span> <span class="va">parent_child</span>,</span>
-<span>                                          configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child_nodes</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Prep_PIT_data_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
-<div class="section level3">
-<h3 id="movement-paths-node-order">Movement Paths &amp; Node Order<a class="anchor" aria-label="anchor" href="#movement-paths-node-order"></a>
-</h3>
-<p><code>PITcleanr</code> provides a function to determine the detection locations a tag would pass between a starting point (e.g, a tagging or release location) and an ending point (e.g., each subsequent detection point), based on the parent-child table. We refer to these detection locations as a movement path. They are equivalent to following one of the paths in the figures above (produced by <code><a href="../reference/plotNodes.html">plotNodes()</a></code>).</p>
-<p>The function <code><a href="../reference/buildPaths.html">buildPaths()</a></code> will provide the movement path leading to each node in a parent-child table. It provides a row for each node, and then provides the path that an individual would have to take to get to that given node. The <code>build_paths()</code> function could be performed on either the <code>parent_child</code> or <code>parent_child_nodes</code> objects.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/buildPaths.html">buildPaths</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 x 2</span></span></span>
-<span><span class="co">#&gt;    end_loc path           </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> LNF     TUM ICL LNF    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICM     TUM ICL ICM    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ICL     TUM ICL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> LWN     TUM LWN        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CHL     TUM CHL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> PES     TUM PES        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> WTL     TUM WTL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> NAL     TUM NAL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CHW     TUM CHW        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ICU     TUM ICL ICM ICU</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> CHU     TUM CHL CHU    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> PEU     TUM PES PEU    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> NAU     TUM NAL NAU</span></span>
-<span></span>
-<span><span class="co"># to set direction to downstream, for example</span></span>
-<span><span class="co"># buildPaths(parent_child,</span></span>
-<span><span class="co">#            direction = "d")</span></span></code></pre></div>
-<p>The <code><a href="../reference/buildNodeOrder.html">buildNodeOrder()</a></code> provides both the movement path and the node order of each node (starting from the root site and counting upwards past each node). Each of these functions currently has an argument, <code>direction</code> that provides paths and node orders based on upstream movement (the default) or downstream movement. For downstream movement, each node may appear in the resulting tibble multiple times, as there may be multiple ways to reach that node, from different starting points. Again, <code><a href="../reference/buildNodeOrder.html">buildNodeOrder()</a></code> could be performed on either <code>parent_child</code> or <code>parent_child_nodes</code>.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/buildNodeOrder.html">buildNodeOrder</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 14 x 3</span></span></span>
-<span><span class="co">#&gt;    node  node_order path           </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TUM            1 TUM            </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> CHL            2 TUM CHL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CHU            3 TUM CHL CHU    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> CHW            2 TUM CHW        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> ICL            2 TUM ICL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> ICM            3 TUM ICL ICM    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> ICU            4 TUM ICL ICM ICU</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> LNF            3 TUM ICL LNF    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> LWN            2 TUM LWN        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> NAL            2 TUM NAL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> NAU            3 TUM NAL NAU    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> PES            2 TUM PES        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> PEU            3 TUM PES PEU    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> WTL            2 TUM WTL</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="add-direction">Add Direction<a class="anchor" aria-label="anchor" href="#add-direction"></a>
-</h2>
-<p>With the parent-child relationships established, <code>PITcleanr</code> can assign a direction between each node where a given tag was detected.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">comp_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addDirection.html">addDirection</a></span><span class="op">(</span>compress_obs <span class="op">=</span> <span class="va">comp_obs</span>,</span>
-<span>                         parent_child <span class="op">=</span> <span class="va">parent_child_nodes</span>,</span>
-<span>                         direction <span class="op">=</span> <span class="st">"u"</span><span class="op">)</span></span></code></pre></div>
-<p>The <code>comp_dir</code> data.frame contains all the same columns as the <code>comp_obs</code>, with an additional column called <code>direction</code>. However, <code>comp_dir</code> may have fewer rows, because any node in the <code>comp_obs</code> data.frame that is not contained in the parent-child table will be dropped. The various <code>direction</code> values indicate the following:</p>
-<ul>
-<li>
-<code>start</code>: The initial detection at the “root site”. Every tag should have this row.</li>
-<li>
-<code>forward</code>: Based on the current and previous detections, the tag has moved forward along a parent-child path (moving from parent to child).</li>
-<li>
-<code>backward</code>: Based on the current and previous detections, the tag has moved backwards along a parent-child path (moving from child to parent).</li>
-<li>
-<code>no movement</code>: indicates the previous and current detections were from the same node. Often this occurs when the <code>event_type_name</code> differs (e.g. an “Observation” on an interrogation antenna and a “Recapture” from a weir that has been assigned the same node as the antenna)</li>
-<li>
-<code>unknown</code>: this indicates the tag has been detected on a different path of the parent-child graph. For instance, a fish moves into one tributary and is detected there, but then falls back and moves up into a different tributary and is detected there.</li>
-</ul>
-<p>In our example, since we are focused on upstream-migrating fish, <code>forward</code> indicates upstream movement and <code>backward</code> indicates downstream movement. Fish with an <code>unknown</code> direction somewhere in their detections have not taken a straightforward path along the parent-child graph.</p>
-</div>
-<div class="section level2">
-<h2 id="filtering-detections">Filtering Detections<a class="anchor" aria-label="anchor" href="#filtering-detections"></a>
-</h2>
-<p>For some types of analyses, such as Cormack-Jolly-Seber (CJS) models, one of the assumptions is that a tag/individual undergoes only one-way travel (i.e., travel is either all upstream or all downstream). To meet this assumption, individual detections sometime need to be discarded. For example, an adult salmon undergoing an upstream spawning migration may move up a mainstem migration corridor (e.g., the Snake River), dip into a tributary (e.g., Selway River in the Clearwater), and then move back downstream and up another tributary (e.g., Salmon River) to their spawning location. In this case, any detections that occurred in the Clearwater River would need to be discarded if we believe the fish was destined for a location in the Salmon River. In other cases, more straightforward summaries of directional movements may be desired.</p>
-<p><code>PITcleanr</code> contains a function, <code><a href="../reference/filterDetections.html">filterDetections()</a></code>, to help determine which tags/individuals fail to meet the one-way travel assumption and need to be examined further. <code><a href="../reference/filterDetections.html">filterDetections()</a></code> first runs <code><a href="../reference/addDirection.html">addDirection()</a></code>, and then adds two columns, <code>auto_keep_obs</code> and <code>user_keep_obs</code>. These are meant to indicate whether each row should be kept (i.e. marked <code>TRUE</code>) or deleted (i.e. marked <code>FALSE</code>). For tags that do meet the one-way travel assumption, both <code>auto_keep_obs</code> and <code>user_keep_obs</code> columns will be filled. If a fish moves back and forth along the same path, <code>PITcleanr</code> will indicate that only the last detection at each node should be kept.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">comp_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterDetections.html">filterDetections</a></span><span class="op">(</span>compress_obs <span class="op">=</span> <span class="va">comp_obs</span>,</span>
-<span>                                parent_child <span class="op">=</span> <span class="va">parent_child_nodes</span>,</span>
-<span>                                max_obs_date <span class="op">=</span> <span class="st">"20150930"</span><span class="op">)</span></span></code></pre></div>
-<p>If a tag fails to to meet that assumption (e.g. at least one direction is <code>unknown</code>), the <code>user_keep_obs</code> column will be <code>NA</code> for all observations of that tag. The <code>auto_keep_obs</code> column is <code>PITcleanr</code>’s best guess as to which detections should be kept. This guess is based on the assumption that the last and furthest forward-moving detection should be kept, and all detections along that movement path should be kept, while dropping others. Below is an example of tag that fails to meet the one-way travel assumption, and which observations <code>PITcleanr</code> suggests should be kept (keep the detection on CHLB0 and drop the one on WTLA0).</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">comp_filter</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">tag_code</span><span class="op">:</span><span class="va">min_det</span>, <span class="va">direction</span>,</span>
-<span>         <span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html" class="external-link">ends_with</a></span><span class="op">(</span><span class="st">"keep_obs"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">user_keep_obs</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">tag_code</span> <span class="op">==</span> <span class="va">tag_code</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">kable_styling</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<table class="table table" style="margin-left: auto; margin-right: auto;">
-<thead><tr>
-<th style="text-align:left;">
-tag_code
-</th>
-<th style="text-align:left;">
-node
-</th>
-<th style="text-align:right;">
-slot
-</th>
-<th style="text-align:left;">
-event_type_name
-</th>
-<th style="text-align:right;">
-n_dets
-</th>
-<th style="text-align:left;">
-min_det
-</th>
-<th style="text-align:left;">
-direction
-</th>
-<th style="text-align:left;">
-auto_keep_obs
-</th>
-<th style="text-align:left;">
-user_keep_obs
-</th>
-</tr></thead>
-<tbody>
-<tr>
-<td style="text-align:left;">
-3D9.1BF24B20F5
-</td>
-<td style="text-align:left;">
-TUM
-</td>
-<td style="text-align:right;">
-8
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:right;">
-2
-</td>
-<td style="text-align:left;">
-2015-06-14 20:11:21
-</td>
-<td style="text-align:left;">
-start
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-3D9.1BF24B20F5
-</td>
-<td style="text-align:left;">
-TUM
-</td>
-<td style="text-align:right;">
-9
-</td>
-<td style="text-align:left;">
-Recapture
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-2015-06-14 23:59:00
-</td>
-<td style="text-align:left;">
-no movement
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-3D9.1BF24B20F5
-</td>
-<td style="text-align:left;">
-WTLA0
-</td>
-<td style="text-align:right;">
-10
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-2015-06-22 21:04:18
-</td>
-<td style="text-align:left;">
-forward
-</td>
-<td style="text-align:left;">
-FALSE
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-3D9.1BF24B20F5
-</td>
-<td style="text-align:left;">
-CHLB0
-</td>
-<td style="text-align:right;">
-11
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:right;">
-1
-</td>
-<td style="text-align:left;">
-2015-08-30 21:24:46
-</td>
-<td style="text-align:left;">
-unknown
-</td>
-<td style="text-align:left;">
-TRUE
-</td>
-<td style="text-align:left;">
-NA
-</td>
-</tr>
-</tbody>
-</table>
-<p>The user can then save the output from <code><a href="../reference/filterDetections.html">filterDetections()</a></code>, and fill in all the blanks in the <code>user_keep_obs</code> column. The <code>auto_keep_obs</code> column is merely a suggestion from <code>PITcleanr</code>, the user should use their own knowledge of the landscape, where the detection sites are, the run timing and general spatial patterns of that population to make final decisions. Once all the blank <code>user_keep_obs</code> cells have been filled in, that output can be read back into R and filtered for when <code>user_keep_obs == TRUE</code>, and the analysis can proceed from there.</p>
-<p>It should be noted that not every analysis requires a one-way travel assumption, so this step may not be necessary depending on the user’s goals.</p>
-</div>
-<div class="section level2">
-<h2 id="construct-capture-histories">Construct Capture Histories<a class="anchor" aria-label="anchor" href="#construct-capture-histories"></a>
-</h2>
-<p>Often, various mark-recapture models require a capture history of 1’s and 0’s as inputs. The compressed observations (whether they’ve been through <code>filterDections()</code> or not, depending on the user’s analysis) can be converted into that kind of capture history in a fairly straightforward manner. One key will be to ensure the nodes or sites are put in correct order for the user.</p>
-<p>In this example, we use the node order, and the movement paths (<code>path</code>) to get to each node, to define the factor levels of all possible nodes. With that defined, we can translate the tag detections into capture histories, a series of 1’s and 0’s for each tag, and we know what node each entry in those capture histories refers to. Most mark-recapture models, such as those used in <a href="http://www.phidot.org/software/mark/" class="external-link">program MARK</a>, use those types of capture histories as inputs. The user can then also attach any relevant covariates (e.g. marking location, size at tagging, etc.) based on the tag code.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set the levels of nodes based somewhat on the movement paths</span></span>
-<span><span class="va">node_levels</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/buildNodeOrder.html">buildNodeOrder</a></span><span class="op">(</span><span class="va">parent_child_nodes</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">node</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># translate PIT tag observations into capture histories, one per tag</span></span>
-<span><span class="va">comp_filter</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">auto_keep_obs</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">tag_code</span>, <span class="va">node</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="va">node</span>,</span>
-<span>                <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">.</span>,</span>
-<span>                         levels <span class="op">=</span> <span class="va">node_levels</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>detected <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">node</span>,</span>
-<span>              names_sort <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>              names_expand <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>              values_from <span class="op">=</span> <span class="va">detected</span>,</span>
-<span>              values_fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unite.html" class="external-link">unite</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"cap_hist"</span>,</span>
-<span>        <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">tag_code</span><span class="op">)</span>,</span>
-<span>        sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2,018 x 2</span></span></span>
-<span><span class="co">#&gt;    tag_code       cap_hist                  </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 384.3B239AD241 10000000000000001111000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 3D9.1BF24B20F5 11000000000000000000000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 3D9.1C2D76FB78 10000000000000000000000011</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 3D9.1C2D770193 10000000000000000111000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3D9.1C2D91B3DE 11000000000000000000000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3D9.1C2D925C52 10000000000000001111000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 3D9.1C2D929849 10000000000000001111000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3D9.1C2D93282A 10000000000000001111000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3D9.1C2DB9A65E 11100000000000000000000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3D9.1C2DC026E4 10000000000000000000000011</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># i 2,008 more rows</span></span></span></code></pre></div>
 </div>
   </div>
 
