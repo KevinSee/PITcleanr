@@ -11,4 +11,5 @@
 ^docs$
 ^pkgdown$
 ^\.github$
-vignettes/_child_docs
+vignettes/_DABOM_prep
+
