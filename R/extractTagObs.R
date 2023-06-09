@@ -15,7 +15,7 @@ extractTagObs = function(cth_file = NULL,
                                        "Biologic_csv",
                                        "raw")) {
 
-  stopifnot(!is.null(ptagis_file))
+  stopifnot(!is.null(cth_file))
 
   observations = PITcleanr::readCTH(cth_file,
                                     file_type = file_type)
