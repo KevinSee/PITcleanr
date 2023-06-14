@@ -96,7 +96,7 @@
       <h1 data-toc-skip>DABOM Data Prep ‘Cheatsheet’</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">07 June, 2023</h4>
+            <h4 data-toc-skip class="date">14 June, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/quick_prep.Rmd" class="external-link"><code>vignettes/quick_prep.Rmd</code></a></small>
       <div class="hidden name"><code>quick_prep.Rmd</code></div>
@@ -167,9 +167,9 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">config_template</span> <span class="op">=</span> <span class="fu"><a href="../reference/buildConfig.html">buildConfig</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">site_code</span>, </span>
-<span>         <span class="co"># site_name, </span></span>
+<span>         <span class="va">site_name</span>,</span>
 <span>         <span class="va">config_id</span>, </span>
-<span>         <span class="co"># antenna_group, </span></span>
+<span>         <span class="va">antenna_group</span>,</span>
 <span>         <span class="va">antenna_id</span>, </span>
 <span>         <span class="va">node</span><span class="op">)</span></span></code></pre></div>
 <p>The user may save this template to a .csv file, and then edit it by hand, deleting sites they are not interested in, and filling in the <code>node</code> information for all other rows they are interested in.</p>
@@ -189,7 +189,7 @@
 <div class="section level2">
 <h2 id="parent-child-relationships">“Parent-Child” Relationships<a class="anchor" aria-label="anchor" href="#parent-child-relationships"></a>
 </h2>
-<p>The parent-child table contains information about how sites or nodes are connected on the stream network. Each site/node child has a single parent, defined as the site/node most directly downstream of the child. Each parent may have multiple children, as the stream network may branch upstream of the parent. For additional information, see that section in <a href="Prep_PIT_data.Rmd">this vignette</a>.</p>
+<p>The parent-child table contains information about how sites or nodes are connected on the stream network. Each site/node child has a single parent, defined as the site/node most directly downstream of the child. Each parent may have multiple children, as the stream network may branch upstream of the parent. For additional information, see that section in <a href="Prep_PIT_data.html">this vignette</a>.</p>
 <p>If the user wishes to create a parent-child table by hand, the file must contain at a minimum the columns <code>parent</code> and <code>child</code>. This file can then be read into R.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in parent_child file</span></span>
@@ -218,7 +218,17 @@
 <li>Antenna</li>
 <li>Antenna Group Configuration</li>
 </ul>
-<!-- * Mark Species --><!-- * Mark Rear Type --><!-- * Event Type --><!-- * Event Release Date Time --><!-- * Event Release Site Code --><p>Now the user can assign those detections to a “node”, compress that data, assign directionality and determine which observations should be retained for DABOM, all using the <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function. The <code>min_obs_date</code> argument will filter out observations prior to that date, while the <code>max_obs_date</code> argument will ensure that all detections after that date are not retained.</p>
+<p>This next group of attributes are not required, but are highly recommended:</p>
+<ul>
+<li>Mark Species</li>
+<li>Mark Rear Type</li>
+<li>Event Type</li>
+<li>Event Site Type</li>
+<li>Event Release Site Code</li>
+<li>Event Release Date Time</li>
+</ul>
+<p>For further information about querying data from PTAGIS (or other sources), please read the <a href="read_in_data.html">vignette about reading in data</a>.</p>
+<p>Now the user can assign those detections to a “node”, compress that data, assign directionality and determine which observations should be retained for DABOM, all using the <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function. The <code>min_obs_date</code> argument will filter out observations prior to that date, while the <code>max_obs_date</code> argument will ensure that all detections after that date are not retained.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in PTAGIS observations and compress them,</span></span>
 <span><span class="co"># then prep data for choice of which detections to keep</span></span>

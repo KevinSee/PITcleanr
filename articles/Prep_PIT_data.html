@@ -97,7 +97,7 @@
       <h1 data-toc-skip>Querying, Compressing, and Making Sense of PIT Tag Detection Data</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">07 June, 2023</h4>
+            <h4 data-toc-skip class="date">14 June, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/Prep_PIT_data.Rmd" class="external-link"><code>vignettes/Prep_PIT_data.Rmd</code></a></small>
       <div class="hidden name"><code>Prep_PIT_data.Rmd</code></div>
@@ -111,10 +111,10 @@
 </h2>
 <p>For more detailed explanations of the following topics, we encourage users to read through these vignettes:</p>
 <ul>
-<li><a href="read_in_data.Rmd">Reading in data</a></li>
-<li><a href="configuration_files.Rmd">Configuration files</a></li>
-<li><a href="compress_data.Rmd">Compressing data</a></li>
-<li><a href="parent_child.Rmd">Parent-Child Tables</a></li>
+<li><a href="read_in_data.html">Reading in data</a></li>
+<li><a href="configuration_files.html">Configuration files</a></li>
+<li><a href="compress_data.html">Compressing data</a></li>
+<li><a href="parent_child.html">Parent-Child Tables</a></li>
 </ul>
 <p>This vignette shows how to use the <code>PITcleanr</code> package to wrangle PIT tag data to either summarize detections or prepare the data for further analysis. <code>PITcleanr</code> can help import complete tag histories from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a>, build a configuration file to help assign each detection to a “node”, and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table of locations, and assign directionality of movement between each detection site. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), <code>PITcleanr</code> can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept.</p>
 </div>
@@ -1998,7 +1998,7 @@ TUMFBY
 <div class="section level2">
 <h2 id="compressing-detection-data">Compressing Detection Data<a class="anchor" aria-label="anchor" href="#compressing-detection-data"></a>
 </h2>
-<p>In this vignette, we will use an example dataset of Spring Chinook Salmon tagged as adults at Tumwater dam in 2015. <code>PITcleanr</code> includes the <a href="read_in_data.Rmd">complete tag history</a> downloaded from PTAGIS, the <a href="configuration_files.Rmd">configuration file</a> and the <a href="parent_child.Rmd">parent-child table</a> for this particular analysis. However, if the user needs to consult how to query or construct any of those, please read the appropriate vignette.</p>
+<p>In this vignette, we will use an example dataset of Spring Chinook Salmon tagged as adults at Tumwater dam in 2015. <code>PITcleanr</code> includes the <a href="read_in_data.html">complete tag history</a> downloaded from PTAGIS, the <a href="configuration_files.html">configuration file</a> and the <a href="parent_child.html">parent-child table</a> for this particular analysis. However, if the user needs to consult how to query or construct any of those, please read the appropriate vignette.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># the complete tag history file from PTAGIS</span></span>
 <span><span class="va">ptagis_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
@@ -2024,7 +2024,7 @@ TUMFBY
 <span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
 <span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span>show_col_types <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
-<p>The first step is to <a href="compress_data.Rmd">compress</a> the raw detection data. This maps each detection on an individual antenna to a node, defined in the <code>configuration</code> file, and combines detections on the same node to a single row.</p>
+<p>The first step is to <a href="compress_data.html">compress</a> the raw detection data. This maps each detection on an individual antenna to a node, defined in the <code>configuration</code> file, and combines detections on the same node to a single row.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">comp_obs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compress.html">compress</a></span><span class="op">(</span><span class="va">cth_df</span>,</span>
 <span>                     configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span></span></code></pre></div>
@@ -2038,7 +2038,7 @@ TUMFBY
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Prep_PIT_data_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 <p>The initial parent-child table only contains entire sites. However, in our configuration file we have defined the nodes to be distinct arrays (e.g. rows of antennas), and most sites in this example contain multiple arrays (and therefore two nodes). We can expand the parent-child table by using the configuration file, and the <code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code> function. The graph of nodes expands.</p>
-<p>Note that in <code>PITcleanr</code>’s default settings, nodes that end in <code>B0</code> are generally the downstream array, while nodes that end in <code>A0</code> are the upstream array. For more information about that, see the <a href="configuration_files.Rmd">configuration files</a> vignette.</p>
+<p>Note that in <code>PITcleanr</code>’s default settings, nodes that end in <code>B0</code> are generally the downstream array, while nodes that end in <code>A0</code> are the upstream array. For more information about that, see the <a href="configuration_files.html">configuration files</a> vignette.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parent_child_nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addParentChildNodes.html">addParentChildNodes</a></span><span class="op">(</span>parent_child <span class="op">=</span> <span class="va">parent_child</span>,</span>
 <span>                                          configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span></span>
