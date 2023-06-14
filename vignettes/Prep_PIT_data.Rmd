@@ -29,10 +29,10 @@ library(here)
 
 For more detailed explanations of the following topics, we encourage users to read through these vignettes:
 
-* [Reading in data](read_in_data.Rmd)
-* [Configuration files](configuration_files.Rmd)
-* [Compressing data](compress_data.Rmd)
-* [Parent-Child Tables](parent_child.Rmd)
+* [Reading in data](read_in_data.html)
+* [Configuration files](configuration_files.html)
+* [Compressing data](compress_data.html)
+* [Parent-Child Tables](parent_child.html)
 
 This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data to either summarize detections or prepare the data for further analysis. `PITcleanr` can help import complete tag histories from [PTAGIS](https://www.ptagis.org/), build a configuration file to help assign each detection to a "node", and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table of locations, and assign directionality of movement between each detection site. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), `PITcleanr` can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept. 
 
@@ -87,7 +87,7 @@ To extract a single element from the `qc_detections`, the user can simply use th
 
 # Compressing Detection Data
 
-In this vignette, we will use an example dataset of Spring Chinook Salmon tagged as adults at Tumwater dam in 2015. `PITcleanr` includes the [complete tag history](read_in_data.Rmd) downloaded from PTAGIS, the [configuration file](configuration_files.Rmd) and the [parent-child table](parent_child.Rmd) for this particular analysis. However, if the user needs to consult how to query or construct any of those, please read the appropriate vignette.
+In this vignette, we will use an example dataset of Spring Chinook Salmon tagged as adults at Tumwater dam in 2015. `PITcleanr` includes the [complete tag history](read_in_data.html) downloaded from PTAGIS, the [configuration file](configuration_files.html) and the [parent-child table](parent_child.html) for this particular analysis. However, if the user needs to consult how to query or construct any of those, please read the appropriate vignette.
 
 ```{r}
 # the complete tag history file from PTAGIS
@@ -116,7 +116,7 @@ parent_child <- system.file("extdata",
   read_csv(show_col_types = F)
 ```
 
-The first step is to [compress](compress_data.Rmd) the raw detection data. This maps each detection on an individual antenna to a node, defined in the `configuration` file, and combines detections on the same node to a single row. 
+The first step is to [compress](compress_data.html) the raw detection data. This maps each detection on an individual antenna to a node, defined in the `configuration` file, and combines detections on the same node to a single row. 
 
 ```{r}
 comp_obs <- compress(cth_df,
@@ -135,7 +135,7 @@ plotNodes(parent_child)
 
 The initial parent-child table only contains entire sites. However, in our configuration file we have defined the nodes to be distinct arrays (e.g. rows of antennas), and most sites in this example contain multiple arrays (and therefore two nodes). We can expand the parent-child table by using the configuration file, and the `addParentChildNodes()` function. The graph of nodes expands.
 
-Note that in `PITcleanr`'s default settings, nodes that end in `B0` are generally the downstream array, while nodes that end in `A0` are the upstream array. For more information about that, see the [configuration files](configuration_files.Rmd) vignette. 
+Note that in `PITcleanr`'s default settings, nodes that end in `B0` are generally the downstream array, while nodes that end in `A0` are the upstream array. For more information about that, see the [configuration files](configuration_files.html) vignette. 
 
 ```{r}
 parent_child_nodes <- addParentChildNodes(parent_child = parent_child,

@@ -97,9 +97,9 @@ For a typical DABOM model, where nodes are generally defined as arrays, the user
 ```{r, eval = F}
 config_template = buildConfig() %>%
   select(site_code, 
-         # site_name, 
+         site_name,
          config_id, 
-         # antenna_group, 
+         antenna_group,
          antenna_id, 
          node)
 ```
@@ -135,7 +135,7 @@ my_configuration = read_csv(config_file,
 
 # "Parent-Child" Relationships
 
-The parent-child table contains information about how sites or nodes are connected on the stream network. Each site/node child has a single parent, defined as the site/node most directly downstream of the child. Each parent may have multiple children, as the stream network may branch upstream of the parent. For additional information, see that section in [this vignette](Prep_PIT_data.Rmd). 
+The parent-child table contains information about how sites or nodes are connected on the stream network. Each site/node child has a single parent, defined as the site/node most directly downstream of the child. Each parent may have multiple children, as the stream network may branch upstream of the parent. For additional information, see that section in [this vignette](Prep_PIT_data.html). 
 
 If the user wishes to create a parent-child table by hand, the file must contain at a minimum the columns `parent` and `child`. This file can then be read into R.
 
@@ -182,11 +182,16 @@ Finally, the user must download complete tag histories from PTAGIS for the tags 
 * Antenna
 * Antenna Group Configuration
 
-<!-- * Mark Species -->
-<!-- * Mark Rear Type -->
-<!-- * Event Type -->
-<!-- * Event Release Date Time -->
-<!-- * Event Release Site Code -->
+This next group of attributes are not required, but are highly recommended:
+
+* Mark Species
+* Mark Rear Type
+* Event Type
+* Event Site Type
+* Event Release Site Code
+* Event Release Date Time
+
+For further information about querying data from PTAGIS (or other sources), please read the [vignette about reading in data](read_in_data.html).
 
 ```{r, echo = F}
 # find file with PTAGIS observations
