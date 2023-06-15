@@ -13,9 +13,13 @@ remotes::install_github("KevinSee/PITcleanr",
                          build_vignettes = TRUE)
 ```
 
-`devtools` may require the downloading and installation of Rtools. The latest version of Rtools can be found [here](https://cran.r-project.org/bin/windows/Rtools/).
+`devtools` may require a working development environment. Further details around the installation of `devtools` can be found [here](https://www.r-project.org/nosvn/pandoc/devtools.html).
 
-For the latest development version:
+* For Windows, that will involve the downloading and installation of Rtools. The latest version of Rtools can be found [here](https://cran.r-project.org/bin/windows/Rtools/). 
+* For Mac OS, that may involve installing Xcode from teh Mac App Store.
+* For Linux, that may involve installing a compiler and various development libraries, depending on the specific version of Linux.
+
+To install the latest development version of `PITcleanr`:
 
 ```{r develop-version, eval = FALSE}
 remotes::install_github("KevinSee/PITcleanr@develop")
