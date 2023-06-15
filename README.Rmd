@@ -26,7 +26,7 @@ Title <- "Title of your paper goes here"
 
 It was originally conceived as a companion to the [DABOM](https://github.com/KevinSee/DABOM) package for estimating abundance of returning anadromous adult fish moving upstream. `PITcleanr` was designed to prepare the raw PIT tag observations from [PTAGIS](https://www.ptagis.org/) for use in the `DABOM` package.
 
-The user can find more information related to installation and use of this package on the [package website](https://kevinsee.github.io/PITcleanr/).
+***The user can find more information related to installation and use of this package on the [package website](https://kevinsee.github.io/PITcleanr/), https://kevinsee.github.io/PITcleanr.***
 
 ## Installation Instructions
 
@@ -39,23 +39,6 @@ Be sure to use the `build_vignettes = TRUE` argument, as this will build all of 
 browseVignettes(package = "PITcleanr")
 ```
 
-<!-- ## Compressing PTAGIS Detection Data -->
-
-<!-- ```{r set-ptagis-file, echo = F} -->
-<!-- library(PITcleanr) -->
-<!-- ptagis_file = system.file("extdata",  -->
-<!--                           "TUM_Chinook_2015.csv",  -->
-<!--                           package = "PITcleanr", -->
-<!--                           mustWork = TRUE) -->
-<!-- ``` -->
-
-
-<!-- ```{r, eval = T, child = "vignettes/compress_data.Rmd"} -->
-<!-- ``` -->
-
-<!-- ## Other Functionality -->
-
-<!-- `PITcleanr` contains lots of additional functionality to help users summarize and further analyze the compressed PTAGIS observations. Find more details in the various vignettes. -->
 
 ## Authors
 

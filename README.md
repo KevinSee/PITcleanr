@@ -30,9 +30,10 @@ abundance of returning anadromous adult fish moving upstream.
 `PITcleanr` was designed to prepare the raw PIT tag observations from
 [PTAGIS](https://www.ptagis.org/) for use in the `DABOM` package.
 
-The user can find more information related to installation and use of
+***The user can find more information related to installation and use of
 this package on the [package
-website](https://kevinsee.github.io/PITcleanr/).
+website](https://kevinsee.github.io/PITcleanr/),
+<https://kevinsee.github.io/PITcleanr>.***
 
 ## Installation Instructions
 
@@ -46,11 +47,19 @@ remotes::install_github("KevinSee/PITcleanr",
                          build_vignettes = TRUE)
 ```
 
-`devtools` may require the downloading and installation of Rtools. The
-latest version of Rtools can be found
-[here](https://cran.r-project.org/bin/windows/Rtools/).
+`devtools` may require a working development environment. Further
+details around the installation of `devtools` can be found
+[here](https://www.r-project.org/nosvn/pandoc/devtools.html).
 
-For the latest development version:
+-   For Windows, that will involve the downloading and installation of
+    Rtools. The latest version of Rtools can be found
+    [here](https://cran.r-project.org/bin/windows/Rtools/).
+-   For Mac OS, that may involve installing Xcode from teh Mac App
+    Store.
+-   For Linux, that may involve installing a compiler and various
+    development libraries, depending on the specific version of Linux.
+
+To install the latest development version of `PITcleanr`:
 
 ``` r
 remotes::install_github("KevinSee/PITcleanr@develop")
@@ -70,19 +79,6 @@ the vignettes, which can be accessed using:
 ``` r
 browseVignettes(package = "PITcleanr")
 ```
-
-<!-- ## Compressing PTAGIS Detection Data -->
-<!-- ```{r set-ptagis-file, echo = F} -->
-<!-- library(PITcleanr) -->
-<!-- ptagis_file = system.file("extdata",  -->
-<!--                           "TUM_Chinook_2015.csv",  -->
-<!--                           package = "PITcleanr", -->
-<!--                           mustWork = TRUE) -->
-<!-- ``` -->
-<!-- ```{r, eval = T, child = "vignettes/compress_data.Rmd"} -->
-<!-- ``` -->
-<!-- ## Other Functionality -->
-<!-- `PITcleanr` contains lots of additional functionality to help users summarize and further analyze the compressed PTAGIS observations. Find more details in the various vignettes. -->
 
 ## Authors
 
