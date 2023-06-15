@@ -97,7 +97,7 @@
       <h1 data-toc-skip>Reading PIT Tag Data Into R</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">14 June, 2023</h4>
+            <h4 data-toc-skip class="date">15 June, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/read_in_data.Rmd" class="external-link"><code>vignettes/read_in_data.Rmd</code></a></small>
       <div class="hidden name"><code>read_in_data.Rmd</code></div>
@@ -170,7 +170,8 @@
 <li>Export filter details: unchecked</li>
 <li>Remove extra column: Yes</li>
 </ul>
-<p>And click “Export”, again. <code>PITcleanr</code> includes an example of PTAGIS output for the Tumwater Chinook tags from 2015. Using similar code (<code>system.file</code>), the user can set the file path to this file, ans store it as a new object <code>ptagis_file</code>.</p>
+<p>And click “Export”, again.</p>
+<p><code>PITcleanr</code> includes several example files to help users understand the appropriate format of certain files, and to provide demonstrations of various functions. The <code>system.file</code> function locates the file path to the subdirectory and file contained with a certain package. One such example is PTAGIS output for the Tumwater Chinook tags from 2015. Using similar code (<code>system.file</code>), the user can set the file path to this file, and store it as a new object <code>ptagis_file</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
 <span>                          <span class="st">"TUM_Chinook_2015.csv"</span>, </span>
@@ -179,7 +180,7 @@
 <p>Alternatively, if the user has run a query from PTAGIS as described above, they could set <code>ptagis_file</code> to the path and file name of the .csv they downloaded.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># As an example, set path to PTAGIS query output</span></span>
-<span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/usernamehere/Downloads/TUM_Chinook_2015.csv"</span></span></code></pre></div>
+<span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/USER_NAME_HERE/Downloads/TUM_Chinook_2015.csv"</span></span></code></pre></div>
 <p>Note that in our example file, there are 24938 detections (rows) for 2019 unique tags, matching the number of tags in our example tag list “tag_list_TUM_2015.txt”. For a handful of those tags, in our case 178, there is only a “Mark” detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining tags, many of them were often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of some of the raw data for a single tag:</p>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
@@ -1011,9 +1012,7 @@ NA
 <span>         <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">conditional_comments</span>,</span>
 <span>                    <span class="st">"[:space:]M$"</span>,</span>
 <span>                    negate <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">kable_styling</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:right;">

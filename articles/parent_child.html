@@ -96,7 +96,7 @@
       <h1 data-toc-skip>Parent-Child Tables</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">14 June, 2023</h4>
+            <h4 data-toc-skip class="date">15 June, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/parent_child.Rmd" class="external-link"><code>vignettes/parent_child.Rmd</code></a></small>
       <div class="hidden name"><code>parent_child.Rmd</code></div>
@@ -175,7 +175,7 @@
 <span><span class="co"># focus on sites within Wenatchee subbasin, and drop a few sites we don't care about</span></span>
 <span><span class="va">sites_sf</span> <span class="op">&lt;-</span> <span class="va">sites_sf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="co"># all sites in the Wenatchee have a river kilometer that starts with 754</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">str_detect</span><span class="op">(</span><span class="va">rkm</span>, <span class="st">"^754."</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">rkm</span>, <span class="st">"^754."</span><span class="op">)</span>,</span>
 <span>         <span class="va">type</span> <span class="op">!=</span> <span class="st">"MRR"</span>,</span>
 <span>         <span class="va">site_code</span> <span class="op">!=</span> <span class="st">"LWE"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="va">site_code</span>,</span>

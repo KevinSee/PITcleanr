@@ -97,7 +97,7 @@
       <h1 data-toc-skip>Querying, Compressing, and Making Sense of PIT Tag Detection Data</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">14 June, 2023</h4>
+            <h4 data-toc-skip class="date">15 June, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/Prep_PIT_data.Rmd" class="external-link"><code>vignettes/Prep_PIT_data.Rmd</code></a></small>
       <div class="hidden name"><code>Prep_PIT_data.Rmd</code></div>
@@ -127,8 +127,13 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr"</span>, </span>
 <span>                         build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><code>devtools</code> may require the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">here</a>.</p>
-<p>For the latest development version:</p>
+<p><code>devtools</code> may require a working development environment. Further details around the installation of <code>devtools</code> can be found <a href="https://www.r-project.org/nosvn/pandoc/devtools.html" class="external-link">here</a>.</p>
+<ul>
+<li>For Windows, that will involve the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">here</a>.</li>
+<li>For Mac OS, that may involve installing Xcode from teh Mac App Store.</li>
+<li>For Linux, that may involve installing a compiler and various development libraries, depending on the specific version of Linux.</li>
+</ul>
+<p>To install the latest development version of <code>PITcleanr</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr@develop"</span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, the <code>PITcleanr</code> compendium can be downloaded as a zip file from from this URL: <a href="https://github.com/KevinSee/PITcleanr/archive/master.zip" class="external-link uri">https://github.com/KevinSee/PITcleanr/archive/master.zip</a> Once extracted, the functions can be sourced individually, or a user can build the R package locally.</p>
@@ -200,7 +205,8 @@
 <li>Export filter details: unchecked</li>
 <li>Remove extra column: Yes</li>
 </ul>
-<p>And click “Export”, again. <code>PITcleanr</code> includes an example of PTAGIS output for the Tumwater Chinook tags from 2015. Using similar code (<code>system.file</code>), the user can set the file path to this file, ans store it as a new object <code>ptagis_file</code>.</p>
+<p>And click “Export”, again.</p>
+<p><code>PITcleanr</code> includes several example files to help users understand the appropriate format of certain files, and to provide demonstrations of various functions. The <code>system.file</code> function locates the file path to the subdirectory and file contained with a certain package. One such example is PTAGIS output for the Tumwater Chinook tags from 2015. Using similar code (<code>system.file</code>), the user can set the file path to this file, and store it as a new object <code>ptagis_file</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
 <span>                          <span class="st">"TUM_Chinook_2015.csv"</span>, </span>
@@ -209,7 +215,7 @@
 <p>Alternatively, if the user has run a query from PTAGIS as described above, they could set <code>ptagis_file</code> to the path and file name of the .csv they downloaded.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># As an example, set path to PTAGIS query output</span></span>
-<span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/usernamehere/Downloads/TUM_Chinook_2015.csv"</span></span></code></pre></div>
+<span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/USER_NAME_HERE/Downloads/TUM_Chinook_2015.csv"</span></span></code></pre></div>
 <p>Note that in our example file, there are 24938 detections (rows) for 2019 unique tags, matching the number of tags in our example tag list “tag_list_TUM_2015.txt”. For a handful of those tags, in our case 178, there is only a “Mark” detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining tags, many of them were often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of some of the raw data for a single tag:</p>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
@@ -1041,9 +1047,7 @@ NA
 <span>         <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">conditional_comments</span>,</span>
 <span>                    <span class="st">"[:space:]M$"</span>,</span>
 <span>                    negate <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">kable</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu">kable_styling</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:right;">
@@ -2033,7 +2037,8 @@ TUMFBY
 <div class="section level2">
 <h2 id="parent-child-table">Parent-Child Table<a class="anchor" aria-label="anchor" href="#parent-child-table"></a>
 </h2>
-<p>A parent-child table describes the relationship between detection sites, showing possible movement paths of the tagged fish. Tags must move from a parent site to a child site (although they may not necessarily be detected at either). Graphically, this can be displayed using the <code><a href="../reference/plotNodes.html">plotNodes()</a></code> function.</p>
+<p>A parent-child table describes the relationship between detection sites, showing possible movement paths of the tagged fish. Tags must move from a parent site to a child site (although they may not necessarily be detected at either). For much more information on constructing parent-child tables, please see the <a href="parent_child.html">parent-child vignette</a>.</p>
+<p>Graphically, these relationships can be displayed using the <code><a href="../reference/plotNodes.html">plotNodes()</a></code> function.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Prep_PIT_data_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>

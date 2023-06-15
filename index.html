@@ -102,7 +102,7 @@
 </h2>
 <p><code>PITcleanr</code> is an R package for preparing PIT tag data for further analysis. The package can help import complete tag histories from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a>, build a configuration file to help assign each detection to a “node”, and compress those detections into a smaller file. It contains functions to determine which detection locations are upstream or downstream of each other, build a parent-child relationship table describing whether detection locations are upstream or downstream in relation to each other, and assign directionality of movement between each detection location. For analyses that focus on one-way directional movement (e.g., straightforward CJS models), <code>PITcleanr</code> can help determine which detections fail to meet that one-way movement assumption and should be examined more closely, and which detections can be kept.</p>
 <p>It was originally conceived as a companion to the <a href="https://github.com/KevinSee/DABOM" class="external-link">DABOM</a> package for estimating abundance of returning anadromous adult fish moving upstream. <code>PITcleanr</code> was designed to prepare the raw PIT tag observations from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a> for use in the <code>DABOM</code> package.</p>
-<p>The user can find more information related to installation and use of this package on the <a href="https://kevinsee.github.io/PITcleanr/">package website</a>.</p>
+<p><strong><em>The user can find more information related to installation and use of this package on the <a href="https://kevinsee.github.io/PITcleanr/">package website</a>, <a href="https://kevinsee.github.io/PITcleanr" class="uri">https://kevinsee.github.io/PITcleanr</a>.</em></strong></p>
 </div>
 <div class="section level2">
 <h2 id="installation-instructions">Installation Instructions<a class="anchor" aria-label="anchor" href="#installation-instructions"></a>
@@ -113,15 +113,19 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr"</span>, </span>
 <span>                         build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><code>devtools</code> may require the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">here</a>.</p>
-<p>For the latest development version:</p>
+<p><code>devtools</code> may require a working development environment. Further details around the installation of <code>devtools</code> can be found <a href="https://www.r-project.org/nosvn/pandoc/devtools.html" class="external-link">here</a>.</p>
+<ul>
+<li>For Windows, that will involve the downloading and installation of Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">here</a>.</li>
+<li>For Mac OS, that may involve installing Xcode from teh Mac App Store.</li>
+<li>For Linux, that may involve installing a compiler and various development libraries, depending on the specific version of Linux.</li>
+</ul>
+<p>To install the latest development version of <code>PITcleanr</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"KevinSee/PITcleanr@develop"</span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, the <code>PITcleanr</code> compendium can be downloaded as a zip file from from this URL: <a href="https://github.com/KevinSee/PITcleanr/archive/master.zip" class="external-link uri">https://github.com/KevinSee/PITcleanr/archive/master.zip</a> Once extracted, the functions can be sourced individually, or a user can build the R package locally.</p>
 <p>Be sure to use the <code>build_vignettes = TRUE</code> argument, as this will build all of the vignettes (i.e., user manuals) that are included with the package. Further instructions on how to use <code>PITcleanr</code> can be found in the vignettes, which can be accessed using:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/browseVignettes.html" class="external-link">browseVignettes</a></span><span class="op">(</span>package <span class="op">=</span> <span class="st">"PITcleanr"</span><span class="op">)</span></span></code></pre></div>
-<!-- ## Compressing PTAGIS Detection Data --><!-- ```{r set-ptagis-file, echo = F} --><!-- library(PITcleanr) --><!-- ptagis_file = system.file("extdata",  --><!--                           "TUM_Chinook_2015.csv",  --><!--                           package = "PITcleanr", --><!--                           mustWork = TRUE) --><!-- ``` --><!-- ```{r, eval = T, child = "vignettes/compress_data.Rmd"} --><!-- ``` --><!-- ## Other Functionality --><!-- `PITcleanr` contains lots of additional functionality to help users summarize and further analyze the compressed PTAGIS observations. Find more details in the various vignettes. -->
 </div>
 <div class="section level2">
 <h2 id="authors">Authors<a class="anchor" aria-label="anchor" href="#authors"></a>
