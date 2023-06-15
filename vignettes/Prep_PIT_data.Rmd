@@ -127,7 +127,9 @@ In our Tumwater Dam Spring Chinook Salmon example, the `compress()` function has
 
 # Parent-Child Table
 
-A parent-child table describes the relationship between detection sites, showing possible movement paths of the tagged fish. Tags must move from a parent site to a child site (although they may not necessarily be detected at either). Graphically, this can be displayed using the `plotNodes()` function.
+A parent-child table describes the relationship between detection sites, showing possible movement paths of the tagged fish. Tags must move from a parent site to a child site (although they may not necessarily be detected at either). For much more information on constructing parent-child tables, please see the [parent-child vignette](parent_child.html). 
+
+Graphically, these relationships can be displayed using the `plotNodes()` function.
 
 ```{r}
 plotNodes(parent_child)
