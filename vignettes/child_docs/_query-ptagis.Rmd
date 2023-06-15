@@ -73,7 +73,9 @@ Under "Report Message Name:" near the bottom, name the query something appropria
 * Export filter details: unchecked
 * Remove extra column: Yes
 
-And click "Export", again. `PITcleanr` includes an example of PTAGIS output for the Tumwater Chinook tags from 2015. Using similar code (`system.file`), the user can set the file path to this file, ans store it as a new object `ptagis_file`.
+And click "Export", again. 
+
+`PITcleanr` includes several example files to help users understand the appropriate format of certain files, and to provide demonstrations of various functions. The `system.file` function locates the file path to the subdirectory and file contained with a certain package. One such example is PTAGIS output for the Tumwater Chinook tags from 2015. Using similar code (`system.file`), the user can set the file path to this file, and store it as a new object `ptagis_file`.
 
 ```{r}
 ptagis_file = system.file("extdata", 
@@ -86,7 +88,7 @@ Alternatively, if the user has run a query from PTAGIS as described above, they 
 
 ```{r, eval = F}
 # As an example, set path to PTAGIS query output
-ptagis_file = "C:/Users/usernamehere/Downloads/TUM_Chinook_2015.csv"
+ptagis_file = "C:/Users/USER_NAME_HERE/Downloads/TUM_Chinook_2015.csv"
 
 ```
 
@@ -153,7 +155,27 @@ tum_2015_mrr <- queryMRRDataFile("NBD15065.TUM")
 
 Depending on how comprehensive that MRR data file is, a user might filter this data.frame for Spring Chinook by focusing on the species run rear type of "11", and tags that were not collected for broodstock, or otherwise killed. An example of some of the data contained in MRR files like this is shown below.
 
-```{r}
+```{r eval = F}
+tum_2015_mrr |> 
+    # filter for Spring Chinook tags
+  filter(str_detect(species_run_rear_type, 
+                    "^11"),
+         # filter out fish removed for broodstock collection
+         str_detect(conditional_comments,
+                    "BR",
+                    negate = T),
+         # filter out fish with other mortality
+         str_detect(conditional_comments,
+                    "[:space:]M[:space:]",
+                    negate = T),
+         str_detect(conditional_comments,
+                    "[:space:]M$",
+                    negate = T)) |> 
+  slice(1:10)
+```
+
+
+```{r echo = F}
 tum_2015_mrr |> 
     # filter for Spring Chinook tags
   filter(str_detect(species_run_rear_type, 
