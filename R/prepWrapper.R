@@ -49,7 +49,7 @@ prepWrapper = function(compress_obs = NULL,
     (!is.null(compress_obs)) | (!is.null(cth_file) & !is.null(configuration))
   })
 
-  if(add_tag_detects & is.null(cth_file)) {
+  if(add_tag_detects & is.null(cth_file) & is.null(compress_obs)) {
     stop("Original detection file needed to add tag detections.")
   }
 
