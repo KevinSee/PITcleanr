@@ -60,7 +60,7 @@ readCTH = function(cth_file = NULL,
       observations <-
         readr::read_csv(cth_file,
                         show_col_types = F) %>%
-        janitor::clean_names() |>
+        janitor::clean_names() %>%
         dplyr::select(dplyr::all_of(req_col_nms),
                       dplyr::any_of(sug_col_nms),
                       dplyr::everything())
@@ -76,14 +76,14 @@ readCTH = function(cth_file = NULL,
         max()
 
       if(n_colons == 2) {
-        observations <- observations |>
+        observations <- observations %>%
           dplyr::mutate(
             dplyr::across(
               dplyr::any_of(c("event_date_time_value",
                               "event_release_date_time_value")),
               lubridate::mdy_hms))
       } else if(n_colons == 1) {
-        observations <- observations |>
+        observations <- observations %>%
           dplyr::mutate(
             dplyr::across(
               dplyr::any_of(c("event_date_time_value",
@@ -95,7 +95,7 @@ readCTH = function(cth_file = NULL,
 
       # fix issues when Excel has converted antenna_id to numeric instead of character
       # all antenna IDs should be at least 2 characters for PTAGIS data
-      observations <- observations |>
+      observations <- observations %>%
         dplyr::mutate(
           dplyr::across(
             antenna_id,
@@ -111,19 +111,19 @@ readCTH = function(cth_file = NULL,
       observations <-
         readr::read_csv(cth_file,
                         show_col_types = F) %>%
-        janitor::clean_names() |>
+        janitor::clean_names() %>%
         dplyr::rename(tag_code = tag,
                       event_site_code_value = site,
                       event_date_time_value = detected,
                       antenna_id = reader,
-                      antenna_number = antenna) |>
+                      antenna_number = antenna) %>%
         dplyr::mutate(event_type_name = "Observation",
                       event_site_type_description = "Instream Remote Detection System",
                       antenna_group_configuration_value = 100,
-                      cth_count = 1) |>
+                      cth_count = 1) %>%
         dplyr::select(dplyr::any_of(req_col_nms),
                       dplyr::any_of(sug_col_nms),
-                      dplyr::everything()) |>
+                      dplyr::everything()) %>%
         dplyr::arrange(tag_code,
                        event_date_time_value)
 
@@ -131,13 +131,13 @@ readCTH = function(cth_file = NULL,
       observations[,req_col_nms[!req_col_nms %in% names(observations)]] <- NA
       # observations[,sug_col_nms[!sug_col_nms %in% names(observations)]] <- NA
 
-      observations <- observations |>
+      observations <- observations %>%
         dplyr::mutate(
           dplyr::across(
             antenna_id,
             as.character))
 
-      observations <- observations |>
+      observations <- observations %>%
         dplyr::select(dplyr::all_of(req_col_nms),
                       dplyr::any_of(sug_col_nms))
 
@@ -146,9 +146,9 @@ readCTH = function(cth_file = NULL,
         # observations <-
         #   suppressWarnings(readr::read_table(cth_file,
         #                                      col_names = F,
-        #                                      show_col_types = F)) |>
-        #   dplyr::filter(stringr::str_detect(X1, "TAG")) |>
-        #   dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(X4, X5))) |>
+        #                                      show_col_types = F)) %>%
+        #   dplyr::filter(stringr::str_detect(X1, "TAG")) %>%
+        #   dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(X4, X5))) %>%
         #   dplyr::select(tag_code = X6,
         #                 antenna_id = X2,
         #                 antenna_number = X3,
@@ -156,11 +156,11 @@ readCTH = function(cth_file = NULL,
 
         first_tag_row <- suppressWarnings(readr::read_table(cth_file,
                                                             col_names = F,
-                                                            show_col_types = F)) |>
+                                                            show_col_types = F)) %>%
           dplyr::mutate(row_num = 1:n(),
-                        tag_rows = stringr::str_detect(X1, "^TAG")) |>
-          dplyr::filter(tag_rows) |>
-          dplyr::pull(row_num) |>
+                        tag_rows = stringr::str_detect(X1, "^TAG")) %>%
+          dplyr::filter(tag_rows) %>%
+          dplyr::pull(row_num) %>%
           min()
 
 
@@ -168,53 +168,53 @@ readCTH = function(cth_file = NULL,
           suppressWarnings(readr::read_table(cth_file,
                                              col_names = F,
                                              skip = first_tag_row - 1,
-                                             show_col_types = F)) |>
+                                             show_col_types = F)) %>%
           dplyr::filter(stringr::str_detect(X1, "^TAG"))
 
-        first_obs_row <- observations |>
-          dplyr::slice(1) |>
+        first_obs_row <- observations %>%
+          dplyr::slice(1) %>%
           dplyr::mutate(
             dplyr::across(
               dplyr::everything(),
               as.character))
 
-        dash_cnts <- first_obs_row |>
+        dash_cnts <- first_obs_row %>%
           stringr::str_count("/")
         date_column <- which(dash_cnts == 2)
 
-        colon_cnts <- first_obs_row |>
+        colon_cnts <- first_obs_row %>%
           stringr::str_count(":")
         time_column <- which(colon_cnts == 2)
 
-        tag_column <- first_obs_row |>
-          stringr::str_detect("^[:alnum:][:alnum:][:alnum:]\\.") |>
+        tag_column <- first_obs_row %>%
+          stringr::str_detect("^[:alnum:][:alnum:][:alnum:]\\.") %>%
           which()
 
         names(observations)[c(date_column, time_column, tag_column)] <- c("date", "time", "tag_code")
 
         if("X3" %in% names(observations)) {
-          observations <- observations |>
+          observations <- observations %>%
             dplyr::rename(antenna_number = X3)
         } else {
-          observations <- observations |>
+          observations <- observations %>%
             dplyr::mutate(antenna_number = NA_character_)
         }
 
-        observations <- observations |>
-          dplyr::rename(antenna_id = X2) |>
-          dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(date, time))) |>
+        observations <- observations %>%
+          dplyr::rename(antenna_id = X2) %>%
+          dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(date, time))) %>%
           dplyr::select(tag_code,
                         dplyr::starts_with("antenna"),
                         event_date_time_value)
 
       } else if(str_detect(cth_file, "\\.xlsx$")) {
         observations <-
-          readxl::excel_sheets(cth_file) |>
+          readxl::excel_sheets(cth_file) %>%
           purrr::map_df(.f = function(x) {
             readxl::read_excel(cth_file,
                                sheet = x)
-          }) |>
-          dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(`Scan Date`, `Scan Time`))) |>
+          }) %>%
+          dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(`Scan Date`, `Scan Time`))) %>%
           dplyr::select(tag_code = `HEX Tag ID`,
                         antenna_id = `Reader ID`,
                         antenna_number = `Antenna ID`,
@@ -226,8 +226,8 @@ readCTH = function(cth_file = NULL,
                                              delim = " ",
                                              col_names = F,
                                              col_select = c(1, 3, 5, 10, 17, 18, 38),
-                                             show_col_types = F)) |>
-          dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(X1, X3))) |>
+                                             show_col_types = F)) %>%
+          dplyr::mutate(event_date_time_value = lubridate::mdy_hms(paste(X1, X3))) %>%
           dplyr::select(tag_code = X38,
                         antenna_id = X17,
                         antenna_number = X18,
@@ -238,25 +238,25 @@ readCTH = function(cth_file = NULL,
       }
 
       # add a few other columns
-      observations <- observations |>
+      observations <- observations %>%
         dplyr::mutate(event_type_name = "Observation",
                       event_site_type_description = "Instream Remote Detection System",
                       antenna_group_configuration_value = 100,
-                      cth_count = 1) |>
+                      cth_count = 1) %>%
         dplyr::select(dplyr::any_of(req_col_nms),
                       dplyr::any_of(sug_col_nms),
-                      dplyr::everything()) |>
+                      dplyr::everything()) %>%
         dplyr::arrange(tag_code,
                        event_date_time_value)
 
       # determine site code based on file name
-      file_nm_strs <- stringr::str_split(cth_file, "/") |>
+      file_nm_strs <- stringr::str_split(cth_file, "/") %>%
         magrittr::extract2(1) %>%
-        magrittr::extract(length(.)) |>
-        stringr::str_split("_") |>
-        magrittr::extract2(1) |>
-        stringr::str_remove("\\.xlsx$") |>
-        stringr::str_remove("\\.log$") |>
+        magrittr::extract(length(.)) %>%
+        stringr::str_split("_") %>%
+        magrittr::extract2(1) %>%
+        stringr::str_remove("\\.xlsx$") %>%
+        stringr::str_remove("\\.log$") %>%
         stringr::str_remove("\\.csv$")
       n_alpha = stringr::str_count(file_nm_strs, "[:alpha:]")
       site_code <- file_nm_strs[which.max(n_alpha)]
@@ -266,21 +266,21 @@ readCTH = function(cth_file = NULL,
       # add any missing columns
       observations[,req_col_nms[!req_col_nms %in% names(observations)]] <- NA
 
-      observations <- observations |>
+      observations <- observations %>%
         dplyr::mutate(
           dplyr::across(
             antenna_id,
             as.character))
 
-      observations <- observations |>
+      observations <- observations %>%
         dplyr::select(dplyr::all_of(req_col_nms),
                       dplyr::any_of(sug_col_nms))
     }
 
   } else if(class(cth_file)[1] %in% c("spec_tbl_df", "tbl_df", "tbl", "data.frame")) {
     observations = cth_file %>%
-      dplyr::as_tibble() |>
-      janitor::clean_names() |>
+      dplyr::as_tibble() %>%
+      janitor::clean_names() %>%
       dplyr::select(dplyr::all_of(req_col_nms),
                     dplyr::any_of(sug_col_nms),
                     dplyr::everything())
@@ -297,14 +297,14 @@ readCTH = function(cth_file = NULL,
         max()
 
       if(n_colons == 2) {
-        observations <- observations |>
+        observations <- observations %>%
           dplyr::mutate(
             dplyr::across(
               dplyr::any_of(c("event_date_time_value",
                               "event_release_date_time_value")),
               lubridate::mdy_hms))
       } else if(n_colons == 1) {
-        observations <- observations |>
+        observations <- observations %>%
           dplyr::mutate(
             dplyr::across(
               dplyr::any_of(c("event_date_time_value",
@@ -317,7 +317,7 @@ readCTH = function(cth_file = NULL,
 
 
     if(class(observations$antenna_id) != "character") {
-      observations <- observations |>
+      observations <- observations %>%
         dplyr::mutate(
           dplyr::across(
             antenna_id,
@@ -326,7 +326,7 @@ readCTH = function(cth_file = NULL,
 
     # fix issues when Excel has converted antenna_id to numeric instead of character
     # all antenna IDs should be at least 2 characters for PTAGIS data
-    observations <- observations |>
+    observations <- observations %>%
       dplyr::mutate(
         dplyr::across(
           antenna_id,
@@ -342,10 +342,27 @@ readCTH = function(cth_file = NULL,
   }
 
   # filter out test tags
-  observations <- observations |>
-    dplyr::filter(stringr::str_detect(tag_code,
-                                      paste0("^", test_tag_prefix),
-                                      negate = T))
+  # collect all test tag codes
+  for(i in 1:length(test_tag_prefix)) {
+    if(i == 1) {
+      test_tags <- observations %>%
+        dplyr::filter(stringr::str_detect(tag_code,
+                                          paste0("^", test_tag_prefix[i]))) %>%
+        dplyr::pull(tag_code) %>%
+        unique()
+    } else {
+      test_tags <- c(test_tags,
+                     observations %>%
+                       dplyr::filter(stringr::str_detect(tag_code,
+                                                         paste0("^", test_tag_prefix[i]))) %>%
+                       dplyr::pull(tag_code) %>%
+                       unique())
+    }
+  }
+
+
+  observations <- observations %>%
+    dplyr::filter(!tag_code %in% test_tags)
 
   # fix issues when Excel has converted antenna_id to numeric instead of character
   # all antenna IDs should be at least 2 characters

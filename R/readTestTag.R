@@ -24,9 +24,27 @@ readTestTag <- function(cth_file = NULL,
                           file_type = file_type,
                           test_tag_prefix = NA)
 
-  test_tag_obs <- observations |>
-    dplyr::filter(stringr::str_detect(tag_code,
-                                      paste0("^", test_tag_prefix)))
+  # collect all test tag codes
+  for(i in 1:length(test_tag_prefix)) {
+    if(i == 1) {
+      test_tags <- observations %>%
+        dplyr::filter(stringr::str_detect(tag_code,
+                                          paste0("^", test_tag_prefix[i]))) %>%
+        dplyr::pull(tag_code) %>%
+        unique()
+    } else {
+      test_tags <- c(test_tags,
+                     observations %>%
+                       dplyr::filter(stringr::str_detect(tag_code,
+                                                         paste0("^", test_tag_prefix[i]))) %>%
+                       dplyr::pull(tag_code) %>%
+                       unique())
+    }
+  }
+
+
+  test_tag_obs <- observations %>%
+    dplyr::filter(tag_code %in% test_tags)
 
   return(test_tag_obs)
 
