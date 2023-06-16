@@ -69,13 +69,21 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extractTagObs</span><span class="op">(</span>cth_file <span class="op">=</span> <span class="cn">NULL</span>, file_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PTAGIS"</span>, <span class="st">"Biologic_csv"</span>, <span class="st">"raw"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">extractTagObs</span><span class="op">(</span></span>
+<span>  obs_file <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  obs_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"compressed"</span>, <span class="st">"cth"</span><span class="op">)</span>,</span>
+<span>  file_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PTAGIS"</span>, <span class="st">"Biologic_csv"</span>, <span class="st">"raw"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>cth_file</dt>
-<dd><p>is the path to the complete tag history file</p></dd>
+    <dl><dt>obs_file</dt>
+<dd><p>Either a data.frame of compressed detections (output of `compress()`), or the complete tag history file path and name (same format to `cth_file` argument in `readCTH()` function).</p></dd>
+
+
+<dt>obs_type</dt>
+<dd><p>what type of observation file is being fed in? `compressed` is the output of `compress()`, while `cth` is a raw complete tag history file path and name. Default is `compressed`.</p></dd>
 
 
 <dt>file_type</dt>
