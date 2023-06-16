@@ -4,10 +4,16 @@
 \alias{extractTagObs}
 \title{Tag Detections}
 \usage{
-extractTagObs(cth_file = NULL, file_type = c("PTAGIS", "Biologic_csv", "raw"))
+extractTagObs(
+  obs_file = NULL,
+  obs_type = c("compressed", "cth"),
+  file_type = c("PTAGIS", "Biologic_csv", "raw")
+)
 }
 \arguments{
-\item{cth_file}{is the path to the complete tag history file}
+\item{obs_file}{Either a data.frame of compressed detections (output of `compress()`), or the complete tag history file path and name (same format to `cth_file` argument in `readCTH()` function).}
+
+\item{obs_type}{what type of observation file is being fed in? `compressed` is the output of `compress()`, while `cth` is a raw complete tag history file path and name. Default is `compressed`.}
 
 \item{file_type}{describes the source of the complete tag history file.
 
