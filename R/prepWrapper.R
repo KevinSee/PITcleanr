@@ -56,8 +56,10 @@ prepWrapper = function(compress_obs = NULL,
 
   if(is.null(compress_obs)) {
     cat("Compressing detections\n")
-    compress_obs = compress(cth_file = cth_file,
-                            file_type = file_type,
+    raw_obs <- readCTH(cth_file = cth_file,
+                          file_type = file_type)
+
+    compress_obs = compress(raw_obs,
                             configuration = configuration,
                             ...)
   }
@@ -65,9 +67,13 @@ prepWrapper = function(compress_obs = NULL,
   if(is.null(start_node)) {
     cat("Determining starting node\n")
     node_order = try(buildNodeOrder(parent_child = parent_child))
-    start_node = node_order %>%
-      filter(node_order == 1) %>%
-      pull(node)
+    if(class(node_order)[1] == "try-error") {
+      start_node = NULL
+    } else {
+      start_node = node_order %>%
+        filter(node_order == 1) %>%
+        pull(node)
+    }
   }
 
   # filter all compressed observations before the min_obs_date
@@ -78,33 +84,41 @@ prepWrapper = function(compress_obs = NULL,
   }
 
   # filter all the compressed observations to start at the start_node
-  cat(paste("Filtering observations prior to", start_node, "\n"))
-  obs = compress_obs %>%
-    left_join(compress_obs %>%
-                filter(node == start_node,
-                       event_type_name %in% c("Mark", "Recapture")) %>%
-                group_by(tag_code) %>%
-                filter(min_det == min(min_det)) %>%
-                slice(1) %>%
-                summarise(start_date = min_det,
-                          .groups = "drop"),
-              by = "tag_code") %>%
-    left_join(compress_obs %>%
-                filter(node == start_node) %>%
-                group_by(tag_code) %>%
-                filter(min_det == min(min_det)) %>%
-                slice(1) %>%
-                summarise(min_root_date = min_det,
-                          .groups = "drop"),
-              by = "tag_code") %>%
-    mutate(start_date = if_else(is.na(start_date),
-                                min_root_date,
-                                start_date)) %>%
-    select(-min_root_date) %>%
-    filter(min_det >= start_date | is.na(start_date)) %>%
-    group_by(tag_code) %>%
-    mutate(slot = slot - min(slot) + 1) %>%
-    ungroup()
+  if(!is.null(start_node)) {
+    cat(paste("Filtering observations prior to", start_node, "\n"))
+
+    obs = compress_obs %>%
+      left_join(compress_obs %>%
+                  filter(node == start_node,
+                         event_type_name %in% c("Mark", "Recapture")) %>%
+                  group_by(tag_code) %>%
+                  filter(min_det == min(min_det)) %>%
+                  slice(1) %>%
+                  summarise(start_date = min_det,
+                            .groups = "drop"),
+                by = "tag_code") %>%
+      left_join(compress_obs %>%
+                  filter(node == start_node) %>%
+                  group_by(tag_code) %>%
+                  filter(min_det == min(min_det)) %>%
+                  slice(1) %>%
+                  summarise(min_root_date = min_det,
+                            .groups = "drop"),
+                by = "tag_code") %>%
+      mutate(start_date = if_else(is.na(start_date),
+                                  min_root_date,
+                                  start_date)) %>%
+      select(-min_root_date) %>%
+      filter(min_det >= start_date | is.na(start_date)) %>%
+      group_by(tag_code) %>%
+      mutate(slot = slot - min(slot) + 1) %>%
+      ungroup()
+  } else {
+    obs = compress_obs %>%
+      group_by(tag_code) %>%
+      mutate(start_date = min(mid_det)) %>%
+      ungroup()
+  }
 
   # determine which detections to keep
   cat("Determining which detections to retain\n")
@@ -113,17 +127,7 @@ prepWrapper = function(compress_obs = NULL,
                               max_obs_date = max_obs_date)
 
   if(add_tag_detects) {
-    ptagis_obs = PITcleanr::readCTH(ptagis_file)
-    tag_obs = ptagis_obs %>%
-      dplyr::left_join(obs %>%
-                         dplyr::select(tag_code,
-                                       start_date) %>%
-                         distinct(),
-                       by = "tag_code") %>%
-      dplyr::filter(event_date_time_value >= start_date |
-                      event_release_date_time_value >= start_date) %>%
-      dplyr::select(-start_date) %>%
-      PITcleanr::extractTagObs()
+    tag_obs <- extractTagObs(obs)
 
     keep_obs = keep_obs %>%
       dplyr::left_join(tag_obs,
