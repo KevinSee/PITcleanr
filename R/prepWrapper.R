@@ -47,7 +47,6 @@ prepWrapper = function(compress_obs = NULL,
 
   stopifnot(exprs = {
     (!is.null(compress_obs)) | (!is.null(cth_file) & !is.null(configuration))
-    !is.null(parent_child)
   })
 
   if(add_tag_detects & is.null(cth_file)) {
@@ -55,7 +54,7 @@ prepWrapper = function(compress_obs = NULL,
   }
 
   if(is.null(compress_obs)) {
-    cat("Compressing detections\n")
+    message("Compressing detections\n")
     raw_obs <- readCTH(cth_file = cth_file,
                           file_type = file_type)
 
@@ -64,8 +63,8 @@ prepWrapper = function(compress_obs = NULL,
                             ...)
   }
 
-  if(is.null(start_node)) {
-    cat("Determining starting node\n")
+  if(is.null(start_node) & !is.null(parent_child)) {
+    message("Determining starting node\n")
     node_order = try(buildNodeOrder(parent_child = parent_child))
     if(class(node_order)[1] == "try-error") {
       start_node = NULL
@@ -78,14 +77,14 @@ prepWrapper = function(compress_obs = NULL,
 
   # filter all compressed observations before the min_obs_date
   if(!is.null(min_obs_date)) {
-    cat(paste("Filtering observations prior to", format(lubridate::ymd(min_obs_date), "%b %d, %Y"), "\n"))
+    message(paste("Filtering observations prior to", format(lubridate::ymd(min_obs_date), "%b %d, %Y"), "\n"))
     compress_obs = compress_obs %>%
       filter(min_det >= lubridate::ymd(min_obs_date))
   }
 
   # filter all the compressed observations to start at the start_node
   if(!is.null(start_node)) {
-    cat(paste("Filtering observations prior to", start_node, "\n"))
+    message(paste("Filtering observations prior to", start_node, "\n"))
 
     obs = compress_obs %>%
       left_join(compress_obs %>%
@@ -116,15 +115,29 @@ prepWrapper = function(compress_obs = NULL,
   } else {
     obs = compress_obs %>%
       group_by(tag_code) %>%
-      mutate(start_date = min(mid_det)) %>%
+      mutate(start_date = min(min_det)) %>%
       ungroup()
   }
 
   # determine which detections to keep
-  cat("Determining which detections to retain\n")
+  message("Determining which detections to retain\n")
+  if(!is.null(parent_child)) {
   keep_obs = filterDetections(compress_obs = obs,
                               parent_child = parent_child,
                               max_obs_date = max_obs_date)
+  } else {
+    if(is.null(max_obs_date)) {
+      max_obs_date = (max(obs$max_det, na.rm = T) + lubridate::days(1)) %>%
+        format("%Y%m%d") %>%
+        as.character()
+    }
+
+    keep_obs <- obs %>%
+      mutate(auto_keep_obs = if_else(min_det <= lubridate::ymd(max_obs_date),
+                                     T, F),
+             user_keep_obs = if_else(min_det <= lubridate::ymd(max_obs_date),
+                                     T, F))
+  }
 
   if(add_tag_detects) {
     tag_obs <- extractTagObs(obs)
