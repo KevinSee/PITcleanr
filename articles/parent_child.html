@@ -175,7 +175,7 @@
 <span><span class="co"># focus on sites within Wenatchee subbasin, and drop a few sites we don't care about</span></span>
 <span><span class="va">sites_sf</span> <span class="op">&lt;-</span> <span class="va">sites_sf</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="co"># all sites in the Wenatchee have a river kilometer that starts with 754</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">rkm</span>, <span class="st">"^754."</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu">str_detect</span><span class="op">(</span><span class="va">rkm</span>, <span class="st">"^754."</span><span class="op">)</span>,</span>
 <span>         <span class="va">type</span> <span class="op">!=</span> <span class="st">"MRR"</span>,</span>
 <span>         <span class="va">site_code</span> <span class="op">!=</span> <span class="st">"LWE"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="va">site_code</span>,</span>
