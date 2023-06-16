@@ -83,10 +83,10 @@ buildConfig = function(node_assign = c("array",
 
   } else if(node_assign == "antenna") {
     configuration <- configuration %>%
-      dplyr::rowwise() |>
+      dplyr::rowwise() %>%
       dplyr::mutate(node = paste(site_code,
                                  antenna_id,
-                                 sep = "_")) |>
+                                 sep = "_")) %>%
       dplyr::ungroup()
 
   } else if(node_assign == "site") {
