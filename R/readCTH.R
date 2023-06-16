@@ -32,7 +32,8 @@ readCTH = function(cth_file = NULL,
                    file_type = c("PTAGIS",
                                  "Biologic_csv",
                                  "raw"),
-                   test_tag_prefix = "3E7") {
+                   test_tag_prefix = NULL) {
+                   # test_tag_prefix = "3E7") {
 
   stopifnot(!is.null(cth_file))
 
@@ -342,27 +343,30 @@ readCTH = function(cth_file = NULL,
   }
 
   # filter out test tags
-  # collect all test tag codes
-  for(i in 1:length(test_tag_prefix)) {
-    if(i == 1) {
-      test_tags <- observations %>%
-        dplyr::filter(stringr::str_detect(tag_code,
-                                          paste0("^", test_tag_prefix[i]))) %>%
-        dplyr::pull(tag_code) %>%
-        unique()
-    } else {
-      test_tags <- c(test_tags,
-                     observations %>%
-                       dplyr::filter(stringr::str_detect(tag_code,
-                                                         paste0("^", test_tag_prefix[i]))) %>%
-                       dplyr::pull(tag_code) %>%
-                       unique())
+  if(!is.null(test_tag_prefix)) {
+    # collect all test tag codes
+    for(i in 1:length(test_tag_prefix)) {
+      if(i == 1) {
+        test_tags <- observations %>%
+          dplyr::filter(stringr::str_detect(tag_code,
+                                            paste0("^", test_tag_prefix[i]))) %>%
+          dplyr::pull(tag_code) %>%
+          unique()
+      } else {
+        test_tags <- c(test_tags,
+                       observations %>%
+                         dplyr::filter(stringr::str_detect(tag_code,
+                                                           paste0("^", test_tag_prefix[i]))) %>%
+                         dplyr::pull(tag_code) %>%
+                         unique())
+      }
     }
+
+
+    observations <- observations %>%
+      dplyr::filter(!tag_code %in% test_tags)
+
   }
-
-
-  observations <- observations %>%
-    dplyr::filter(!tag_code %in% test_tags)
 
   # fix issues when Excel has converted antenna_id to numeric instead of character
   # all antenna IDs should be at least 2 characters

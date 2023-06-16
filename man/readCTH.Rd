@@ -7,7 +7,7 @@
 readCTH(
   cth_file = NULL,
   file_type = c("PTAGIS", "Biologic_csv", "raw"),
-  test_tag_prefix = "3E7"
+  test_tag_prefix = NULL
 )
 }
 \arguments{
