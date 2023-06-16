@@ -17,15 +17,12 @@ extractTagObs = function(cth_file = NULL,
 
   stopifnot(!is.null(cth_file))
 
-  observations = PITcleanr::readCTH(cth_file,
-                                    file_type = file_type)
-
-  tag_obs = PITcleanr::compress(observations,
-                                configuration = PITcleanr::buildConfig() %>%
-                                  dplyr::mutate(node = site_code)) %>%
+  tag_obs = PITcleanr::compress(cth_file = cth_file,
+                                file_type = file_type) %>%
     dplyr::group_by(tag_code) %>%
     dplyr::summarise(tag_detects = paste(node,
                                          collapse = " "))
+
 
   return(tag_obs)
 
