@@ -13,8 +13,6 @@ summarizeTagData(
 )
 }
 \arguments{
-\item{filtered_obs}{Tibble returned by `filterDetections()`.}
-
 \item{bio_data}{Dataframe containing `tag_code` and relevant biological data from each fish, often gathered when they were tagged.}
 
 \item{file_name}{if `save_csv` is `TRUE`, this is the file path and name, with .csv extension, where the file should be save.}

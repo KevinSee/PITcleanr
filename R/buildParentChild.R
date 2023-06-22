@@ -17,7 +17,7 @@
 #' @importFrom magrittr %<>%
 #' @export
 #' @return NULL
-#' @examples createParentChildDf()
+#' @examples #buildParentChild()
 
 
 buildParentChild = function(sites_sf = NULL,

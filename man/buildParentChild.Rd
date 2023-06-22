@@ -25,7 +25,7 @@ Default is `FALSE`.}
 Build a parent-child table based on site locations and the flowlines from NHDPlusV2 layer.
 }
 \examples{
-createParentChildDf()
+#buildParentChild()
 }
 \author{
 Kevin See
