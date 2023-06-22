@@ -22,7 +22,7 @@ summarizeTagData = function(filtered_obs = NULL,
 
   stopifnot(!is.null(filtered_obs))
 
-  tag_summ = estimateSpawnLoc(filtered_obs,
+  tag_summ = estimateFinalLoc(filtered_obs,
                               ...)
 
   if(!is.null(bio_data)) {

@@ -1,21 +1,21 @@
-#' @title Final spawning location
+#' @title Final location
 #'
-#' @description Based on cleaned capture history, determines further upstream location of each tag. Assumption is that this is the spawning location.
+#' @description Based on cleaned capture history, determines furthest location of each tag along possible paths.
 #'
 #' @author Kevin See
 #'
 #' @param filtered_obs Tibble returned by `filterDetections()`.
-#' @param spawn_site Should the PTAGIS site code of spawning detection be returned? Default is `FALSE`.
+#' @param incl_site_code Should the PTAGIS site code of final location be returned? Default is `FALSE`.
 #' @inheritParams compress
 #'
 #'
 #' @import dplyr tidyr
 #' @export
 #' @return NULL
-#' @examples estimateSpawnLoc()
+#' @examples #estimateFinalLoc()
 
-estimateSpawnLoc = function(filtered_obs = NULL,
-                            spawn_site = F,
+estimateFinalLoc = function(filtered_obs = NULL,
+                            incl_site_code = F,
                             cth_file = NULL,
                             file_type = c("PTAGIS",
                                           "Biologic_csv",
@@ -34,7 +34,7 @@ estimateSpawnLoc = function(filtered_obs = NULL,
   #                                  user_keep_obs))
 
   # filter for observations that should be kept
-  spawn_loc = filtered_obs %>%
+  final_loc = filtered_obs %>%
     filter(user_keep_obs) %>%
     group_by(tag_code) %>%
     filter(node_order == max(node_order)) %>%
@@ -42,7 +42,7 @@ estimateSpawnLoc = function(filtered_obs = NULL,
     slice(1) %>%
     ungroup() %>%
     select(tag_code,
-           spawn_node = node,
+           final_node = node,
            event_type_name,
            min_det,
            max_det) %>%
@@ -55,16 +55,16 @@ estimateSpawnLoc = function(filtered_obs = NULL,
               by = "tag_code") %>%
     arrange(tag_code)
 
-  if(spawn_site) {
+  if(incl_site_code) {
     stopifnot(!is.null(cth_file))
 
     observations = readCTH(cth_file,
-                         file_type = file_type)
+                           file_type = file_type)
 
-    spawn_loc = spawn_loc %>%
+    final_loc = final_loc %>%
       left_join(observations %>%
                   select(tag_code, event_type_name,
-                         spawn_site = event_site_code_value,
+                         final_site = event_site_code_value,
                          matches('date_time_value')) %>%
                   tidyr::pivot_longer(cols = matches('date_time_value'),
                                       names_to = "name",
@@ -73,9 +73,9 @@ estimateSpawnLoc = function(filtered_obs = NULL,
                   select(-name),
                 by = c("tag_code", "event_type_name", "max_det")) %>%
       select(tag_code,
-             starts_with("spawn"),
+             starts_with("final"),
              everything())
   }
 
-  return(spawn_loc)
+  return(final_loc)
 }
