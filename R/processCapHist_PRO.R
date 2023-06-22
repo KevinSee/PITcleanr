@@ -12,7 +12,6 @@
 #' @inheritParams writeCapHistOutput
 #'
 #' @import dplyr lubridate
-#' @export
 #' @return list
 #' @examples processCapHist_PRO()
 

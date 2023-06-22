@@ -9,7 +9,6 @@
 #' @inheritParams writeCapHistOutput
 #'
 #' @import dplyr lubridate
-#' @export
 #' @return NULL
 #' @examples processCapHist_TUM()
 
