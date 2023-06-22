@@ -17,7 +17,7 @@ findDwnstrmHydroseg(hydro_id, flow_lines, hydro_pause_ids)
 character of the nearest downstream HY segment to starting segment that falls within a list of possible stopping segments.
 }
 \description{
-Find Hydro Segment of Downstream Site
+Based on NHDPlus layer (`flow_lines`) that includes the hydro sequence of the next downstream segment, this function systematically moves downstream, identifying the next downstream hydro sequence, until it reaches a pre-determined hydro sequence number, at which point it stops.
 }
 \author{
 Kevin See

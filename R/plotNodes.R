@@ -15,7 +15,7 @@
 #' @import dplyr tidyr tidygraph ggraph
 #' @importFrom rlang set_names
 #' @export
-#' @return
+#' @return a ggplot object
 
 plotNodes = function(parent_child = NULL,
                      layout = "auto",

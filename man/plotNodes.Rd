@@ -27,6 +27,9 @@ function, a matrix, or a data.frame (see Details)}
 
 \item{...}{other arguments for `geom_edge_diagonal`, `geom_node_point()` or `geom_node_label()`.}
 }
+\value{
+a ggplot object
+}
 \description{
 Create a schematic plot showing the connections
 between each detection node in a parent-child table.

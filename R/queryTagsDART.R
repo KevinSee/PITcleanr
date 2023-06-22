@@ -12,7 +12,7 @@
 #' @importFrom readr read_csv
 #' @export
 #' @return NULL
-#' @examples
+#' @examples queryTagsDART("Chinook", "GRA", 2019)
 #'
 queryTagsDART <- function(species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
                           loc = c('GRA', 'PRA'),
