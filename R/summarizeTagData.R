@@ -4,7 +4,7 @@
 #'
 #' @author Kevin See
 #'
-#' @inheritParams estimateSpawnLoc
+#' @inheritParams estimateFinalLoc
 #' @param bio_data Dataframe containing `tag_code` and relevant biological data from each fish, often gathered when they were tagged.
 #' @param save_csv should the resulting dataframe be saved as a csv file? Default value is `FALSE`.
 #' @param file_name if `save_csv` is `TRUE`, this is the file path and name, with .csv extension, where the file should be save.
