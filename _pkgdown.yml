@@ -68,7 +68,7 @@ reference:
     Functions to help the user manipulate and summarize data
 - contents:
   - addDirection
-  - estimateSpawnLoc
+  - estimateFinalLoc
   - estNodeEff
   - filterDetections
   - prepWrapper
