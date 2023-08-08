@@ -7,7 +7,7 @@
 \url{http://www.ptagis.org}
 }
 \usage{
-buildConfig(node_assign = c("array", "site", "antenna"), node_2_dmu = FALSE)
+buildConfig(node_assign = c("array", "site", "antenna"), nodes_2_dmu = FALSE)
 }
 \arguments{
 \item{node_assign}{should nodes by assigned by \code{array}, \code{site} or \code{antenna}? Default is \code{array}.}

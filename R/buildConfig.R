@@ -15,10 +15,8 @@
 #' @return NULL
 #' @examples buildConfig()
 #'
-buildConfig = function(node_assign = c("array",
-                                       "site",
-                                       "antenna"),
-                       node_2_dmu = FALSE) {
+buildConfig = function(node_assign = c("array", "site", "antenna"),
+                       nodes_2_dmu = FALSE) {
 
   node_assign = match.arg(node_assign)
 
