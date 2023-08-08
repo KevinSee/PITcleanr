@@ -7,10 +7,13 @@
 \url{http://www.ptagis.org}
 }
 \usage{
-buildConfig(node_assign = c("array", "site", "antenna"))
+buildConfig(node_assign = c("array", "site", "antenna"), node_2_dmu = FALSE)
 }
 \arguments{
 \item{node_assign}{should nodes by assigned by \code{array}, \code{site} or \code{antenna}? Default is \code{array}.}
+
+\item{nodes_2_dmu}{if \code{node_assign = array} should nodes be assigned downstream (_D), middle (_M), and
+upstream (_U) suffixes, rather than the default _A0 and _B0.}
 }
 \description{
 Compile metadata from all MRR and interogation sites from PTAGIS
