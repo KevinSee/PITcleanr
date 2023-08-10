@@ -7,10 +7,18 @@
 \url{http://www.ptagis.org}
 }
 \usage{
-buildConfig(node_assign = c("array", "site", "antenna"))
+buildConfig(
+  node_assign = c("array", "site", "antenna"),
+  array_suffix = c("A0B0", "UD", "UMD")
+)
 }
 \arguments{
 \item{node_assign}{should nodes by assigned by \code{array}, \code{site} or \code{antenna}? Default is \code{array}.}
+
+\item{array_suffix}{if \code{node_assign = "array"}, should nodes uses the suffixes of _A0 & _B0 (\code{A0B0}),
+_U & _D (\code{UD}), or _U, _M, & _D (\code{UMD}) to denote upstream, middle, and downstream arrays, respectively.
+Default is \code{A0B0}. If \code{array_suffix = "A0B0"} or \code{array_suffix = "UD"}, the middle array is grouped
+with the upstream array.}
 }
 \description{
 Compile metadata from all MRR and interogation sites from PTAGIS
