@@ -14,7 +14,7 @@
 #' @importFrom magrittr %<>%
 #' @return NULL
 #' @export
-#' @examples addParentChildNodes()
+#' @examples addParentChildNodes_LGR()
 
 addParentChildNodes_LGR = function(parent_child = NULL,
                                    configuration = NULL) {
