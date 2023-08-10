@@ -18,7 +18,7 @@ child locations now refer to nodes, not sites. This function is specific to Lowe
 and the Snake River; for other cases see `addParentChildNodes()`.
 }
 \examples{
-addParentChildNodes()
+addParentChildNodes_LGR()
 }
 \author{
 Kevin See and Ryan Kinzer
