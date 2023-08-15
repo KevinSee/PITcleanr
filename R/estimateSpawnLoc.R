@@ -1,4 +1,4 @@
-#' @title Final spawning location - LGR
+#' @title Final spawning location
 #'
 #' @description Based on cleaned capture history, determines further upstream location of each tag. Assumption is that this is the spawning location.
 #'
@@ -12,11 +12,11 @@
 #' @import dplyr tidyr
 #' @export
 #' @return NULL
-#' @examples estimateSpawnLoc_LGR()
+#' @examples estimateSpawnLoc()
 
-estimateSpawnLoc_LGR = function(filtered_obs = NULL,
-                                spawn_site = F,
-                                ptagis_file = NULL) {
+estimateSpawnLoc = function(filtered_obs = NULL,
+                            spawn_site = F,
+                            ptagis_file = NULL) {
 
   stopifnot(!is.null(filtered_obs))
 
