@@ -5,9 +5,9 @@
 #' @author Kevin See
 #'
 #' @param node_assign should nodes by assigned by \code{array}, \code{site} or \code{antenna}? Default is \code{array}.
-#' @param array_suffix if \code{node_assign = "array"}, should nodes uses the suffixes of _A0 & _B0 (\code{A0B0}),
-#' _U & _D (\code{UD}), or _U, _M, & _D (\code{UMD}) to denote upstream, middle, and downstream arrays, respectively.
-#' Default is \code{A0B0}. If \code{array_suffix = "A0B0"} or \code{array_suffix = "UD"}, the middle array is grouped
+#' @param array_suffix if \code{node_assign = "array"}, should nodes uses the suffixes of _U & _D (\code{UD}),
+#' _U, _M, & _D (\code{UMD}), or _A0 & _B0 (\code{A0B0}) to denote upstream, middle, and downstream arrays, respectively.
+#' Default is \code{UD}. If \code{array_suffix = "UD"} or \code{array_suffix = "A0B0"}, the middle array is grouped
 #' with the upstream array.
 #'
 #' @source \url{http://www.ptagis.org}
@@ -20,9 +20,9 @@
 buildConfig = function(node_assign = c("array",
                                        "site",
                                        "antenna"),
-                       array_suffix = c("A0B0",
-                                        "UD",
-                                        "UMD")) {
+                       array_suffix = c("UD",
+                                        "UMD",
+                                        "A0B0")) {
 
   node_assign = match.arg(node_assign)
 
@@ -84,14 +84,6 @@ buildConfig = function(node_assign = c("array",
              -node_site_D)
 
     # change node suffixes according to array_suffix
-    if(array_suffix == "A0B0") {
-      configuration = configuration %>%
-        mutate(node = case_when(
-          stringr::str_detect(node, "_U$") ~ stringr::str_replace(node, "_U$", "_A0"),
-          stringr::str_detect(node, "_M$") ~ stringr::str_replace(node, "_M$", "_A0"),
-          stringr::str_detect(node, "_D$") ~ stringr::str_replace(node, "_D$", "_B0"),
-          TRUE ~ node))
-    }
     if(array_suffix == "UD") {
       configuration = configuration %>%
         mutate(node = case_when(
@@ -101,7 +93,14 @@ buildConfig = function(node_assign = c("array",
     if(array_suffix == "UMD") {
       configuration = configuration
     }
-    # end if node_assign == "array"
+    if(array_suffix == "A0B0") {
+      configuration = configuration %>%
+        mutate(node = case_when(
+          stringr::str_detect(node, "_U$") ~ stringr::str_replace(node, "_U$", "_A0"),
+          stringr::str_detect(node, "_M$") ~ stringr::str_replace(node, "_M$", "_A0"),
+          stringr::str_detect(node, "_D$") ~ stringr::str_replace(node, "_D$", "_B0"),
+          TRUE ~ node))
+    } # end if node_assign == "array"
   } else if(node_assign == "antenna") {
     configuration <- configuration %>%
       dplyr::rowwise() %>%
