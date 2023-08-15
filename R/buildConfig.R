@@ -25,6 +25,7 @@ buildConfig = function(node_assign = c("array",
                                         "A0B0")) {
 
   node_assign = match.arg(node_assign)
+  array_suffix = match.arg(array_suffix)
 
   config_all = PITcleanr::queryPtagisMeta()
 
