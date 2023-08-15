@@ -26,13 +26,13 @@ addParentChildNodes = function(parent_child = NULL,
     left_join(configuration %>%
                 select(node) %>%
                 distinct() %>%
-                mutate(site_code = if_else(grepl("D$", node) &
+                mutate(site_code = if_else(grepl("_D$", node) &
                                              nchar(node) >= 5,
-                                           str_remove(node, "D"),
+                                           str_remove(node, "_D"),
                                            node),
-                       site_code = if_else(grepl("U$", site_code) &
+                       site_code = if_else(grepl("_U$", site_code) &
                                              nchar(site_code) >= 5,
-                                           str_remove(site_code, "U"),
+                                           str_remove(site_code, "_U"),
                                            site_code)),
               by = "site_code") %>%
     distinct() %>%
