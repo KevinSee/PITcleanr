@@ -55,8 +55,8 @@ estNodeEff = function(capHist_proc = NULL,
                     #   unlist()
 
                     # if interested in an upstream array, use detections at downstream array as well to estimate efficiency
-                    if(grepl('U$', x)) {
-                      node_vec = c(node_vec, stringr::str_replace(x, 'U$', 'D'))
+                    if(grepl('_U$', x)) {
+                      node_vec = c(node_vec, stringr::str_replace(x, '_U$', '_D'))
                     }
 
                     # calculate node efficiency and estimate tags above that node
