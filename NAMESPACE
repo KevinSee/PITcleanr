@@ -2,7 +2,6 @@
 
 export(addDirection)
 export(addParentChildNodes)
-export(addParentChildNodes_LGR)
 export(buildConfig)
 export(buildNodeGraph)
 export(buildNodeOrder)
