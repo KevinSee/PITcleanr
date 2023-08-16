@@ -2,21 +2,29 @@
 % Please edit documentation in R/queryTagMeta.R
 \name{queryTagMeta}
 \alias{queryTagMeta}
-\title{PTAGIS MRR sites}
+\title{PTAGIS Meta Data}
 \source{
-\url{http://www.ptagis.org}
+\url{http://api.ptagis.org}
 }
 \usage{
-queryTagMeta(tagCode = NULL)
+queryTagMeta(
+  tag_code = NULL,
+  api_key = NULL,
+  type = c(NA, "mark", "recapture", "recovery", "observation")
+)
 }
 \arguments{
-\item{tagCode}{PTAGIS tag code}
+\item{tag_code}{PTAGIS tag code}
+
+\item{api_key}{PTAGIS API key, given to individual users}
+
+\item{type}{one of `mark`, `recapture`, `recovery`, or `observation`. If one is specified, only data about evernts of that type are returned. The defualt, `NA`, will return data about all events for that tag.}
 }
 \value{
-From PTAGIS: WARNING: this feature has been disabled. Contact PTAGIS for more info. Gets mark event information for a given tag code.
+Gets data about all events for a given tag code.
 }
 \description{
-Query and download mark data for one tag from PTAGIS
+Query and download event metadata for one tag from PTAGIS. In the interest of not overwhelming PTAGIS with data requests, this function should not be used to query more than a thousand tags a day and there should be a couple of seconds between calls. If a user is looking for more than that, using the advanced reporting system in PTAGIS is the best option at this time.
 }
 \examples{
 queryTagMeta("3D9.1C2D929849")
