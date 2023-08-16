@@ -55,9 +55,10 @@ queryTagMeta = function(tag_code = NULL,
                         task = 'query data from PTAGIS')
 
   # parse the response
+  parsed = httr::content(web_req,
+                         'parsed')
+
   if(!is.na(type)) {
-    parsed = httr::content(web_req,
-                           'parsed')
     if(length(parsed[[1]]) == 1) {
       parsed <- parsed %>%
         stack() %>%
@@ -93,8 +94,7 @@ queryTagMeta = function(tag_code = NULL,
     }
 
   } else {
-    parsed <- httr::content(web_req,
-                            'parsed') %>%
+    parsed <- parsed %>%
       map(.f = function(x) {
         x %>%
           stack() %>%
