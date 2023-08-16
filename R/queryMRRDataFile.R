@@ -37,14 +37,14 @@ queryMRRDataFile = function(file_nm = NULL,
     }
     doc <- XML::xmlParse(my_content)
     col_nms <- XML::xmlToDataFrame(nodes = XML::getNodeSet(doc, "//DetailProjectDefinedField")) %>%
-      as_tibble()
+      dplyr::as_tibble()
     tag_data <- XML::xmlToDataFrame(nodes = XML::getNodeSet(doc, "//MRREvent")) %>%
-      as_tibble()
+      dplyr::as_tibble()
     names(tag_data)[stringr::str_detect(names(tag_data), "PDV")] <- col_nms$Label[match(names(tag_data)[stringr::str_detect(names(tag_data), "PDV")], col_nms$PDVColumn)]
 
     if(text_only) {
       txt_df <-
-        tibble(X1 = paste(names(tag_data),
+        dplyr::tibble(X1 = paste(names(tag_data),
                           collapse = "\t")) |>
         bind_rows(tidyr::unite(tag_data,
                                col = "X1",
@@ -144,12 +144,16 @@ queryMRRDataFile = function(file_nm = NULL,
           dplyr::contains("date"),
           lubridate::mdy_hm))
 
+    if(! "release_date" %in% names(meta_data) & "tag_date" %in% names(meta_data)) {
+      meta_data$release_date = meta_data$tag_date
+    }
+
     # pull out tag data
     tag_data <-
       text_file |>
-      slice(first_tag_row:last_tag_row) |>
+      dplyr::slice(first_tag_row:last_tag_row) |>
       dplyr::mutate(split_text = stringr::str_split(X1, "[:space:][:space:]+")) |>
-      dplyr::mutate(split_text_df = map(split_text,
+      dplyr::mutate(split_text_df = purrr::map(split_text,
                                         .f = function(x) {
                                           if(length(x) == 3) {
                                             dplyr::tibble(id = x[1],
@@ -161,7 +165,7 @@ queryMRRDataFile = function(file_nm = NULL,
                                                               ~ as.numeric(.) |>
                                                                 suppressWarnings()))
                                           } else if(length(x) == 4) {
-                                            if(str_detect(x[4], "^\\|")) {
+                                            if(stringr::str_detect(x[4], "^\\|")) {
                                               x[4] <- paste0(x[3], x[4])
                                               x[3] <- NA_real_
                                             }
@@ -185,8 +189,20 @@ queryMRRDataFile = function(file_nm = NULL,
 
     # extract which dates match which tags
     dates <-
-      text_file |>
-      filter(stringr::str_detect(X1, "^V"))
+      tryCatch(text_file |>
+                 filter(stringr::str_detect(X1, "^V")),
+               error =
+                 function(cond) {
+                   message("Error message:")
+                   message(cond)
+                   return(dplyr::tibble(X1 = NULL))
+                 },
+               warning =
+                 function(cond) {
+                   message("Warning message:")
+                   message(cond)
+                   return(dplyr::tibble(X1 = NULL))
+                 })
 
     if(nrow(dates) > 0) {
       dates <-
