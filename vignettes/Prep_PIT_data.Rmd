@@ -137,7 +137,7 @@ plotNodes(parent_child)
 
 The initial parent-child table only contains entire sites. However, in our configuration file we have defined the nodes to be distinct arrays (e.g. rows of antennas), and most sites in this example contain multiple arrays (and therefore two nodes). We can expand the parent-child table by using the configuration file, and the `addParentChildNodes()` function. The graph of nodes expands.
 
-Note that in `PITcleanr`'s default settings, nodes that end in `B0` are generally the downstream array, while nodes that end in `A0` are the upstream array. For more information about that, see the [configuration files](configuration_files.html) vignette. 
+Note that in `PITcleanr`'s default settings, nodes that end in `_D` are generally the downstream array, while nodes that end in `_U` are the upstream array. For more information about that, see the [configuration files](configuration_files.html) vignette. 
 
 ```{r}
 parent_child_nodes <- addParentChildNodes(parent_child = parent_child,
@@ -201,7 +201,7 @@ comp_filter <- filterDetections(compress_obs = comp_obs,
 
 ```
 
-If a tag fails to to meet that assumption (e.g. at least one direction is `unknown`), the `user_keep_obs` column will be `NA` for all observations of that tag. The `auto_keep_obs` column is `PITcleanr`'s best guess as to which detections should be kept. This guess is based on the assumption that the last and furthest forward-moving detection should be kept, and all detections along that movement path should be kept, while dropping others. Below is an example of tag that fails to meet the one-way travel assumption, and which observations `PITcleanr` suggests should be kept (keep the detection on CHLB0 and drop the one on WTLA0). 
+If a tag fails to to meet that assumption (e.g. at least one direction is `unknown`), the `user_keep_obs` column will be `NA` for all observations of that tag. The `auto_keep_obs` column is `PITcleanr`'s best guess as to which detections should be kept. This guess is based on the assumption that the last and furthest forward-moving detection should be kept, and all detections along that movement path should be kept, while dropping others. Below is an example of tag that fails to meet the one-way travel assumption, and which observations `PITcleanr` suggests should be kept (keep the detection on CHL_D and drop the one on WTL_U). 
 
 ```{r}
 comp_filter |>
