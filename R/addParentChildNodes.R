@@ -7,10 +7,9 @@
 #' @author Kevin See
 #'
 #' @param parent_child dataframe produced by `buildParentChild()`.
-#' @param configuration a configuration dataframe, such as one built by `buildmy_config()`.
+#' @param configuration a configuration dataframe, such as one built by `buildConfig()`.
 #'
-#' @import dplyr tidyr
-#' @importFrom magrittr %<>%
+#' @import dplyr tidyr stringr
 #' @return NULL
 #' @export
 #' @examples addParentChildNodes()
@@ -26,17 +25,17 @@ addParentChildNodes = function(parent_child = NULL,
     left_join(configuration %>%
                 select(node) %>%
                 distinct() %>%
-                mutate(site_code = if_else(grepl("_D$", node) &
+                mutate(site_code = if_else(stringr::str_detect(node, "_D$") &
                                              nchar(node) >= 5,
-                                           str_remove(node, "_D"),
+                                           stringr::str_remove(node, "_D$"),
                                            node),
-                       site_code = if_else(grepl("_U$", site_code) &
+                       site_code = if_else(stringr::str_detect(site_code, "_U$") &
                                              nchar(site_code) >= 5,
-                                           str_remove(site_code, "_U"),
+                                           stringr::str_remove(site_code, "_U$"),
                                            site_code)),
               by = "site_code") %>%
     distinct() %>%
-    arrange(site_code, desc(node)) %>%
+    arrange(site_code, node) %>%
     group_by(site_code) %>%
     mutate(n_nodes = n_distinct(node)) %>%
     mutate(node_num = paste("node", 1:n(), sep = "_")) %>%
@@ -44,13 +43,13 @@ addParentChildNodes = function(parent_child = NULL,
     left_join(parent_child %>%
                 select(matches("child")) %>%
                 rename(site_code = child) %>%
-                rlang::set_names(nm = str_remove,
+                rlang::set_names(nm = stringr::str_remove,
                                  pattern = "child_") %>%
                 bind_rows(parent_child %>%
                             select(matches("parent")) %>%
                             distinct() %>%
                             rename(site_code = parent) %>%
-                            rlang::set_names(nm = str_remove,
+                            rlang::set_names(nm = stringr::str_remove,
                                              pattern = "parent_")) %>%
                 distinct(),
               by = "site_code")
@@ -115,22 +114,22 @@ addParentChildNodes = function(parent_child = NULL,
            child) %>%
     distinct()
 
-  if(sum(grepl("hydro", names(parent_child))) > 0) {
-  pc_nodes %<>%
-    left_join(node_long %>%
-                select(parent = node,
-                       parent_hydro = hydro),
-              by = "parent") %>%
-    left_join(node_long %>%
-                select(child = node,
-                       child_hydro = hydro),
-              by = "child") %>%
-    arrange(parent_hydro,
-            child_hydro)
+  if(sum(stringr::string_detect(names(parent_child), "hydro")) > 0) {
+    pc_nodes <- pc_nodes %>%
+      left_join(node_long %>%
+                  select(parent = node,
+                         parent_hydro = hydro),
+                by = "parent") %>%
+      left_join(node_long %>%
+                  select(child = node,
+                         child_hydro = hydro),
+                by = "child") %>%
+      arrange(parent_hydro,
+              child_hydro)
   }
 
-  if(sum(grepl("rkm", names(parent_child))) > 0) {
-    pc_nodes %<>%
+  if(sum(stringr::str_detect(names(parent_child), "rkm")) > 0) {
+    pc_nodes <- pc_nodes %>%
       select(-matches('rkm')) %>%
       left_join(node_long %>%
                   select(parent = node,
@@ -144,5 +143,5 @@ addParentChildNodes = function(parent_child = NULL,
       select(any_of(names(parent_child))) %>%
       distinct()
   }
-    return(pc_nodes)
+  return(pc_nodes)
 }
