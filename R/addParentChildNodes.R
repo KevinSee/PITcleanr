@@ -114,7 +114,7 @@ addParentChildNodes = function(parent_child = NULL,
            child) %>%
     distinct()
 
-  if(sum(stringr::string_detect(names(parent_child), "hydro")) > 0) {
+  if(sum(stringr::str_detect(names(parent_child), "hydro")) > 0) {
     pc_nodes <- pc_nodes %>%
       left_join(node_long %>%
                   select(parent = node,
