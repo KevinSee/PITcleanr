@@ -23,7 +23,11 @@ summarizeTagData = function(filtered_obs = NULL,
   stopifnot(!is.null(filtered_obs))
 
   tag_summ = estimateFinalLoc(filtered_obs,
-                              ...)
+                              ...) %>%
+    left_join(filtered_obs %>%
+                select(tag_code,
+                       start_date) %>%
+                distinct())
 
   if(!is.null(bio_data)) {
     tag_summ = tag_summ %>%
