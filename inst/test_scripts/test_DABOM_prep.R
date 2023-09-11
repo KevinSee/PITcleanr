@@ -565,7 +565,7 @@ if(root_site == "GRA") {
 }
 
 
-comp_obs = compress(ptagis_file = ptagis_file,
+comp_obs = compress(cth_file = ptagis_file,
                     #max_minutes = 5,
                     max_minutes = NA,
                     configuration = configuration,
