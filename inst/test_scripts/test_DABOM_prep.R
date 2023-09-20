@@ -18,20 +18,20 @@ devtools::load_all()
 root_site = c("LGR",
               "PRA",
               "PRO",
-              "TUM")[1]
+              "TUM")[2]
 
 #-----------------------------------------------------------------
 # load configuration and parent-child table
-load(here("inst/extdata/updated_data",
+load(here("inst/extdata",
           paste0(root_site, "_site_config.Rdata")))
 
 configuration <-
-  read_csv(here("inst/extdata/updated_data",
+  read_csv(here("inst/extdata",
                 paste0(root_site, "_configuration.csv")),
            show_col_types = F)
 
 parent_child <-
-  read_csv(here("inst/extdata/updated_data",
+  read_csv(here("inst/extdata",
                 paste0(root_site, "_parent_child.csv")),
            show_col_types = F)
 
@@ -46,11 +46,11 @@ parent_child_nodes <-
 
 # locate the file
 ptagis_file <-
-  list.files("inst/extdata/updated_data")[str_detect(list.files("inst/extdata/updated_data"), root_site) &
-                                            str_detect(list.files("inst/extdata/updated_data"), "cth")]
+  list.files("inst/extdata")[str_detect(list.files("inst/extdata"), root_site) &
+                                            str_detect(list.files("inst/extdata"), "cth")]
 
 # read in detections
-ptagis_cth <- readCTH(paste0("inst/extdata/updated_data/",
+ptagis_cth <- readCTH(paste0("inst/extdata/",
                              ptagis_file),
                       file_type = "PTAGIS")
 
