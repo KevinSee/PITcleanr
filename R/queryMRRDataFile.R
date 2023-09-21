@@ -45,7 +45,7 @@ queryMRRDataFile = function(file_nm = NULL,
     if(text_only) {
       txt_df <-
         dplyr::tibble(X1 = paste(names(tag_data),
-                          collapse = "\t")) |>
+                                 collapse = "\t")) |>
         bind_rows(tidyr::unite(tag_data,
                                col = "X1",
                                everything(),
