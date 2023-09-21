@@ -216,7 +216,7 @@ parent_child
 
 ## Incorporating Nodes
 
-If the configuration file contains multiple nodes for some sites (e.g., a node for each array at a site), then the parent-child table can be expanded to accommodate these nodes using the `addParentChildNodes()` function. The function essentially "expands" (adds rows) to the existing parent-child table to accommodate those additional nodes. Note: the `addParentChildNodes()` function assumes that the parent-child table is arranged so that children are upstream of parents, and nodes designated as `A0` are upstream of those designated `B0`. Currently, the function can only handle up to two nodes at each site.
+If the configuration file contains multiple nodes for some sites (e.g., a node for each array at a site), then the parent-child table can be expanded to accommodate these nodes using the `addParentChildNodes()` function. The function essentially "expands" (adds rows) to the existing parent-child table to accommodate those additional nodes. Note: the `addParentChildNodes()` function assumes that the parent-child table is arranged so that children are upstream of parents, and nodes designated as `_U` are upstream of those designated `_D`. Currently, the function can only handle up to two nodes at each site.
 
 Here, we use the `addParentChildNodes()` function on our existing `parent_child` table, and provide our existing `configuration` tibble to the `configuration` argument to expand the tibble. Our results are saved to a new object `parent_child_nodes`.
 

@@ -105,8 +105,8 @@ extractSites = function(cth_file = NULL,
              -config_id) %>%
       distinct() %>%
       # delete sites with another node where the node name differs from the site code
-      mutate(node_site = str_remove(node, "A0$"),
-             node_site = str_remove(node_site, "B0$")) %>%
+      mutate(node_site = str_remove(node, "_U$"),
+             node_site = str_remove(node_site, "_D$")) %>%
       # select(-node) %>%
       distinct() %>%
       group_by(node_site) %>%

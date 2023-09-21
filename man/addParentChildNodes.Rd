@@ -9,7 +9,7 @@ addParentChildNodes(parent_child = NULL, configuration = NULL)
 \arguments{
 \item{parent_child}{dataframe produced by `buildParentChild()`.}
 
-\item{configuration}{a configuration dataframe, such as one built by `buildmy_config()`.}
+\item{configuration}{a configuration dataframe, such as one built by `buildConfig()`.}
 }
 \description{
 When some sites in the parent-child table have multiple nodes, this function

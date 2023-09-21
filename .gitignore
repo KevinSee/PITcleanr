@@ -3,3 +3,5 @@
 .RData
 .DS_Store
 docs
+*_site_config.Rdata
+inst/extdata/updated_data/
