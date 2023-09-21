@@ -7,6 +7,7 @@
 defineCapHistCols(
   parent_child = NULL,
   configuration = NULL,
+  use_rkm = TRUE,
   bottom_sites = NULL,
   incl_all_nodes = TRUE
 )
@@ -15,6 +16,8 @@ defineCapHistCols(
 \item{parent_child}{parent-child table. Could be created from `buildParentChild()` from `PITcleanr` package.}
 
 \item{configuration}{configuration file. Could be created from `buildConfig()` from `PITcleanr` package. If river kilometer (`rkm`) is included as a column, this function will use that to help determine the column order. Otherwise, it will use the paths contructed from `buildNodeOrder()`.}
+
+\item{use_rkm}{if the river kilometer code exists in the configuration file (in a column named `rkm`), use those codes to help establish the order of capture history columns. Default value is `TRUE`.}
 
 \item{bottom_sites}{If provided, represents a character vector of sites to use as "bottom sites". All upstream sites of each bottom site will be grouped just after that bottom site in the capture history matrix.}
 
