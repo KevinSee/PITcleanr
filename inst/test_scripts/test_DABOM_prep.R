@@ -1,7 +1,7 @@
 # Author: Kevin See
 # Purpose: Test new functions for processing PTAGIS data for DABOM
 # Created: 2/10/2021
-# Last Modified: 9/11/2023
+# Last Modified: 9/19/2023
 # Notes:
 
 #-----------------------------------------------------------------
@@ -18,7 +18,7 @@ devtools::load_all()
 root_site = c("LGR",
               "PRA",
               "PRO",
-              "TUM")[2]
+              "TUM")[1]
 
 #-----------------------------------------------------------------
 # load configuration and parent-child table
@@ -189,6 +189,7 @@ identical(nrow(fish_origin),
 devtools::load_all("../DABOM")
 
 # file path to the default and initial model
+# basic_mod_file = "DABOM_init.txt"
 basic_mod_file = tempfile("DABOM_init", fileext = ".txt")
 
 writeDABOM(file_name = basic_mod_file,
@@ -203,6 +204,7 @@ writeDABOM(file_name = basic_mod_file,
 #------------------------------------------------------------------------------
 
 # filepath for specific JAGS model code for species and year
+# mod_path = "DABOM_final.txt"
 mod_path = tempfile("DABOM_final", fileext = ".txt")
 
 # writes species and year specific jags code
