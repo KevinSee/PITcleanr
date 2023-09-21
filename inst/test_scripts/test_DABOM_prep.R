@@ -1,7 +1,7 @@
 # Author: Kevin See
 # Purpose: Test new functions for processing PTAGIS data for DABOM
 # Created: 2/10/2021
-# Last Modified: 9/11/2023
+# Last Modified: 9/19/2023
 # Notes:
 
 #-----------------------------------------------------------------
@@ -22,16 +22,16 @@ root_site = c("LGR",
 
 #-----------------------------------------------------------------
 # load configuration and parent-child table
-load(here("inst/extdata/updated_data",
+load(here("inst/extdata",
           paste0(root_site, "_site_config.Rdata")))
 
 configuration <-
-  read_csv(here("inst/extdata/updated_data",
+  read_csv(here("inst/extdata",
                 paste0(root_site, "_configuration.csv")),
            show_col_types = F)
 
 parent_child <-
-  read_csv(here("inst/extdata/updated_data",
+  read_csv(here("inst/extdata",
                 paste0(root_site, "_parent_child.csv")),
            show_col_types = F)
 
@@ -46,11 +46,11 @@ parent_child_nodes <-
 
 # locate the file
 ptagis_file <-
-  list.files("inst/extdata/updated_data")[str_detect(list.files("inst/extdata/updated_data"), root_site) &
-                                            str_detect(list.files("inst/extdata/updated_data"), "cth")]
+  list.files("inst/extdata")[str_detect(list.files("inst/extdata"), root_site) &
+                                            str_detect(list.files("inst/extdata"), "cth")]
 
 # read in detections
-ptagis_cth <- readCTH(paste0("inst/extdata/updated_data/",
+ptagis_cth <- readCTH(paste0("inst/extdata/",
                              ptagis_file),
                       file_type = "PTAGIS")
 
@@ -189,6 +189,7 @@ identical(nrow(fish_origin),
 devtools::load_all("../DABOM")
 
 # file path to the default and initial model
+# basic_mod_file = "DABOM_init.txt"
 basic_mod_file = tempfile("DABOM_init", fileext = ".txt")
 
 writeDABOM(file_name = basic_mod_file,
@@ -203,6 +204,7 @@ writeDABOM(file_name = basic_mod_file,
 #------------------------------------------------------------------------------
 
 # filepath for specific JAGS model code for species and year
+# mod_path = "DABOM_final.txt"
 mod_path = tempfile("DABOM_final", fileext = ".txt")
 
 # writes species and year specific jags code
