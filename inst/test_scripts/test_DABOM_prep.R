@@ -1,5 +1,5 @@
 # Author: Kevin See
-# Purpose: Test new functions for processing PTAGIS data for DABOM
+# Purpose: Test functions for processing PTAGIS data for DABOM
 # Created: 2/10/2021
 # Last Modified: 9/19/2023
 # Notes:
