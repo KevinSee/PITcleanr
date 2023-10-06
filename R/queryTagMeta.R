@@ -34,7 +34,7 @@ queryTagMeta = function(tag_code = NULL,
   ua = httr::user_agent('https://github.com/KevinSee/PITcleanr')
 
   # compose url with query
-  url_req = 'http://api.ptagis.org/data/events'
+  url_req = 'https://api.ptagis.org/data/events'
 
   # send query to PTAGIS
   if(!is.na(type)) {
