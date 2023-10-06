@@ -135,24 +135,28 @@ queryCapHist = function(ptagis_tag_code = NULL,
 
 
     # query mark information
-    mrk_parsed <-
-      queryTagMeta(ptagis_tag_code,
-                   Sys.getenv("PTAGIS_API_KEY")) |>
-      dplyr::filter(event_type == "Mark") |>
-      dplyr::select(tag_code,
-                    event_site_code_value = site_code,
-                    site_name = site_name,
-                    event_type_name = event_type,
-                    event_date_time_value = event_date,
-                    cth_count = event_count) |>
-      dplyr::select(dplyr::any_of(names(parsed)))
+    if(include_mark) {
+      stopifnot(!is.null(api_key))
 
-    # add mark data to other detections
-    if(nrow(mrk_parsed) > 0) {
-      parsed <- parsed |>
-        dplyr::bind_rows(mrk_parsed) |>
-        dplyr::arrange(tag_code,
-                       event_date_time_value)
+      mrk_parsed <-
+        queryTagMeta(ptagis_tag_code,
+                     api_key = api_key) |>
+        dplyr::filter(event_type == "Mark") |>
+        dplyr::select(tag_code,
+                      event_site_code_value = site_code,
+                      site_name = site_name,
+                      event_type_name = event_type,
+                      event_date_time_value = event_date,
+                      cth_count = event_count) |>
+        dplyr::select(dplyr::any_of(names(parsed)))
+
+      # add mark data to other detections
+      if(nrow(mrk_parsed) > 0) {
+        parsed <- parsed |>
+          dplyr::bind_rows(mrk_parsed) |>
+          dplyr::arrange(tag_code,
+                         event_date_time_value)
+      }
     }
 
 
