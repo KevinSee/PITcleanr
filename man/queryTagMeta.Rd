@@ -8,13 +8,13 @@
 }
 \usage{
 queryTagMeta(
-  tag_code = NULL,
+  ptagis_tag_code = NULL,
   api_key = NULL,
   type = c(NA, "mark", "recapture", "recovery", "observation")
 )
 }
 \arguments{
-\item{tag_code}{PTAGIS tag code}
+\item{ptagis_tag_code}{PTAGIS tag code}
 
 \item{api_key}{PTAGIS API key, given to individual users}
 

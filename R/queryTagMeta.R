@@ -4,17 +4,17 @@
 #'
 #' @author Kevin See
 #'
-#' @param tag_code PTAGIS tag code
+#' @param ptagis_tag_code PTAGIS tag code
 #' @param api_key PTAGIS API key, given to individual users
 #' @param type one of `mark`, `recapture`, `recovery`, or `observation`. If one is specified, only data about evernts of that type are returned. The defualt, `NA`, will return data about all events for that tag.
 #'
 #' @source \url{http://api.ptagis.org}
 #'
-#' @import dplyr httr
+#' @import dplyr httr lubridate
 #' @return Gets data about all events for a given tag code.
 #' @examples queryTagMeta("3D9.1C2D929849")
 
-queryTagMeta = function(tag_code = NULL,
+queryTagMeta = function(ptagis_tag_code = NULL,
                         api_key = NULL,
                         type = c(NA,
                                  "mark",
@@ -23,7 +23,7 @@ queryTagMeta = function(tag_code = NULL,
                                  "observation")) {
 
   # need a tag code
-  stopifnot(!is.null(tag_code))
+  stopifnot(!is.null(ptagis_tag_code))
 
   # need an API key
   stopifnot(!is.null(api_key))
@@ -41,12 +41,12 @@ queryTagMeta = function(tag_code = NULL,
     web_req = httr::GET(paste0(url_req,
                                "/", type,
                                "?apiKey=", api_key,
-                               "&tagCode=", tag_code),
+                               "&tagCode=", ptagis_tag_code),
                         ua)
   } else {
     web_req = httr::GET(paste0(url_req,
                                "?apiKey=", api_key,
-                               "&tagCode=", tag_code),
+                               "&tagCode=", ptagis_tag_code),
                         ua)
   }
 
