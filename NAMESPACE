@@ -2,6 +2,7 @@
 
 export(addDirection)
 export(addParentChildNodes)
+export(buildCapHist)
 export(buildConfig)
 export(buildNodeGraph)
 export(buildNodeOrder)
