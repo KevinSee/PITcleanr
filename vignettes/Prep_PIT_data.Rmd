@@ -87,30 +87,30 @@ To extract a single element from the `qc_detections`, the user can simply use th
 
 # Compressing Detection Data
 
-In this vignette, we will use an example dataset of Spring Chinook Salmon tagged as adults at Tumwater dam in 2015. `PITcleanr` includes the [complete tag history](read_in_data.html) downloaded from PTAGIS, the [configuration file](configuration_files.html) and the [parent-child table](parent_child.html) for this particular analysis. However, if the user needs to consult how to query or construct any of those, please read the appropriate vignette.
+In this vignette, we will use an example dataset of Spring Chinook Salmon tagged as adults at Tumwater dam in 2018. `PITcleanr` includes the [complete tag history](read_in_data.html) downloaded from PTAGIS, the [configuration file](configuration_files.html) and the [parent-child table](parent_child.html) for this particular analysis. However, if the user needs to consult how to query or construct any of those, please read the appropriate vignette.
 
 ```{r}
 # the complete tag history file from PTAGIS
 ptagis_file <- system.file("extdata", 
-                          "TUM_Chinook_2015.csv", 
+                          "TUM_chnk_cth_2018.csv", 
                           package = "PITcleanr",
                           mustWork = TRUE)
 
 # read the complete tag history file into R, and filter detections before a certain date
 cth_df <- readCTH(ptagis_file,
                   file_type = "PTAGIS") |> 
-  filter(event_date_time_value >= lubridate::ymd(20150301))
+  filter(event_date_time_value >= lubridate::ymd(20180301))
 
 # the pre-built configuration file
 configuration <- system.file("extdata", 
-                          "configuration_TUM.csv", 
+                          "TUM_configuration.csv", 
                           package = "PITcleanr",
                           mustWork = TRUE) |> 
   read_csv(show_col_types = F)
 
 # the pre-built parent-child table
 parent_child <- system.file("extdata", 
-                          "parent_child_TUM.csv", 
+                          "TUM_parent_child.csv", 
                           package = "PITcleanr",
                           mustWork = TRUE) |> 
   read_csv(show_col_types = F)
@@ -197,7 +197,7 @@ For some types of analyses, such as Cormack-Jolly-Seber (CJS) models, one of the
 ```{r}
 comp_filter <- filterDetections(compress_obs = comp_obs,
                                 parent_child = parent_child_nodes,
-                                max_obs_date = "20150930")
+                                max_obs_date = "20180930")
 
 ```
 
