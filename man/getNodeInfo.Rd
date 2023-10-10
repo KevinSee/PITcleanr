@@ -9,7 +9,7 @@ getNodeInfo(parent_child = NULL, configuration = NULL)
 \arguments{
 \item{parent_child}{parent-child table. Could be created from `buildParentChild()` from `PITcleanr` package.}
 
-\item{configuration}{configuration file. Could be created from `buildConfig()` from `PITcleanr` package. By default, it will sort using the paths constructed from `buildNodeOrder()`. If river kilometer (`rkm`) is included as a column in the configuration file, this function could use that to help determine the column order.}
+\item{configuration}{configuration file. Could be created from `buildConfig()` from `PITcleanr` package.}
 }
 \description{
 Based on a parent-child table and a configuration file, this function compiles how many nodes each site has, what the parent site is, and what child number of that parent the site in question is

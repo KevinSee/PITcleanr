@@ -1,12 +1,12 @@
 #' @title Define Column Names for Capture History Matrix
 #'
-#' @description Based on a parent-child table, this returns a vector of column names to help create a consistent capture history matrix
+#' @description Based on a parent-child table, this returns a vector of column names to help create a consistent capture history matrix. By default, it will sort using the paths constructed from `buildNodeOrder()`. If river kilometer (`rkm`) is included as a column in the configuration file, this function could use that to help determine the column order.
 #'
 #' @author Kevin See
 #'
 #' @param parent_child parent-child table. Could be created from `buildParentChild()` from `PITcleanr` package.
-#' @param configuration configuration file. Could be created from `buildConfig()` from `PITcleanr` package. If river kilometer (`rkm`) is included as a column, this function will use that to help determine the column order. Otherwise, it will use the paths contructed from `buildNodeOrder()`.
-#' @param use_rkm if the river kilometer code exists in the configuration file (in a column named `rkm`), use those codes to help establish the order of capture history columns. Default value is `TRUE`.
+#' @param configuration configuration file. Could be created from `buildConfig()` from `PITcleanr` package.
+#' @param use_rkm if the river kilometer code exists in the configuration file (in a column named `rkm`), use those codes to help establish the order of capture history columns. Default value is `FALSE`.
 #' @param bottom_sites If provided, represents a character vector of sites to use as "bottom sites". All upstream sites of each bottom site will be grouped just after that bottom site in the capture history matrix.
 #' @param incl_all_nodes if some `bottom_sites` are supplied, should all the nodes in the parent-child table be included (default is `TRUE`), or only nodes upstream of those bottom sites be returned (`FALSE`). The initial site will always be returned. If no `bottom_sites` are supplied, this is set to `TRUE`.
 #'
@@ -17,7 +17,7 @@
 
 defineCapHistCols = function(parent_child = NULL,
                              configuration = NULL,
-                             use_rkm = TRUE,
+                             use_rkm = FALSE,
                              bottom_sites = NULL,
                              incl_all_nodes = TRUE) {
 
