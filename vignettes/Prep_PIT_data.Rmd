@@ -221,30 +221,26 @@ It should be noted that not every analysis requires a one-way travel assumption,
 
 Often, various mark-recapture models require a capture history of 1's and 0's as inputs. The compressed observations (whether they've been through `filterDections()` or not, depending on the user's analysis) can be converted into that kind of capture history in a fairly straightforward manner. One key will be to ensure the nodes or sites are put in correct order for the user.
 
-In this example, we use the node order, and the movement paths (`path`) to get to each node, to define the factor levels of all possible nodes. With that defined, we can translate the tag detections into capture histories, a series of 1's and 0's for each tag, and we know what node each entry in those capture histories refers to. Most mark-recapture models, such as those used in [program MARK](http://www.phidot.org/software/mark/), use those types of capture histories as inputs. The user can then also attach any relevant covariates (e.g. marking location, size at tagging, etc.) based on the tag code. 
+The function `defineCapHistCols()` determines the order of nodes to be used in a capture history matrix. At a minimum, it utilizes the parent-child table and the configuration file. If river kilometer is provided as part of the configuration file, in a column called `rkm`, the user may set `use_rkm = T` and it will organize nodes by rkm mask. Otherwise, it defaults to sorting by the paths defined in `buildNodeOrder()`. 
+
+If the user would like to keep individual columns for each node, they can set `drop_nodes = F`. The default (`drop_nodes = T`) will delete all the columns associated with each node, and consolidate all them into one column called `cap_hist` that is a string of ones and zeros indicating the capture history. Many mark-recapture models, such as those used in [program MARK](http://www.phidot.org/software/mark/), use those types of capture histories as inputs. The user can then also attach any relevant covariates (e.g. marking location, size at tagging, etc.) based on the tag code.
 
 ```{r}
-# set the levels of nodes based somewhat on the movement paths
-node_levels <- buildNodeOrder(parent_child_nodes) |> 
-  arrange(path) |> 
-  pull(node)
-
 # translate PIT tag observations into capture histories, one per tag
-comp_filter |> 
-  filter(auto_keep_obs) |> 
-  select(tag_code, node) |> 
-  distinct() |> 
-  mutate(across(node,
-                ~ factor(.,
-                         levels = node_levels))) |> 
-  mutate(detected = 1) |> 
-  pivot_wider(names_from = node,
-              names_sort = TRUE,
-              names_expand = TRUE,
-              values_from = detected,
-              values_fill = 0) |> 
-  unite(col = "cap_hist",
-        -c(tag_code),
-        sep = "")
+buildCapHist(comp_filter,
+             parent_child = parent_child,
+             configuration = configuration,
+             use_rkm = T)
+```
+
+To determine which position in the `cap_hist` string corresponds to which node, the user can run the `defineCapHistCols()` function (which is called internally within `buildCapHist()`). 
+
+```{r}
+# to find out the node associated with each column
+col_nodes <- defineCapHistCols(parent_child = parent_child,
+                               configuration = configuration,
+                               use_rkm = T)
+col_nodes
+
 ```
 
