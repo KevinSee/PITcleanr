@@ -41,14 +41,33 @@ buildCapHist = function(filter_ch = NULL,
                                configuration = configuration,
                                ...)
 
+  # ensure that some columns are included
+  if(!"user_keep_obs" %in% names(filter_ch)) {
+    message("No user_keep_obs column found. All rows will be assigned user_keep_obs = T. \n")
+    filter_ch <-
+      filter_ch |>
+      mutate(user_keep_obs = T)
+  }
+
+  if(!"auto_keep_obs" %in% names(filter_ch) & sum(is.na(filter_ch$user_keep_obs)) > 0) {
+    message("Either auto_keep_obs must be a column, or T/F values must be provided for all user_keep_obs entries.")
+    stop()
+  }
+
+  if("auto_keep_obs" %in% names(filter_ch) & (sum(is.na(filter_ch$user_keep_obs)) > 0 | sum(filter_ch$user_keep_obs == "", na.rm = T) > 0)) {
+    filter_ch <-
+      filter_ch %>%
+      dplyr::mutate(across(user_keep_obs,
+                           ~ if_else(is.na(.) | . == "",
+                                     auto_keep_obs,
+                                     .)))
+    message("Assigning blank user_keep_obs rows to values from auto_keep_obs column.")
+  }
+
   # create capture histories
   # include nodes that had no observations, to ensure all columns are included
   cap_hist_df <-
-    filter_ch %>%
-    dplyr::mutate(across(user_keep_obs,
-                         ~ if_else(is.na(.) | . == "",
-                                   auto_keep_obs,
-                                   .))) |>
+    filter_ch |>
     dplyr::filter(user_keep_obs) |>
     dplyr::select(any_of(keep_cols),
                   node) %>%
@@ -57,7 +76,7 @@ buildCapHist = function(filter_ch = NULL,
                          ~ factor(., levels = col_nms))) %>%
     dplyr::mutate(seen = 1) %>%
     dplyr::group_by(tag_code,
-    # dplyr::group_by({{ keep_cols }},
+                    # dplyr::group_by({{ keep_cols }},
                     node) %>%
     dplyr::summarise(across(seen,
                             sum),
