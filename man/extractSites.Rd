@@ -41,7 +41,7 @@ If supplied, sites with detections prior to this date will be excluded from the 
 \item{max_date}{character in the format `YYYYMMDD` that describes a maximum detection date.
 If supplied, sites with detections after this date will be excluded from the results.}
 
-\item{configuration}{is a data frame which assigns node names to unique SiteID, AntennaID, and
+\item{configuration}{is a data frame which assigns node names to unique site, antenna, and
 site configuration ID combinations. One example can be built with the function `buildConfig`. If
 no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
 the column name should be `node`.}

@@ -10,7 +10,7 @@ buildPaths(parent_child = NULL, direction = c("u", "d"))
 \item{parent_child}{data frame with at least `parent` and `child` columns.
 Can be created with `buildParentChild()` function.}
 
-\item{the}{direction of movement. Parent-child tables are generally built imagining parents as downstream from children. Assuming that's the case, should the paths be upstream (`u` or `upstream`), the default, or downstream (`d` or `downstream`)?}
+\item{direction}{the direction of movement. Parent-child tables are generally built imagining parents as downstream from children. Assuming that's the case, should the paths be upstream (`u` or `upstream`), the default, or downstream (`d` or `downstream`)?}
 }
 \value{
 data frame containing a column,`end_loc`, showing the possible final locations,

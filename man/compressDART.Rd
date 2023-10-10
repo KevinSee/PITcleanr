@@ -18,7 +18,7 @@ compressDART(
 
 \item{spawn_year}{available years includes spawn year 2010 to present}
 
-\item{configuration}{is a data frame which assigns node names to unique SiteID, AntennaID, and
+\item{configuration}{is a data frame which assigns node names to unique site, antenna, and
 site configuration ID combinations. One example can be built with the function `buildConfig`. If
 no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
 the column name should be `node`.}
