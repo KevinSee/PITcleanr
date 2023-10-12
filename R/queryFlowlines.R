@@ -9,6 +9,7 @@
 #' @param min_strm_order minimum stream order to query flowlines for. Default value is `0`.
 #' @param dwnstream_sites Does `sites_sf` contain sites that are downstream of `root_site_code`? If `TRUE`, then all flowlines within a boundary box of `sites_df` will be downloaded
 #' @param dwn_min_stream_order_diff Used to control the minimum stream order of downloaded downstream flowlines. This can be useful if the user wants to prevent downloading excessive smaller streams downstream of a tagging or release location. It corresponds to the difference between the stream order of the `root_site_code` site and the minimum stream order desired in the downstream flowlines. For example, if the `root_site_code` is located on a stream order 6 and `dwn_min_stream_order_diff = 2`, then only flowlines of at least 6-2=**4** will be downloaded. The default value is 0, meaning only streams of equal or greater order than the tagging or release site will be returned.
+#' @param buffer_dist when querying flowlines downstream of `root_site_code`, how big a buffer should be used around all sites in `sites_sf` to capture all the flowlines? Default is `0`. See `?sf::st_buffer()` for more help with possible formats.
 #'
 #' @import dplyr sf nhdplusTools
 #' @importFrom magrittr %<>%
@@ -20,7 +21,8 @@ queryFlowlines = function(sites_sf = NULL,
                           root_site_code = NULL,
                           min_strm_order = 0,
                           dwnstrm_sites = FALSE,
-                          dwn_min_stream_order_diff = NULL) {
+                          dwn_min_stream_order_diff = NULL,
+                          buffer_dist = 0) {
 
   requireNamespace("nhdplusTools", quietly = TRUE)
 
@@ -62,6 +64,7 @@ queryFlowlines = function(sites_sf = NULL,
     # get flowlines for downstream sites based on bounding box of all sites
     nhd_lst_tmp = sites_sf %>%
       sf::st_transform(crs = 3857) %>%
+      sf::st_buffer(dist = buffer_dist) %>%
       sf::st_bbox() %>%
       nhdplusTools::plot_nhdplus(bbox = .,
                                  streamorder = max(min_strm_order, (max(flowlines$StreamOrde) - dwn_min_stream_order_diff)),
@@ -69,15 +72,31 @@ queryFlowlines = function(sites_sf = NULL,
 
     # pull out the comid for the largest stream order and furthest downstream segment
     dwn_comid = nhd_lst_tmp$flowline %>%
-      filter(StreamOrde == max(StreamOrde)) %>%
+      dplyr::filter(StreamOrde == max(StreamOrde)) %>%
       # filter(Hydroseq == min(Hydroseq)) %>%
-      filter(TotDASqKM == max(TotDASqKM)) %>%
-      pull(COMID)
+      dplyr::filter(TotDASqKM == max(TotDASqKM)) %>%
+      dplyr::pull(COMID)
+
+    # # determine stream order of hydrosequences of downstream sites
+    # min_strm_order <-
+    #   sites_sf |>
+    #   st_transform(st_crs(flowlines)) |>
+    #   st_join(flowlines |>
+    #             st_buffer(dist = 100) |>
+    #             select(starts_with("gnis"),
+    #                    StreamOrde,
+    #                    contains("Hydroseq")),
+    #           join = st_covered_by) |>
+    #   filter(!is.na(gnis_id)) |>
+    #   pull(StreamOrde) |>
+    #   max()
+
 
     cat(paste("Querying streams downstream of", root_site_code, "\n"))
     # nhd_lst_dwn = nhdplusTools::plot_nhdplus(outlets = list(dwn_comid),
     #                                          # streamorder = max(flowlines$StreamOrde),
-    #                                          streamorder = max(min_strm_order, (max(flowlines$StreamOrde) - dwn_min_stream_order_diff)),
+    #                                          # streamorder = max(min_strm_order, (max(flowlines$StreamOrde) - dwn_min_stream_order_diff)),
+    #                                          streamorder = min_strm_order,
     #                                          actually_plot = F)
 
     nhd_lst_dwn = nhd_lst_tmp
@@ -90,13 +109,13 @@ queryFlowlines = function(sites_sf = NULL,
     dwn_site_comids = nhd_lst_dwn$flowline %>%
       sf::st_zm() %>%
       sf::st_transform(crs = sf::st_crs(sites_sf)) %>%
-      select(COMID, Hydroseq) %>%
-      st_join(sites_sf,
+      dplyr::select(COMID, Hydroseq) %>%
+      sf::st_join(sites_sf,
               .,
               join = st_nearest_feature) %>%
-      filter(! COMID %in% flowlines$COMID) %>%
-      as_tibble() %>%
-      pull(COMID)
+      dplyr::filter(! COMID %in% flowlines$COMID) %>%
+      dplyr::as_tibble() %>%
+      dplyr::pull(COMID)
 
     dwn_comids = c(start_comid,
                    dwn_site_comids) %>%

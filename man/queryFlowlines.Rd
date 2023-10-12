@@ -9,7 +9,8 @@ queryFlowlines(
   root_site_code = NULL,
   min_strm_order = 0,
   dwnstrm_sites = FALSE,
-  dwn_min_stream_order_diff = NULL
+  dwn_min_stream_order_diff = NULL,
+  buffer_dist = 0
 )
 }
 \arguments{
@@ -20,6 +21,8 @@ queryFlowlines(
 \item{min_strm_order}{minimum stream order to query flowlines for. Default value is `0`.}
 
 \item{dwn_min_stream_order_diff}{Used to control the minimum stream order of downloaded downstream flowlines. This can be useful if the user wants to prevent downloading excessive smaller streams downstream of a tagging or release location. It corresponds to the difference between the stream order of the `root_site_code` site and the minimum stream order desired in the downstream flowlines. For example, if the `root_site_code` is located on a stream order 6 and `dwn_min_stream_order_diff = 2`, then only flowlines of at least 6-2=**4** will be downloaded. The default value is 0, meaning only streams of equal or greater order than the tagging or release site will be returned.}
+
+\item{buffer_dist}{when querying flowlines downstream of `root_site_code`, how big a buffer should be used around all sites in `sites_sf` to capture all the flowlines? Default is `0`. See `?sf::st_buffer()` for more help with possible formats.}
 
 \item{dwnstream_sites}{Does `sites_sf` contain sites that are downstream of `root_site_code`? If `TRUE`, then all flowlines within a boundary box of `sites_df` will be downloaded}
 }
