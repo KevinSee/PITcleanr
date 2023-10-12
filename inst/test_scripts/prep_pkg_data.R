@@ -11,6 +11,7 @@ library(sf)
 library(nhdplusTools)
 library(magrittr)
 library(here)
+library(usethis)
 # library(PITcleanr)
 devtools::load_all()
 
@@ -684,4 +685,120 @@ save(configuration,
      flowlines,
      parent_child,
      file = here("inst/extdata/updated_data",
+                 paste0(root_site, "_site_config.Rdata")))
+
+
+
+#-----------------------------------------------------------------
+# smolts tagged at Upper Lemhi RST
+#-----------------------------------------------------------------
+root_site = "LEMTRP"
+
+# update configuration file
+# combine some sites at and below Bonneville
+configuration <-
+  buildConfig(node_assign = "site") |>
+  mutate(across(node,
+                ~ if_else(as.numeric(str_sub(rkm, 1, 3)) <= 234,
+                          "B2J",
+                          .)),
+         across(node,
+                ~ if_else(site_code == "GRS",
+                          "GRJ",
+                          .))) |>
+  filter(!is.na(node))
+
+# read in PTAGIS detections
+ptagis_file = here('inst/extdata/LEMTRP',
+                   "LEMTRP_chnk_cth_2021.csv")
+
+
+ptagis_obs <- readCTH(ptagis_file) |>
+  arrange(tag_code,
+          event_date_time_value)
+
+# extract the sites with detections
+sites_sf <-
+  ptagis_obs |>
+  filter(!event_site_code_value == "ORPHAN") |>
+  # filter(tag_code %in% pluck(qc_lst, "orphan_tags"),
+  #        tag_code %in% pluck(qc_lst, "disown_tags"))
+  extractSites(as_sf = T,
+               configuration = configuration,
+               max_date = "20220630") |>
+  arrange(rkm)
+
+# refine further
+sites_sf <-
+  sites_sf |>
+  left_join(configuration |>
+              select(site_code,
+                     rkm_total) |>
+              distinct()) |>
+  filter(nchar(rkm) <= 7 |
+           (str_detect(rkm, "522.303.416") &
+              rkm_total <= rkm_total[site_code == "LEMTRP"] &
+              nchar(rkm) == 15),
+         site_code != "HAYDNC")
+
+
+# query flowlines
+nhd_list <-
+  queryFlowlines(sites_sf,
+                 # root_site_code = "LEMTRP",
+                 root_site_code = "LLR",
+                 min_strm_order = 2,
+                 dwnstrm_sites = T,
+                 dwn_min_stream_order_diff = 4,
+                 buffer_dist = units::as_units(10, "km"))
+
+# compile the upstream and downstream flowlines
+flowlines = nhd_list$flowlines |>
+  rbind(nhd_list$dwn_flowlines)
+
+# construct parent-child table
+parent_child = sites_sf |>
+  buildParentChild(flowlines,
+                   rm_na_parent = T,
+                   add_rkm = T)
+
+plotNodes(parent_child)
+
+# flip direction of parent/child relationships
+parent_child <-
+  parent_child |>
+  select(p = parent,
+         c = child,
+         p_rkm = parent_rkm,
+         c_rkm = child_rkm) |>
+  mutate(parent = c,
+         child = p,
+         parent_rkm = c_rkm,
+         child_rkm = p_rkm) |>
+  select(parent,
+         child,
+         parent_rkm,
+         child_rkm)
+
+#-----------------------------------------------------------------
+# write configuration & parent-child table
+configuration |>
+  write_csv(here("inst/extdata/LEMTRP",
+                 paste0(root_site, "_configuration.csv")))
+
+parent_child |>
+  write_csv(here("inst/extdata/LEMTRP",
+                 paste0(root_site, "_parent_child.csv")))
+
+flowlines |>
+  st_write(dsn = here("inst/extdata/LEMTRP",
+                      paste0(root_site, "_flowlines.gpkg")),
+           delete_dsn = T)
+
+
+save(configuration,
+     sites_sf,
+     flowlines,
+     parent_child,
+     file = here("inst/extdata/LEMTRP",
                  paste0(root_site, "_site_config.Rdata")))
