@@ -8,7 +8,8 @@ compressDART(
   species = c("Chinook", "Coho", "Steelhead", "Sockeye"),
   loc = c("GRA", "PRA"),
   spawn_year = NULL,
-  configuration = NULL
+  configuration = NULL,
+  ...
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ compressDART(
 site configuration ID combinations. One example can be built with the function `buildConfig`. If
 no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
 the column name should be `node`.}
+
+\item{...}{other arguements to be passed to the `compress` function if the default values are not suitable.}
 }
 \value{
 A tibble with particular information from a complete tag history PTAGIS query.
