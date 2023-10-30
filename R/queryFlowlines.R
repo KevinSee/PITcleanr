@@ -62,10 +62,20 @@ queryFlowlines = function(sites_sf = NULL,
   if(dwnstrm_sites) {
     cat("Calculating furthest mainstem point downstream \n")
     # get flowlines for downstream sites based on bounding box of all sites
-    nhd_lst_tmp = sites_sf %>%
-      sf::st_transform(crs = 3857) %>%
-      sf::st_buffer(dist = buffer_dist) %>%
-      sf::st_bbox() %>%
+    if(buffer_dist == 0) {
+     site_bb <-
+       sites_sf %>%
+       sf::st_transform(crs = 3857) %>%
+       sf::st_bbox()
+    } else {
+      site_bb <-
+        sites_sf %>%
+        sf::st_transform(crs = 3857) %>%
+        sf::st_buffer(dist = buffer_dist) %>%
+        sf::st_bbox()
+    }
+    nhd_lst_tmp <-
+      site_bb %>%
       nhdplusTools::plot_nhdplus(bbox = .,
                                  streamorder = max(min_strm_order, (max(flowlines$StreamOrde) - dwn_min_stream_order_diff)),
                                  actually_plot = F)
