@@ -673,18 +673,18 @@ if(root_site == "PRO") {
 #-----------------------------------------------------------------
 # write configuration & parent-child table
 configuration |>
-  write_csv(here("inst/extdata/updated_data",
+  write_csv(here("inst/extdata",
                  paste0(root_site, "_configuration.csv")))
 
 parent_child |>
-  write_csv(here("inst/extdata/updated_data",
+  write_csv(here("inst/extdata",
                  paste0(root_site, "_parent_child.csv")))
 
 save(configuration,
      sites_sf,
      flowlines,
      parent_child,
-     file = here("inst/extdata/updated_data",
+     file = here("inst/extdata",
                  paste0(root_site, "_site_config.Rdata")))
 
 
