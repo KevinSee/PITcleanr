@@ -536,9 +536,9 @@ ggplot() +
   #           st_convex_hull(),
   #         fill = NA,
   #         lwd = 2) +
-geom_sf(data = sites_sf,
-        size = 3,
-        color = "black") +
+  geom_sf(data = sites_sf,
+          size = 3,
+          color = "black") +
   # geom_sf_label(data = sites_sf,
   #               size = 1.5,
   #               aes(label = site_code)) +
