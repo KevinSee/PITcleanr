@@ -62,7 +62,7 @@ queryFlowlines = function(sites_sf = NULL,
   if(dwnstrm_sites) {
     cat("Calculating furthest mainstem point downstream \n")
     # get flowlines for downstream sites based on bounding box of all sites
-    if(buffer_dist == 0) {
+    if(as.numeric(buffer_dist) == 0) {
      site_bb <-
        sites_sf %>%
        sf::st_transform(crs = 3857) %>%
