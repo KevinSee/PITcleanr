@@ -4,9 +4,11 @@ author: Kevin See
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   rmarkdown::html_vignette:
+    fig_height: 5
+    fig_width: 5
     toc: true
 vignette: >
-  %\VignetteIndexEntry{Querying, Compressing, and Making Sense of PIT Tag Detection Data}
+  %\VignetteIndexEntry{Preparing Data for a Cormack-Jolly-Seber (CJS) model}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -105,7 +107,7 @@ comp_obs <-
            units = "days")
 ```
 
-```{r, echo F}
+```{r, echo = F}
 # drop a couple of duplicate mark records to avoid confusion
 comp_obs <-
   comp_obs |> 
@@ -150,7 +152,8 @@ sites_sf <-
            (str_detect(rkm, "522.303.416") &
               rkm_total <= rkm_total[site_code == "LEMTRP"] &
               nchar(rkm) == 15),
-         site_code != "HAYDNC")
+         !site_code %in% c("HAYDNC",
+                           "S3A"))
 ```
 
 From here, we could build a parent-child table by hand (see the [Parent-Child Tables](parent_child.html) vignette). To build it using some of the functionality of `PITcleanr`, continue below.
@@ -163,7 +166,7 @@ nhd_list = queryFlowlines(sites_sf,
                           min_strm_order = 2,
                           dwnstrm_sites = T,
                           dwn_min_stream_order_diff = 4,
-                          buffer_dist = units::as_unit(10, "km"))
+                          buffer_dist = units::as_units(10, "km"))
 
 # compile the upstream and downstream flowlines
 flowlines = nhd_list$flowlines |>
@@ -175,7 +178,9 @@ flowlines <- system.file("extdata/LEMTRP",
                           "LEMTRP_flowlines.gpkg", 
                           package = "PITcleanr",
                           mustWork = TRUE) |>
-  st_read(quiet = T)
+  st_read(quiet = T) |> 
+  rename(geometry = geom) |> 
+  select(-id)
 ```
 
 This figure plots the NHDplus flowlines and our sites.
@@ -276,7 +281,7 @@ prepped_df <-
               save_file = F)
 ```
 
-In our example, here are the capture histories of the `r n_distinct(prepped_df$tag_code[is.na(prepped_df$user_keep_obs)])` tags with non-straightforward movements, along with `PITcleanr`'s suggestions as to which detections to keep (`auto_keep_obs == TRUE`). 
+In our example, here are the capture histories of the `r n_distinct(prepped_df$tag_code[is.na(prepped_df$user_keep_obs)])` tags with non-straightforward movements, along with `PITcleanr`'s suggestions as to which detections to keep (`auto_keep_obs == TRUE`) and which ones to discard (`auto_keep_obs == FALSE`). 
 
 ```{r, echo = F}
 prepped_df |> 
@@ -327,11 +332,45 @@ col_nodes <- defineCapHistCols(parent_child = parent_child,
 col_nodes
 ```
 
+Users have the option to keep each detection node as a separate column when creating the capture histories, by setting `drop_nodes = F`.
+
+```{r}
+cap_hist2 <-
+  buildCapHist(prepped_df,
+               parent_child = parent_child,
+               configuration = configuration,
+               drop_nodes = F)
+cap_hist2
+```
+
+If the user wanted to find out how many tags were detected at each node, something like the following could be run:
+
+```{r}
+cap_hist2 |> 
+  select(-c(tag_code,
+            cap_hist)) |> 
+  colSums()
+```
+
+or directly from the prepared detection data:
+
+```{r}
+prepped_df |> 
+  group_by(node) |> 
+  summarize(n_tags = n_distinct(tag_code),
+            .groups = "drop") |> 
+  mutate(across(node,
+                ~ factor(.,
+                         levels = col_nodes))) |> 
+  arrange(node)
+```
+
+
 If the user wants more control over which columns correspond to which sites or nodes, they can define the column order themselves.
 
 ```{r}
 # in this example, we are reversing the order
-column_order <- c("B2J", "JDJ", "MCJ", "ICH", "LMJ", "GOJ", "GRJ", "LLR", "LLRTP", "EVL", "S3A", "EVU", "LEMTRP")
+column_order <- c("B2J", "JDJ", "MCJ", "ICH", "LMJ", "GOJ", "GRJ", "LLR", "LLRTP", "EVL", "EVU", "LEMTRP")
 
 # construct capture history matrix
 prepped_df |> 
@@ -357,11 +396,13 @@ prepped_df |>
 
 # Fit a Cormack-Jolly-Seber Model
 
-Now that we've wrangled all our detections into capture histories, we're finally ready to fit a CJS model. There are many options for doing this, but in this example, we'll use the R package `marked`. Note that fitting a model like this (or nearly any kind of model) is outside the scope of the `PITcleanr` package. `PITcleanr` will help the user wrangle their data into a format that can be utlized in further analyses. 
+Now that we've wrangled all our detections into capture histories, we're finally ready to fit a Cormack-Jolly-Seber (CJS) model. There are many options for doing this, but in this example, we'll use the R package `marked`. Note that fitting a model like this (or nearly any kind of model) is outside the scope of the `PITcleanr` package. `PITcleanr` will help the user wrangle their data into a format that can be utilized in further analyses. 
 
-`marked` requires the capture histories to be processed and design data created. Setting the formula for `Phi` (survival parameters) and `p` (detection parameters) to be `~ time` ensures that a separate survival and detection parameter will be estimated between and for each site. For further information about using the `marked` package, please see the package's [CRAN site](https://CRAN.R-project.org/package=marked), the package [vignette](https://cran.r-project.org/web/packages/marked/vignettes/markedVignette.html), or the paper describing it ([Laake, Johnson and Conn (2013)](https://doi.org/10.1111/2041-210X.12065)).
+Please note that this vignette does not cover any of the details or assumptions behind a CJS model. Before attempting any analysis, the user should be aware of what's involved and how to interpret the results. 
 
-```{r}
+The `marked` package requires the capture histories to be processed and design data created. Setting the formula for `Phi` (survival parameters) and `p` (detection parameters) to be `~ time` ensures that a separate survival and detection parameter will be estimated between and for each site. For further information about using the `marked` package, please see the package's [CRAN site](https://CRAN.R-project.org/package=marked), the package [vignette](https://cran.r-project.org/web/packages/marked/vignettes/markedVignette.html), or the paper describing it ([Laake, Johnson and Conn (2013)](https://doi.org/10.1111/2041-210X.12065)).
+
+```{r fit-cjs-mod, results = "hide"}
 # load needed package
 library(marked)
 
@@ -425,29 +466,33 @@ est_preds$p <-
 
 ```{r}
 # examine the estimates
+
+# Survival
 est_preds$Phi |> 
   mutate(across(where(is.numeric),
          ~ round(., digits = 3)))
 
+# Detection
 est_preds$p |> 
   mutate(across(where(is.numeric),
          ~ round(., digits = 3)))
 
 ```
 
+In this example, a user might be interested in the cummulative survival of fish from the Upper Lemhi screw trap to certain dams like Lower Granite, McNary, and John Day. These can be obtained by multiplying survival estimates up to the location of interest. Because the final survival and detection probabilties are confounded in this type of CJS model, we can't estimate cummulative survival to Bonneville dam (B2J) unless we added detection sites either within the estuary or of adults returning to Bonneville. 
 
 ```{r}
-# cumulative survival to Lower Granite and Bonneville Dam
+# cumulative survival to Lower Granite, McNary and John Day dams
 est_preds$Phi |> 
   # group_by(life_stage) |> 
   summarize(lower_granite = prod(estimate[occ <= 6]),
-            john_day = prod(estimate[occ <= 11]),
-            bonneville = prod(estimate))
-
-
+            mcnary = prod(estimate[occ <= 10]),
+            john_day = prod(estimate[occ <= 11]))
 ```
 
 ## Slightly More Complicated CJS
+
+To demonstrate how a CJS model might get more nuanced, we will examine whether survival and detection at each site depend on whether a fish is tagged at the Upper Lemhi screw trap in the fall as a parr, or in the spring as a smolt. First we assign a life-stage to each tag, and prepare the data again.
 
 ```{r}
 covar_df <-
@@ -463,6 +508,7 @@ covar_df <-
          life_stage) |> 
   distinct()
 
+# add life history type to capture histories
 cjs_data <-
   cap_hist |> 
   left_join(covar_df,
@@ -470,9 +516,7 @@ cjs_data <-
   relocate(cap_hist,
            .after = life_stage)
 
-```
-
-```{r}
+# process capture history into necessary format
 cjs_proc <-
   cjs_data |>
   rename(ch = cap_hist) |> 
@@ -480,18 +524,30 @@ cjs_proc <-
   process.data(model = "CJS",
                groups = c("life_stage"))
 
+# create design data
 cjs_ddl <-
   make.design.data(cjs_proc)
 
-# set model construction
+```
+
+The `marked` package allows a user to fit a number of different user-defined models to the same dataset, and returns some model selection information such as AIC. 
+
+```{r, eval = F}
+#------------------------
+# set up possible models
+
+# survival and detection only depend on location
 Phi.time <- list(formula = ~ time)
 p.time <- list(formula = ~ time)
 
+# survival and detection depend on location and life-stage
 Phi.time.grp <- list(formula = ~ time * life_stage)
 p.time.grp <- list(formula = ~ time * life_stage)
 
+# create all combinations of Phi and p models
 cml <- create.model.list(c("Phi","p"))
 
+# fit all possible models
 all_mods <-
   crm.wrapper(cml,
               data = cjs_proc,
@@ -501,40 +557,67 @@ all_mods <-
               hessian = T)
 
 all_mods
-```
 
-```{r}
 # pull out best model
-best_mod <-
+mod_ls <-
   pluck(all_mods,
         all_mods$model.table |>
           rownames() |>
           pluck(1) |>
-          as.numeric()
-  )
+          as.numeric())
+```
 
-est_preds <-
-  predict(best_mod,
+```{r fit-ls-cjs-mod, results = "hide", echo = F}
+# survival and detection depend on location and life-stage
+Phi.time.grp <- list(formula = ~ time * life_stage)
+p.time.grp <- list(formula = ~ time * life_stage)
+
+# fit full model
+mod_ls <- crm(data = cjs_proc,
+              ddl = cjs_ddl,
+              model.parameters = list(Phi = Phi.time.grp,
+                                      p = p.time.grp),
+              hessian = T)
+```
+
+In this case, the model best supported by AIC included different survival and detection probabilities for each life stage, parr and smolt. We can extract those estimates and assign a reach to each survival parameter and site to each detection parameter. 
+
+```{r}
+# pull out parameter estimates
+est_preds_ls <-
+  predict(mod_ls,
           se = T) |>
   map(.f = as_tibble)
 
-est_preds$Phi <-
-  est_preds$Phi |>
+# label reaches for survival
+est_preds_ls$Phi <-
+  est_preds_ls$Phi |>
   left_join(parent_child |>
               left_join(buildNodeOrder(parent_child),
                         by = join_by(child == node)) |> 
               arrange(node_order) |>
               mutate(occ = node_order - 1) |> 
               select(occ, parent, child) |>
-              unite(col = "surv",
+              unite(col = "reach",
                     parent,
                     child,
                     sep = "_"),
             by = join_by(occ)) |> 
-  relocate(surv,
+  relocate(reach,
            .before = estimate)
 
-est_preds$Phi |> 
+# label sites for detection
+est_preds_ls$p <-
+  est_preds_ls$p |>
+  bind_cols(tibble(site = rep(rev(parent_child$child), 2))) |> 
+  relocate(site,
+           .before = estimate)
+
+```
+
+
+```{r, echo = F, eval = F}
+est_preds$Phi |>
   pivot_wider(names_from = life_stage,
               names_sort = T,
               values_from = c(estimate,
@@ -543,14 +626,6 @@ est_preds$Phi |>
                               ucl),
               names_glue = "{life_stage}_{.value}",
               names_vary = "fastest")
-
-
-
-est_preds$p <-
-  est_preds$p |>
-  bind_cols(tibble(site = rep(rev(parent_child$child), 2))) |> 
-  relocate(site,
-           .before = estimate)
 
 est_preds$p |>
   pivot_wider(names_from = life_stage,
@@ -569,11 +644,73 @@ est_preds |>
                     ~ round(., 3)))
   })
 
+# cumulative survival to Lower Granite, McNary and John Day dams
 est_preds$Phi |> 
-  group_by(life_stage) |> 
-  summarize(grj_surv = prod(estimate[occ <= 6]),
-            bon_surv = prod(estimate))
+  group_by(life_stage) |>
+  summarize(lower_granite = prod(estimate[occ <= 6]),
+            mcnary = prod(estimate[occ <= 10]),
+            john_day = prod(estimate[occ <= 11]))
+```
 
+We can then plot the estimates, for both the model separating parameters by life-stage, and the model which combines all that data. 
+
+```{r surv-est}
+pd = 0.2
+
+est_preds_ls$Phi |> 
+  bind_rows(est_preds$Phi |>
+              mutate(life_stage = "All")) |>
+  mutate(across(life_stage,
+                ~ str_to_title(.))) |> 
+  filter(occ < max(occ)) |> 
+  mutate(across(reach,
+                forcats::as_factor)) |> 
+  ggplot(aes(x = reach,
+             y = estimate,
+             color = life_stage)) +
+  geom_errorbar(aes(ymin = lcl,
+                    ymax = ucl),
+                width = 0,
+                position = position_dodge(width = pd)) +
+  geom_point(size = 3,
+             position = position_dodge(width = pd)) +
+  scale_color_brewer(palette = "Set1",
+                     name = "Life Stage") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom") +
+  labs(x = "Reach",
+       y = "Survival")
+```
+
+```{r det-est}
+pd = 0.2
+
+est_preds_ls$p |> 
+  bind_rows(est_preds$p |> 
+              mutate(life_stage = "All")) |> 
+  mutate(across(life_stage,
+                ~ str_to_title(.))) |> 
+  filter(occ < max(occ)) |> 
+  mutate(across(site,
+                forcats::as_factor)) |> 
+  ggplot(aes(x = site,
+             y = estimate,
+             color = life_stage)) +
+  geom_errorbar(aes(ymin = lcl,
+                    ymax = ucl),
+                width = 0,
+                position = position_dodge(width = pd)) +
+  geom_point(size = 3,
+             position = position_dodge(width = pd)) +
+  scale_color_brewer(palette = "Set1",
+                     name = "Life Stage") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom") +
+  labs(x = "Site",
+       y = "Detection Probability")
 
 ```
 
+# Warnings
