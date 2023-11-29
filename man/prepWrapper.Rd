@@ -37,7 +37,7 @@ If \code{Biologic_csv}, that implies the data was downloaded from Biologic softw
 
 If \code{raw}, that implies the data was downloaded directly from the reader, in either a .log or .xlsx format. In this case, the largest string containing alphabetic characters in the file name will be assigned as the site code.}
 
-\item{configuration}{is a data frame which assigns node names to unique SiteID, AntennaID, and
+\item{configuration}{is a data frame which assigns node names to unique site, antenna, and
 site configuration ID combinations. One example can be built with the function `buildConfig`. If
 no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
 the column name should be `node`.}

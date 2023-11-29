@@ -6,6 +6,7 @@
 #'
 #' @inheritParams queryObsDART
 #' @inheritParams compress
+#' @param ... other arguements to be passed to the `compress` function if the default values are not suitable.
 #'
 #' @author Kevin See
 #'
@@ -19,7 +20,8 @@
 compressDART <- function(species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
                          loc = c('GRA', 'PRA'),
                          spawn_year = NULL,
-                         configuration = NULL) {
+                         configuration = NULL,
+                         ...) {
 
   # what is the species code for each species?
   spp_code = tibble(mark_species_name = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
@@ -48,7 +50,8 @@ compressDART <- function(species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye'),
            everything())
 
   comp_obs = compress(dart_obs,
-                      ignore_event_vs_release = T)
+                      configuration = configuration,
+                      ...)
 
   list('compress_obs' = comp_obs,
        'dart_obs' = dart_obs) %>%

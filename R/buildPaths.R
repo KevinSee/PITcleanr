@@ -7,7 +7,7 @@
 #'
 #' @param parent_child data frame with at least `parent` and `child` columns.
 #' Can be created with `buildParentChild()` function.
-#' @param the direction of movement. Parent-child tables are generally built imagining parents as downstream from children. Assuming that's the case, should the paths be upstream (`u` or `upstream`), the default, or downstream (`d` or `downstream`)?
+#' @param direction the direction of movement. Parent-child tables are generally built imagining parents as downstream from children. Assuming that's the case, should the paths be upstream (`u` or `upstream`), the default, or downstream (`d` or `downstream`)?
 #'
 #' @import dplyr purrr
 #' @importFrom magrittr %<>%

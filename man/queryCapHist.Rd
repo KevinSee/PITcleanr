@@ -5,12 +5,28 @@
 \title{PTAGIS Detection History}
 \source{
 \url{http://www.ptagis.org}
+
+\url{https://www.cbr.washington.edu/dart}
 }
 \usage{
-queryCapHist(tag_code = NULL, configuration = NULL)
+queryCapHist(
+  ptagis_tag_code = NULL,
+  configuration = NULL,
+  include_mark = FALSE,
+  api_key = NULL
+)
 }
 \arguments{
-\item{tag_code}{PTAGIS tag code}
+\item{ptagis_tag_code}{PTAGIS tag code}
+
+\item{configuration}{is a data frame which assigns node names to unique site, antenna, and
+site configuration ID combinations. One example can be built with the function `buildConfig`. If
+no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
+the column name should be `node`.}
+
+\item{include_mark}{should the mark event information be queried from PTAGIS and added to other detections? If `TRUE`, `api_key` must be supplied for this PTAGIS query.}
+
+\item{api_key}{PTAGIS API key, given to individual users}
 }
 \description{
 Query and download complete capture history for one tag from PTAGIS (through DART). Due to
@@ -18,7 +34,7 @@ PTAGIS no longer offering queries for the mark event information for a given tag
 observations after the mark event are returned.
 }
 \examples{
-queryCapHist(tag_code = '384.3B23A0A6EE')
+queryCapHist(ptagis_tag_code = '384.3B23A0A6EE')
 }
 \author{
 Kevin See

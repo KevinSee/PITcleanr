@@ -60,7 +60,7 @@ The PTAGIS metadata also contains additional information such as:
 
 All of this would be submitted to PTAGIS by individuals when setting up sites, and not every site will have all of that information. 
 
-`buildConfig()` defaults to assigning nodes based on the array, or group of antennas (`node_assign = array`). Searching the antenna group description for words like "upstream", "upper", or "top", it will assign those antennas to the upstream node, which is the site code plus `A0` (e.g. `CHLA0`). Similarly, if the antenna group description contains words like "downstream", "lower", or "bottom", it assigns it to the downstream node, which is the site code plus `B0`. If a site contains a middle array, those antennas are assigned to the `A0` node. For sites with four arrays, the upper two arrays are mapped to `A0` and the lower two arrays are mapped to `B0`. 
+`buildConfig()` defaults to assigning nodes based on the array, or group of antennas (`node_assign = array`). Searching the antenna group description for words like "upstream", "upper", or "top", it will assign those antennas to the upstream node, which is the site code plus `_U` (e.g. `CHL_U`). Similarly, if the antenna group description contains words like "downstream", "lower", or "bottom", it assigns it to the downstream node, which is the site code plus `_D`. If a site contains a middle array, those antennas are assigned to the `_U` node. For sites with four arrays, the upper two arrays are mapped to `_U` and the lower two arrays are mapped to `_D`. 
 
 If the user chooses to set the `node_assign` argument in `buildConfig()` to "site", the node will be identical to the site code, so all detections at a site will be mapped to the same node. If, however, the `node_assign` argument is set to "antenna", each antenna is defined as a separate node, and those nodes are labeled as the site code and the antenna ID, separated by "_". 
 
@@ -86,27 +86,27 @@ my_configuration = array_configuration %>%
                        'TUM',
                        node),
          node = ifelse(site_code == 'CHIWAC',
-                       'CHWA0',
+                       'CHW_U',
                        node),
          node = ifelse(site_code %in% c('CHIWAR', 'CHIWAT'),
-                       'CHLA0',
+                       'CHL_U',
                        node),
          node = ifelse(site_code == 'CHIW',
-                       'CHLA0',
+                       'CHL_U',
                        node),
          # In this case, PIT tags from carcass recoveries in the Chikamin River are
          # grouped with the upper 'CHU' array
          node = ifelse(site_code == 'CHIKAC',
-                       'CHUA0',
+                       'CHU_U',
                        node),
          node = ifelse(site_code == 'NASONC',
-                       'NALA0',
+                       'NAL_U',
                        node),
          node = ifelse(site_code == 'WHITER',
-                       'WTLA0',
+                       'WTL_U',
                        node),
          node = ifelse(site_code == 'LWENAT',
-                       'LWNA0',
+                       'LWN_U',
                        node)) %>%
   distinct()
 ```

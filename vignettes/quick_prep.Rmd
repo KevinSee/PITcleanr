@@ -28,7 +28,7 @@ options(rmarkdown.html_vignette.check_title = FALSE)
 
 # Introduction
 
-The core of `PITcleanr`'s functionality relies on detections from [PTAGIS](https://www.ptagis.org/), a configuration file that maps those detections onto user-defined "nodes", and a parent-child table showing how those nodes are related to each other on a stream network (i.e. which nodes are connected). `PITcleanr` contains several functions to help create the configuration file and the parent-child table, but the user can also create those files by hand, or use files from a previous analysis (e.g. last year). This vignette shows only the essential steps needed to make use of `PITcleanr` in preparing data for `DABOM`. 
+The core of `PITcleanr`'s functionality relies on detections from [PTAGIS](https://www.ptagis.org/), a configuration file that maps those detections onto user-defined "nodes", and a parent-child table showing how those nodes are related to each other on a stream network (i.e. which nodes are connected). `PITcleanr` contains several functions to help create the configuration file and the parent-child table, but the user can also create those files by hand, or use files from a previous analysis (e.g. last year). This vignette shows only the essential steps needed to make use of `PITcleanr` in preparing data for the Dam Adult Branch Occupancy Model ([DABOM](https://github.com/KevinSee/DABOM)). 
 
 ```{r setup, echo = F}
 library(PITcleanr)
@@ -59,7 +59,7 @@ prepped_df = prepWrapper(ptagis_file = ptagis_file,
                          configuration = my_config,
                          parent_child = parent_child,
                          # filter out detections after a particular date
-                         max_obs_date = "20150930",
+                         max_obs_date = "20180930",
                          # save results to file
                          save_file = T,
                          file_name = "PITcleanr_output.xlsx")
@@ -121,7 +121,7 @@ Once the user has finished editing it, they may read it back into R:
 ```{r, echo = F}
 # find configuration file
 config_file = system.file("extdata", 
-                          "configuration_TUM.csv", 
+                          "TUM_configuration.csv", 
                           package = "PITcleanr",
                           mustWork = TRUE)
 ```
@@ -142,7 +142,7 @@ If the user wishes to create a parent-child table by hand, the file must contain
 ```{r, echo = F}
 # find parent-child file
 parent_child_file = system.file("extdata", 
-                                "parent_child_TUM.csv", 
+                                "TUM_parent_child.csv", 
                                 package = "PITcleanr",
                                 mustWork = TRUE)
 ```
@@ -159,7 +159,7 @@ The path to an example parent-child file included with `PITcleanr` can be found 
 ```{r, eval = F}
 # path to example parent-child table
 system.file("extdata", 
-            "parent_child_TUM.csv", 
+            "TUM_parent_child.csv", 
             package = "PITcleanr",
             mustWork = TRUE)
 ```
@@ -196,7 +196,7 @@ For further information about querying data from PTAGIS (or other sources), plea
 ```{r, echo = F}
 # find file with PTAGIS observations
 ptagis_file = system.file("extdata", 
-                          "TUM_Chinook_2015.csv", 
+                          "TUM_chnk_cth_2018.csv", 
                           package = "PITcleanr",
                           mustWork = TRUE)
 ```
@@ -209,8 +209,8 @@ Now the user can assign those detections to a "node", compress that data, assign
 prepped_df = prepWrapper(cth_file = ptagis_file,
                          configuration = my_configuration,
                          parent_child = parent_child_nodes,
-                         min_obs_date = "20150301",
-                         max_obs_date = "20150930")
+                         min_obs_date = "20180301",
+                         max_obs_date = "20180930")
 ```
 
 The user can even save that output directly to an Excel workbook or .csv file by setting `save_file = TRUE` and defining a file path and name in the `file_name` argument. Within this output (either in R, or in the saved Excel file), all the rows where the field `user_keep_obs` is NA or blank must be filled in with either `TRUE` or `FALSE`. The field `auto_keep_obs` provides a suggestion, but the ultimate choice is up to the user. 
@@ -219,10 +219,12 @@ The user can even save that output directly to an Excel workbook or .csv file by
 prepped_df = prepWrapper(ptagis_file = ptagis_file,
                          configuration = my_config,
                          parent_child = parent_child_nodes,
-                         min_obs_date = "20150301",
-                         max_obs_date = "20150930",
+                         min_obs_date = "20180301",
+                         max_obs_date = "20180930",
                          save_file = T,
                          file_name = "PITcleanr_output.xlsx")
 ```
+
+The `prepWrapper()` function also contains an option to add a column showing a character string of all the nodes a tag was detected at, in chronological order. Some users may find this display useful in determining which detections to retain. This option can be invoked by setting the argument `add_tag_detects = TRUE` within the `prepWrapper()` function.
 
 #### End Vignette

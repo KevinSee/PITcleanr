@@ -45,7 +45,7 @@ queryMRRDataFile = function(file_nm = NULL,
     if(text_only) {
       txt_df <-
         dplyr::tibble(X1 = paste(names(tag_data),
-                          collapse = "\t")) |>
+                                 collapse = "\t")) |>
         bind_rows(tidyr::unite(tag_data,
                                col = "X1",
                                everything(),
@@ -114,7 +114,7 @@ queryMRRDataFile = function(file_nm = NULL,
     last_tag_row <-
       text_file |>
       dplyr::summarize(row_num = min(which(stringr::str_detect(X1, "^V") |
-                                         stringr::str_detect(X1, "^CLOSE DATE")))) |>
+                                             stringr::str_detect(X1, "^CLOSE DATE")))) |>
       dplyr::pull(row_num) - 1
 
     # get meta data from header
@@ -154,33 +154,33 @@ queryMRRDataFile = function(file_nm = NULL,
       dplyr::slice(first_tag_row:last_tag_row) |>
       dplyr::mutate(split_text = stringr::str_split(X1, "[:space:][:space:]+")) |>
       dplyr::mutate(split_text_df = purrr::map(split_text,
-                                        .f = function(x) {
-                                          if(length(x) == 3) {
-                                            dplyr::tibble(id = x[1],
-                                                   pit_tag = x[2],
-                                                   length = NA_real_,
-                                                   comments = x[3]) |>
-                                              dplyr::mutate(
-                                                dplyr::across(id,
-                                                              ~ as.numeric(.) |>
-                                                                suppressWarnings()))
-                                          } else if(length(x) == 4) {
-                                            if(stringr::str_detect(x[4], "^\\|")) {
-                                              x[4] <- paste0(x[3], x[4])
-                                              x[3] <- NA_real_
-                                            }
+                                               .f = function(x) {
+                                                 if(length(x) == 3) {
+                                                   dplyr::tibble(id = x[1],
+                                                                 pit_tag = x[2],
+                                                                 length = NA_real_,
+                                                                 comments = x[3]) |>
+                                                     dplyr::mutate(
+                                                       dplyr::across(id,
+                                                                     ~ as.numeric(.) |>
+                                                                       suppressWarnings()))
+                                                 } else if(length(x) == 4) {
+                                                   if(stringr::str_detect(x[4], "^\\|")) {
+                                                     x[4] <- paste0(x[3], x[4])
+                                                     x[3] <- NA_real_
+                                                   }
 
-                                            dplyr::tibble(id = x[1],
-                                                          pit_tag = x[2],
-                                                          length = x[3],
-                                                          comments = x[4]) |>
-                                              dplyr::mutate(
-                                                dplyr::across(c(id,
-                                                                length),
-                                                              ~ as.numeric(.) |>
-                                                                suppressWarnings()))
-                                          }
-                                        })) |>
+                                                   dplyr::tibble(id = x[1],
+                                                                 pit_tag = x[2],
+                                                                 length = x[3],
+                                                                 comments = x[4]) |>
+                                                     dplyr::mutate(
+                                                       dplyr::across(c(id,
+                                                                       length),
+                                                                     ~ as.numeric(.) |>
+                                                                       suppressWarnings()))
+                                                 }
+                                               })) |>
       tidyr::unnest(split_text_df) |>
       dplyr::select(-c(X1,split_text)) |>
       dplyr::filter(stringr::str_detect(pit_tag,
@@ -253,7 +253,7 @@ queryMRRDataFile = function(file_nm = NULL,
                                                 "Recapture",
                                                 "Mark")) |>
       dplyr::left_join(dates,
-                by = dplyr::join_by(grp_num)) |>
+                       by = dplyr::join_by(grp_num)) |>
       dplyr::select(sequence_number = id,
                     pit_tag,
                     species_run_rear_type = srr,
