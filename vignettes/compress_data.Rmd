@@ -86,7 +86,7 @@ Now, re-run the `compress()` function, except supplying a `configuration`:
 ```{r}
 library(readr)
 my_configuration <- system.file("extdata", 
-                                "configuration_TUM.csv", 
+                                "TUM_configuration.csv", 
                                 package = "PITcleanr",
                                 mustWork = TRUE) |> 
   read_csv(show_col_types = F)
@@ -97,7 +97,5 @@ comp_obs2 = compress(cth_file,
 
 # look at first part of comp_obs
 head(comp_obs2, 10)
-```
-
 ```
 
