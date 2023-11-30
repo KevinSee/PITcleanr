@@ -63,6 +63,7 @@ reference:
   - buildPaths
   - plotNodes
   - buildNodeGraph
+  - getNodeInfo
 - title: Manipulate Data
   desc: |
     Functions to help the user manipulate and summarize data
@@ -75,23 +76,13 @@ reference:
   - summarizeTagData
   - compressDART
   - readTestTag
+  - buildCapHist
+  - defineCapHistCols
 - title: Deprecated functions
   desc: |
     These functions have been superseded
 - contents:
-  - obsNetwork
-  - defineRepGrps
-  - filterLGRtrapDB
   - findDwnStrmSite_RKM
-  - processCapHist_LGD
-  - processCapHist_PRD
-  - processCapHist_PRO
-  - processCapHist_TUM
-  - processDART_LGR
-  - summariseValidTagsLGR
-  - writeCapHistOutput
-  - writeFishPaths
-  - writeSpwnPaths
   - writeOldNetworks
   - writeLGRNodeNetwork
   - writePRDNodeNetwork
