@@ -7,6 +7,7 @@ output:
 ```{r echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
 library(dplyr)
 library(stringr)
+library(janitor)
 library(PITcleanr)
 library(knitr)
 library(kableExtra)
@@ -98,7 +99,7 @@ ptagis_file = "C:/Users/USER_NAME_HERE/Downloads/TUM_chnk_cth_2018.csv"
 
 raw_ptagis = readCTH(ptagis_file,
                      "PTAGIS") |> 
-  clean_names("title")
+  janitor::clean_names("title")
 
 n_raw_tags = dplyr::n_distinct(raw_ptagis$`Tag Code`)
 

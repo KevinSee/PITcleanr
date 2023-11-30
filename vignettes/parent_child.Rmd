@@ -29,7 +29,7 @@ library(readr)
 library(stringr)
 library(PITcleanr)
 
-devtools::load_all()
+# devtools::load_all()
 ```
 
 # Description
@@ -44,10 +44,20 @@ parent_child <- system.file("extdata",
                             package = "PITcleanr",
                             mustWork = TRUE) |> 
   read_csv(show_col_types = F) |> 
-  arrange(parent_rkm,
-          child_rkm) |> 
+  # arrange(parent_hydro,
+  #         child_hydro) |> 
   select(parent, 
          child)
+
+# ensure the rows are in a reasonable order
+parent_child <-
+  parent_child |> 
+  left_join(buildNodeOrder(parent_child),
+            by = join_by(child == node)) |> 
+  arrange(path) |> 
+  select(parent, child)
+  
+
 ```
 
 ```{r}
