@@ -40,7 +40,7 @@ For example, in the Wenatchee River example, the parent-child table looks like t
 
 ```{r parent-child-fig, echo = F, results = "hide", fig.align = "center"}
 parent_child <- system.file("extdata", 
-                            "parent_child_TUM.csv", 
+                            "TUM_parent_child.csv", 
                             package = "PITcleanr",
                             mustWork = TRUE) |> 
   read_csv(show_col_types = F) |> 
@@ -81,7 +81,7 @@ When dealing with large number of sites, and many possible connections, it can b
 
 ```{r}
 cth_file = system.file("extdata", 
-                       "TUM_Chinook_2015.csv", 
+                       "TUM_chnk_cth_2018.csv", 
                        package = "PITcleanr",
                        mustWork = TRUE)
 
@@ -134,14 +134,14 @@ ggplot() +
 
 ```{r, eval = F, echo = F}
 cth_file = system.file("extdata", 
-                       "TUM_Chinook_2015.csv", 
+                       "TUM_chnk_cth_2018.csv", 
                        package = "PITcleanr",
                        mustWork = TRUE)
 
 cth_df <- readCTH(cth_file)
 
 # my_configuration <- system.file("extdata", 
-#                                 "configuration_TUM.csv", 
+#                                 "TUM_configuration.csv", 
 #                                 package = "PITcleanr",
 #                                 mustWork = TRUE) |> 
 #   read_csv(show_col_types = F)
@@ -223,7 +223,7 @@ Here, we use the `addParentChildNodes()` function on our existing `parent_child`
 ```{r}
 # read in configuration file
 my_configuration <- system.file("extdata",
-                                "configuration_TUM.csv",
+                                "TUM_configuration.csv",
                                 package = "PITcleanr",
                                 mustWork = TRUE) |>
   read_csv(show_col_types = F)

@@ -92,9 +92,9 @@ In this vignette, we will use an example dataset of Spring Chinook Salmon tagged
 ```{r}
 # the complete tag history file from PTAGIS
 ptagis_file <- system.file("extdata", 
-                          "TUM_chnk_cth_2018.csv", 
-                          package = "PITcleanr",
-                          mustWork = TRUE)
+                           "TUM_chnk_cth_2018.csv", 
+                           package = "PITcleanr",
+                           mustWork = TRUE)
 
 # read the complete tag history file into R, and filter detections before a certain date
 cth_df <- readCTH(ptagis_file,
@@ -103,16 +103,16 @@ cth_df <- readCTH(ptagis_file,
 
 # the pre-built configuration file
 configuration <- system.file("extdata", 
-                          "TUM_configuration.csv", 
-                          package = "PITcleanr",
-                          mustWork = TRUE) |> 
+                             "TUM_configuration.csv", 
+                             package = "PITcleanr",
+                             mustWork = TRUE) |> 
   read_csv(show_col_types = F)
 
 # the pre-built parent-child table
 parent_child <- system.file("extdata", 
-                          "TUM_parent_child.csv", 
-                          package = "PITcleanr",
-                          mustWork = TRUE) |> 
+                            "TUM_parent_child.csv", 
+                            package = "PITcleanr",
+                            mustWork = TRUE) |> 
   read_csv(show_col_types = F)
 ```
 
