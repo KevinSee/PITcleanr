@@ -97,7 +97,7 @@
       <h1 data-toc-skip>Reading PIT Tag Data Into R</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">22 June, 2023</h4>
+            <h4 data-toc-skip class="date">30 November, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/read_in_data.Rmd" class="external-link"><code>vignettes/read_in_data.Rmd</code></a></small>
       <div class="hidden name"><code>read_in_data.Rmd</code></div>
@@ -120,27 +120,27 @@
 <h3 id="complete-capture-history">Complete Capture History<a class="anchor" aria-label="anchor" href="#complete-capture-history"></a>
 </h3>
 <p><code>PITcleanr</code> starts with a complete capture history query from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> for a select group of tags of interest. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query.</p>
-<p>For convenience, we’ve included one such file with <code>PITcleanr</code>, which is saved to the user’s computer when <code>PITcleanr</code> is installed. The file, “tag_list_TUM_2015.txt”, contains tag IDs for Chinook salmon adults implanted with PIT tags at Tumwater Dam in 2015. The following code can be used to find the path to this example file. The user can use this as a template for creating their own tag list as well.</p>
+<p>For convenience, we’ve included one such file with <code>PITcleanr</code>, which is saved to the user’s computer when <code>PITcleanr</code> is installed. The file, “TUM_chnk_tags_2018.txt”, contains tag IDs for Chinook salmon adults implanted with PIT tags at Tumwater Dam in 2018. The following code can be used to find the path to this example file. The user can use this as a template for creating their own tag list as well.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>            <span class="st">"tag_list_TUM_2015.txt"</span>, </span>
+<span>            <span class="st">"TUM_chnk_tags_2018.txt"</span>, </span>
 <span>            package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
 <span>            mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The example file of tag codes is very simple:</p>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2,019 x 1</span></span></span>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,406 x 1</span></span></span>
 <span><span class="co">#&gt;    X1            </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 384.3B239AD241</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 3D9.1BF24B20F5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 3D9.1C2D76FB78</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 3D9.1C2D770193</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3D9.1C2D91B3DE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3D9.1C2D925C52</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 3D9.1C2D929849</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3D9.1C2D93282A</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3D9.1C2DB9A65E</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3D9.1C2DC026E4</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># i 2,009 more rows</span></span></span></code></pre>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 3DD.00777C5CEC</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 3DD.00777C5E34</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 3DD.00777C7728</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 3DD.00777C8493</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3DD.00777C9185</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3DD.00777C91C3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 3DD.00777CE6B8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3DD.00777CEB31</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3DD.00777CEF93</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3DD.00777CEFC1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i 1,396 more rows</span></span></span></code></pre>
 <p>Once the user has created their own tag list, or located this example one, they can go to the <a href="https:://www.ptagis/org">PTAGIS homepage</a> to query the complete tag histories for those tags. The complete tag history query is available under <a href="https://www.ptagis.org/Data/AdvancedReporting" class="external-link">Advanced Reporting</a>, which requires a free account from PTAGIS. From the <a href="https:://www.ptagis/org">homepage</a>, click on “Login/Register”, and either login to an existing account, or click “Create a new account” to create one. Once logged in, scroll down the dashboard page to the Advanced Reporting Links section. PTAGIS allows users to save reports/queries to be run again. For users who plan to utilize <code>PITcleanr</code> more than once, it saves a lot of time to build the initial query and then save it into the user’s PTAGIS account. It is then available through the “My Reports” link. To create a new query, click on “Query Builder”, or “Advanced Reporting Home Page” and then ““Create Query Builder2 Report”. From here, choose “Complete Tag History” from the list of possible reports.</p>
 <p>There are several query indices on the left side of the query builder, but for the purposes of <code>PITcleanr</code> only a few are needed. First, under “1 Select Attributes” the following attributes are required to work with <code>PITcleanr</code>:</p>
 <ul>
@@ -161,8 +161,8 @@
 </ul>
 <p>Simply move these attributes over from the “Available” column to the “Selected:” column on the page by selecting them and clicking on the right arrow between the “Available” and “Selected” boxes. Other fields of interest to the user may be included as well (e.g. Event Length), and will be included as extra columns in the query output.</p>
 <p>The only other required index is “2 Select Metrics”, but that can remain as the default, “CTH Count”, which provides one record for each event recorded per tag.</p>
-<p>Set up a filter for specific tags by next navigating to the “27 Tag Code - List or Text File” on the left. After selecting “Tag” under “Attributes:”, click on “Import file…”. Simply upload the .txt file containing your PIT tag codes of interest, or alternatively, feel free to use the “tag_list_TUM_2015.txt” file provided with <code>PITcleanr</code>. After choosing the file, click on “Import” and the tag list will be loaded (delimited by semi-colons). Click “OK”.</p>
-<p>Under “Report Message Name:” near the bottom, name the query something appropriate, such as “TUM_Chinook_2015”, and select “Run Report”. Once the query has successfully completed, the output can be exported as a .csv file (e.g. “TUM_Chinook_2015.csv”). Simply click on the “Export” icon near the top, which will open a new page, and select the default settings:</p>
+<p>Set up a filter for specific tags by next navigating to the “27 Tag Code - List or Text File” on the left. After selecting “Tag” under “Attributes:”, click on “Import file…”. Simply upload the .txt file containing your PIT tag codes of interest, or alternatively, feel free to use the “TUM_chnk_tags_2018.txt” file provided with <code>PITcleanr</code>. After choosing the file, click on “Import” and the tag list will be loaded (delimited by semi-colons). Click “OK”.</p>
+<p>Under “Report Message Name:” near the bottom, name the query something appropriate, such as “TUM_chnk_cth_2018”, and select “Run Report”. Once the query has successfully completed, the output can be exported as a .csv file (e.g. “TUM_chnk_cth_2018.csv”). Simply click on the “Export” icon near the top, which will open a new page, and select the default settings:</p>
 <ul>
 <li>Export: Whole report</li>
 <li>CSV file format</li>
@@ -171,21 +171,33 @@
 <li>Remove extra column: Yes</li>
 </ul>
 <p>And click “Export”, again.</p>
-<p><code>PITcleanr</code> includes several example files to help users understand the appropriate format of certain files, and to provide demonstrations of various functions. The <code>system.file</code> function locates the file path to the subdirectory and file contained with a certain package. One such example is PTAGIS output for the Tumwater Chinook tags from 2015. Using similar code (<code>system.file</code>), the user can set the file path to this file, and store it as a new object <code>ptagis_file</code>.</p>
+<p><code>PITcleanr</code> includes several example files to help users understand the appropriate format of certain files, and to provide demonstrations of various functions. The <code>system.file</code> function locates the file path to the subdirectory and file contained with a certain package. One such example is PTAGIS output for the Tumwater Chinook tags from 2018. Using similar code (<code>system.file</code>), the user can set the file path to this file, and store it as a new object <code>ptagis_file</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>                          <span class="st">"TUM_Chinook_2015.csv"</span>, </span>
+<span>                          <span class="st">"TUM_chnk_cth_2018.csv"</span>,</span>
 <span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
 <span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, if the user has run a query from PTAGIS as described above, they could set <code>ptagis_file</code> to the path and file name of the .csv they downloaded.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># As an example, set path to PTAGIS query output</span></span>
-<span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/USER_NAME_HERE/Downloads/TUM_Chinook_2015.csv"</span></span></code></pre></div>
-<p>Note that in our example file, there are 24938 detections (rows) for 2019 unique tags, matching the number of tags in our example tag list “tag_list_TUM_2015.txt”. For a handful of those tags, in our case 178, there is only a “Mark” detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining tags, many of them were often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of some of the raw data for a single tag:</p>
+<span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/USER_NAME_HERE/Downloads/TUM_chnk_cth_2018.csv"</span></span></code></pre></div>
+<p>Note that in our example file, there are 13501 detections (rows) for 1406 unique tags, matching the number of tags in our example tag list “TUM_chnk_tags_2018.txt”. For a handful of those tags, in our case 221, there is only a “Mark” detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining tags, many of them were often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of some of the raw data for a single tag:</p>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
 Tag Code
+</th>
+<th style="text-align:left;">
+Event Site Code Value
+</th>
+<th style="text-align:left;">
+Event Date Time Value
+</th>
+<th style="text-align:left;">
+Antenna Id
+</th>
+<th style="text-align:right;">
+Antenna Group Configuration Value
 </th>
 <th style="text-align:left;">
 Mark Species Name
@@ -200,49 +212,25 @@ Event Type Name
 Event Site Type Description
 </th>
 <th style="text-align:left;">
-Event Site Code Value
-</th>
-<th style="text-align:left;">
-Event Date Time Value
-</th>
-<th style="text-align:left;">
-Antenna ID
-</th>
-<th style="text-align:right;">
-Antenna Group Configuration Value
-</th>
-<th style="text-align:left;">
 Event Release Site Code Code
 </th>
 <th style="text-align:left;">
 Event Release Date Time Value
 </th>
 <th style="text-align:right;">
-CTH Count
+Cth Count
 </th>
 </tr></thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-384.3B239AD241
+3DD.0077767AC6
 </td>
 <td style="text-align:left;">
-Chinook
+TUM
 </td>
 <td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Mark
-</td>
-<td style="text-align:left;">
-River
-</td>
-<td style="text-align:left;">
-NASONC
-</td>
-<td style="text-align:left;">
-11/3/2013 9:44:00 AM
+2018-06-22 06:40:12
 </td>
 <td style="text-align:left;">
 NA
@@ -251,10 +239,22 @@ NA
 0
 </td>
 <td style="text-align:left;">
-NASONC
+Chinook
 </td>
 <td style="text-align:left;">
-11/4/2013 4:45:00 PM
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Mark
+</td>
+<td style="text-align:left;">
+Dam
+</td>
+<td style="text-align:left;">
+TUMFBY
+</td>
+<td style="text-align:left;">
+2018-06-22 06:40:12
 </td>
 <td style="text-align:right;">
 1
@@ -262,563 +262,31 @@ NASONC
 </tr>
 <tr>
 <td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:14:29 AM
-</td>
-<td style="text-align:left;">
-01
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:14:32 AM
-</td>
-<td style="text-align:left;">
-02
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:14:35 AM
-</td>
-<td style="text-align:left;">
-03
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:14:37 AM
-</td>
-<td style="text-align:left;">
-04
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:38 AM
-</td>
-<td style="text-align:left;">
-A1
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:38 AM
-</td>
-<td style="text-align:left;">
-A2
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:39 AM
-</td>
-<td style="text-align:left;">
-A3
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:39 AM
-</td>
-<td style="text-align:left;">
-A4
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:43 AM
-</td>
-<td style="text-align:left;">
-81
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:43 AM
-</td>
-<td style="text-align:left;">
-82
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:43 AM
-</td>
-<td style="text-align:left;">
-83
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:43 AM
-</td>
-<td style="text-align:left;">
-84
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Instream Remote Detection System
-</td>
-<td style="text-align:left;">
-NAL
-</td>
-<td style="text-align:left;">
-6/12/2015 1:36:38 AM
-</td>
-<td style="text-align:left;">
-66
-</td>
-<td style="text-align:right;">
-100
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Instream Remote Detection System
-</td>
-<td style="text-align:left;">
-NAL
-</td>
-<td style="text-align:left;">
-6/12/2015 1:36:50 AM
-</td>
-<td style="text-align:left;">
-63
-</td>
-<td style="text-align:right;">
-100
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Instream Remote Detection System
+3DD.0077767AC6
 </td>
 <td style="text-align:left;">
 NAU
 </td>
 <td style="text-align:left;">
-6/22/2015 12:40:37 AM
+2018-07-06 22:04:04
 </td>
 <td style="text-align:left;">
-45
+44
 </td>
 <td style="text-align:right;">
 100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
 </td>
 <td style="text-align:left;">
 NA
@@ -832,25 +300,13 @@ NA
 </tr>
 <tr>
 <td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Instream Remote Detection System
+3DD.0077767AC6
 </td>
 <td style="text-align:left;">
 NAU
 </td>
 <td style="text-align:left;">
-6/22/2015 12:40:55 AM
+2018-07-06 22:04:28
 </td>
 <td style="text-align:left;">
 42
@@ -859,6 +315,18 @@ NAU
 100
 </td>
 <td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
 NA
 </td>
 <td style="text-align:left;">
@@ -870,13 +338,25 @@ NA
 </tr>
 <tr>
 <td style="text-align:left;">
-384.3B239AD241
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-07-08 22:26:21
+</td>
+<td style="text-align:left;">
+45
+</td>
+<td style="text-align:right;">
+100
 </td>
 <td style="text-align:left;">
 Chinook
 </td>
 <td style="text-align:left;">
-Wild Fish or Natural Production
+Hatchery Reared
 </td>
 <td style="text-align:left;">
 Observation
@@ -885,10 +365,138 @@ Observation
 Instream Remote Detection System
 </td>
 <td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAL
+</td>
+<td style="text-align:left;">
+2018-07-13 21:52:09
+</td>
+<td style="text-align:left;">
+66
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAL
+</td>
+<td style="text-align:left;">
+2018-07-16 00:13:19
+</td>
+<td style="text-align:left;">
+66
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
 NAU
 </td>
 <td style="text-align:left;">
-8/21/2015 10:17:32 PM
+2018-08-26 00:01:36
+</td>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 00:02:03
 </td>
 <td style="text-align:left;">
 41
@@ -897,42 +505,16 @@ NAU
 100
 </td>
 <td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
 Chinook
 </td>
 <td style="text-align:left;">
-Wild Fish or Natural Production
+Hatchery Reared
 </td>
 <td style="text-align:left;">
 Observation
 </td>
 <td style="text-align:left;">
 Instream Remote Detection System
-</td>
-<td style="text-align:left;">
-NAU
-</td>
-<td style="text-align:left;">
-8/21/2015 10:18:13 PM
-</td>
-<td style="text-align:left;">
-44
-</td>
-<td style="text-align:right;">
-100
 </td>
 <td style="text-align:left;">
 NA
@@ -946,13 +528,25 @@ NA
 </tr>
 <tr>
 <td style="text-align:left;">
-384.3B239AD241
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 10:23:12
+</td>
+<td style="text-align:left;">
+41
+</td>
+<td style="text-align:right;">
+100
 </td>
 <td style="text-align:left;">
 Chinook
 </td>
 <td style="text-align:left;">
-Wild Fish or Natural Production
+Hatchery Reared
 </td>
 <td style="text-align:left;">
 Observation
@@ -961,16 +555,422 @@ Observation
 Instream Remote Detection System
 </td>
 <td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
 NAU
 </td>
 <td style="text-align:left;">
-8/22/2015 12:51:37 AM
+2018-08-26 10:23:19
 </td>
 <td style="text-align:left;">
 44
 </td>
 <td style="text-align:right;">
 100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 15:00:36
+</td>
+<td style="text-align:left;">
+45
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 15:00:48
+</td>
+<td style="text-align:left;">
+43
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 15:01:12
+</td>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 15:01:32
+</td>
+<td style="text-align:left;">
+42
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 17:38:46
+</td>
+<td style="text-align:left;">
+44
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 19:00:05
+</td>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 19:00:38
+</td>
+<td style="text-align:left;">
+42
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-27 16:09:31
+</td>
+<td style="text-align:left;">
+43
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-27 16:09:39
+</td>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-27 16:51:01
+</td>
+<td style="text-align:left;">
+44
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
 </td>
 <td style="text-align:left;">
 NA
@@ -986,18 +986,18 @@ NA
 </table>
 <p><code>PITcleanr</code> provides a function to read in this kind of complete capture history, called <code><a href="../reference/readCTH.html">readCTH()</a></code>. This function ensures the column names are consistent for subsequent <code>PITcleanr</code> functions, and provides one function to read in PTAGIS and non-PTAGIS data and return similarly formatted output.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ptagis_cth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readCTH.html">readCTH</a></span><span class="op">(</span><span class="va">ptagis_file</span>,</span>
+<code class="sourceCode R"><span><span class="va">ptagis_cth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readCTH.html">readCTH</a></span><span class="op">(</span>cth_file <span class="op">=</span> <span class="va">ptagis_file</span>,</span>
 <span>                      file_type <span class="op">=</span> <span class="st">"PTAGIS"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="mark-data-file">Mark Data File<a class="anchor" aria-label="anchor" href="#mark-data-file"></a>
 </h3>
-<p><code>PITcleanr</code> also allows the user to query PTAGIS for an MRR data file. Many projects are set up to record all the tagging information for an entire season, or part of a season from a single site in one file, which is uploaded to PTAGIS. This file can be used to determine the list of tag codes a user may be interested in. The <code>queryMRRDataFile</code> will pull this information from PTAGIS, using either the XML information contained in P4 files, or the older file structure (text file with various possible file extensions). The only requirement is the file name. For example, to pull this data for tagging at Tumwater in 2015, use the following code:</p>
+<p><code>PITcleanr</code> also allows the user to query PTAGIS for an MRR data file. Many projects are set up to record all the tagging information for an entire season, or part of a season from a single site in one file, which is uploaded to PTAGIS. This file can be used to determine the list of tag codes a user may be interested in. The <code>queryMRRDataFile</code> will pull this information from PTAGIS, using either the XML information contained in P4 files, or the older file structure (text file with various possible file extensions). The only requirement is the file name. For example, to pull this data for tagging at Tumwater in 2018, use the following code:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tum_2015_mrr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryMRRDataFile.html">queryMRRDataFile</a></span><span class="op">(</span><span class="st">"NBD15065.TUM"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tum_2018_mrr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryMRRDataFile.html">queryMRRDataFile</a></span><span class="op">(</span><span class="st">"NBD15065.TUM"</span><span class="op">)</span></span></code></pre></div>
 <p>Depending on how comprehensive that MRR data file is, a user might filter this data.frame for Spring Chinook by focusing on the species run rear type of “11”, and tags that were not collected for broodstock, or otherwise killed. An example of some of the data contained in MRR files like this is shown below.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tum_2015_mrr</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">tum_2018_mrr</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="co"># filter for Spring Chinook tags</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">species_run_rear_type</span>, </span>
 <span>                    <span class="st">"^11"</span><span class="op">)</span>,</span>

@@ -74,7 +74,8 @@
 <span>  root_site_code <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_strm_order <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  dwnstrm_sites <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  dwn_min_stream_order_diff <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  dwn_min_stream_order_diff <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  buffer_dist <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -94,6 +95,10 @@
 
 <dt>dwn_min_stream_order_diff</dt>
 <dd><p>Used to control the minimum stream order of downloaded downstream flowlines. This can be useful if the user wants to prevent downloading excessive smaller streams downstream of a tagging or release location. It corresponds to the difference between the stream order of the `root_site_code` site and the minimum stream order desired in the downstream flowlines. For example, if the `root_site_code` is located on a stream order 6 and `dwn_min_stream_order_diff = 2`, then only flowlines of at least 6-2=**4** will be downloaded. The default value is 0, meaning only streams of equal or greater order than the tagging or release site will be returned.</p></dd>
+
+
+<dt>buffer_dist</dt>
+<dd><p>when querying flowlines downstream of `root_site_code`, how big a buffer should be used around all sites in `sites_sf` to capture all the flowlines? Default is `0`. See `?sf::st_buffer()` for more help with possible formats.</p></dd>
 
 
 <dt>dwnstream_sites</dt>

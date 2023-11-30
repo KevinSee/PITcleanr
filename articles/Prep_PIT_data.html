@@ -97,7 +97,7 @@
       <h1 data-toc-skip>Querying, Compressing, and Making Sense of PIT Tag Detection Data</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">22 June, 2023</h4>
+            <h4 data-toc-skip class="date">30 November, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/Prep_PIT_data.Rmd" class="external-link"><code>vignettes/Prep_PIT_data.Rmd</code></a></small>
       <div class="hidden name"><code>Prep_PIT_data.Rmd</code></div>
@@ -155,27 +155,27 @@
 <h3 id="complete-capture-history">Complete Capture History<a class="anchor" aria-label="anchor" href="#complete-capture-history"></a>
 </h3>
 <p><code>PITcleanr</code> starts with a complete capture history query from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> for a select group of tags of interest. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query.</p>
-<p>For convenience, we’ve included one such file with <code>PITcleanr</code>, which is saved to the user’s computer when <code>PITcleanr</code> is installed. The file, “tag_list_TUM_2015.txt”, contains tag IDs for Chinook salmon adults implanted with PIT tags at Tumwater Dam in 2015. The following code can be used to find the path to this example file. The user can use this as a template for creating their own tag list as well.</p>
+<p>For convenience, we’ve included one such file with <code>PITcleanr</code>, which is saved to the user’s computer when <code>PITcleanr</code> is installed. The file, “TUM_chnk_tags_2018.txt”, contains tag IDs for Chinook salmon adults implanted with PIT tags at Tumwater Dam in 2018. The following code can be used to find the path to this example file. The user can use this as a template for creating their own tag list as well.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>            <span class="st">"tag_list_TUM_2015.txt"</span>, </span>
+<span>            <span class="st">"TUM_chnk_tags_2018.txt"</span>, </span>
 <span>            package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
 <span>            mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The example file of tag codes is very simple:</p>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2,019 x 1</span></span></span>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,406 x 1</span></span></span>
 <span><span class="co">#&gt;    X1            </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 384.3B239AD241</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 3D9.1BF24B20F5</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 3D9.1C2D76FB78</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 3D9.1C2D770193</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3D9.1C2D91B3DE</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3D9.1C2D925C52</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 3D9.1C2D929849</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3D9.1C2D93282A</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3D9.1C2DB9A65E</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3D9.1C2DC026E4</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># i 2,009 more rows</span></span></span></code></pre>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 3DD.00777C5CEC</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 3DD.00777C5E34</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 3DD.00777C7728</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 3DD.00777C8493</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3DD.00777C9185</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3DD.00777C91C3</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 3DD.00777CE6B8</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3DD.00777CEB31</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3DD.00777CEF93</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3DD.00777CEFC1</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i 1,396 more rows</span></span></span></code></pre>
 <p>Once the user has created their own tag list, or located this example one, they can go to the <a href="https:://www.ptagis/org">PTAGIS homepage</a> to query the complete tag histories for those tags. The complete tag history query is available under <a href="https://www.ptagis.org/Data/AdvancedReporting" class="external-link">Advanced Reporting</a>, which requires a free account from PTAGIS. From the <a href="https:://www.ptagis/org">homepage</a>, click on “Login/Register”, and either login to an existing account, or click “Create a new account” to create one. Once logged in, scroll down the dashboard page to the Advanced Reporting Links section. PTAGIS allows users to save reports/queries to be run again. For users who plan to utilize <code>PITcleanr</code> more than once, it saves a lot of time to build the initial query and then save it into the user’s PTAGIS account. It is then available through the “My Reports” link. To create a new query, click on “Query Builder”, or “Advanced Reporting Home Page” and then ““Create Query Builder2 Report”. From here, choose “Complete Tag History” from the list of possible reports.</p>
 <p>There are several query indices on the left side of the query builder, but for the purposes of <code>PITcleanr</code> only a few are needed. First, under “1 Select Attributes” the following attributes are required to work with <code>PITcleanr</code>:</p>
 <ul>
@@ -196,8 +196,8 @@
 </ul>
 <p>Simply move these attributes over from the “Available” column to the “Selected:” column on the page by selecting them and clicking on the right arrow between the “Available” and “Selected” boxes. Other fields of interest to the user may be included as well (e.g. Event Length), and will be included as extra columns in the query output.</p>
 <p>The only other required index is “2 Select Metrics”, but that can remain as the default, “CTH Count”, which provides one record for each event recorded per tag.</p>
-<p>Set up a filter for specific tags by next navigating to the “27 Tag Code - List or Text File” on the left. After selecting “Tag” under “Attributes:”, click on “Import file…”. Simply upload the .txt file containing your PIT tag codes of interest, or alternatively, feel free to use the “tag_list_TUM_2015.txt” file provided with <code>PITcleanr</code>. After choosing the file, click on “Import” and the tag list will be loaded (delimited by semi-colons). Click “OK”.</p>
-<p>Under “Report Message Name:” near the bottom, name the query something appropriate, such as “TUM_Chinook_2015”, and select “Run Report”. Once the query has successfully completed, the output can be exported as a .csv file (e.g. “TUM_Chinook_2015.csv”). Simply click on the “Export” icon near the top, which will open a new page, and select the default settings:</p>
+<p>Set up a filter for specific tags by next navigating to the “27 Tag Code - List or Text File” on the left. After selecting “Tag” under “Attributes:”, click on “Import file…”. Simply upload the .txt file containing your PIT tag codes of interest, or alternatively, feel free to use the “TUM_chnk_tags_2018.txt” file provided with <code>PITcleanr</code>. After choosing the file, click on “Import” and the tag list will be loaded (delimited by semi-colons). Click “OK”.</p>
+<p>Under “Report Message Name:” near the bottom, name the query something appropriate, such as “TUM_chnk_cth_2018”, and select “Run Report”. Once the query has successfully completed, the output can be exported as a .csv file (e.g. “TUM_chnk_cth_2018.csv”). Simply click on the “Export” icon near the top, which will open a new page, and select the default settings:</p>
 <ul>
 <li>Export: Whole report</li>
 <li>CSV file format</li>
@@ -206,21 +206,33 @@
 <li>Remove extra column: Yes</li>
 </ul>
 <p>And click “Export”, again.</p>
-<p><code>PITcleanr</code> includes several example files to help users understand the appropriate format of certain files, and to provide demonstrations of various functions. The <code>system.file</code> function locates the file path to the subdirectory and file contained with a certain package. One such example is PTAGIS output for the Tumwater Chinook tags from 2015. Using similar code (<code>system.file</code>), the user can set the file path to this file, and store it as a new object <code>ptagis_file</code>.</p>
+<p><code>PITcleanr</code> includes several example files to help users understand the appropriate format of certain files, and to provide demonstrations of various functions. The <code>system.file</code> function locates the file path to the subdirectory and file contained with a certain package. One such example is PTAGIS output for the Tumwater Chinook tags from 2018. Using similar code (<code>system.file</code>), the user can set the file path to this file, and store it as a new object <code>ptagis_file</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>                          <span class="st">"TUM_Chinook_2015.csv"</span>, </span>
+<span>                          <span class="st">"TUM_chnk_cth_2018.csv"</span>,</span>
 <span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
 <span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>Alternatively, if the user has run a query from PTAGIS as described above, they could set <code>ptagis_file</code> to the path and file name of the .csv they downloaded.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># As an example, set path to PTAGIS query output</span></span>
-<span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/USER_NAME_HERE/Downloads/TUM_Chinook_2015.csv"</span></span></code></pre></div>
-<p>Note that in our example file, there are 24938 detections (rows) for 2019 unique tags, matching the number of tags in our example tag list “tag_list_TUM_2015.txt”. For a handful of those tags, in our case 178, there is only a “Mark” detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining tags, many of them were often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of some of the raw data for a single tag:</p>
+<span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/USER_NAME_HERE/Downloads/TUM_chnk_cth_2018.csv"</span></span></code></pre></div>
+<p>Note that in our example file, there are 13501 detections (rows) for 1406 unique tags, matching the number of tags in our example tag list “TUM_chnk_tags_2018.txt”. For a handful of those tags, in our case 221, there is only a “Mark” detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining tags, many of them were often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of some of the raw data for a single tag:</p>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
 Tag Code
+</th>
+<th style="text-align:left;">
+Event Site Code Value
+</th>
+<th style="text-align:left;">
+Event Date Time Value
+</th>
+<th style="text-align:left;">
+Antenna Id
+</th>
+<th style="text-align:right;">
+Antenna Group Configuration Value
 </th>
 <th style="text-align:left;">
 Mark Species Name
@@ -235,49 +247,25 @@ Event Type Name
 Event Site Type Description
 </th>
 <th style="text-align:left;">
-Event Site Code Value
-</th>
-<th style="text-align:left;">
-Event Date Time Value
-</th>
-<th style="text-align:left;">
-Antenna ID
-</th>
-<th style="text-align:right;">
-Antenna Group Configuration Value
-</th>
-<th style="text-align:left;">
 Event Release Site Code Code
 </th>
 <th style="text-align:left;">
 Event Release Date Time Value
 </th>
 <th style="text-align:right;">
-CTH Count
+Cth Count
 </th>
 </tr></thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-384.3B239AD241
+3DD.0077767AC6
 </td>
 <td style="text-align:left;">
-Chinook
+TUM
 </td>
 <td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Mark
-</td>
-<td style="text-align:left;">
-River
-</td>
-<td style="text-align:left;">
-NASONC
-</td>
-<td style="text-align:left;">
-11/3/2013 9:44:00 AM
+2018-06-22 06:40:12
 </td>
 <td style="text-align:left;">
 NA
@@ -286,10 +274,22 @@ NA
 0
 </td>
 <td style="text-align:left;">
-NASONC
+Chinook
 </td>
 <td style="text-align:left;">
-11/4/2013 4:45:00 PM
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Mark
+</td>
+<td style="text-align:left;">
+Dam
+</td>
+<td style="text-align:left;">
+TUMFBY
+</td>
+<td style="text-align:left;">
+2018-06-22 06:40:12
 </td>
 <td style="text-align:right;">
 1
@@ -297,563 +297,31 @@ NASONC
 </tr>
 <tr>
 <td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:14:29 AM
-</td>
-<td style="text-align:left;">
-01
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:14:32 AM
-</td>
-<td style="text-align:left;">
-02
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:14:35 AM
-</td>
-<td style="text-align:left;">
-03
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:14:37 AM
-</td>
-<td style="text-align:left;">
-04
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:38 AM
-</td>
-<td style="text-align:left;">
-A1
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:38 AM
-</td>
-<td style="text-align:left;">
-A2
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:39 AM
-</td>
-<td style="text-align:left;">
-A3
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:39 AM
-</td>
-<td style="text-align:left;">
-A4
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:43 AM
-</td>
-<td style="text-align:left;">
-81
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:43 AM
-</td>
-<td style="text-align:left;">
-82
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:43 AM
-</td>
-<td style="text-align:left;">
-83
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Juvenile Fish Bypass Facility
-</td>
-<td style="text-align:left;">
-JDJ
-</td>
-<td style="text-align:left;">
-5/25/2014 11:15:43 AM
-</td>
-<td style="text-align:left;">
-84
-</td>
-<td style="text-align:right;">
-160
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Instream Remote Detection System
-</td>
-<td style="text-align:left;">
-NAL
-</td>
-<td style="text-align:left;">
-6/12/2015 1:36:38 AM
-</td>
-<td style="text-align:left;">
-66
-</td>
-<td style="text-align:right;">
-100
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Instream Remote Detection System
-</td>
-<td style="text-align:left;">
-NAL
-</td>
-<td style="text-align:left;">
-6/12/2015 1:36:50 AM
-</td>
-<td style="text-align:left;">
-63
-</td>
-<td style="text-align:right;">
-100
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Instream Remote Detection System
+3DD.0077767AC6
 </td>
 <td style="text-align:left;">
 NAU
 </td>
 <td style="text-align:left;">
-6/22/2015 12:40:37 AM
+2018-07-06 22:04:04
 </td>
 <td style="text-align:left;">
-45
+44
 </td>
 <td style="text-align:right;">
 100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
 </td>
 <td style="text-align:left;">
 NA
@@ -867,25 +335,13 @@ NA
 </tr>
 <tr>
 <td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
-Chinook
-</td>
-<td style="text-align:left;">
-Wild Fish or Natural Production
-</td>
-<td style="text-align:left;">
-Observation
-</td>
-<td style="text-align:left;">
-Instream Remote Detection System
+3DD.0077767AC6
 </td>
 <td style="text-align:left;">
 NAU
 </td>
 <td style="text-align:left;">
-6/22/2015 12:40:55 AM
+2018-07-06 22:04:28
 </td>
 <td style="text-align:left;">
 42
@@ -894,6 +350,18 @@ NAU
 100
 </td>
 <td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
 NA
 </td>
 <td style="text-align:left;">
@@ -905,13 +373,25 @@ NA
 </tr>
 <tr>
 <td style="text-align:left;">
-384.3B239AD241
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-07-08 22:26:21
+</td>
+<td style="text-align:left;">
+45
+</td>
+<td style="text-align:right;">
+100
 </td>
 <td style="text-align:left;">
 Chinook
 </td>
 <td style="text-align:left;">
-Wild Fish or Natural Production
+Hatchery Reared
 </td>
 <td style="text-align:left;">
 Observation
@@ -920,10 +400,138 @@ Observation
 Instream Remote Detection System
 </td>
 <td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAL
+</td>
+<td style="text-align:left;">
+2018-07-13 21:52:09
+</td>
+<td style="text-align:left;">
+66
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAL
+</td>
+<td style="text-align:left;">
+2018-07-16 00:13:19
+</td>
+<td style="text-align:left;">
+66
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
 NAU
 </td>
 <td style="text-align:left;">
-8/21/2015 10:17:32 PM
+2018-08-26 00:01:36
+</td>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 00:02:03
 </td>
 <td style="text-align:left;">
 41
@@ -932,42 +540,16 @@ NAU
 100
 </td>
 <td style="text-align:left;">
-NA
-</td>
-<td style="text-align:left;">
-NA
-</td>
-<td style="text-align:right;">
-1
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-384.3B239AD241
-</td>
-<td style="text-align:left;">
 Chinook
 </td>
 <td style="text-align:left;">
-Wild Fish or Natural Production
+Hatchery Reared
 </td>
 <td style="text-align:left;">
 Observation
 </td>
 <td style="text-align:left;">
 Instream Remote Detection System
-</td>
-<td style="text-align:left;">
-NAU
-</td>
-<td style="text-align:left;">
-8/21/2015 10:18:13 PM
-</td>
-<td style="text-align:left;">
-44
-</td>
-<td style="text-align:right;">
-100
 </td>
 <td style="text-align:left;">
 NA
@@ -981,13 +563,25 @@ NA
 </tr>
 <tr>
 <td style="text-align:left;">
-384.3B239AD241
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 10:23:12
+</td>
+<td style="text-align:left;">
+41
+</td>
+<td style="text-align:right;">
+100
 </td>
 <td style="text-align:left;">
 Chinook
 </td>
 <td style="text-align:left;">
-Wild Fish or Natural Production
+Hatchery Reared
 </td>
 <td style="text-align:left;">
 Observation
@@ -996,16 +590,422 @@ Observation
 Instream Remote Detection System
 </td>
 <td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
 NAU
 </td>
 <td style="text-align:left;">
-8/22/2015 12:51:37 AM
+2018-08-26 10:23:19
 </td>
 <td style="text-align:left;">
 44
 </td>
 <td style="text-align:right;">
 100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 15:00:36
+</td>
+<td style="text-align:left;">
+45
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 15:00:48
+</td>
+<td style="text-align:left;">
+43
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 15:01:12
+</td>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 15:01:32
+</td>
+<td style="text-align:left;">
+42
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 17:38:46
+</td>
+<td style="text-align:left;">
+44
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 19:00:05
+</td>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-26 19:00:38
+</td>
+<td style="text-align:left;">
+42
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-27 16:09:31
+</td>
+<td style="text-align:left;">
+43
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-27 16:09:39
+</td>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:right;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.0077767AC6
+</td>
+<td style="text-align:left;">
+NAU
+</td>
+<td style="text-align:left;">
+2018-08-27 16:51:01
+</td>
+<td style="text-align:left;">
+44
+</td>
+<td style="text-align:right;">
+100
+</td>
+<td style="text-align:left;">
+Chinook
+</td>
+<td style="text-align:left;">
+Hatchery Reared
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:left;">
+Instream Remote Detection System
 </td>
 <td style="text-align:left;">
 NA
@@ -1021,18 +1021,18 @@ NA
 </table>
 <p><code>PITcleanr</code> provides a function to read in this kind of complete capture history, called <code><a href="../reference/readCTH.html">readCTH()</a></code>. This function ensures the column names are consistent for subsequent <code>PITcleanr</code> functions, and provides one function to read in PTAGIS and non-PTAGIS data and return similarly formatted output.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ptagis_cth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readCTH.html">readCTH</a></span><span class="op">(</span><span class="va">ptagis_file</span>,</span>
+<code class="sourceCode R"><span><span class="va">ptagis_cth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readCTH.html">readCTH</a></span><span class="op">(</span>cth_file <span class="op">=</span> <span class="va">ptagis_file</span>,</span>
 <span>                      file_type <span class="op">=</span> <span class="st">"PTAGIS"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="mark-data-file">Mark Data File<a class="anchor" aria-label="anchor" href="#mark-data-file"></a>
 </h3>
-<p><code>PITcleanr</code> also allows the user to query PTAGIS for an MRR data file. Many projects are set up to record all the tagging information for an entire season, or part of a season from a single site in one file, which is uploaded to PTAGIS. This file can be used to determine the list of tag codes a user may be interested in. The <code>queryMRRDataFile</code> will pull this information from PTAGIS, using either the XML information contained in P4 files, or the older file structure (text file with various possible file extensions). The only requirement is the file name. For example, to pull this data for tagging at Tumwater in 2015, use the following code:</p>
+<p><code>PITcleanr</code> also allows the user to query PTAGIS for an MRR data file. Many projects are set up to record all the tagging information for an entire season, or part of a season from a single site in one file, which is uploaded to PTAGIS. This file can be used to determine the list of tag codes a user may be interested in. The <code>queryMRRDataFile</code> will pull this information from PTAGIS, using either the XML information contained in P4 files, or the older file structure (text file with various possible file extensions). The only requirement is the file name. For example, to pull this data for tagging at Tumwater in 2018, use the following code:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tum_2015_mrr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryMRRDataFile.html">queryMRRDataFile</a></span><span class="op">(</span><span class="st">"NBD15065.TUM"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tum_2018_mrr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryMRRDataFile.html">queryMRRDataFile</a></span><span class="op">(</span><span class="st">"NBD15065.TUM"</span><span class="op">)</span></span></code></pre></div>
 <p>Depending on how comprehensive that MRR data file is, a user might filter this data.frame for Spring Chinook by focusing on the species run rear type of “11”, and tags that were not collected for broodstock, or otherwise killed. An example of some of the data contained in MRR files like this is shown below.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tum_2015_mrr</span> <span class="op">|&gt;</span> </span>
+<code class="sourceCode R"><span><span class="va">tum_2018_mrr</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="co"># filter for Spring Chinook tags</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_detect.html" class="external-link">str_detect</a></span><span class="op">(</span><span class="va">species_run_rear_type</span>, </span>
 <span>                    <span class="st">"^11"</span><span class="op">)</span>,</span>
@@ -1919,20 +1919,24 @@ TUMFBY
 <span><span class="co">#&gt; character(0)</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $rel_time_batches</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 23 x 11</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 15 x 11</span></span></span>
 <span><span class="co">#&gt;    mark_species_name  year event_site_type_description event_type_name</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                       <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Chinook            <span style="text-decoration: underline;">2</span>011 Hatchery                    Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Chinook            <span style="text-decoration: underline;">2</span>012 Hatchery                    Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Chinook            <span style="text-decoration: underline;">2</span>012 Hatchery                    Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Chinook            <span style="text-decoration: underline;">2</span>012 River                       Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Chinook            <span style="text-decoration: underline;">2</span>012 Trap or Weir                Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Chinook            <span style="text-decoration: underline;">2</span>013 Acclimation Pond            Recapture      </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Chinook            <span style="text-decoration: underline;">2</span>013 Hatchery                    Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Chinook            <span style="text-decoration: underline;">2</span>013 River                       Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Chinook            <span style="text-decoration: underline;">2</span>013 River                       Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Chinook            <span style="text-decoration: underline;">2</span>013 River                       Mark           </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># i 13 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> Chinook            <span style="text-decoration: underline;">2</span>014 Hatchery                    Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> Chinook            <span style="text-decoration: underline;">2</span>015 Hatchery                    Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> Chinook            <span style="text-decoration: underline;">2</span>015 River                       Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> Chinook            <span style="text-decoration: underline;">2</span>015 River                       Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> Chinook            <span style="text-decoration: underline;">2</span>015 Trap or Weir                Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> Chinook            <span style="text-decoration: underline;">2</span>016 Dam                         Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> Chinook            <span style="text-decoration: underline;">2</span>016 River                       Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> Chinook            <span style="text-decoration: underline;">2</span>016 Trap or Weir                Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> Chinook            <span style="text-decoration: underline;">2</span>017 Dam                         Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> Chinook            <span style="text-decoration: underline;">2</span>018 Dam                         Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> Chinook            <span style="text-decoration: underline;">2</span>018 Dam                         Recapture      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> Chinook            <span style="text-decoration: underline;">2</span>018 Intra-Dam Release Site      Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> Chinook            <span style="text-decoration: underline;">2</span>018 Intra-Dam Release Site      Mark           </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> Chinook            <span style="text-decoration: underline;">2</span>018 Trap or Weir                Recapture      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> Chinook            <span style="text-decoration: underline;">2</span>018 Trap or Weir                Recapture      </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># i 7 more variables: event_site_code_value &lt;chr&gt;, n_tags &lt;int&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   n_events &lt;int&gt;, n_release &lt;int&gt;, rel_greq_event &lt;int&gt;, rel_ls_event &lt;int&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   event_rel_ratio &lt;dbl&gt;</span></span></span></code></pre></div>
@@ -2002,37 +2006,37 @@ TUMFBY
 <div class="section level2">
 <h2 id="compressing-detection-data">Compressing Detection Data<a class="anchor" aria-label="anchor" href="#compressing-detection-data"></a>
 </h2>
-<p>In this vignette, we will use an example dataset of Spring Chinook Salmon tagged as adults at Tumwater dam in 2015. <code>PITcleanr</code> includes the <a href="read_in_data.html">complete tag history</a> downloaded from PTAGIS, the <a href="configuration_files.html">configuration file</a> and the <a href="parent_child.html">parent-child table</a> for this particular analysis. However, if the user needs to consult how to query or construct any of those, please read the appropriate vignette.</p>
+<p>In this vignette, we will use an example dataset of Spring Chinook Salmon tagged as adults at Tumwater dam in 2018. <code>PITcleanr</code> includes the <a href="read_in_data.html">complete tag history</a> downloaded from PTAGIS, the <a href="configuration_files.html">configuration file</a> and the <a href="parent_child.html">parent-child table</a> for this particular analysis. However, if the user needs to consult how to query or construct any of those, please read the appropriate vignette.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># the complete tag history file from PTAGIS</span></span>
 <span><span class="va">ptagis_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>                          <span class="st">"TUM_Chinook_2015.csv"</span>, </span>
-<span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
-<span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span>                           <span class="st">"TUM_chnk_cth_2018.csv"</span>, </span>
+<span>                           package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
+<span>                           mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># read the complete tag history file into R, and filter detections before a certain date</span></span>
 <span><span class="va">cth_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readCTH.html">readCTH</a></span><span class="op">(</span><span class="va">ptagis_file</span>,</span>
 <span>                  file_type <span class="op">=</span> <span class="st">"PTAGIS"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">event_date_time_value</span> <span class="op">&gt;=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html" class="external-link">ymd</a></span><span class="op">(</span><span class="fl">20150301</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">event_date_time_value</span> <span class="op">&gt;=</span> <span class="fu">lubridate</span><span class="fu">::</span><span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html" class="external-link">ymd</a></span><span class="op">(</span><span class="fl">20180301</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># the pre-built configuration file</span></span>
 <span><span class="va">configuration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>                          <span class="st">"configuration_TUM.csv"</span>, </span>
-<span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
-<span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>                             <span class="st">"TUM_configuration.csv"</span>, </span>
+<span>                             package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
+<span>                             mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span>show_col_types <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># the pre-built parent-child table</span></span>
 <span><span class="va">parent_child</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>                          <span class="st">"parent_child_TUM.csv"</span>, </span>
-<span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
-<span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>                            <span class="st">"TUM_parent_child.csv"</span>, </span>
+<span>                            package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
+<span>                            mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span>show_col_types <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
 <p>The first step is to <a href="compress_data.html">compress</a> the raw detection data. This maps each detection on an individual antenna to a node, defined in the <code>configuration</code> file, and combines detections on the same node to a single row.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">comp_obs</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compress.html">compress</a></span><span class="op">(</span><span class="va">cth_df</span>,</span>
 <span>                     configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span></span></code></pre></div>
-<p>In our Tumwater Dam Spring Chinook Salmon example, the <code><a href="../reference/compress.html">compress()</a></code> function has scaled down the raw data from PTAGIS from 24,662 rows of data to a slightly more manageable 13,231 rows. At the same time, the sum of the <code>n_dets</code> column in <code>comp_obs</code> is 24,662, showing that every detection from the raw data has been accounted for. For much of the remaining vignette, we will explore other functionality of <code>PITcleanr</code> and as it relates to this compressed data i.e., the <code>comp_obs</code> object.</p>
+<p>In our Tumwater Dam Spring Chinook Salmon example, the <code><a href="../reference/compress.html">compress()</a></code> function has scaled down the raw data from PTAGIS from 13,294 rows of data to a slightly more manageable 6,739 rows. At the same time, the sum of the <code>n_dets</code> column in <code>comp_obs</code> is 13,294, showing that every detection from the raw data has been accounted for. For much of the remaining vignette, we will explore other functionality of <code>PITcleanr</code> and as it relates to this compressed data i.e., the <code>comp_obs</code> object.</p>
 </div>
 <div class="section level2">
 <h2 id="parent-child-table">Parent-Child Table<a class="anchor" aria-label="anchor" href="#parent-child-table"></a>
@@ -2043,7 +2047,7 @@ TUMFBY
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span></code></pre></div>
 <p><img src="Prep_PIT_data_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
 <p>The initial parent-child table only contains entire sites. However, in our configuration file we have defined the nodes to be distinct arrays (e.g. rows of antennas), and most sites in this example contain multiple arrays (and therefore two nodes). We can expand the parent-child table by using the configuration file, and the <code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code> function. The graph of nodes expands.</p>
-<p>Note that in <code>PITcleanr</code>’s default settings, nodes that end in <code>B0</code> are generally the downstream array, while nodes that end in <code>A0</code> are the upstream array. For more information about that, see the <a href="configuration_files.html">configuration files</a> vignette.</p>
+<p>Note that in <code>PITcleanr</code>’s default settings, nodes that end in <code>_D</code> are generally the downstream array, while nodes that end in <code>_U</code> are the upstream array. For more information about that, see the <a href="configuration_files.html">configuration files</a> vignette.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parent_child_nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/addParentChildNodes.html">addParentChildNodes</a></span><span class="op">(</span>parent_child <span class="op">=</span> <span class="va">parent_child</span>,</span>
 <span>                                          configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span></span>
@@ -2057,22 +2061,23 @@ TUMFBY
 <p>The function <code><a href="../reference/buildPaths.html">buildPaths()</a></code> will provide the movement path leading to each node in a parent-child table. It provides a row for each node, and then provides the path that an individual would have to take to get to that given node. The <code>build_paths()</code> function could be performed on either the <code>parent_child</code> or <code>parent_child_nodes</code> objects.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/buildPaths.html">buildPaths</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 13 x 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 14 x 2</span></span></span>
 <span><span class="co">#&gt;    end_loc path           </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> LNF     TUM ICL LNF    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICM     TUM ICL ICM    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ICL     TUM ICL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> LWN     TUM LWN        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> UWE     TUM UWE        </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CHL     TUM CHL        </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> PES     TUM PES        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> WTL     TUM WTL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> NAL     TUM NAL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CHW     TUM CHW        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ICU     TUM ICL ICM ICU</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> CHU     TUM CHL CHU    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> PEU     TUM PES PEU    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> NAU     TUM NAL NAU</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CHW     TUM CHW        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ICU     TUM ICL ICM ICU</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> LWN     TUM UWE LWN    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> WTL     TUM UWE WTL    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> NAL     TUM UWE NAL    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> CHU     TUM CHL CHU    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> PEU     TUM PES PEU    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> NAU     TUM UWE NAL NAU</span></span>
 <span></span>
 <span><span class="co"># to set direction to downstream, for example</span></span>
 <span><span class="co"># buildPaths(parent_child,</span></span>
@@ -2080,7 +2085,7 @@ TUMFBY
 <p>The <code><a href="../reference/buildNodeOrder.html">buildNodeOrder()</a></code> provides both the movement path and the node order of each node (starting from the root site and counting upwards past each node). Each of these functions currently has an argument, <code>direction</code> that provides paths and node orders based on upstream movement (the default) or downstream movement. For downstream movement, each node may appear in the resulting tibble multiple times, as there may be multiple ways to reach that node, from different starting points. Again, <code><a href="../reference/buildNodeOrder.html">buildNodeOrder()</a></code> could be performed on either <code>parent_child</code> or <code>parent_child_nodes</code>.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/buildNodeOrder.html">buildNodeOrder</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 14 x 3</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 15 x 3</span></span></span>
 <span><span class="co">#&gt;    node  node_order path           </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TUM            1 TUM            </span></span>
@@ -2091,12 +2096,13 @@ TUMFBY
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> ICM            3 TUM ICL ICM    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> ICU            4 TUM ICL ICM ICU</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> LNF            3 TUM ICL LNF    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> LWN            2 TUM LWN        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> NAL            2 TUM NAL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> NAU            3 TUM NAL NAU    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> PES            2 TUM PES        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> PEU            3 TUM PES PEU    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> WTL            2 TUM WTL</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> PES            2 TUM PES        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> PEU            3 TUM PES PEU    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> UWE            2 TUM UWE        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> LWN            3 TUM UWE LWN    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> NAL            3 TUM UWE NAL    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> NAU            4 TUM UWE NAL NAU</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> WTL            3 TUM UWE WTL</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -2130,8 +2136,8 @@ TUMFBY
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">comp_filter</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/filterDetections.html">filterDetections</a></span><span class="op">(</span>compress_obs <span class="op">=</span> <span class="va">comp_obs</span>,</span>
 <span>                                parent_child <span class="op">=</span> <span class="va">parent_child_nodes</span>,</span>
-<span>                                max_obs_date <span class="op">=</span> <span class="st">"20150930"</span><span class="op">)</span></span></code></pre></div>
-<p>If a tag fails to to meet that assumption (e.g. at least one direction is <code>unknown</code>), the <code>user_keep_obs</code> column will be <code>NA</code> for all observations of that tag. The <code>auto_keep_obs</code> column is <code>PITcleanr</code>’s best guess as to which detections should be kept. This guess is based on the assumption that the last and furthest forward-moving detection should be kept, and all detections along that movement path should be kept, while dropping others. Below is an example of tag that fails to meet the one-way travel assumption, and which observations <code>PITcleanr</code> suggests should be kept (keep the detection on CHLB0 and drop the one on WTLA0).</p>
+<span>                                max_obs_date <span class="op">=</span> <span class="st">"20180930"</span><span class="op">)</span></span></code></pre></div>
+<p>If a tag fails to to meet that assumption (e.g. at least one direction is <code>unknown</code>), the <code>user_keep_obs</code> column will be <code>NA</code> for all observations of that tag. The <code>auto_keep_obs</code> column is <code>PITcleanr</code>’s best guess as to which detections should be kept. This guess is based on the assumption that the last and furthest forward-moving detection should be kept, and all detections along that movement path should be kept, while dropping others. Below is an example of tag that fails to meet the one-way travel assumption, and which observations <code>PITcleanr</code> suggests should be kept (keep the detection on CHL_D and drop the one on WTL_U).</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">comp_filter</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">tag_code</span><span class="op">:</span><span class="va">min_det</span>, <span class="va">direction</span>,</span>
@@ -2173,22 +2179,22 @@ user_keep_obs
 <tbody>
 <tr>
 <td style="text-align:left;">
-3D9.1BF24B20F5
+3DD.003BC80D81
 </td>
 <td style="text-align:left;">
 TUM
 </td>
 <td style="text-align:right;">
-8
+7
 </td>
 <td style="text-align:left;">
 Observation
 </td>
 <td style="text-align:right;">
-2
+4
 </td>
 <td style="text-align:left;">
-2015-06-14 20:11:21
+2018-06-21 12:59:55
 </td>
 <td style="text-align:left;">
 start
@@ -2202,13 +2208,13 @@ NA
 </tr>
 <tr>
 <td style="text-align:left;">
-3D9.1BF24B20F5
+3DD.003BC80D81
 </td>
 <td style="text-align:left;">
 TUM
 </td>
 <td style="text-align:right;">
-9
+8
 </td>
 <td style="text-align:left;">
 Recapture
@@ -2217,7 +2223,7 @@ Recapture
 1
 </td>
 <td style="text-align:left;">
-2015-06-14 23:59:00
+2018-06-21 16:14:26
 </td>
 <td style="text-align:left;">
 no movement
@@ -2231,13 +2237,13 @@ NA
 </tr>
 <tr>
 <td style="text-align:left;">
-3D9.1BF24B20F5
+3DD.003BC80D81
 </td>
 <td style="text-align:left;">
-WTLA0
+UWE
 </td>
 <td style="text-align:right;">
-10
+9
 </td>
 <td style="text-align:left;">
 Observation
@@ -2246,7 +2252,7 @@ Observation
 1
 </td>
 <td style="text-align:left;">
-2015-06-22 21:04:18
+2018-06-29 15:29:19
 </td>
 <td style="text-align:left;">
 forward
@@ -2260,10 +2266,39 @@ NA
 </tr>
 <tr>
 <td style="text-align:left;">
-3D9.1BF24B20F5
+3DD.003BC80D81
 </td>
 <td style="text-align:left;">
-CHLB0
+NAL_D
+</td>
+<td style="text-align:right;">
+10
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2018-06-30 01:35:27
+</td>
+<td style="text-align:left;">
+forward
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.003BC80D81
+</td>
+<td style="text-align:left;">
+NAL_U
 </td>
 <td style="text-align:right;">
 11
@@ -2275,10 +2310,184 @@ Observation
 1
 </td>
 <td style="text-align:left;">
-2015-08-30 21:24:46
+2018-06-30 01:35:48
+</td>
+<td style="text-align:left;">
+forward
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.003BC80D81
+</td>
+<td style="text-align:left;">
+LWN_U
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2018-07-05 23:05:02
 </td>
 <td style="text-align:left;">
 unknown
+</td>
+<td style="text-align:left;">
+FALSE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.003BC80D81
+</td>
+<td style="text-align:left;">
+NAL_D
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2018-07-08 03:06:42
+</td>
+<td style="text-align:left;">
+unknown
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.003BC80D81
+</td>
+<td style="text-align:left;">
+UWE
+</td>
+<td style="text-align:right;">
+14
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2018-07-17 21:52:42
+</td>
+<td style="text-align:left;">
+backward
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.003BC80D81
+</td>
+<td style="text-align:left;">
+NAL_U
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2018-07-20 21:50:13
+</td>
+<td style="text-align:left;">
+forward
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.003BC80D81
+</td>
+<td style="text-align:left;">
+NAU_D
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2018-07-30 22:40:06
+</td>
+<td style="text-align:left;">
+forward
+</td>
+<td style="text-align:left;">
+TRUE
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3DD.003BC80D81
+</td>
+<td style="text-align:left;">
+NAU_U
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:left;">
+Observation
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+2018-07-30 22:41:59
+</td>
+<td style="text-align:left;">
+forward
 </td>
 <td style="text-align:left;">
 TRUE
@@ -2296,44 +2505,38 @@ NA
 <h2 id="construct-capture-histories">Construct Capture Histories<a class="anchor" aria-label="anchor" href="#construct-capture-histories"></a>
 </h2>
 <p>Often, various mark-recapture models require a capture history of 1’s and 0’s as inputs. The compressed observations (whether they’ve been through <code>filterDections()</code> or not, depending on the user’s analysis) can be converted into that kind of capture history in a fairly straightforward manner. One key will be to ensure the nodes or sites are put in correct order for the user.</p>
-<p>In this example, we use the node order, and the movement paths (<code>path</code>) to get to each node, to define the factor levels of all possible nodes. With that defined, we can translate the tag detections into capture histories, a series of 1’s and 0’s for each tag, and we know what node each entry in those capture histories refers to. Most mark-recapture models, such as those used in <a href="http://www.phidot.org/software/mark/" class="external-link">program MARK</a>, use those types of capture histories as inputs. The user can then also attach any relevant covariates (e.g. marking location, size at tagging, etc.) based on the tag code.</p>
+<p>The function <code><a href="../reference/defineCapHistCols.html">defineCapHistCols()</a></code> determines the order of nodes to be used in a capture history matrix. At a minimum, it utilizes the parent-child table and the configuration file. If river kilometer is provided as part of the configuration file, in a column called <code>rkm</code>, the user may set <code>use_rkm = T</code> and it will organize nodes by rkm mask. Otherwise, it defaults to sorting by the paths defined in <code><a href="../reference/buildNodeOrder.html">buildNodeOrder()</a></code>.</p>
+<p>If the user would like to keep individual columns for each node, they can set <code>drop_nodes = F</code>. The default (<code>drop_nodes = T</code>) will delete all the columns associated with each node, and consolidate all them into one column called <code>cap_hist</code> that is a string of ones and zeros indicating the capture history. Many mark-recapture models, such as those used in <a href="http://www.phidot.org/software/mark/" class="external-link">program MARK</a>, use those types of capture histories as inputs. The user can then also attach any relevant covariates (e.g. marking location, size at tagging, etc.) based on the tag code.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># set the levels of nodes based somewhat on the movement paths</span></span>
-<span><span class="va">node_levels</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/buildNodeOrder.html">buildNodeOrder</a></span><span class="op">(</span><span class="va">parent_child_nodes</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">path</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">node</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># translate PIT tag observations into capture histories, one per tag</span></span>
-<span><span class="va">comp_filter</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">auto_keep_obs</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">tag_code</span>, <span class="va">node</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="va">node</span>,</span>
-<span>                <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="va">.</span>,</span>
-<span>                         levels <span class="op">=</span> <span class="va">node_levels</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>detected <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">node</span>,</span>
-<span>              names_sort <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>              names_expand <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>              values_from <span class="op">=</span> <span class="va">detected</span>,</span>
-<span>              values_fill <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unite.html" class="external-link">unite</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"cap_hist"</span>,</span>
-<span>        <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">tag_code</span><span class="op">)</span>,</span>
-<span>        sep <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2,018 x 2</span></span></span>
-<span><span class="co">#&gt;    tag_code       cap_hist                  </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 384.3B239AD241 10000000000000001111000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 3D9.1BF24B20F5 11000000000000000000000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 3D9.1C2D76FB78 10000000000000000000000011</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 3D9.1C2D770193 10000000000000000111000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3D9.1C2D91B3DE 11000000000000000000000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3D9.1C2D925C52 10000000000000001111000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 3D9.1C2D929849 10000000000000001111000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3D9.1C2D93282A 10000000000000001111000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3D9.1C2DB9A65E 11100000000000000000000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3D9.1C2DC026E4 10000000000000000000000011</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># i 2,008 more rows</span></span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># translate PIT tag observations into capture histories, one per tag</span></span>
+<span><span class="fu"><a href="../reference/buildCapHist.html">buildCapHist</a></span><span class="op">(</span><span class="va">comp_filter</span>,</span>
+<span>             parent_child <span class="op">=</span> <span class="va">parent_child</span>,</span>
+<span>             configuration <span class="op">=</span> <span class="va">configuration</span>,</span>
+<span>             use_rkm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,406 x 2</span></span></span>
+<span><span class="co">#&gt;    tag_code       cap_hist                   </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                      </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 384.3B239AC47B 100000000000000000101000000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 3DD.003B9DD720 100000000000000000000000000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 3DD.003B9DD725 100000000000000001000000000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 3DD.003B9DDAB0 100000000000000000000000000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3DD.003B9F123C 100000000000000000100000000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3DD.003BC7A654 100000000000000000110110000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 3DD.003BC7F0E3 100000000000000000110110000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3DD.003BC80A3C 100000000000000000101000000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3DD.003BC80D81 100000000000000000111110000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3DD.003BC80F20 100000000000000000010000000</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># i 1,396 more rows</span></span></span></code></pre></div>
+<p>To determine which position in the <code>cap_hist</code> string corresponds to which node, the user can run the <code><a href="../reference/defineCapHistCols.html">defineCapHistCols()</a></code> function (which is called internally within <code><a href="../reference/buildCapHist.html">buildCapHist()</a></code>).</p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># to find out the node associated with each column</span></span>
+<span><span class="va">col_nodes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/defineCapHistCols.html">defineCapHistCols</a></span><span class="op">(</span>parent_child <span class="op">=</span> <span class="va">parent_child</span>,</span>
+<span>                               configuration <span class="op">=</span> <span class="va">configuration</span>,</span>
+<span>                               use_rkm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span><span class="va">col_nodes</span></span>
+<span><span class="co">#&gt;  [1] "TUM"   "PES_D" "PES_U" "PEU_D" "PEU_U" "ICL_D" "ICL_U" "LNF"   "ICM_D"</span></span>
+<span><span class="co">#&gt; [10] "ICM_U" "ICU_D" "ICU_U" "CHW_D" "CHW_U" "CHL_D" "CHL_U" "CHU_D" "CHU_U"</span></span>
+<span><span class="co">#&gt; [19] "UWE"   "NAL_D" "NAL_U" "NAU_D" "NAU_U" "WTL_D" "WTL_U" "LWN_D" "LWN_U"</span></span></code></pre></div>
 </div>
   </div>
 

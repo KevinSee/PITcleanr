@@ -112,7 +112,7 @@ detections on a new node.</p></dd>
 
 
 <dt>configuration</dt>
-<dd><p>is a data frame which assigns node names to unique SiteID, AntennaID, and
+<dd><p>is a data frame which assigns node names to unique site, antenna, and
 site configuration ID combinations. One example can be built with the function `buildConfig`. If
 no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
 the column name should be `node`.</p></dd>
@@ -144,21 +144,7 @@ the event time value will be used</p></dd>
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">cth_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"PRO_Steelhead_2019.csv"</span>, package <span class="op">=</span> <span class="st">"PITcleanr"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">compress</span><span class="op">(</span><span class="va">cth_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 320 x 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    tag_code       node    slot event_type_name n_dets min_det            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 384.3B23A8BBDA TOPPEC     1 Mark                 1 2015-12-13 <span style="color: #949494;">09:00:00</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 384.3B23A8BBDA BO2        2 Observation          8 2018-07-07 <span style="color: #949494;">06:11:40</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 384.3B23A8BBDA BO4        3 Observation          6 2018-07-07 <span style="color: #949494;">10:30:32</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 384.3B23A8BBDA TD2        4 Observation          4 2018-07-08 <span style="color: #949494;">16:45:51</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 384.3B23A8BBDA JO1        5 Observation          2 2018-07-10 <span style="color: #949494;">06:30:55</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 384.3B23A8BBDA MC1        6 Observation         13 2018-07-13 <span style="color: #949494;">14:58:46</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 384.3B23A8BBDA PRA        7 Observation          2 2018-07-21 <span style="color: #949494;">15:34:26</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 384.3B23A8BBDA RIA        8 Observation          3 2018-07-25 <span style="color: #949494;">15:21:42</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 384.3B23A8BBDA RRF        9 Observation          3 2018-07-28 <span style="color: #949494;">12:28:48</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 384.3B23A8BBDA PRO       10 Recapture            1 2019-04-10 <span style="color: #949494;">06:46:35</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 310 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> '' does not exist in current working directory ('C:/Users/seek1477/AppData/Local/Temp/Rtmpsj17RS/file496c16e42733/reference').</span>
 </code></pre></div>
     </div>
   </div>

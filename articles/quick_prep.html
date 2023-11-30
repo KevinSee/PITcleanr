@@ -96,7 +96,7 @@
       <h1 data-toc-skip>DABOM Data Prep ‘Cheatsheet’</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">22 June, 2023</h4>
+            <h4 data-toc-skip class="date">30 November, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/quick_prep.Rmd" class="external-link"><code>vignettes/quick_prep.Rmd</code></a></small>
       <div class="hidden name"><code>quick_prep.Rmd</code></div>
@@ -108,7 +108,7 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The core of <code>PITcleanr</code>’s functionality relies on detections from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a>, a configuration file that maps those detections onto user-defined “nodes”, and a parent-child table showing how those nodes are related to each other on a stream network (i.e. which nodes are connected). <code>PITcleanr</code> contains several functions to help create the configuration file and the parent-child table, but the user can also create those files by hand, or use files from a previous analysis (e.g. last year). This vignette shows only the essential steps needed to make use of <code>PITcleanr</code> in preparing data for <code>DABOM</code>.</p>
+<p>The core of <code>PITcleanr</code>’s functionality relies on detections from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a>, a configuration file that maps those detections onto user-defined “nodes”, and a parent-child table showing how those nodes are related to each other on a stream network (i.e. which nodes are connected). <code>PITcleanr</code> contains several functions to help create the configuration file and the parent-child table, but the user can also create those files by hand, or use files from a previous analysis (e.g. last year). This vignette shows only the essential steps needed to make use of <code>PITcleanr</code> in preparing data for the Dam Adult Branch Occupancy Model (<a href="https://github.com/KevinSee/DABOM" class="external-link">DABOM</a>).</p>
 </div>
 <div class="section level2">
 <h2 id="minimal-r-script">Minimal R Script<a class="anchor" aria-label="anchor" href="#minimal-r-script"></a>
@@ -132,7 +132,7 @@
 <span>                         configuration <span class="op">=</span> <span class="va">my_config</span>,</span>
 <span>                         parent_child <span class="op">=</span> <span class="va">parent_child</span>,</span>
 <span>                         <span class="co"># filter out detections after a particular date</span></span>
-<span>                         max_obs_date <span class="op">=</span> <span class="st">"20150930"</span>,</span>
+<span>                         max_obs_date <span class="op">=</span> <span class="st">"20180930"</span>,</span>
 <span>                         <span class="co"># save results to file</span></span>
 <span>                         save_file <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>                         file_name <span class="op">=</span> <span class="st">"PITcleanr_output.xlsx"</span><span class="op">)</span></span></code></pre></div>
@@ -199,7 +199,7 @@
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># path to example parent-child table</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>            <span class="st">"parent_child_TUM.csv"</span>, </span>
+<span>            <span class="st">"TUM_parent_child.csv"</span>, </span>
 <span>            package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
 <span>            mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The user may choose to only include site codes in the parent and child columns, and then use their configuration file to build out the parent child table to include nodes. To add nodes, use the <code>addParentChildNodes</code> function:</p>
@@ -235,17 +235,18 @@
 <span><span class="va">prepped_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/prepWrapper.html">prepWrapper</a></span><span class="op">(</span>cth_file <span class="op">=</span> <span class="va">ptagis_file</span>,</span>
 <span>                         configuration <span class="op">=</span> <span class="va">my_configuration</span>,</span>
 <span>                         parent_child <span class="op">=</span> <span class="va">parent_child_nodes</span>,</span>
-<span>                         min_obs_date <span class="op">=</span> <span class="st">"20150301"</span>,</span>
-<span>                         max_obs_date <span class="op">=</span> <span class="st">"20150930"</span><span class="op">)</span></span></code></pre></div>
+<span>                         min_obs_date <span class="op">=</span> <span class="st">"20180301"</span>,</span>
+<span>                         max_obs_date <span class="op">=</span> <span class="st">"20180930"</span><span class="op">)</span></span></code></pre></div>
 <p>The user can even save that output directly to an Excel workbook or .csv file by setting <code>save_file = TRUE</code> and defining a file path and name in the <code>file_name</code> argument. Within this output (either in R, or in the saved Excel file), all the rows where the field <code>user_keep_obs</code> is NA or blank must be filled in with either <code>TRUE</code> or <code>FALSE</code>. The field <code>auto_keep_obs</code> provides a suggestion, but the ultimate choice is up to the user.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prepped_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/prepWrapper.html">prepWrapper</a></span><span class="op">(</span>ptagis_file <span class="op">=</span> <span class="va">ptagis_file</span>,</span>
 <span>                         configuration <span class="op">=</span> <span class="va">my_config</span>,</span>
 <span>                         parent_child <span class="op">=</span> <span class="va">parent_child_nodes</span>,</span>
-<span>                         min_obs_date <span class="op">=</span> <span class="st">"20150301"</span>,</span>
-<span>                         max_obs_date <span class="op">=</span> <span class="st">"20150930"</span>,</span>
+<span>                         min_obs_date <span class="op">=</span> <span class="st">"20180301"</span>,</span>
+<span>                         max_obs_date <span class="op">=</span> <span class="st">"20180930"</span>,</span>
 <span>                         save_file <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>                         file_name <span class="op">=</span> <span class="st">"PITcleanr_output.xlsx"</span><span class="op">)</span></span></code></pre></div>
+<p>The <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function also contains an option to add a column showing a character string of all the nodes a tag was detected at, in chronological order. Some users may find this display useful in determining which detections to retain. This option can be invoked by setting the argument <code>add_tag_detects = TRUE</code> within the <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function.</p>
 <div class="section level5">
 <h5 id="end-vignette">End Vignette<a class="anchor" aria-label="anchor" href="#end-vignette"></a>
 </h5>

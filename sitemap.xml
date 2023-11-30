@@ -49,6 +49,9 @@
     <loc>https://kevinsee.github.io/PITcleanr/reference/addParentChildNodes.html</loc>
   </url>
   <url>
+    <loc>https://kevinsee.github.io/PITcleanr/reference/buildCapHist.html</loc>
+  </url>
+  <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/buildConfig.html</loc>
   </url>
   <url>
@@ -70,7 +73,7 @@
     <loc>https://kevinsee.github.io/PITcleanr/reference/compressDART.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/defineRepGrps.html</loc>
+    <loc>https://kevinsee.github.io/PITcleanr/reference/defineCapHistCols.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/editParentChild.html</loc>
@@ -91,9 +94,6 @@
     <loc>https://kevinsee.github.io/PITcleanr/reference/filterDetections.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/filterLGRtrapDB.html</loc>
-  </url>
-  <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/findDwnstrmHydroseg.html</loc>
   </url>
   <url>
@@ -103,34 +103,19 @@
     <loc>https://kevinsee.github.io/PITcleanr/reference/findDwnStrmSite_RKM.html</loc>
   </url>
   <url>
+    <loc>https://kevinsee.github.io/PITcleanr/reference/getNodeInfo.html</loc>
+  </url>
+  <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/index.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/listParents.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/obsNetwork.html</loc>
-  </url>
-  <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/plotNodes.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/prepWrapper.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/processCapHist_LGD.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/processCapHist_PRD.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/processCapHist_PRO.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/processCapHist_TUM.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/processDART_LGR.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/qcTagHistory.html</loc>
@@ -166,22 +151,16 @@
     <loc>https://kevinsee.github.io/PITcleanr/reference/queryTagsDART.html</loc>
   </url>
   <url>
+    <loc>https://kevinsee.github.io/PITcleanr/reference/queryTestTagSite.html</loc>
+  </url>
+  <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/readCTH.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/readTestTag.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/summariseValidTagsLGR.html</loc>
-  </url>
-  <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/summarizeTagData.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/writeCapHistOutput.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/writeFishPaths.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/writeLGRNodeNetwork.html</loc>
@@ -194,9 +173,6 @@
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/writePRONodeNetwork.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/writeSpwnPaths.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/writeTUMNodeNetwork.html</loc>

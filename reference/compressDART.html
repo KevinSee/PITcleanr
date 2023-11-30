@@ -77,7 +77,8 @@ as well as any subsequent detections upstream, and then compress them.</p>
 <span>  species <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Chinook"</span>, <span class="st">"Coho"</span>, <span class="st">"Steelhead"</span>, <span class="st">"Sockeye"</span><span class="op">)</span>,</span>
 <span>  loc <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GRA"</span>, <span class="st">"PRA"</span><span class="op">)</span>,</span>
 <span>  spawn_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  configuration <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  configuration <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -96,10 +97,14 @@ as well as any subsequent detections upstream, and then compress them.</p>
 
 
 <dt>configuration</dt>
-<dd><p>is a data frame which assigns node names to unique SiteID, AntennaID, and
+<dd><p>is a data frame which assigns node names to unique site, antenna, and
 site configuration ID combinations. One example can be built with the function `buildConfig`. If
 no configuration file is provided, nodes are considered site codes by default. If nodes are assigned,
 the column name should be `node`.</p></dd>
+
+
+<dt>...</dt>
+<dd><p>other arguements to be passed to the `compress` function if the default values are not suitable.</p></dd>
 
 </dl></div>
     <div id="value">

@@ -96,7 +96,7 @@
       <h1 data-toc-skip>Configuration Files</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">22 June, 2023</h4>
+            <h4 data-toc-skip class="date">30 November, 2023</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/configuration_files.Rmd" class="external-link"><code>vignettes/configuration_files.Rmd</code></a></small>
       <div class="hidden name"><code>configuration_files.Rmd</code></div>
@@ -148,7 +148,7 @@
 </li>
 </ul>
 <p>All of this would be submitted to PTAGIS by individuals when setting up sites, and not every site will have all of that information.</p>
-<p><code><a href="../reference/buildConfig.html">buildConfig()</a></code> defaults to assigning nodes based on the array, or group of antennas (<code>node_assign = array</code>). Searching the antenna group description for words like “upstream”, “upper”, or “top”, it will assign those antennas to the upstream node, which is the site code plus <code>A0</code> (e.g. <code>CHLA0</code>). Similarly, if the antenna group description contains words like “downstream”, “lower”, or “bottom”, it assigns it to the downstream node, which is the site code plus <code>B0</code>. If a site contains a middle array, those antennas are assigned to the <code>A0</code> node. For sites with four arrays, the upper two arrays are mapped to <code>A0</code> and the lower two arrays are mapped to <code>B0</code>.</p>
+<p><code><a href="../reference/buildConfig.html">buildConfig()</a></code> defaults to assigning nodes based on the array, or group of antennas (<code>node_assign = array</code>). Searching the antenna group description for words like “upstream”, “upper”, or “top”, it will assign those antennas to the upstream node, which is the site code plus <code>_U</code> (e.g. <code>CHL_U</code>). Similarly, if the antenna group description contains words like “downstream”, “lower”, or “bottom”, it assigns it to the downstream node, which is the site code plus <code>_D</code>. If a site contains a middle array, those antennas are assigned to the <code>_U</code> node. For sites with four arrays, the upper two arrays are mapped to <code>_U</code> and the lower two arrays are mapped to <code>_D</code>.</p>
 <p>If the user chooses to set the <code>node_assign</code> argument in <code><a href="../reference/buildConfig.html">buildConfig()</a></code> to “site”, the node will be identical to the site code, so all detections at a site will be mapped to the same node. If, however, the <code>node_assign</code> argument is set to “antenna”, each antenna is defined as a separate node, and those nodes are labeled as the site code and the antenna ID, separated by “_“.</p>
 <p>Once that initial configuration file is built, the user may edit it however they wish, either within R, or by saving it as a .csv file and editing it by hand, then reading it back into R. Examples of this kind of editing might include assigning all the antennas at a particular dam to the same node, or mapping all the sites upstream (or downstream) of a certain point to the same node, based on river kilometer or some other criteria.</p>
 <p>In the following example, we use the <code><a href="../reference/buildConfig.html">buildConfig()</a></code> function to generate a default configuration and save it as <code>array_configuration</code>.</p>
@@ -167,27 +167,27 @@
 <span>                       <span class="st">'TUM'</span>,</span>
 <span>                       <span class="va">node</span><span class="op">)</span>,</span>
 <span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'CHIWAC'</span>,</span>
-<span>                       <span class="st">'CHWA0'</span>,</span>
+<span>                       <span class="st">'CHW_U'</span>,</span>
 <span>                       <span class="va">node</span><span class="op">)</span>,</span>
 <span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">'CHIWAR'</span>, <span class="st">'CHIWAT'</span><span class="op">)</span>,</span>
-<span>                       <span class="st">'CHLA0'</span>,</span>
+<span>                       <span class="st">'CHL_U'</span>,</span>
 <span>                       <span class="va">node</span><span class="op">)</span>,</span>
 <span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'CHIW'</span>,</span>
-<span>                       <span class="st">'CHLA0'</span>,</span>
+<span>                       <span class="st">'CHL_U'</span>,</span>
 <span>                       <span class="va">node</span><span class="op">)</span>,</span>
 <span>         <span class="co"># In this case, PIT tags from carcass recoveries in the Chikamin River are</span></span>
 <span>         <span class="co"># grouped with the upper 'CHU' array</span></span>
 <span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'CHIKAC'</span>,</span>
-<span>                       <span class="st">'CHUA0'</span>,</span>
+<span>                       <span class="st">'CHU_U'</span>,</span>
 <span>                       <span class="va">node</span><span class="op">)</span>,</span>
 <span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'NASONC'</span>,</span>
-<span>                       <span class="st">'NALA0'</span>,</span>
+<span>                       <span class="st">'NAL_U'</span>,</span>
 <span>                       <span class="va">node</span><span class="op">)</span>,</span>
 <span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'WHITER'</span>,</span>
-<span>                       <span class="st">'WTLA0'</span>,</span>
+<span>                       <span class="st">'WTL_U'</span>,</span>
 <span>                       <span class="va">node</span><span class="op">)</span>,</span>
 <span>         node <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">site_code</span> <span class="op">==</span> <span class="st">'LWENAT'</span>,</span>
-<span>                       <span class="st">'LWNA0'</span>,</span>
+<span>                       <span class="st">'LWN_U'</span>,</span>
 <span>                       <span class="va">node</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
