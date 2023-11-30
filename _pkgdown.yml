@@ -102,7 +102,5 @@ articles:
 - title: DABOM
   desc: |
     Vignettes aimed at preparing data for DABOM
-  contents:
-  # - DABOM_prep
-  - quick_prep
+  contents: quick_prep
 
