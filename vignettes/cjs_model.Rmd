@@ -1,0 +1,716 @@
+---
+title: "Preparing Data for a Cormack-Jolly-Seber (CJS) model"
+author: Kevin See
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  rmarkdown::html_vignette:
+    fig_height: 5
+    fig_width: 5
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Preparing Data for a Cormack-Jolly-Seber (CJS) model}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
+# knitr options
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
+  echo = TRUE,
+  comment = "#>"
+)
+
+library(knitr)
+library(here)
+```
+
+# Introduction
+
+This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data to fit a Cormack-Jolly-Seber model to estimate detection probabilities and survival parameters for juvenile salmon smolts moving downstream, from the Upper Lemhi rotary screw trap all the way to Bonneville Dam on the Columbia River. 
+
+```{r load-packages}
+library(dplyr)
+library(ggplot2)
+library(sf)
+# library(PITcleanr)
+devtools::load_all()
+```
+
+
+# PTAGIS Data
+
+* queried PTAGIS for Chinook tags that were marked or recaptured at LEMTRP between Aug 1, 2021 and July 31, 2022
+* queried PTAGIS for MRR data on all tags
+* composed a list of tags
+* queried PTAGIS for complete tag history of those tags
+
+# Wrangle Capture Histories
+
+We start by reading in the detection or capture histories that we've queried from PTAGIS.
+
+```{r}
+# read in PTAGIS detections
+ptagis_file = here('inst/extdata/LEMTRP',
+                   "LEMTRP_chnk_cth_2021.csv")
+
+# ptagis_file <- system.file("extdata", 
+#                            "LEMTRP_chnk_cth_2021.csv", 
+#                            package = "PITcleanr",
+#                            mustWork = TRUE)
+
+ptagis_cth <- readCTH(ptagis_file) |>
+  arrange(tag_code,
+          event_date_time_value)
+
+# qcTagHistory(ptagis_cth,
+#              ignore_event_vs_release = T)
+
+```
+
+The configuration file we will use starts with the standard PTAGIS configuration information. For this example we will not concern ourselves with various arrays or antennas at individual sites, but instead we define nodes by their site codes. The first of two exceptions is any sites downstream of Bonneville Dam (river kilometer 234). Because our CJS model will only extend downstream to Bonneville, we will combine all detections below Bonneville with detections at Bonneville, using site B2J. The other exception is to combine the spillway arrays at Lower Granite Dam (site code "GRS") with other juvenile bypass antennas ("GRJ") there, because we are not interested in how fish pass Lower Granite dam, only if they do and are detected somewhere while doing so.
+
+```{r, eval = F}
+configuration <-
+  buildConfig(node_assign = "site") |> 
+   mutate(across(node,
+                ~ if_else(as.numeric(str_sub(rkm, 1, 3)) <= 234,
+                          "B2J",
+                          .)),
+         across(node,
+                ~ if_else(site_code == "GRS",
+                          "GRJ",
+                          .))) |>
+  filter(!is.na(node))
+```
+
+```{r, echo = F}
+configuration <- system.file("extdata/LEMTRP", 
+                          "LEMTRP_configuration.csv", 
+                          package = "PITcleanr",
+                          mustWork = TRUE) |> 
+  readr::read_csv(show_col_types = F)
+
+```
+
+## Compress
+
+With the capture histories and a configuration file that shows what node each detection is mapped onto, we can compress those capture histories into a more manageable and meaningful object. For more detail about compressing, see the [Compressing data](compress_data.html) vignette.
+
+```{r}
+# compress detections
+comp_obs <-
+  compress(ptagis_cth,
+           configuration = configuration,
+           units = "days")
+```
+
+```{r, echo = F}
+# drop a couple of duplicate mark records to avoid confusion
+comp_obs <-
+  comp_obs |> 
+  filter(event_type_name != "Mark Duplicate")
+```
+
+
+```{r echo = F}
+comp_obs |> 
+  mutate(across(where(is.difftime),
+                as.numeric),
+         across(where(is.numeric),
+                ~ round(., digits = 3))) |> 
+  DT::datatable(filter = "top")
+```
+
+## Build Parent Child Table
+
+Based on the complete tag histories from PTAGIS, and our slightly modified configuration file, we will determine which sites to include in our CJS model. The function `extractSites` in the `PITcleanr` package will pull out all the nodes where any of our tags were detected and has the ability to turn that into a spatial object (i.e. an `sf` object) using the latitude and longitude information in the configuration file. 
+
+```{r}
+sites_sf <-
+  extractSites(ptagis_cth,
+               as_sf = T,
+               configuration = configuration,
+               max_date = "20220630") |>
+  arrange(desc(rkm))
+
+sites_sf
+```
+
+There are a few screwtraps on the mainstem Salmon River or in a tributary to the Salmon that we are not interested in using. We can filter those by only keeping site from Lower Granite downstream, or sites within the Lemhi basin. Some of these sites are on tributaries of the Lemhi River, and we are not interested in keeping those sites (since we don't anticipate every fish necessarily moving past those sites)
+
+```{r}
+sites_sf <-
+  sites_sf |> 
+  left_join(configuration |> 
+              select(site_code, 
+                     rkm_total) |> 
+              distinct()) |> 
+  filter(nchar(rkm) <= 7 |
+           (str_detect(rkm, "522.303.416") &
+              rkm_total <= rkm_total[site_code == "LEMTRP"] &
+              nchar(rkm) == 15),
+         !site_code %in% c("HAYDNC",
+                           "S3A"))
+```
+
+From here, we could build a parent-child table by hand (see the [Parent-Child Tables](parent_child.html) vignette). To build it using some of the functionality of `PITcleanr`, continue below.
+
+Once the sites have been finalized, we query the NHDPlus v2 flowlines from USGS, using the `queryFlowlines` function in `PITcleanr`. 
+
+```{r, eval = F}
+nhd_list = queryFlowlines(sites_sf,
+                          root_site_code = "LLR",
+                          min_strm_order = 2,
+                          dwnstrm_sites = T,
+                          dwn_min_stream_order_diff = 4,
+                          buffer_dist = units::as_units(10, "km"))
+
+# compile the upstream and downstream flowlines
+flowlines = nhd_list$flowlines |>
+  rbind(nhd_list$dwn_flowlines)
+```
+
+```{r, echo = F}
+flowlines <- system.file("extdata/LEMTRP", 
+                          "LEMTRP_flowlines.gpkg", 
+                          package = "PITcleanr",
+                          mustWork = TRUE) |>
+  st_read(quiet = T) |> 
+  rename(geometry = geom) |> 
+  select(-id)
+```
+
+This figure plots the NHDplus flowlines and our sites.
+
+```{r}
+ggplot() +
+  geom_sf(data = flowlines,
+          aes(color = as.factor(StreamOrde))) +
+  scale_color_viridis_d(direction = -1,
+                        option = "D",
+                        name = "Stream\nOrder",
+                        end = 0.8) +
+  geom_sf(data = sites_sf,
+          size = 3,
+          color = "black") +
+  ggrepel::geom_label_repel(
+    data = sites_sf,
+    aes(label = site_code,
+        geometry = geometry),
+    size = 1.5,
+    stat = "sf_coordinates",
+    min.segment.length = 0,
+    max.overlaps = 100
+  ) +
+  theme_bw() +
+  theme(axis.title = element_blank(),
+        legend.position = "bottom")
+```
+
+`PITcleanr` can make use of some of the covariates associated with each reach in the NHDPlus_v2 layer to determine which sites are downstream or upstream of one another. This is how we construct the parent-child table, using the `buildParentChild()` function.
+
+```{r}
+# construct parent-child table
+parent_child = sites_sf |>
+  buildParentChild(flowlines,
+                   rm_na_parent = T,
+                   add_rkm = F) |> 
+  select(parent,
+         child)
+
+```
+
+By default, `PITcleanr` assumes the parent is downstream of the child. We can switch this direction with some clever coding and renaming.
+
+```{r}
+# flip direction of parent/child relationships
+parent_child <-
+  parent_child |>
+  select(p = parent,
+         c = child) |>
+  mutate(parent = c,
+         child = p) |>
+  select(parent,
+         child)
+```
+
+Our table now looks like this:
+
+```{r}
+parent_child
+```
+
+`PITcleanr` can make a visual representation, showing how each site is connected to the others by using the `plotNodes()` function.
+
+```{r}
+plotNodes(parent_child)
+```
+
+## Filter Strange Capture Histories
+
+Once the detections have been compressed, and we can describe the relationship between nodes / sites with a parent-child table, we can assign direction of a tag between two nodes. For straightforward CJS models, one of the assumptions is that fish (or whatever creature is being studied) strictly moves forward through the detection points. When a CJS model describes survival through time, that is an easy assumption to make (i.e. animals are always only moving forward in time), but when performing a space-for-time type CJS as we are discussing here, that assumption could be violated. 
+
+One way to deal with non-straightforward movements is to filter the detections to only include those that appear to move in a straightforward manner. `PITcleanr` can help the user identify which tags have non-straightforward movements, and suggest what detections to keep, and which ones to filter out. `PITcleanr` contains a function, `filterDetections()`, to help determine which tags/individuals fail to meet the one-way travel assumption and need to be examined further. `filterDetections()` first runs `addDirection()`, and then adds two columns, `auto_keep_obs` and `user_keep_obs`. These are meant to indicate whether each row should be kept (i.e. marked `TRUE`) or deleted (i.e. marked `FALSE`). For tags that do meet the one-way travel assumption, both `auto_keep_obs` and `user_keep_obs` columns will be filled. If a fish moves back and forth along the same path, `PITcleanr` will indicate that only the last detection at each node should be kept. 
+
+In this analysis, we are also only concerned with tag movements after the fish has passed the Upper Lemhi rotary screw trap (site code LEMTRP). As mentioned above, some fish may have been tagged further upstream, prior to reaching LEMTRP, but we are not interested in their journey prior to LEMTRP, so we would like to filter observations of each tag prior to their detection at LEMTRP. 
+
+`PITcleanr` can perform multiple steps under a single wrapper function, `prepWrapper()`. `prepWrapper` can:
+
+*  start with a compressed detection file (`compress_obs`), OR
+  * start with the raw complete tag history (`cth_file`) and then compress them.
+* filter out detections prior to a user-defined minimum date (`min_obs_date`) OR
+* filter out detections prior to a user-defined starting node (`start_node`)
+* add direction of movement to each detection (requires `parent_child`)
+* note which tags have detections that follow one-way movements, and which tags do not
+  * and suggest which detections to keep and which to filter out if needed,
+  * including detections that occur after a user-defined maximum date (`max_obs_date`)
+* add a column showing all the nodes where a tag was detected if that would be helpful to the user (`add_tag_detects`; uses the `extractTagObs` function from `PITcleanr`)
+* save the output as an .xlsx or .csv file for the user to peruse with Excel or a similar program (`save_file = TRUE` and `file_name` can be set).
+
+For our purposes, we will use the compressed detections and the parent-child table we built previously, filter for detections prior to LEMTRP and add all of the tag detections.
+
+```{r}
+prepped_df <-
+  prepWrapper(compress_obs = comp_obs,
+              parent_child = parent_child,
+              start_node = "LEMTRP",
+              add_tag_detects = T,
+              save_file = F)
+```
+
+In our example, here are the capture histories of the `r n_distinct(prepped_df$tag_code[is.na(prepped_df$user_keep_obs)])` tags with non-straightforward movements, along with `PITcleanr`'s suggestions as to which detections to keep (`auto_keep_obs == TRUE`) and which ones to discard (`auto_keep_obs == FALSE`). 
+
+```{r, echo = F}
+prepped_df |> 
+  filter(is.na(user_keep_obs)) |> 
+  select(tag_code:
+         node,
+         event_type_name,
+         min_det,
+         direction,
+         ends_with("keep_obs")) |> 
+  DT::datatable(filter = "top")
+```
+
+In our example, we are content deleting the observations that `PITcleanr` has flagged with `auto_keep_obs = FALSE`. 
+
+```{r}
+prepped_df <-
+  prepped_df |> 
+  mutate(
+    across(user_keep_obs,
+           ~ if_else(is.na(.),
+                     auto_keep_obs,
+                     .))) |> 
+  filter(user_keep_obs)
+```
+
+## Form Capture Histories
+
+Often, the inputs to a CJS model include a capture history matrix, with one row per tag, and columns of 0s and 1s describing if each tag was detected at each time period or node. We can easily construct such capture history matrices with the `buildCapHist()` function, using all the detections we determined to keep.
+
+```{r}
+# translate PIT tag observations into capture histories, one per tag
+cap_hist <-
+  buildCapHist(prepped_df,
+               parent_child = parent_child,
+               configuration = configuration)
+
+# show an example
+cap_hist
+```
+
+To determine which position in the `cap_hist` string corresponds to which node, the user can run the `defineCapHistCols()` function (which is called internally within `buildCapHist()`). 
+
+```{r}
+# to find out the node associated with each column
+col_nodes <- defineCapHistCols(parent_child = parent_child,
+                               configuration = configuration)
+col_nodes
+```
+
+Users have the option to keep each detection node as a separate column when creating the capture histories, by setting `drop_nodes = F`.
+
+```{r}
+cap_hist2 <-
+  buildCapHist(prepped_df,
+               parent_child = parent_child,
+               configuration = configuration,
+               drop_nodes = F)
+cap_hist2
+```
+
+If the user wanted to find out how many tags were detected at each node, something like the following could be run:
+
+```{r}
+cap_hist2 |> 
+  select(-c(tag_code,
+            cap_hist)) |> 
+  colSums()
+```
+
+or directly from the prepared detection data:
+
+```{r}
+prepped_df |> 
+  group_by(node) |> 
+  summarize(n_tags = n_distinct(tag_code),
+            .groups = "drop") |> 
+  mutate(across(node,
+                ~ factor(.,
+                         levels = col_nodes))) |> 
+  arrange(node)
+```
+
+
+If the user wants more control over which columns correspond to which sites or nodes, they can define the column order themselves.
+
+```{r}
+# in this example, we are reversing the order
+column_order <- c("B2J", "JDJ", "MCJ", "ICH", "LMJ", "GOJ", "GRJ", "LLR", "LLRTP", "EVL", "EVU", "LEMTRP")
+
+# construct capture history matrix
+prepped_df |> 
+  select(tag_code,
+         node) |> 
+  distinct() |> 
+  mutate(across(node,
+                ~ factor(., 
+                         levels = column_order))) |> 
+  mutate(seen = 1) |> 
+  pivot_wider(names_from = "node",
+              names_sort = T,
+              names_expand = T,
+              values_from = "seen",
+              values_fill = 0) |>
+  unite(col = "cap_hist",
+        -c("tag_code"),
+        sep = "",
+        remove = T)
+
+```
+
+
+# Fit a Cormack-Jolly-Seber Model
+
+Now that we've wrangled all our detections into capture histories, we're finally ready to fit a Cormack-Jolly-Seber (CJS) model. There are many options for doing this, but in this example, we'll use the R package `marked`. Note that fitting a model like this (or nearly any kind of model) is outside the scope of the `PITcleanr` package. `PITcleanr` will help the user wrangle their data into a format that can be utilized in further analyses. 
+
+Please note that this vignette does not cover any of the details or assumptions behind a CJS model. Before attempting any analysis, the user should be aware of what's involved and how to interpret the results. 
+
+The `marked` package requires the capture histories to be processed and design data created. Setting the formula for `Phi` (survival parameters) and `p` (detection parameters) to be `~ time` ensures that a separate survival and detection parameter will be estimated between and for each site. For further information about using the `marked` package, please see the package's [CRAN site](https://CRAN.R-project.org/package=marked), the package [vignette](https://cran.r-project.org/web/packages/marked/vignettes/markedVignette.html), or the paper describing it ([Laake, Johnson and Conn (2013)](https://doi.org/10.1111/2041-210X.12065)).
+
+```{r fit-cjs-mod, results = "hide"}
+# load needed package
+library(marked)
+
+# process capture history into necessary format
+cjs_proc <-
+  cap_hist |>
+  select(tag_code,
+         ch = cap_hist) |> 
+  as.data.frame() |>
+  process.data(model = "CJS")
+
+# create design data
+cjs_ddl <-
+  make.design.data(cjs_proc)
+
+# set model construction
+Phi.time <- list(formula = ~ time)
+p.time <- list(formula = ~ time)
+
+# fit model
+mod1 <- crm(data = cjs_proc,
+            ddl = cjs_ddl,
+            model.parameters = list(Phi = Phi.time,
+                                    p = p.time),
+            hessian = T)
+```
+
+Survival and detection parameter estimates can be extracted, and the user can label them by the reaches and sites they refer to. 
+
+```{r}
+# pull out parameter estimates
+est_preds <-
+  predict(mod1,
+          se = T) |>
+  map(.f = as_tibble)
+
+est_preds$Phi <-
+  est_preds$Phi |>
+  left_join(parent_child |>
+              left_join(buildNodeOrder(parent_child),
+                        by = join_by(child == node)) |> 
+              arrange(node_order) |>
+              mutate(occ = node_order - 1) |> 
+              select(occ, parent, child) |>
+              unite(col = "reach",
+                    parent,
+                    child,
+                    sep = "_"),
+            by = join_by(occ)) |> 
+  relocate(reach,
+           .after = occ)
+
+
+est_preds$p <-
+  est_preds$p |>
+  mutate(site = rev(parent_child$child)) |> 
+  relocate(site,
+           .after = occ)
+```
+
+
+```{r}
+# examine the estimates
+
+# Survival
+est_preds$Phi |> 
+  mutate(across(where(is.numeric),
+         ~ round(., digits = 3)))
+
+# Detection
+est_preds$p |> 
+  mutate(across(where(is.numeric),
+         ~ round(., digits = 3)))
+
+```
+
+In this example, a user might be interested in the cummulative survival of fish from the Upper Lemhi screw trap to certain dams like Lower Granite, McNary, and John Day. These can be obtained by multiplying survival estimates up to the location of interest. Because the final survival and detection probabilties are confounded in this type of CJS model, we can't estimate cummulative survival to Bonneville dam (B2J) unless we added detection sites either within the estuary or of adults returning to Bonneville. 
+
+```{r}
+# cumulative survival to Lower Granite, McNary and John Day dams
+est_preds$Phi |> 
+  # group_by(life_stage) |> 
+  summarize(lower_granite = prod(estimate[occ <= 6]),
+            mcnary = prod(estimate[occ <= 10]),
+            john_day = prod(estimate[occ <= 11]))
+```
+
+## Slightly More Complicated CJS
+
+To demonstrate how a CJS model might get more nuanced, we will examine whether survival and detection at each site depend on whether a fish is tagged at the Upper Lemhi screw trap in the fall as a parr, or in the spring as a smolt. First we assign a life-stage to each tag, and prepare the data again.
+
+```{r}
+covar_df <-
+  prepped_df |> 
+  mutate(life_stage = if_else(year(start_date) == 2021,
+                              "parr",
+                              "smolt"),
+         across(life_stage,
+                ~ factor(.,
+                         levels = c("parr",
+                                    "smolt")))) |>
+  select(tag_code,
+         life_stage) |> 
+  distinct()
+
+# add life history type to capture histories
+cjs_data <-
+  cap_hist |> 
+  left_join(covar_df,
+            by = join_by(tag_code)) %>%
+  relocate(cap_hist,
+           .after = life_stage)
+
+# process capture history into necessary format
+cjs_proc <-
+  cjs_data |>
+  rename(ch = cap_hist) |> 
+  as.data.frame() |>
+  process.data(model = "CJS",
+               groups = c("life_stage"))
+
+# create design data
+cjs_ddl <-
+  make.design.data(cjs_proc)
+
+```
+
+The `marked` package allows a user to fit a number of different user-defined models to the same dataset, and returns some model selection information such as AIC. 
+
+```{r, eval = F}
+#------------------------
+# set up possible models
+
+# survival and detection only depend on location
+Phi.time <- list(formula = ~ time)
+p.time <- list(formula = ~ time)
+
+# survival and detection depend on location and life-stage
+Phi.time.grp <- list(formula = ~ time * life_stage)
+p.time.grp <- list(formula = ~ time * life_stage)
+
+# create all combinations of Phi and p models
+cml <- create.model.list(c("Phi","p"))
+
+# fit all possible models
+all_mods <-
+  crm.wrapper(cml,
+              data = cjs_proc,
+              ddl = cjs_ddl,
+              external = F,
+              accumulate = F,
+              hessian = T)
+
+all_mods
+
+# pull out best model
+mod_ls <-
+  pluck(all_mods,
+        all_mods$model.table |>
+          rownames() |>
+          pluck(1) |>
+          as.numeric())
+```
+
+```{r fit-ls-cjs-mod, results = "hide", echo = F}
+# survival and detection depend on location and life-stage
+Phi.time.grp <- list(formula = ~ time * life_stage)
+p.time.grp <- list(formula = ~ time * life_stage)
+
+# fit full model
+mod_ls <- crm(data = cjs_proc,
+              ddl = cjs_ddl,
+              model.parameters = list(Phi = Phi.time.grp,
+                                      p = p.time.grp),
+              hessian = T)
+```
+
+In this case, the model best supported by AIC included different survival and detection probabilities for each life stage, parr and smolt. We can extract those estimates and assign a reach to each survival parameter and site to each detection parameter. 
+
+```{r}
+# pull out parameter estimates
+est_preds_ls <-
+  predict(mod_ls,
+          se = T) |>
+  map(.f = as_tibble)
+
+# label reaches for survival
+est_preds_ls$Phi <-
+  est_preds_ls$Phi |>
+  left_join(parent_child |>
+              left_join(buildNodeOrder(parent_child),
+                        by = join_by(child == node)) |> 
+              arrange(node_order) |>
+              mutate(occ = node_order - 1) |> 
+              select(occ, parent, child) |>
+              unite(col = "reach",
+                    parent,
+                    child,
+                    sep = "_"),
+            by = join_by(occ)) |> 
+  relocate(reach,
+           .before = estimate)
+
+# label sites for detection
+est_preds_ls$p <-
+  est_preds_ls$p |>
+  bind_cols(tibble(site = rep(rev(parent_child$child), 2))) |> 
+  relocate(site,
+           .before = estimate)
+
+```
+
+
+```{r, echo = F, eval = F}
+est_preds$Phi |>
+  pivot_wider(names_from = life_stage,
+              names_sort = T,
+              values_from = c(estimate,
+                              se,
+                              lcl,
+                              ucl),
+              names_glue = "{life_stage}_{.value}",
+              names_vary = "fastest")
+
+est_preds$p |>
+  pivot_wider(names_from = life_stage,
+              names_sort = T,
+              values_from = c(estimate,
+                              se,
+                              lcl,
+                              ucl),
+              names_glue = "{life_stage}_{.value}",
+              names_vary = "fastest")
+
+est_preds |>
+  map(.f = function(x) {
+    x |>
+      mutate(across(where(is.double),
+                    ~ round(., 3)))
+  })
+
+# cumulative survival to Lower Granite, McNary and John Day dams
+est_preds$Phi |> 
+  group_by(life_stage) |>
+  summarize(lower_granite = prod(estimate[occ <= 6]),
+            mcnary = prod(estimate[occ <= 10]),
+            john_day = prod(estimate[occ <= 11]))
+```
+
+We can then plot the estimates, for both the model separating parameters by life-stage, and the model which combines all that data. 
+
+```{r surv-est}
+pd = 0.2
+
+est_preds_ls$Phi |> 
+  bind_rows(est_preds$Phi |>
+              mutate(life_stage = "All")) |>
+  mutate(across(life_stage,
+                ~ str_to_title(.))) |> 
+  filter(occ < max(occ)) |> 
+  mutate(across(reach,
+                forcats::as_factor)) |> 
+  ggplot(aes(x = reach,
+             y = estimate,
+             color = life_stage)) +
+  geom_errorbar(aes(ymin = lcl,
+                    ymax = ucl),
+                width = 0,
+                position = position_dodge(width = pd)) +
+  geom_point(size = 3,
+             position = position_dodge(width = pd)) +
+  scale_color_brewer(palette = "Set1",
+                     name = "Life Stage") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom") +
+  labs(x = "Reach",
+       y = "Survival")
+```
+
+```{r det-est}
+pd = 0.2
+
+est_preds_ls$p |> 
+  bind_rows(est_preds$p |> 
+              mutate(life_stage = "All")) |> 
+  mutate(across(life_stage,
+                ~ str_to_title(.))) |> 
+  filter(occ < max(occ)) |> 
+  mutate(across(site,
+                forcats::as_factor)) |> 
+  ggplot(aes(x = site,
+             y = estimate,
+             color = life_stage)) +
+  geom_errorbar(aes(ymin = lcl,
+                    ymax = ucl),
+                width = 0,
+                position = position_dodge(width = pd)) +
+  geom_point(size = 3,
+             position = position_dodge(width = pd)) +
+  scale_color_brewer(palette = "Set1",
+                     name = "Life Stage") +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "bottom") +
+  labs(x = "Site",
+       y = "Detection Probability")
+
+```
+
+# Warnings
