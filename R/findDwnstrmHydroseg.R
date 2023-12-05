@@ -18,7 +18,11 @@ findDwnstrmHydroseg = function(hydro_id,
                                hydro_pause_ids) {
 
   if(!hydro_id %in% flow_lines$Hydroseq) {
-    stop(paste("HydroSeq", hydro_id, "not found within flow lines.\n"))
+    # stop(paste("HydroSeq", hydro_id, "not found within flow lines.\n"))
+
+    warning(paste("HydroSeq", hydro_id, "not found within flow lines.\n"))
+    return(NA_real_)
+
   }
 
   hydro_dn = flow_lines %>%

@@ -14,7 +14,8 @@
 
 findDwnstrmSite = function(site_id = NULL,
                            flow_lines = NULL,
-                           sites_joined = NULL) {
+                           sites_joined = NULL,
+                           quiet = TRUE) {
 
   stopifnot(!is.null(site_id),
             !is.null(flow_lines),
@@ -32,12 +33,22 @@ findDwnstrmSite = function(site_id = NULL,
     warning(paste("Sites", paste(init_sites, collapse = " and "), "have the same hydro sequence.\n"))
   }
 
+
   dwn_hydseq = PITcleanr::findDwnstrmHydroseg(init_hydseq,
                                               flow_lines,
                                               sites_joined$Hydroseq)
 
-  sites_joined %>%
-    dplyr::filter(Hydroseq == dwn_hydseq) %>%
-    dplyr::pull(site_code) %>%
-    return()
+  if(is.na(dwn_hydseq)) {
+    warning(paste("No downstream hydro sequence was found for site", site_id))
+
+    return(NA_character_)
+
+  } else {
+
+    sites_joined %>%
+      dplyr::filter(Hydroseq == dwn_hydseq) %>%
+      dplyr::pull(site_code) %>%
+      return()
+
+  }
 }
