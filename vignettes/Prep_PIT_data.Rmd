@@ -45,7 +45,7 @@ This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data t
 
 Once `PITcleanr` is successfully installed, it can be loaded into the R session. In this vignette, we will also use many functions from the `tidyverse` [group of packages](https://www.tidyverse.org/), so load those as well:
 
-```{r load-packages}
+```{r load-r-packages}
 library(PITcleanr)
 library(dplyr)
 library(readr)
