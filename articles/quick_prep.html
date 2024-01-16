@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PITcleanr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.1</span>
       </span>
     </div>
 
@@ -96,7 +96,7 @@
       <h1 data-toc-skip>DABOM Data Prep ‘Cheatsheet’</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">30 November, 2023</h4>
+            <h4 data-toc-skip class="date">16 January, 2024</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/quick_prep.Rmd" class="external-link"><code>vignettes/quick_prep.Rmd</code></a></small>
       <div class="hidden name"><code>quick_prep.Rmd</code></div>
@@ -108,12 +108,26 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The core of <code>PITcleanr</code>’s functionality relies on detections from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a>, a configuration file that maps those detections onto user-defined “nodes”, and a parent-child table showing how those nodes are related to each other on a stream network (i.e. which nodes are connected). <code>PITcleanr</code> contains several functions to help create the configuration file and the parent-child table, but the user can also create those files by hand, or use files from a previous analysis (e.g. last year). This vignette shows only the essential steps needed to make use of <code>PITcleanr</code> in preparing data for the Dam Adult Branch Occupancy Model (<a href="https://github.com/KevinSee/DABOM" class="external-link">DABOM</a>).</p>
+<p>The core of <code>PITcleanr</code>’s functionality relies on
+detections from <a href="https://www.ptagis.org/" class="external-link">PTAGIS</a>, a
+configuration file that maps those detections onto user-defined “nodes”,
+and a parent-child table showing how those nodes are related to each
+other on a stream network (i.e. which nodes are connected).
+<code>PITcleanr</code> contains several functions to help create the
+configuration file and the parent-child table, but the user can also
+create those files by hand, or use files from a previous analysis
+(e.g. last year). This vignette shows only the essential steps needed to
+make use of <code>PITcleanr</code> in preparing data for the Dam Adult
+Branch Occupancy Model (<a href="https://github.com/KevinSee/DABOM" class="external-link">DABOM</a>).</p>
 </div>
 <div class="section level2">
 <h2 id="minimal-r-script">Minimal R Script<a class="anchor" aria-label="anchor" href="#minimal-r-script"></a>
 </h2>
-<p>If the user has file containing the complete tag histories for their tags of interest, plus the configuration file (<code>config_file</code>) and the parent-child file (<code>parent_child_file</code>) ready, the only script necessary to run in R (which will include saving the output as an Excel workbook) is:</p>
+<p>If the user has file containing the complete tag histories for their
+tags of interest, plus the configuration file (<code>config_file</code>)
+and the parent-child file (<code>parent_child_file</code>) ready, the
+only script necessary to run in R (which will include saving the output
+as an Excel workbook) is:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># load the necessary packages</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/KevinSee/PITcleanr" class="external-link">PITcleanr</a></span><span class="op">)</span></span>
@@ -136,24 +150,36 @@
 <span>                         <span class="co"># save results to file</span></span>
 <span>                         save_file <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>                         file_name <span class="op">=</span> <span class="st">"PITcleanr_output.xlsx"</span><span class="op">)</span></span></code></pre></div>
-<p>For additional details on site configuration, parent-child tables, and using the <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function, continue reading.</p>
+<p>For additional details on site configuration, parent-child tables,
+and using the <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function, continue reading.</p>
 </div>
 <div class="section level2">
 <h2 id="site-configuration">Site Configuration<a class="anchor" aria-label="anchor" href="#site-configuration"></a>
 </h2>
-<p>The user may want to start with a configuration file queried from PTAGIS, or generate their own. If they choose to generate their own, it must contain the following columns (at a minimum):</p>
+<p>The user may want to start with a configuration file queried from
+PTAGIS, or generate their own. If they choose to generate their own, it
+must contain the following columns (at a minimum):</p>
 <ul>
 <li>
-<code>site_code</code>: this is the site code associated with a detection site in PTAGIS</li>
+<code>site_code</code>: this is the site code associated with a
+detection site in PTAGIS</li>
 <li>
-<code>config_id</code>: this is the configuration sequence from PTAGIS associated with a specific antenna arrangement for that site</li>
+<code>config_id</code>: this is the configuration sequence from
+PTAGIS associated with a specific antenna arrangement for that site</li>
 <li>
-<code>antenna_id</code>: this is the antenna code or ID from PTAGIS</li>
+<code>antenna_id</code>: this is the antenna code or ID from
+PTAGIS</li>
 <li>
-<code>node</code>: this is the user-defined node that detections are mapped to i.e., how would the user like to group detections on a specific antenna, in a specific configuration, and at a specific site?</li>
+<code>node</code>: this is the user-defined node that detections are
+mapped to i.e., how would the user like to group detections on a
+specific antenna, in a specific configuration, and at a specific
+site?</li>
 </ul>
-<p>The user may want to include other columns such as site name, latitude/longitude, river kilometer (RKM), etc. but none of those are strictly necessary.</p>
-<p>The user can start with a template by downloading all the metadata associated with each detection site in PTAGIS using the following:</p>
+<p>The user may want to include other columns such as site name,
+latitude/longitude, river kilometer (RKM), etc. but none of those are
+strictly necessary.</p>
+<p>The user can start with a template by downloading all the metadata
+associated with each detection site in PTAGIS using the following:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">config_template</span> <span class="op">=</span> <span class="fu"><a href="../reference/queryPtagisMeta.html">queryPtagisMeta</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">site_code</span>, </span>
@@ -163,7 +189,10 @@
 <span>         <span class="va">antenna_id</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="co"># set each node to NA to start</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>node <span class="op">=</span> <span class="cn">NA_character_</span><span class="op">)</span></span></code></pre></div>
-<p>For a typical DABOM model, where nodes are generally defined as arrays, the user may wish to start with a configuration file that has nodes assigned to each antenna, based on the array the antenna is part of, and merely edit some rows.</p>
+<p>For a typical DABOM model, where nodes are generally defined as
+arrays, the user may wish to start with a configuration file that has
+nodes assigned to each antenna, based on the array the antenna is part
+of, and merely edit some rows.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">config_template</span> <span class="op">=</span> <span class="fu"><a href="../reference/buildConfig.html">buildConfig</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">site_code</span>, </span>
@@ -172,7 +201,10 @@
 <span>         <span class="va">antenna_group</span>,</span>
 <span>         <span class="va">antenna_id</span>, </span>
 <span>         <span class="va">node</span><span class="op">)</span></span></code></pre></div>
-<p>The user may save this template to a .csv file, and then edit it by hand, deleting sites they are not interested in, and filling in the <code>node</code> information for all other rows they are interested in.</p>
+<p>The user may save this template to a .csv file, and then edit it by
+hand, deleting sites they are not interested in, and filling in the
+<code>node</code> information for all other rows they are interested
+in.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># tell R where to save the csv file</span></span>
 <span><span class="va">config_file</span> <span class="op">=</span> <span class="st">"configuration.csv"</span></span>
@@ -180,7 +212,8 @@
 <span><span class="co"># save the template as a csv file</span></span>
 <span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html" class="external-link">write_csv</a></span><span class="op">(</span><span class="va">config_template</span>,</span>
 <span>          file <span class="op">=</span> <span class="va">config_file</span><span class="op">)</span></span></code></pre></div>
-<p>Once the user has finished editing it, they may read it back into R:</p>
+<p>Once the user has finished editing it, they may read it back into
+R:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in configuration file</span></span>
 <span><span class="va">my_configuration</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="va">config_file</span>,</span>
@@ -189,20 +222,34 @@
 <div class="section level2">
 <h2 id="parent-child-relationships">“Parent-Child” Relationships<a class="anchor" aria-label="anchor" href="#parent-child-relationships"></a>
 </h2>
-<p>The parent-child table contains information about how sites or nodes are connected on the stream network. Each site/node child has a single parent, defined as the site/node most directly downstream of the child. Each parent may have multiple children, as the stream network may branch upstream of the parent. For additional information, see that section in <a href="Prep_PIT_data.html">this vignette</a>.</p>
-<p>If the user wishes to create a parent-child table by hand, the file must contain at a minimum the columns <code>parent</code> and <code>child</code>. This file can then be read into R.</p>
+<p>The parent-child table contains information about how sites or nodes
+are connected on the stream network. Each site/node child has a single
+parent, defined as the site/node most directly downstream of the child.
+Each parent may have multiple children, as the stream network may branch
+upstream of the parent. For additional information, see that section in
+<a href="Prep_PIT_data.html">this vignette</a>.</p>
+<p>If the user wishes to create a parent-child table by hand, the file
+must contain at a minimum the columns <code>parent</code> and
+<code>child</code>. This file can then be read into R.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in parent_child file</span></span>
 <span><span class="va">parent_child</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html" class="external-link">read_csv</a></span><span class="op">(</span><span class="va">parent_child_file</span>,</span>
 <span>                        show_col_types <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code></pre></div>
-<p>The path to an example parent-child file included with <code>PITcleanr</code> can be found by running the following. The user could copy/paste that file to use as a template. Again, only the <code>parent</code> and <code>child</code> columns are necessary, although other columns may be useful.</p>
+<p>The path to an example parent-child file included with
+<code>PITcleanr</code> can be found by running the following. The user
+could copy/paste that file to use as a template. Again, only the
+<code>parent</code> and <code>child</code> columns are necessary,
+although other columns may be useful.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># path to example parent-child table</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
 <span>            <span class="st">"TUM_parent_child.csv"</span>, </span>
 <span>            package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
 <span>            mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>The user may choose to only include site codes in the parent and child columns, and then use their configuration file to build out the parent child table to include nodes. To add nodes, use the <code>addParentChildNodes</code> function:</p>
+<p>The user may choose to only include site codes in the parent and
+child columns, and then use their configuration file to build out the
+parent child table to include nodes. To add nodes, use the
+<code>addParentChildNodes</code> function:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parent_child_nodes</span> <span class="op">=</span> <span class="fu"><a href="../reference/addParentChildNodes.html">addParentChildNodes</a></span><span class="op">(</span>parent_child <span class="op">=</span> <span class="va">parent_child</span>,</span>
 <span>                                         configuration <span class="op">=</span> <span class="va">my_configuration</span><span class="op">)</span></span></code></pre></div>
@@ -210,7 +257,9 @@
 <div class="section level2">
 <h2 id="preparing-for-dabom">Preparing for DABOM<a class="anchor" aria-label="anchor" href="#preparing-for-dabom"></a>
 </h2>
-<p>Finally, the user must download complete tag histories from PTAGIS for the tags of interest, ensuring that the following attributes are selected to be included in the output:</p>
+<p>Finally, the user must download complete tag histories from PTAGIS
+for the tags of interest, ensuring that the following attributes are
+selected to be included in the output:</p>
 <ul>
 <li>Tag</li>
 <li>Event Site Code</li>
@@ -218,7 +267,8 @@
 <li>Antenna</li>
 <li>Antenna Group Configuration</li>
 </ul>
-<p>This next group of attributes are not required, but are highly recommended:</p>
+<p>This next group of attributes are not required, but are highly
+recommended:</p>
 <ul>
 <li>Mark Species</li>
 <li>Mark Rear Type</li>
@@ -227,8 +277,15 @@
 <li>Event Release Site Code</li>
 <li>Event Release Date Time</li>
 </ul>
-<p>For further information about querying data from PTAGIS (or other sources), please read the <a href="read_in_data.html">vignette about reading in data</a>.</p>
-<p>Now the user can assign those detections to a “node”, compress that data, assign directionality and determine which observations should be retained for DABOM, all using the <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function. The <code>min_obs_date</code> argument will filter out observations prior to that date, while the <code>max_obs_date</code> argument will ensure that all detections after that date are not retained.</p>
+<p>For further information about querying data from PTAGIS (or other
+sources), please read the <a href="read_in_data.html">vignette about
+reading in data</a>.</p>
+<p>Now the user can assign those detections to a “node”, compress that
+data, assign directionality and determine which observations should be
+retained for DABOM, all using the <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function.
+The <code>min_obs_date</code> argument will filter out observations
+prior to that date, while the <code>max_obs_date</code> argument will
+ensure that all detections after that date are not retained.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in PTAGIS observations and compress them,</span></span>
 <span><span class="co"># then prep data for choice of which detections to keep</span></span>
@@ -237,7 +294,14 @@
 <span>                         parent_child <span class="op">=</span> <span class="va">parent_child_nodes</span>,</span>
 <span>                         min_obs_date <span class="op">=</span> <span class="st">"20180301"</span>,</span>
 <span>                         max_obs_date <span class="op">=</span> <span class="st">"20180930"</span><span class="op">)</span></span></code></pre></div>
-<p>The user can even save that output directly to an Excel workbook or .csv file by setting <code>save_file = TRUE</code> and defining a file path and name in the <code>file_name</code> argument. Within this output (either in R, or in the saved Excel file), all the rows where the field <code>user_keep_obs</code> is NA or blank must be filled in with either <code>TRUE</code> or <code>FALSE</code>. The field <code>auto_keep_obs</code> provides a suggestion, but the ultimate choice is up to the user.</p>
+<p>The user can even save that output directly to an Excel workbook or
+.csv file by setting <code>save_file = TRUE</code> and defining a file
+path and name in the <code>file_name</code> argument. Within this output
+(either in R, or in the saved Excel file), all the rows where the field
+<code>user_keep_obs</code> is NA or blank must be filled in with either
+<code>TRUE</code> or <code>FALSE</code>. The field
+<code>auto_keep_obs</code> provides a suggestion, but the ultimate
+choice is up to the user.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">prepped_df</span> <span class="op">=</span> <span class="fu"><a href="../reference/prepWrapper.html">prepWrapper</a></span><span class="op">(</span>ptagis_file <span class="op">=</span> <span class="va">ptagis_file</span>,</span>
 <span>                         configuration <span class="op">=</span> <span class="va">my_config</span>,</span>
@@ -246,7 +310,12 @@
 <span>                         max_obs_date <span class="op">=</span> <span class="st">"20180930"</span>,</span>
 <span>                         save_file <span class="op">=</span> <span class="cn">T</span>,</span>
 <span>                         file_name <span class="op">=</span> <span class="st">"PITcleanr_output.xlsx"</span><span class="op">)</span></span></code></pre></div>
-<p>The <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function also contains an option to add a column showing a character string of all the nodes a tag was detected at, in chronological order. Some users may find this display useful in determining which detections to retain. This option can be invoked by setting the argument <code>add_tag_detects = TRUE</code> within the <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function.</p>
+<p>The <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function also contains an option to
+add a column showing a character string of all the nodes a tag was
+detected at, in chronological order. Some users may find this display
+useful in determining which detections to retain. This option can be
+invoked by setting the argument <code>add_tag_detects = TRUE</code>
+within the <code><a href="../reference/prepWrapper.html">prepWrapper()</a></code> function.</p>
 <div class="section level5">
 <h5 id="end-vignette">End Vignette<a class="anchor" aria-label="anchor" href="#end-vignette"></a>
 </h5>

@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PITcleanr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.1</span>
       </span>
     </div>
 
@@ -96,7 +96,7 @@
       <h1 data-toc-skip>Parent-Child Tables</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">30 November, 2023</h4>
+            <h4 data-toc-skip class="date">16 January, 2024</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/parent_child.Rmd" class="external-link"><code>vignettes/parent_child.Rmd</code></a></small>
       <div class="hidden name"><code>parent_child.Rmd</code></div>
@@ -108,11 +108,31 @@
 <div class="section level2">
 <h2 id="description">Description<a class="anchor" aria-label="anchor" href="#description"></a>
 </h2>
-<p>When dealing with detections of individual tags, the user often is interested in which locations are connected to which other locations along the stream network. One way to capture this information is through the construction of a parent-child table describing the “relationships” among locations. In a parent-child table, each row consists of a parent location, and a child location that is connected directly to that parent location. By default, <code>PITcleanr</code> assigns parent-child relationships as moving in an upstream direction, so a single parent may have multiple child locations upstream, if the stream network branches upstream of it. However, each child should only have a single parent, as we are assuming a lack of looped connections in our stream network. If the user is interested in a downstream parent-child relationship, the <code>parent</code> and <code>child</code> designations in the table can be manually switched. As an example, assuming only upstream movement, a weir may be considered a parent and each of its next upstream arrays considered children. A location with no detection sites further upstream has no children, but is presumably the child of a downstream location. All of the parent-child relationships among locations in a watershed can describe the potential movements by an individual tag (moving from parent to child, to the next child, etc.).</p>
-<p>For example, in the Wenatchee River example, the parent-child table looks like this.</p>
+<p>When dealing with detections of individual tags, the user often is
+interested in which locations are connected to which other locations
+along the stream network. One way to capture this information is through
+the construction of a parent-child table describing the “relationships”
+among locations. In a parent-child table, each row consists of a parent
+location, and a child location that is connected directly to that parent
+location. By default, <code>PITcleanr</code> assigns parent-child
+relationships as moving in an upstream direction, so a single parent may
+have multiple child locations upstream, if the stream network branches
+upstream of it. However, each child should only have a single parent, as
+we are assuming a lack of looped connections in our stream network. If
+the user is interested in a downstream parent-child relationship, the
+<code>parent</code> and <code>child</code> designations in the table can
+be manually switched. As an example, assuming only upstream movement, a
+weir may be considered a parent and each of its next upstream arrays
+considered children. A location with no detection sites further upstream
+has no children, but is presumably the child of a downstream location.
+All of the parent-child relationships among locations in a watershed can
+describe the potential movements by an individual tag (moving from
+parent to child, to the next child, etc.).</p>
+<p>For example, in the Wenatchee River example, the parent-child table
+looks like this.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parent_child</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 14 x 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 14 × 2</span></span></span>
 <span><span class="co">#&gt;    parent child</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TUM    CHL  </span></span>
@@ -129,7 +149,10 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> UWE    NAL  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> NAL    NAU  </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> UWE    WTL</span></span></code></pre></div>
-<p><code>PITcleanr</code> can plot these relationships graphically, showing the relationships between parent and child sites and which ones are connected along a single “path”. This is done using the <code><a href="../reference/plotNodes.html">plotNodes()</a></code> function.</p>
+<p><code>PITcleanr</code> can plot these relationships graphically,
+showing the relationships between parent and child sites and which ones
+are connected along a single “path”. This is done using the
+<code><a href="../reference/plotNodes.html">plotNodes()</a></code> function.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parent_child</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -141,21 +164,56 @@
 <div class="section level3">
 <h3 id="by-hand">By Hand<a class="anchor" aria-label="anchor" href="#by-hand"></a>
 </h3>
-<p>A user can construct a parent-child table by hand, using a .csv file with column names <code>parent</code> and <code>child</code>. Each line in the figure above is represented by one row in the parent-child table listing the parent site and child site. If the user is interested in upstream movement, the parent will be the downstream site, and every child will have a single parent (although a parent may have multiple children sites). If the interest is in downstream movement, then the parent will be the upstream site.</p>
+<p>A user can construct a parent-child table by hand, using a .csv file
+with column names <code>parent</code> and <code>child</code>. Each line
+in the figure above is represented by one row in the parent-child table
+listing the parent site and child site. If the user is interested in
+upstream movement, the parent will be the downstream site, and every
+child will have a single parent (although a parent may have multiple
+children sites). If the interest is in downstream movement, then the
+parent will be the upstream site.</p>
 </div>
 <div class="section level3">
 <h3 id="through-functions">Through Functions<a class="anchor" aria-label="anchor" href="#through-functions"></a>
 </h3>
-<p>When dealing with large number of sites, and many possible connections, it can be useful to take advantage of some of <code>PITcleanr</code>’s functions to construct a parent-child table. These functions include:</p>
+<p>When dealing with large number of sites, and many possible
+connections, it can be useful to take advantage of some of
+<code>PITcleanr</code>’s functions to construct a parent-child table.
+These functions include:</p>
 <ul>
 <li>
-<code><a href="../reference/extractSites.html">extractSites()</a></code>: based on the complete tag history (either file path and name, or the result of <code><a href="../reference/readCTH.html">readCTH()</a></code>), pulls out which sites had detections. If sites are not in PTAGIS, a configuration file should be supplied with latitude and longitudes.</li>
+<code><a href="../reference/extractSites.html">extractSites()</a></code>: based on the complete tag history
+(either file path and name, or the result of <code><a href="../reference/readCTH.html">readCTH()</a></code>),
+pulls out which sites had detections. If sites are not in PTAGIS, a
+configuration file should be supplied with latitude and longitudes.</li>
 <li>
-<code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code>: using an <code>sf</code> point object of sites, queries the NHDPlusv2 stream layers that connect those sites.</li>
+<code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code>: using an <code>sf</code> point object
+of sites, queries the NHDPlusv2 stream layers that connect those
+sites.</li>
 <li>
-<code>buildParentChild</code>: Based on the output from <code><a href="../reference/extractSites.html">extractSites()</a></code> and <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code>, this function constructs the parent-child table using information in the NHDPlusv2 layer about which hydrosequences are downstream of one another.</li>
+<code>buildParentChild</code>: Based on the output from
+<code><a href="../reference/extractSites.html">extractSites()</a></code> and <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code>, this
+function constructs the parent-child table using information in the
+NHDPlusv2 layer about which hydrosequences are downstream of one
+another.</li>
 </ul>
-<p><code>PITcleanr</code> constructs the parent-child relationship by joining a spatial (<code>sf</code>) point object of sites with the flowlines queried via <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code>. The NHDPlus layer that is returned contains a unique identifier, or hydrosequence, for every segment, as well as the identifier of the hydrosequence immediately upstream and downstream. Using this information, <code>PITcleanr</code> can identify the next downstream site from every known location (using the <code><a href="../reference/findDwnstrmSite.html">findDwnstrmSite()</a></code> function), and thus construct the parent child table through the <code><a href="../reference/buildParentChild.html">buildParentChild()</a></code> function. By default, <code><a href="../reference/buildParentChild.html">buildParentChild()</a></code> returns a tibble identifying every parent-child pair, as well as the hydrosequence joined to the parent and child location. If the argument <code>add_rkm</code> is set to <code>TRUE</code>, <code>PITcleanr</code> will query the PTAGIS metadata again, and attach the river kilometer (or rkm) for each parent and child location. If the sites are not in PTAGIS, the user can join any attributes they wish using their own configuration file.</p>
+<p><code>PITcleanr</code> constructs the parent-child relationship by
+joining a spatial (<code>sf</code>) point object of sites with the
+flowlines queried via <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code>. The NHDPlus layer
+that is returned contains a unique identifier, or hydrosequence, for
+every segment, as well as the identifier of the hydrosequence
+immediately upstream and downstream. Using this information,
+<code>PITcleanr</code> can identify the next downstream site from every
+known location (using the <code><a href="../reference/findDwnstrmSite.html">findDwnstrmSite()</a></code> function), and
+thus construct the parent child table through the
+<code><a href="../reference/buildParentChild.html">buildParentChild()</a></code> function. By default,
+<code><a href="../reference/buildParentChild.html">buildParentChild()</a></code> returns a tibble identifying every
+parent-child pair, as well as the hydrosequence joined to the parent and
+child location. If the argument <code>add_rkm</code> is set to
+<code>TRUE</code>, <code>PITcleanr</code> will query the PTAGIS metadata
+again, and attach the river kilometer (or rkm) for each parent and child
+location. If the sites are not in PTAGIS, the user can join any
+attributes they wish using their own configuration file.</p>
 <div class="section level4">
 <h4 id="extracting-sites">Extracting Sites<a class="anchor" aria-label="anchor" href="#extracting-sites"></a>
 </h4>
@@ -166,8 +224,25 @@
 <span>                       mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">cth_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readCTH.html">readCTH</a></span><span class="op">(</span><span class="va">cth_file</span><span class="op">)</span></span></code></pre></div>
-<p>The <code><a href="../reference/queryPtagisMeta.html">queryPtagisMeta()</a></code> and <code><a href="../reference/buildConfig.html">buildConfig()</a></code> functions in <code>PITcleanr</code> return information from <strong>all</strong> INT and MRR sites in PTAGIS. However, the user may only be interested in detections from site codes found within their complete tag history output, e.g., your <code>cth_file</code>. The <code><a href="../reference/extractSites.html">extractSites()</a></code> function does just that: extracts the site codes found in the complete tag history. In addition, the detections can be filtered by a minimum and/or maximum detection date, and the results are returned as either a tibble, or as a simple (spatial) feature <code>sf</code> object. Setting the <code>min_date</code> argument could be useful if the user is not interested in detections at sites prior to your study period e.g., detections that occur prior to fish arriving at your tagging or release location.</p>
-<p>In this example, we create a new object <code>sites_sf</code>, return it as an <code>sf</code> object (by setting <code>as_sf = T</code>) and only return sites from those detections that occurred after May 1, 2018. We also extract sites only from the Wenatchee subbasin and remove a couple sites that we perhaps don’t care about. More information on simple features (<code>sf</code> objects) can be found <a href="https://r-spatial.github.io/sf/" class="external-link">here</a>.</p>
+<p>The <code><a href="../reference/queryPtagisMeta.html">queryPtagisMeta()</a></code> and <code><a href="../reference/buildConfig.html">buildConfig()</a></code>
+functions in <code>PITcleanr</code> return information from
+<strong>all</strong> INT and MRR sites in PTAGIS. However, the user may
+only be interested in detections from site codes found within their
+complete tag history output, e.g., your <code>cth_file</code>. The
+<code><a href="../reference/extractSites.html">extractSites()</a></code> function does just that: extracts the site
+codes found in the complete tag history. In addition, the detections can
+be filtered by a minimum and/or maximum detection date, and the results
+are returned as either a tibble, or as a simple (spatial) feature
+<code>sf</code> object. Setting the <code>min_date</code> argument could
+be useful if the user is not interested in detections at sites prior to
+your study period e.g., detections that occur prior to fish arriving at
+your tagging or release location.</p>
+<p>In this example, we create a new object <code>sites_sf</code>, return
+it as an <code>sf</code> object (by setting <code>as_sf = T</code>) and
+only return sites from those detections that occurred after May 1, 2018.
+We also extract sites only from the Wenatchee subbasin and remove a
+couple sites that we perhaps don’t care about. More information on
+simple features (<code>sf</code> objects) can be found <a href="https://r-spatial.github.io/sf/" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sites_sf</span> <span class="op">=</span> <span class="fu"><a href="../reference/extractSites.html">extractSites</a></span><span class="op">(</span><span class="va">cth_file</span>,</span>
 <span>                        as_sf <span class="op">=</span> <span class="cn">T</span>,</span>
@@ -182,7 +257,15 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="va">site_code</span>,</span>
 <span>                <span class="op">~</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/recode.html" class="external-link">recode</a></span><span class="op">(</span><span class="va">.</span>,</span>
 <span>                         <span class="st">"TUF"</span> <span class="op">=</span> <span class="st">"TUM"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>The user could create their own <code>sf</code> object of detection sites, either by hand in R, or by using GIS software to create a shapefile or geopackage that can then be read into R using the <code>st_read()</code> function in the <code>sf</code> package. If the user chooses this path, the file must contain at least a column called <code>site_code</code>, whose values should be the same site codes found in the configuration file. Other columns are optional. The <code><a href="../reference/extractSites.html">extractSites()</a></code> function returns an <code>sf</code> object with the following columns (gleaned from the configuration file):</p>
+<p>The user could create their own <code>sf</code> object of detection
+sites, either by hand in R, or by using GIS software to create a
+shapefile or geopackage that can then be read into R using the
+<code>st_read()</code> function in the <code>sf</code> package. If the
+user chooses this path, the file must contain at least a column called
+<code>site_code</code>, whose values should be the same site codes found
+in the configuration file. Other columns are optional. The
+<code><a href="../reference/extractSites.html">extractSites()</a></code> function returns an <code>sf</code> object
+with the following columns (gleaned from the configuration file):</p>
 <ul>
 <li><code>site_code</code></li>
 <li><code>site_name</code></li>
@@ -191,25 +274,71 @@
 <li><code>rkm</code></li>
 <li><code>site_description</code></li>
 </ul>
-<p><code><a href="../reference/extractSites.html">extractSites()</a></code> will also accept a configuration file as an argument, if the user wants to pass one of their own in. Such a file should contain all the columns listed above.</p>
+<p><code><a href="../reference/extractSites.html">extractSites()</a></code> will also accept a configuration file as
+an argument, if the user wants to pass one of their own in. Such a file
+should contain all the columns listed above.</p>
 </div>
 <div class="section level4">
 <h4 id="querying-flowlines">Querying Flowlines<a class="anchor" aria-label="anchor" href="#querying-flowlines"></a>
 </h4>
-<p>The user may also be interested in getting the flowlines (i.e., the stream or river network), for their sites of interest. <code>PITcleanr</code> provide the function <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> to accomplish that. <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> downloads an <a href="https://www.epa.gov/waterdata/nhdplus-national-hydrography-dataset-plus" class="external-link">NHDPlus v2</a> stream layer from USGS using the suggested <code>nhdplusTools</code> R package. It requires the spatial location of sites as an <code>sf</code> object (such as the output of <code><a href="../reference/extractSites.html">extractSites()</a></code>), and a site code identified as the “root” site. The root site might correspond with your tagging or release location and is provided to the <code>root_site_code</code> argument. The function starts from the <code>root_site_code</code> and downloads all flowlines upstream from there, with a minimum stream order set by <code>min_strm_order</code>.</p>
-<p>If flowlines downstream of the <code>root_site_code</code> site are required, set the argument <code>dwnstrm_sites = TRUE</code> (default is <code>FALSE</code>). This might be useful if the user is interesting in analyzing or modeling sites downstream of the release site. If you’re not interested in analyzing/modeling downstream sites you can set <code>dwnstrm_sites = FALSE</code> which may speed up the function considerably.</p>
-<p>The user can also control the minimum stream order of the downstream flowlines by setting the <code>dwn_min_stream_order_diff</code> argument. Note: smaller stream orders correspond to smaller streams. This can be useful if the user is not interested or wants to prevent downloading all sorts of tiny streams downstream of a tagging or release location; the <code>dwn_min_stream_order_diff</code> is an attempt to constrain the amount of flowlines downloaded downstream of the <code>root_site_code</code> which can be sizable. The <code>dwn_min_stream_order_diff</code> corresponds to the difference between the stream order of the <code>root_site_code</code> site and the minimum stream order desired in the downstream flowlines. In our example, our <code>root_site_code</code> is located on a stream order of 5 (Wenatchee River) and <code>dwn_min_stream_order_diff = 2</code>, in this case only downstream flowlines of at least 5-2 = <strong>3</strong> will be downloaded. The extent of the downstream flowlines is further constrained by the <code>sites_sf</code> object. The <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> function returns a list consisting of:</p>
+<p>The user may also be interested in getting the flowlines (i.e., the
+stream or river network), for their sites of interest.
+<code>PITcleanr</code> provide the function
+<code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> to accomplish that.
+<code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> downloads an <a href="https://www.epa.gov/waterdata/nhdplus-national-hydrography-dataset-plus" class="external-link">NHDPlus
+v2</a> stream layer from USGS using the suggested
+<code>nhdplusTools</code> R package. It requires the spatial location of
+sites as an <code>sf</code> object (such as the output of
+<code><a href="../reference/extractSites.html">extractSites()</a></code>), and a site code identified as the “root”
+site. The root site might correspond with your tagging or release
+location and is provided to the <code>root_site_code</code> argument.
+The function starts from the <code>root_site_code</code> and downloads
+all flowlines upstream from there, with a minimum stream order set by
+<code>min_strm_order</code>.</p>
+<p>If flowlines downstream of the <code>root_site_code</code> site are
+required, set the argument <code>dwnstrm_sites = TRUE</code> (default is
+<code>FALSE</code>). This might be useful if the user is interesting in
+analyzing or modeling sites downstream of the release site. If you’re
+not interested in analyzing/modeling downstream sites you can set
+<code>dwnstrm_sites = FALSE</code> which may speed up the function
+considerably.</p>
+<p>The user can also control the minimum stream order of the downstream
+flowlines by setting the <code>dwn_min_stream_order_diff</code>
+argument. Note: smaller stream orders correspond to smaller streams.
+This can be useful if the user is not interested or wants to prevent
+downloading all sorts of tiny streams downstream of a tagging or release
+location; the <code>dwn_min_stream_order_diff</code> is an attempt to
+constrain the amount of flowlines downloaded downstream of the
+<code>root_site_code</code> which can be sizable. The
+<code>dwn_min_stream_order_diff</code> corresponds to the difference
+between the stream order of the <code>root_site_code</code> site and the
+minimum stream order desired in the downstream flowlines. In our
+example, our <code>root_site_code</code> is located on a stream order of
+5 (Wenatchee River) and <code>dwn_min_stream_order_diff = 2</code>, in
+this case only downstream flowlines of at least 5-2 = <strong>3</strong>
+will be downloaded. The extent of the downstream flowlines is further
+constrained by the <code>sites_sf</code> object. The
+<code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> function returns a list consisting of:</p>
 <ul>
 <li>
-<code>flowlines</code>: the flowlines upstream of the <code>root_site_code</code>
+<code>flowlines</code>: the flowlines upstream of the
+<code>root_site_code</code>
 </li>
 <li>
-<code>basin</code>: the polygon containing the upstream flowlines</li>
+<code>basin</code>: the polygon containing the upstream
+flowlines</li>
 <li>
-<code>dwn_flowlines</code>: the flowlines downstream of the <code>root_site_code</code>, if <code>dwnstrm_sites = T</code>
+<code>dwn_flowlines</code>: the flowlines downstream of the
+<code>root_site_code</code>, if <code>dwnstrm_sites = T</code>
 </li>
 </ul>
-<p>Depending on the spatial extent of your flowlines, the <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> function may take awhile. Here we create a list of objects, <code>nhd_list</code>. We then use the function <code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> to combine the <code>nhd$flowlines</code> and <code>nhd$dwn_flowlines</code> into a single <code>flowlines</code> simple feature object. More information on the <code>nhdplusTools</code> R package can be found <a href="https://cran.r-project.org/web/packages/nhdplusTools/index.html" class="external-link">here</a>.</p>
+<p>Depending on the spatial extent of your flowlines, the
+<code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> function may take awhile. Here we create a
+list of objects, <code>nhd_list</code>. We then use the function
+<code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> to combine the <code>nhd$flowlines</code> and
+<code>nhd$dwn_flowlines</code> into a single <code>flowlines</code>
+simple feature object. More information on the <code>nhdplusTools</code>
+R package can be found <a href="https://cran.r-project.org/web/packages/nhdplusTools/index.html" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># query the flowlines</span></span>
 <span><span class="va">nhd_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/queryFlowlines.html">queryFlowlines</a></span><span class="op">(</span>sites_sf <span class="op">=</span> <span class="va">sites_sf</span>,</span>
@@ -228,7 +357,8 @@
 <div class="section level4">
 <h4 id="mapping-sites">Mapping Sites<a class="anchor" aria-label="anchor" href="#mapping-sites"></a>
 </h4>
-<p>To visualize the sites and stream, the user can make a plot, such as the one in Figure @ref(fig:fig-basin-map)</p>
+<p>To visualize the sites and stream, the user can make a plot, such as
+the one in Figure @ref(fig:fig-basin-map)</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
@@ -248,7 +378,7 @@
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">sites_sf</span>,</span>
 <span>          size <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>          color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ggrepel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ggrepel/man/geom_text_repel.html" class="external-link">geom_label_repel</a></span><span class="op">(</span></span>
+<span>  <span class="fu">ggrepel</span><span class="fu">::</span><span class="fu"><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html" class="external-link">geom_label_repel</a></span><span class="op">(</span></span>
 <span>    data <span class="op">=</span> <span class="va">sites_sf</span>,</span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>label <span class="op">=</span> <span class="va">site_code</span>, </span>
 <span>        geometry <span class="op">=</span> <span class="va">geometry</span><span class="op">)</span>,</span>
@@ -264,17 +394,15 @@
 <div class="section level4">
 <h4 id="build-parent-child-table">Build Parent-Child Table<a class="anchor" aria-label="anchor" href="#build-parent-child-table"></a>
 </h4>
-<p>Once the user has an <code>sf</code> object with the spatial locations of their sites, and a NHDPlusv2 layer of flowlines, they can use the <code><a href="../reference/buildParentChild.html">buildParentChild()</a></code> function to construct a parent-child table.</p>
+<p>Once the user has an <code>sf</code> object with the spatial
+locations of their sites, and a NHDPlusv2 layer of flowlines, they can
+use the <code><a href="../reference/buildParentChild.html">buildParentChild()</a></code> function to construct a
+parent-child table.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parent_child</span> <span class="op">=</span> <span class="fu"><a href="../reference/buildParentChild.html">buildParentChild</a></span><span class="op">(</span><span class="va">sites_sf</span>,</span>
 <span>                                <span class="va">flowlines</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in findDwnstrmHydroseg(hydro_dn, flow_lines, hydro_pause_ids) : </span></span>
-<span><span class="co">#&gt;   HydroSeq 50016572 not found within flow lines.</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Error in findDwnstrmHydroseg(hydro_dn, flow_lines, hydro_pause_ids) : </span></span>
-<span><span class="co">#&gt;   HydroSeq 50011914 not found within flow lines.</span></span>
 <span><span class="va">parent_child</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 x 4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 4</span></span></span>
 <span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL    TUM       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">013</span>200</span></span>
@@ -294,19 +422,51 @@
 <div class="section level3">
 <h3 id="editing-parent-child-table">Editing Parent-Child Table<a class="anchor" aria-label="anchor" href="#editing-parent-child-table"></a>
 </h3>
-<p>After initially building a parent-child table, there is usually some editing that needs to happen. This is necessary for a variety of reasons we’ve observed:</p>
+<p>After initially building a parent-child table, there is usually some
+editing that needs to happen. This is necessary for a variety of reasons
+we’ve observed:</p>
 <ul>
-<li>Perhaps the latitude and longitude of a site was not correct, and it was placed on the wrong hydrosequence of the flowlines.</li>
-<li>The flowlines layer from the USGS could be inaccurate around a particular area, causing the parent-child relationships to be incorrect.</li>
-<li>A site may be located at the mouth of a tributary was joined to the mainstem hydrosequence of the flowline, instead of the tributary, causing problems for sites upstream and downstream of that site.</li>
+<li>Perhaps the latitude and longitude of a site was not correct, and it
+was placed on the wrong hydrosequence of the flowlines.</li>
+<li>The flowlines layer from the USGS could be inaccurate around a
+particular area, causing the parent-child relationships to be
+incorrect.</li>
+<li>A site may be located at the mouth of a tributary was joined to the
+mainstem hydrosequence of the flowline, instead of the tributary,
+causing problems for sites upstream and downstream of that site.</li>
 </ul>
-<p>For these reasons (or any others), <code>PITcleanr</code> provides a function to edit the parent-child table, <code><a href="../reference/editParentChild.html">editParentChild()</a></code>. It requires a list the length of rows to be fixed (<code>fix_list</code>). Each element of this list is a vector of length 3, where the first two elements contain the parent and child locations to be edited, and the third element is the new (correct) parent location. As each child contains a single parent in the table, this is enough information to uniquely target individual rows of the parent-child table.</p>
-<p>The user can also switch parent-child pairs, making the parent the child and vice versa, using the <code>switch_parent_child</code> argument. This is primarily intended to fix relationships between a root site and the initial downstream sites. If, by default, the parent child table is built assuming upstream movement, but the user would like to incorporate downstream movement from the root site to a location downstream, this argument will be useful. However, it will not “fix” associated parent-child relationships with the locations in the <code>switch_parent_child</code> list; those must be fixed through the <code>fix_list</code> argument.</p>
-<p>Often, a good place to start will be to examine the current parent-child relationships using the function <code><a href="../reference/plotNodes.html">plotNodes()</a></code>. This can help visually identify pathways that need editing.</p>
+<p>For these reasons (or any others), <code>PITcleanr</code> provides a
+function to edit the parent-child table, <code><a href="../reference/editParentChild.html">editParentChild()</a></code>.
+It requires a list the length of rows to be fixed
+(<code>fix_list</code>). Each element of this list is a vector of length
+3, where the first two elements contain the parent and child locations
+to be edited, and the third element is the new (correct) parent
+location. As each child contains a single parent in the table, this is
+enough information to uniquely target individual rows of the
+parent-child table.</p>
+<p>The user can also switch parent-child pairs, making the parent the
+child and vice versa, using the <code>switch_parent_child</code>
+argument. This is primarily intended to fix relationships between a root
+site and the initial downstream sites. If, by default, the parent child
+table is built assuming upstream movement, but the user would like to
+incorporate downstream movement from the root site to a location
+downstream, this argument will be useful. However, it will not “fix”
+associated parent-child relationships with the locations in the
+<code>switch_parent_child</code> list; those must be fixed through the
+<code>fix_list</code> argument.</p>
+<p>Often, a good place to start will be to examine the current
+parent-child relationships using the function <code><a href="../reference/plotNodes.html">plotNodes()</a></code>.
+This can help visually identify pathways that need editing.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span></code></pre></div>
 <p><img src="parent_child_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
-<p>From the figure above, the original parent-child table has some problems with 2 sites (ICL and PES) downstream of the root site, TUM. In addition, the flowlines are not accurate near the LNF site, or the spatial location of that site is incorrect. We would like to make TUM the parent of both ICL and PES, and ICL should be the parent of LNF. All of these corrections are implemented below using the <code><a href="../reference/editParentChild.html">editParentChild()</a></code> function.</p>
+<p>From the figure above, the original parent-child table has some
+problems with 2 sites (ICL and PES) downstream of the root site, TUM. In
+addition, the flowlines are not accurate near the LNF site, or the
+spatial location of that site is incorrect. We would like to make TUM
+the parent of both ICL and PES, and ICL should be the parent of LNF. All
+of these corrections are implemented below using the
+<code><a href="../reference/editParentChild.html">editParentChild()</a></code> function.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parent_child</span> <span class="op">=</span> <span class="fu"><a href="../reference/editParentChild.html">editParentChild</a></span><span class="op">(</span><span class="va">parent_child</span>,</span>
 <span>                               fix_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"PES"</span>, <span class="st">"TUM"</span><span class="op">)</span>,</span>
@@ -316,7 +476,7 @@
 <span></span>
 <span><span class="co"># view corrected parent_child table</span></span>
 <span><span class="va">parent_child</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 x 4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 4</span></span></span>
 <span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL    LNF       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">016</span>752</span></span>
@@ -335,8 +495,22 @@
 <div class="section level3">
 <h3 id="incorporating-nodes">Incorporating Nodes<a class="anchor" aria-label="anchor" href="#incorporating-nodes"></a>
 </h3>
-<p>If the configuration file contains multiple nodes for some sites (e.g., a node for each array at a site), then the parent-child table can be expanded to accommodate these nodes using the <code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code> function. The function essentially “expands” (adds rows) to the existing parent-child table to accommodate those additional nodes. Note: the <code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code> function assumes that the parent-child table is arranged so that children are upstream of parents, and nodes designated as <code>_U</code> are upstream of those designated <code>_D</code>. Currently, the function can only handle up to two nodes at each site.</p>
-<p>Here, we use the <code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code> function on our existing <code>parent_child</code> table, and provide our existing <code>configuration</code> tibble to the <code>configuration</code> argument to expand the tibble. Our results are saved to a new object <code>parent_child_nodes</code>.</p>
+<p>If the configuration file contains multiple nodes for some sites
+(e.g., a node for each array at a site), then the parent-child table can
+be expanded to accommodate these nodes using the
+<code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code> function. The function essentially
+“expands” (adds rows) to the existing parent-child table to accommodate
+those additional nodes. Note: the <code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code>
+function assumes that the parent-child table is arranged so that
+children are upstream of parents, and nodes designated as
+<code>_U</code> are upstream of those designated <code>_D</code>.
+Currently, the function can only handle up to two nodes at each
+site.</p>
+<p>Here, we use the <code><a href="../reference/addParentChildNodes.html">addParentChildNodes()</a></code> function on our
+existing <code>parent_child</code> table, and provide our existing
+<code>configuration</code> tibble to the <code>configuration</code>
+argument to expand the tibble. Our results are saved to a new object
+<code>parent_child_nodes</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read in configuration file</span></span>
 <span><span class="va">my_configuration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,</span>
@@ -351,7 +525,7 @@
 <span></span>
 <span><span class="co"># view expanded parent-child table</span></span>
 <span><span class="va">parent_child_nodes</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 21 x 4</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 21 × 4</span></span></span>
 <span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL_D  ICL_U     50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">012</span>366</span></span>
@@ -364,7 +538,7 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ICM_D  ICM_U     50<span style="text-decoration: underline;">017</span>117    50<span style="text-decoration: underline;">017</span>117</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> UWE    LWN_D     50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>266</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> UWE    WTL_D     50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">026</span>363</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># i 11 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more rows</span></span></span></code></pre></div>
 </div>
 </div>
   </div>

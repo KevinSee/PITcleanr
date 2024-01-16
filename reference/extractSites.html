@@ -20,7 +20,7 @@ correct configuration file."><meta property="og:image" content="https://kevinsee
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PITcleanr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.1</span>
       </span>
     </div>
 
@@ -146,9 +146,9 @@ the column name should be `node`.</p></dd>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"TUM_Chinook_2015.csv"</span>, package <span class="op">=</span> <span class="st">"PITcleanr"</span>, mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in system.file("extdata", "TUM_Chinook_2015.csv", package = "PITcleanr",     mustWork = TRUE):</span> no file found</span>
 <span class="r-in"><span><span class="va">ptagis_cth</span> <span class="op">=</span> <span class="fu"><a href="readCTH.html">readCTH</a></span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in stopifnot(!is.null(cth_file)):</span> object 'ptagis_file' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'ptagis_file' not found</span>
 <span class="r-in"><span><span class="fu">extractSites</span><span class="op">(</span><span class="va">ptagis_cth</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in stopifnot(!is.null(cth_file)):</span> object 'ptagis_cth' not found</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'ptagis_cth' not found</span>
 </code></pre></div>
     </div>
   </div>

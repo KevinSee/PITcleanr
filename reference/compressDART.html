@@ -19,7 +19,7 @@ as well as any subsequent detections upstream, and then compress them."><meta pr
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PITcleanr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.1</span>
       </span>
     </div>
 
@@ -124,7 +124,7 @@ the column name should be `node`.</p></dd>
 <span class="r-in"><span>                       loc <span class="op">=</span> <span class="st">"GRA"</span>,</span></span>
 <span class="r-in"><span>                       spawn_year <span class="op">=</span> <span class="fl">2019</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $compress_obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7,617 x 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 7,617 × 9</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tag_code       node    slot event_type_name n_dets min_det            </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 384.0A0301AFC3 GRA        1 Observation         11 2019-09-27 <span style="color: #949494;">05:50:49</span></span>
@@ -137,11 +137,11 @@ the column name should be `node`.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 384.3B23A562DE LGRLDR     2 Recapture            1 2019-06-07 <span style="color: #949494;">12:39:19</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 384.3B23A562DE GRA        3 Observation         10 2019-06-07 <span style="color: #949494;">14:30:16</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 384.3B23A562DE ZEN        4 Observation          1 2019-06-30 <span style="color: #949494;">00:36:40</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 7,607 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7,607 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $dart_obs</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67,203 x 34</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 67,203 × 34</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    tag_code       mark_species_name mark_rear_type_name event_type_name</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>             <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 3DD.007784D29F Chinook           H                   Observation    </span>
@@ -154,13 +154,13 @@ the column name should be `node`.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 3DD.007784D29F Chinook           H                   Observation    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 3DD.007784D29F Chinook           H                   Observation    </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 3DD.007784D29F Chinook           H                   Observation    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 67,193 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># i 30 more variables: event_site_code_value &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 67,193 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 30 more variables: event_site_code_value &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   event_date_time_value &lt;dttm&gt;, antenna_id &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   antenna_group_configuration_value &lt;dbl&gt;, start_time &lt;dttm&gt;, stage &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   shuc &lt;dbl&gt;, srkm &lt;chr&gt;, mark_date &lt;date&gt;, file_id &lt;chr&gt;, mark_site &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   rel_site &lt;chr&gt;, rel_date &lt;date&gt;, t_species &lt;dbl&gt;, t_run &lt;dbl&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   length &lt;dbl&gt;, esu_type &lt;chr&gt;, rhuc &lt;dbl&gt;, rrkm &lt;chr&gt;, flags &lt;chr&gt;, ...</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   length &lt;dbl&gt;, esu_type &lt;chr&gt;, rhuc &lt;dbl&gt;, rrkm &lt;chr&gt;, flags &lt;chr&gt;, …</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

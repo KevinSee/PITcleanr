@@ -4,6 +4,18 @@
     <loc>https://kevinsee.github.io/PITcleanr/404.html</loc>
   </url>
   <url>
+    <loc>https://kevinsee.github.io/PITcleanr/CONDUCT.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/CONTRIBUTING.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/LICENSE.html</loc>
+  </url>
+  <url>
+    <loc>https://kevinsee.github.io/PITcleanr/articles/Prep_PIT_data.html</loc>
+  </url>
+  <url>
     <loc>https://kevinsee.github.io/PITcleanr/articles/compress_data.html</loc>
   </url>
   <url>
@@ -16,9 +28,6 @@
     <loc>https://kevinsee.github.io/PITcleanr/articles/parent_child.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/PITcleanr/articles/Prep_PIT_data.html</loc>
-  </url>
-  <url>
     <loc>https://kevinsee.github.io/PITcleanr/articles/quick_prep.html</loc>
   </url>
   <url>
@@ -28,16 +37,7 @@
     <loc>https://kevinsee.github.io/PITcleanr/authors.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/PITcleanr/CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/CONTRIBUTING.html</loc>
-  </url>
-  <url>
     <loc>https://kevinsee.github.io/PITcleanr/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/LICENSE.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/news/index.html</loc>
@@ -79,10 +79,10 @@
     <loc>https://kevinsee.github.io/PITcleanr/reference/editParentChild.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/estimateFinalLoc.html</loc>
+    <loc>https://kevinsee.github.io/PITcleanr/reference/estNodeEff.html</loc>
   </url>
   <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/estNodeEff.html</loc>
+    <loc>https://kevinsee.github.io/PITcleanr/reference/estimateFinalLoc.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/extractSites.html</loc>
@@ -94,13 +94,13 @@
     <loc>https://kevinsee.github.io/PITcleanr/reference/filterDetections.html</loc>
   </url>
   <url>
+    <loc>https://kevinsee.github.io/PITcleanr/reference/findDwnStrmSite_RKM.html</loc>
+  </url>
+  <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/findDwnstrmHydroseg.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/findDwnstrmSite.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/findDwnStrmSite_RKM.html</loc>
   </url>
   <url>
     <loc>https://kevinsee.github.io/PITcleanr/reference/getNodeInfo.html</loc>

@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PITcleanr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.1</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
       <h1 data-toc-skip>Reading PIT Tag Data Into R</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">30 November, 2023</h4>
+            <h4 data-toc-skip class="date">16 January, 2024</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/read_in_data.Rmd" class="external-link"><code>vignettes/read_in_data.Rmd</code></a></small>
       <div class="hidden name"><code>read_in_data.Rmd</code></div>
@@ -109,25 +109,61 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>Raw PIT tag detections contain a record of every detection of a tag code on an individual antenna, with the associate time-stamp. This data may be queried in primarily two different ways: 1) all of the tag codes detected at a site or antenna, or 2) all the detections of a particular tag code at a variety of sites or antennas. Regardless of what type of query is used, the user is generally dealing with a row of data for every single detection, identified by tag code, site, antenna and date/time (and detections may contain additional data as well).</p>
-<p>This data may be stored in a variety of formats or databases. Often these can be broken out into data stored in <a href="https://ptagis.org/" class="external-link">PTAGIS</a> (The Columbia Basin PIT Tag Information System), and data stored in non-PTAGIS databases (e.g. BioLogic) or local formats (e.g. .xlsx, .txt, .log). One of the first steps in analyzing this data is to read it into R and standardize the format. <code>PITcleanr</code> contains a workhorse function, <code><a href="../reference/readCTH.html">readCTH()</a></code> (for “read complete tag history”), that can accomplish this across many data formats.</p>
+<p>Raw PIT tag detections contain a record of every detection of a tag
+code on an individual antenna, with the associate time-stamp. This data
+may be queried in primarily two different ways: 1) all of the tag codes
+detected at a site or antenna, or 2) all the detections of a particular
+tag code at a variety of sites or antennas. Regardless of what type of
+query is used, the user is generally dealing with a row of data for
+every single detection, identified by tag code, site, antenna and
+date/time (and detections may contain additional data as well).</p>
+<p>This data may be stored in a variety of formats or databases. Often
+these can be broken out into data stored in <a href="https://ptagis.org/" class="external-link">PTAGIS</a> (The Columbia Basin PIT Tag
+Information System), and data stored in non-PTAGIS databases
+(e.g. BioLogic) or local formats (e.g. .xlsx, .txt, .log). One of the
+first steps in analyzing this data is to read it into R and standardize
+the format. <code>PITcleanr</code> contains a workhorse function,
+<code><a href="../reference/readCTH.html">readCTH()</a></code> (for “read complete tag history”), that can
+accomplish this across many data formats.</p>
 </div>
 <div class="section level2">
 <h2 id="ptagis-data">PTAGIS Data<a class="anchor" aria-label="anchor" href="#ptagis-data"></a>
 </h2>
-<p>The Columbia Basin PIT Tag Information System (<a href="https://ptagis.org/" class="external-link">PTAGIS</a>) is the centralized regional database for PIT-tag detections within the Columbia River Basin. It contains a record of each detection of every PIT tag, including the initial detection, or “mark”, when the tag is implanted in the fish, detections on PIT-tag antennas, recaptures (e.g. at weirs) and recoveries (e.g. carcass surveys). It contains a record of every individual detection, which means potentially multiple records of a tag being detected on the same antenna over and over e.g., in the case that it is not moving. Therefore, querying PTAGIS for all of these detections leads to a wealth of data, which can be unwieldy for the user. <code>PITcleanr</code> aims to compress that data to a more manageable size, without losing any of the information contained in that dataset.</p>
+<p>The Columbia Basin PIT Tag Information System (<a href="https://ptagis.org/" class="external-link">PTAGIS</a>) is the centralized regional
+database for PIT-tag detections within the Columbia River Basin. It
+contains a record of each detection of every PIT tag, including the
+initial detection, or “mark”, when the tag is implanted in the fish,
+detections on PIT-tag antennas, recaptures (e.g. at weirs) and
+recoveries (e.g. carcass surveys). It contains a record of every
+individual detection, which means potentially multiple records of a tag
+being detected on the same antenna over and over e.g., in the case that
+it is not moving. Therefore, querying PTAGIS for all of these detections
+leads to a wealth of data, which can be unwieldy for the user.
+<code>PITcleanr</code> aims to compress that data to a more manageable
+size, without losing any of the information contained in that
+dataset.</p>
 <div class="section level3">
 <h3 id="complete-capture-history">Complete Capture History<a class="anchor" aria-label="anchor" href="#complete-capture-history"></a>
 </h3>
-<p><code>PITcleanr</code> starts with a complete capture history query from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> for a select group of tags of interest. The user will need to compile this list of tags themselves, ideally in a .txt file with one row per tag number, to make it easy to upload to a PTAGIS query.</p>
-<p>For convenience, we’ve included one such file with <code>PITcleanr</code>, which is saved to the user’s computer when <code>PITcleanr</code> is installed. The file, “TUM_chnk_tags_2018.txt”, contains tag IDs for Chinook salmon adults implanted with PIT tags at Tumwater Dam in 2018. The following code can be used to find the path to this example file. The user can use this as a template for creating their own tag list as well.</p>
+<p><code>PITcleanr</code> starts with a complete capture history query
+from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> for a select group of tags
+of interest. The user will need to compile this list of tags themselves,
+ideally in a .txt file with one row per tag number, to make it easy to
+upload to a PTAGIS query.</p>
+<p>For convenience, we’ve included one such file with
+<code>PITcleanr</code>, which is saved to the user’s computer when
+<code>PITcleanr</code> is installed. The file, “TUM_chnk_tags_2018.txt”,
+contains tag IDs for Chinook salmon adults implanted with PIT tags at
+Tumwater Dam in 2018. The following code can be used to find the path to
+this example file. The user can use this as a template for creating
+their own tag list as well.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
 <span>            <span class="st">"TUM_chnk_tags_2018.txt"</span>, </span>
 <span>            package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
 <span>            mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>The example file of tag codes is very simple:</p>
-<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,406 x 1</span></span></span>
+<pre><code><span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,406 × 1</span></span></span>
 <span><span class="co">#&gt;    X1            </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 3DD.00777C5CEC</span></span>
@@ -140,9 +176,26 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3DD.00777CEB31</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3DD.00777CEF93</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3DD.00777CEFC1</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># i 1,396 more rows</span></span></span></code></pre>
-<p>Once the user has created their own tag list, or located this example one, they can go to the <a href="https:://www.ptagis/org">PTAGIS homepage</a> to query the complete tag histories for those tags. The complete tag history query is available under <a href="https://www.ptagis.org/Data/AdvancedReporting" class="external-link">Advanced Reporting</a>, which requires a free account from PTAGIS. From the <a href="https:://www.ptagis/org">homepage</a>, click on “Login/Register”, and either login to an existing account, or click “Create a new account” to create one. Once logged in, scroll down the dashboard page to the Advanced Reporting Links section. PTAGIS allows users to save reports/queries to be run again. For users who plan to utilize <code>PITcleanr</code> more than once, it saves a lot of time to build the initial query and then save it into the user’s PTAGIS account. It is then available through the “My Reports” link. To create a new query, click on “Query Builder”, or “Advanced Reporting Home Page” and then ““Create Query Builder2 Report”. From here, choose “Complete Tag History” from the list of possible reports.</p>
-<p>There are several query indices on the left side of the query builder, but for the purposes of <code>PITcleanr</code> only a few are needed. First, under “1 Select Attributes” the following attributes are required to work with <code>PITcleanr</code>:</p>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,396 more rows</span></span></span></code></pre>
+<p>Once the user has created their own tag list, or located this example
+one, they can go to the <a href="https:://www.ptagis/org">PTAGIS
+homepage</a> to query the complete tag histories for those tags. The
+complete tag history query is available under <a href="https://www.ptagis.org/Data/AdvancedReporting" class="external-link">Advanced
+Reporting</a>, which requires a free account from PTAGIS. From the <a href="https:://www.ptagis/org">homepage</a>, click on “Login/Register”,
+and either login to an existing account, or click “Create a new account”
+to create one. Once logged in, scroll down the dashboard page to the
+Advanced Reporting Links section. PTAGIS allows users to save
+reports/queries to be run again. For users who plan to utilize
+<code>PITcleanr</code> more than once, it saves a lot of time to build
+the initial query and then save it into the user’s PTAGIS account. It is
+then available through the “My Reports” link. To create a new query,
+click on “Query Builder”, or “Advanced Reporting Home Page” and then
+““Create Query Builder2 Report”. From here, choose “Complete Tag
+History” from the list of possible reports.</p>
+<p>There are several query indices on the left side of the query
+builder, but for the purposes of <code>PITcleanr</code> only a few are
+needed. First, under “1 Select Attributes” the following attributes are
+required to work with <code>PITcleanr</code>:</p>
 <ul>
 <li>Tag</li>
 <li>Event Site Code</li>
@@ -150,7 +203,8 @@
 <li>Antenna</li>
 <li>Antenna Group Configuration</li>
 </ul>
-<p>This next group of attributes are not required, but are highly recommended:</p>
+<p>This next group of attributes are not required, but are highly
+recommended:</p>
 <ul>
 <li>Mark Species</li>
 <li>Mark Rear Type</li>
@@ -159,10 +213,27 @@
 <li>Event Release Site Code</li>
 <li>Event Release Date Time</li>
 </ul>
-<p>Simply move these attributes over from the “Available” column to the “Selected:” column on the page by selecting them and clicking on the right arrow between the “Available” and “Selected” boxes. Other fields of interest to the user may be included as well (e.g. Event Length), and will be included as extra columns in the query output.</p>
-<p>The only other required index is “2 Select Metrics”, but that can remain as the default, “CTH Count”, which provides one record for each event recorded per tag.</p>
-<p>Set up a filter for specific tags by next navigating to the “27 Tag Code - List or Text File” on the left. After selecting “Tag” under “Attributes:”, click on “Import file…”. Simply upload the .txt file containing your PIT tag codes of interest, or alternatively, feel free to use the “TUM_chnk_tags_2018.txt” file provided with <code>PITcleanr</code>. After choosing the file, click on “Import” and the tag list will be loaded (delimited by semi-colons). Click “OK”.</p>
-<p>Under “Report Message Name:” near the bottom, name the query something appropriate, such as “TUM_chnk_cth_2018”, and select “Run Report”. Once the query has successfully completed, the output can be exported as a .csv file (e.g. “TUM_chnk_cth_2018.csv”). Simply click on the “Export” icon near the top, which will open a new page, and select the default settings:</p>
+<p>Simply move these attributes over from the “Available” column to the
+“Selected:” column on the page by selecting them and clicking on the
+right arrow between the “Available” and “Selected” boxes. Other fields
+of interest to the user may be included as well (e.g. Event Length), and
+will be included as extra columns in the query output.</p>
+<p>The only other required index is “2 Select Metrics”, but that can
+remain as the default, “CTH Count”, which provides one record for each
+event recorded per tag.</p>
+<p>Set up a filter for specific tags by next navigating to the “27 Tag
+Code - List or Text File” on the left. After selecting “Tag” under
+“Attributes:”, click on “Import file…”. Simply upload the .txt file
+containing your PIT tag codes of interest, or alternatively, feel free
+to use the “TUM_chnk_tags_2018.txt” file provided with
+<code>PITcleanr</code>. After choosing the file, click on “Import” and
+the tag list will be loaded (delimited by semi-colons). Click “OK”.</p>
+<p>Under “Report Message Name:” near the bottom, name the query
+something appropriate, such as “TUM_chnk_cth_2018”, and select “Run
+Report”. Once the query has successfully completed, the output can be
+exported as a .csv file (e.g. “TUM_chnk_cth_2018.csv”). Simply click on
+the “Export” icon near the top, which will open a new page, and select
+the default settings:</p>
 <ul>
 <li>Export: Whole report</li>
 <li>CSV file format</li>
@@ -171,17 +242,34 @@
 <li>Remove extra column: Yes</li>
 </ul>
 <p>And click “Export”, again.</p>
-<p><code>PITcleanr</code> includes several example files to help users understand the appropriate format of certain files, and to provide demonstrations of various functions. The <code>system.file</code> function locates the file path to the subdirectory and file contained with a certain package. One such example is PTAGIS output for the Tumwater Chinook tags from 2018. Using similar code (<code>system.file</code>), the user can set the file path to this file, and store it as a new object <code>ptagis_file</code>.</p>
+<p><code>PITcleanr</code> includes several example files to help users
+understand the appropriate format of certain files, and to provide
+demonstrations of various functions. The <code>system.file</code>
+function locates the file path to the subdirectory and file contained
+with a certain package. One such example is PTAGIS output for the
+Tumwater Chinook tags from 2018. Using similar code
+(<code>system.file</code>), the user can set the file path to this file,
+and store it as a new object <code>ptagis_file</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
 <span>                          <span class="st">"TUM_chnk_cth_2018.csv"</span>,</span>
 <span>                          package <span class="op">=</span> <span class="st">"PITcleanr"</span>,</span>
 <span>                          mustWork <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>Alternatively, if the user has run a query from PTAGIS as described above, they could set <code>ptagis_file</code> to the path and file name of the .csv they downloaded.</p>
+<p>Alternatively, if the user has run a query from PTAGIS as described
+above, they could set <code>ptagis_file</code> to the path and file name
+of the .csv they downloaded.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># As an example, set path to PTAGIS query output</span></span>
 <span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="st">"C:/Users/USER_NAME_HERE/Downloads/TUM_chnk_cth_2018.csv"</span></span></code></pre></div>
-<p>Note that in our example file, there are 13501 detections (rows) for 1406 unique tags, matching the number of tags in our example tag list “TUM_chnk_tags_2018.txt”. For a handful of those tags, in our case 221, there is only a “Mark” detection i.e., that tag was never detected again after the fish was tagged and released. For the remaining tags, many of them were often detected at the same site and sometimes on the same antenna. Data like this, while full of information, can be difficult to analyze efficiently. To illustrate, here is an example of some of the raw data for a single tag:</p>
+<p>Note that in our example file, there are 13501 detections (rows) for
+1406 unique tags, matching the number of tags in our example tag list
+“TUM_chnk_tags_2018.txt”. For a handful of those tags, in our case 221,
+there is only a “Mark” detection i.e., that tag was never detected again
+after the fish was tagged and released. For the remaining tags, many of
+them were often detected at the same site and sometimes on the same
+antenna. Data like this, while full of information, can be difficult to
+analyze efficiently. To illustrate, here is an example of some of the
+raw data for a single tag:</p>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
 <th style="text-align:left;">
@@ -984,7 +1072,11 @@ NA
 </tr>
 </tbody>
 </table>
-<p><code>PITcleanr</code> provides a function to read in this kind of complete capture history, called <code><a href="../reference/readCTH.html">readCTH()</a></code>. This function ensures the column names are consistent for subsequent <code>PITcleanr</code> functions, and provides one function to read in PTAGIS and non-PTAGIS data and return similarly formatted output.</p>
+<p><code>PITcleanr</code> provides a function to read in this kind of
+complete capture history, called <code><a href="../reference/readCTH.html">readCTH()</a></code>. This function
+ensures the column names are consistent for subsequent
+<code>PITcleanr</code> functions, and provides one function to read in
+PTAGIS and non-PTAGIS data and return similarly formatted output.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ptagis_cth</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/readCTH.html">readCTH</a></span><span class="op">(</span>cth_file <span class="op">=</span> <span class="va">ptagis_file</span>,</span>
 <span>                      file_type <span class="op">=</span> <span class="st">"PTAGIS"</span><span class="op">)</span></span></code></pre></div>
@@ -992,10 +1084,23 @@ NA
 <div class="section level3">
 <h3 id="mark-data-file">Mark Data File<a class="anchor" aria-label="anchor" href="#mark-data-file"></a>
 </h3>
-<p><code>PITcleanr</code> also allows the user to query PTAGIS for an MRR data file. Many projects are set up to record all the tagging information for an entire season, or part of a season from a single site in one file, which is uploaded to PTAGIS. This file can be used to determine the list of tag codes a user may be interested in. The <code>queryMRRDataFile</code> will pull this information from PTAGIS, using either the XML information contained in P4 files, or the older file structure (text file with various possible file extensions). The only requirement is the file name. For example, to pull this data for tagging at Tumwater in 2018, use the following code:</p>
+<p><code>PITcleanr</code> also allows the user to query PTAGIS for an
+MRR data file. Many projects are set up to record all the tagging
+information for an entire season, or part of a season from a single site
+in one file, which is uploaded to PTAGIS. This file can be used to
+determine the list of tag codes a user may be interested in. The
+<code>queryMRRDataFile</code> will pull this information from PTAGIS,
+using either the XML information contained in P4 files, or the older
+file structure (text file with various possible file extensions). The
+only requirement is the file name. For example, to pull this data for
+tagging at Tumwater in 2018, use the following code:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tum_2018_mrr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryMRRDataFile.html">queryMRRDataFile</a></span><span class="op">(</span><span class="st">"NBD15065.TUM"</span><span class="op">)</span></span></code></pre></div>
-<p>Depending on how comprehensive that MRR data file is, a user might filter this data.frame for Spring Chinook by focusing on the species run rear type of “11”, and tags that were not collected for broodstock, or otherwise killed. An example of some of the data contained in MRR files like this is shown below.</p>
+<p>Depending on how comprehensive that MRR data file is, a user might
+filter this data.frame for Spring Chinook by focusing on the species run
+rear type of “11”, and tags that were not collected for broodstock, or
+otherwise killed. An example of some of the data contained in MRR files
+like this is shown below.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tum_2018_mrr</span> <span class="op">|&gt;</span> </span>
 <span>    <span class="co"># filter for Spring Chinook tags</span></span>
@@ -1869,14 +1974,40 @@ TUMFBY
 <div class="section level2">
 <h2 id="non-ptagis-data">Non-PTAGIS Data<a class="anchor" aria-label="anchor" href="#non-ptagis-data"></a>
 </h2>
-<p>Not all PIT tag data is in PTAGIS. This section will show the user how to read in PIT tag data from a variety of other sources, including BioLogic csv files as well as raw files (e.g. .xlsx, .log and .txt file extensions) downloaded directly from PIT tag readers. The <code><a href="../reference/readCTH.html">readCTH()</a></code> function is able to read in all of these formats, but the user must indicate what format each file is in.</p>
-<p>There are many ways a user might store their various files, and many ways to script how to read them into R. In this vignette, we will suggest one way to do this, but alternatives certainly exist.</p>
+<p>Not all PIT tag data is in PTAGIS. This section will show the user
+how to read in PIT tag data from a variety of other sources, including
+BioLogic csv files as well as raw files (e.g. .xlsx, .log and .txt file
+extensions) downloaded directly from PIT tag readers. The
+<code><a href="../reference/readCTH.html">readCTH()</a></code> function is able to read in all of these formats,
+but the user must indicate what format each file is in.</p>
+<p>There are many ways a user might store their various files, and many
+ways to script how to read them into R. In this vignette, we will
+suggest one way to do this, but alternatives certainly exist.</p>
 <div class="section level3">
 <h3 id="storing-data-files">Storing Data Files<a class="anchor" aria-label="anchor" href="#storing-data-files"></a>
 </h3>
-<p>In this example, we have accumulated a number of different PIT tag detection files, in a variety of formats. We have saved them all in the same folder, and used some naming convention to indicate what format they are. Files from PTAGIS have “PTAGIS” in the file name somewhere, Biologic csv files have “BIOLOGIC” in the file name somewhere, and we assume the other files are raw files (with a mixture of .xlsx, .log and .txt file extensions).</p>
-<p>For raw detection files, which usually come from a single reader, the file does not contain information about what site code those observations come from. The user can add that themselves within R, or the <code><a href="../reference/readCTH.html">readCTH()</a></code> function will assume the site code is the first part of the file name before the first underscore, <code>_</code>. Therefore, if the user adopts a naming convention that includes the site code at the beginning of every raw detection file, <code>PITcleanr</code> will assign the correct site code. Otherwise, the user can overwrite the site codes manually after running <code><a href="../reference/readCTH.html">readCTH()</a></code>.</p>
-<p>We set the name and path of the folder with all the detection data (<code>detection_folder</code>), and used the following script to compile a data.frame of various file names and file types. A user can set the <code>detection_folder</code> path to point to where they have stored all their detection files.</p>
+<p>In this example, we have accumulated a number of different PIT tag
+detection files, in a variety of formats. We have saved them all in the
+same folder, and used some naming convention to indicate what format
+they are. Files from PTAGIS have “PTAGIS” in the file name somewhere,
+Biologic csv files have “BIOLOGIC” in the file name somewhere, and we
+assume the other files are raw files (with a mixture of .xlsx, .log and
+.txt file extensions).</p>
+<p>For raw detection files, which usually come from a single reader, the
+file does not contain information about what site code those
+observations come from. The user can add that themselves within R, or
+the <code><a href="../reference/readCTH.html">readCTH()</a></code> function will assume the site code is the
+first part of the file name before the first underscore, <code>_</code>.
+Therefore, if the user adopts a naming convention that includes the site
+code at the beginning of every raw detection file,
+<code>PITcleanr</code> will assign the correct site code. Otherwise, the
+user can overwrite the site codes manually after running
+<code><a href="../reference/readCTH.html">readCTH()</a></code>.</p>
+<p>We set the name and path of the folder with all the detection data
+(<code>detection_folder</code>), and used the following script to
+compile a data.frame of various file names and file types. A user can
+set the <code>detection_folder</code> path to point to where they have
+stored all their detection files.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">detection_folder</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
 <span>                                <span class="st">"non_ptagis"</span>,</span>
@@ -1893,7 +2024,7 @@ TUMFBY
 <span>                                     <span class="st">"raw"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">file_df</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 x 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 5 × 2</span></span></span>
 <span><span class="co">#&gt;   file_nm                                file_type   </span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>       </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> 0LL_tagobs_BIOLOGIC_07302022.csv       Biologic_csv</span></span>
@@ -1905,7 +2036,14 @@ TUMFBY
 <div class="section level3">
 <h3 id="reading-in-detections">Reading in Detections<a class="anchor" aria-label="anchor" href="#reading-in-detections"></a>
 </h3>
-<p>The following script uses the path of the <code>detection_folder</code>, the various file names inside that folder, the file type associated with each file, and the <code><a href="../reference/readCTH.html">readCTH()</a></code> function to read all the detections into R and consolidate them into a single data.frame, <code>all_obs</code>. It contains a quick check (<code>try</code> and <code>"try-error"</code>) to ensure that if any particular file has trouble being read, the others are still included.</p>
+<p>The following script uses the path of the
+<code>detection_folder</code>, the various file names inside that
+folder, the file type associated with each file, and the
+<code><a href="../reference/readCTH.html">readCTH()</a></code> function to read all the detections into R and
+consolidate them into a single data.frame, <code>all_obs</code>. It
+contains a quick check (<code>try</code> and <code>"try-error"</code>)
+to ensure that if any particular file has trouble being read, the others
+are still included.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read them all in</span></span>
 <span><span class="va">all_obs</span> <span class="op">&lt;-</span></span>
@@ -1921,8 +2059,21 @@ TUMFBY
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">cls_obs</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/unnest.html" class="external-link">unnest</a></span><span class="op">(</span><span class="va">obs_df</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>Alternatively, the user can run <code><a href="../reference/readCTH.html">readCTH()</a></code> on each detection file, saving each R object separately, and then use <code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows()</a></code> to merge all the detections together. One reason to do this might be to manipulate or filter certain files before merging them.</p>
-<p>The <code><a href="../reference/readCTH.html">readCTH()</a></code> also contains an argument to filter out test tags, so their detection is not included in the results. This option involves setting the <code>test_tag_prefix</code> argument to the initial alphanumeric characters in the test tags. By default, this is set to “3E7”. If the user wishes to keep all test tag detections, set <code>test_tag_prefix = NA</code>. If the user wishes to pull out <em>only</em> test tag detections, they can use the function <code><a href="../reference/readTestTag.html">readTestTag()</a></code> instead of <code><a href="../reference/readCTH.html">readCTH()</a></code>, and set the <code>test_tag_prefix</code> to the appropriate code (e.g. “3E7”).</p>
+<p>Alternatively, the user can run <code><a href="../reference/readCTH.html">readCTH()</a></code> on each
+detection file, saving each R object separately, and then use
+<code><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows()</a></code> to merge all the detections together. One
+reason to do this might be to manipulate or filter certain files before
+merging them.</p>
+<p>The <code><a href="../reference/readCTH.html">readCTH()</a></code> also contains an argument to filter out
+test tags, so their detection is not included in the results. This
+option involves setting the <code>test_tag_prefix</code> argument to the
+initial alphanumeric characters in the test tags. By default, this is
+set to “3E7”. If the user wishes to keep all test tag detections, set
+<code>test_tag_prefix = NA</code>. If the user wishes to pull out
+<em>only</em> test tag detections, they can use the function
+<code><a href="../reference/readTestTag.html">readTestTag()</a></code> instead of <code><a href="../reference/readCTH.html">readCTH()</a></code>, and set
+the <code>test_tag_prefix</code> to the appropriate code
+(e.g. “3E7”).</p>
 </div>
 </div>
   </div>

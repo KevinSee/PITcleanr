@@ -40,7 +40,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">PITcleanr</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">3.0.1</span>
       </span>
     </div>
 
@@ -97,7 +97,7 @@
       <h1 data-toc-skip>Compressing PIT Tag Data</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">30 November, 2023</h4>
+            <h4 data-toc-skip class="date">16 January, 2024</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/compress_data.Rmd" class="external-link"><code>vignettes/compress_data.Rmd</code></a></small>
       <div class="hidden name"><code>compress_data.Rmd</code></div>
@@ -106,20 +106,38 @@
 
     
     
-<p>The heart of <code>PITcleanr</code>’s utility is taking all the various detections from a multitude of antennas and compressing them into a more manageable chunk of data. It does this with the <code><a href="../reference/compress.html">compress()</a></code> function by mapping each detection onto a user defined node, using a user-supplied (or PTAGIS default) configuration file, and then combining detections on the same node into a single row of data.</p>
-<p>The complete tag history query output, either from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> or from other non-PTAGIS data (e.g., <code>cth_file</code>), will provide a record for every detection of each tag code in the tag list. Again, this may include multiple detections on the same antenna, or the same site within a short period of time, leading to an unwieldy and perhaps messy dataset.</p>
-<p>The <code><a href="../reference/compress.html">compress()</a></code> function will work on a capture history that’s been read into R using <code><a href="../reference/readCTH.html">readCTH()</a></code>. Alternatively, the user can provide only the file name and path to where that data is stored (e.g. <code>cth_file</code>), and <code><a href="../reference/compress.html">compress()</a></code> will call <code><a href="../reference/readCTH.html">readCTH()</a></code> internally. In this example, we use the <code><a href="../reference/compress.html">compress()</a></code> function on the <code>cth_file</code> object containing the file path to our PTAGIS query results, and write the output to an object <code>comp_obs</code> containing the compressed observations.</p>
+<p>The heart of <code>PITcleanr</code>’s utility is taking all the
+various detections from a multitude of antennas and compressing them
+into a more manageable chunk of data. It does this with the
+<code><a href="../reference/compress.html">compress()</a></code> function by mapping each detection onto a user
+defined node, using a user-supplied (or PTAGIS default) configuration
+file, and then combining detections on the same node into a single row
+of data.</p>
+<p>The complete tag history query output, either from <a href="https://ptagis.org/" class="external-link">PTAGIS</a> or from other non-PTAGIS data
+(e.g., <code>cth_file</code>), will provide a record for every detection
+of each tag code in the tag list. Again, this may include multiple
+detections on the same antenna, or the same site within a short period
+of time, leading to an unwieldy and perhaps messy dataset.</p>
+<p>The <code><a href="../reference/compress.html">compress()</a></code> function will work on a capture history
+that’s been read into R using <code><a href="../reference/readCTH.html">readCTH()</a></code>. Alternatively, the
+user can provide only the file name and path to where that data is
+stored (e.g. <code>cth_file</code>), and <code><a href="../reference/compress.html">compress()</a></code> will
+call <code><a href="../reference/readCTH.html">readCTH()</a></code> internally. In this example, we use the
+<code><a href="../reference/compress.html">compress()</a></code> function on the <code>cth_file</code> object
+containing the file path to our PTAGIS query results, and write the
+output to an object <code>comp_obs</code> containing the compressed
+observations.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># view path to example file, of course you can also set cth_file to your own PTAGIS query results</span></span>
 <span><span class="va">cth_file</span></span>
-<span><span class="co">#&gt; [1] "C:/Rfolder/R/win-library/4.1/PITcleanr/extdata/TUM_chnk_cth_2018.csv"</span></span>
+<span><span class="co">#&gt; [1] "/home/runner/work/_temp/Library/PITcleanr/extdata/TUM_chnk_cth_2018.csv"</span></span>
 <span></span>
 <span><span class="co"># run compress() function on it</span></span>
 <span><span class="va">comp_obs</span> <span class="op">=</span> <span class="fu"><a href="../reference/compress.html">compress</a></span><span class="op">(</span><span class="va">cth_file</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># look at first parts of resulting object</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_obs</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 x 9</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 9</span></span></span>
 <span><span class="co">#&gt;    tag_code       node    slot event_type_name n_dets min_det            </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 384.3B239AC47B NASONC     1 Mark                 1 2016-03-04 <span style="color: #949494;">17:00:00</span></span></span>
@@ -132,7 +150,7 @@
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 384.3B239AC47B RIA        8 Observation          5 2018-05-30 <span style="color: #949494;">15:56:55</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 384.3B239AC47B TUF        9 Observation         10 2018-06-14 <span style="color: #949494;">20:35:10</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 384.3B239AC47B TUM       10 Recapture            1 2018-06-16 <span style="color: #949494;">15:26:31</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># i 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></span></span>
 <span></span>
 <span><span class="co"># in another format</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_obs</span>, <span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
@@ -466,28 +484,60 @@ Recapture
 <li>
 <strong>tag_code:</strong> The unique PIT tag ID.</li>
 <li>
-<strong>node:</strong> By default, each site code from PTAGIS is considered a node. More on this below…</li>
+<strong>node:</strong> By default, each site code from PTAGIS is
+considered a node. More on this below…</li>
 <li>
-<strong>slot:</strong> A detection “slot” for each tag, numbered in chronological order. Also more on this below…</li>
+<strong>slot:</strong> A detection “slot” for each tag, numbered in
+chronological order. Also more on this below…</li>
 <li>
-<strong>event_type_name:</strong> The type of “event”. Typically, mark, observation, recapture, or recovery.</li>
+<strong>event_type_name:</strong> The type of “event”. Typically,
+mark, observation, recapture, or recovery.</li>
 <li>
-<strong>n_dets:</strong> The number of detections that occurred within that slot.</li>
+<strong>n_dets:</strong> The number of detections that occurred
+within that slot.</li>
 <li>
-<strong>min_det:</strong> The time of the first (min) detection in the slot.</li>
+<strong>min_det:</strong> The time of the first (min) detection in
+the slot.</li>
 <li>
-<strong>max_det:</strong> The time of the last (max) detection in the slot.</li>
+<strong>max_det:</strong> The time of the last (max) detection in
+the slot.</li>
 <li>
-<strong>duration:</strong> The duration of that slot (maximum - minimum detection time).</li>
+<strong>duration:</strong> The duration of that slot (maximum -
+minimum detection time).</li>
 <li>
-<strong>travel_time:</strong> The travel time between the previous slot and that one.</li>
+<strong>travel_time:</strong> The travel time between the previous
+slot and that one.</li>
 </ul>
-<p><strong><em>A note on “nodes”</em></strong>: A node is the spatial scale of interest for the user. If a configuration file is not supplied, then by default the <code><a href="../reference/compress.html">compress()</a></code> function considers the site code as the node. However, a node could be defined as the individual PIT antenna a detection was made on, or the array that antenna is a part of, or groups of arrays, or sites, or groups of sites, or possibly even larger (e.g, any detection in a particular tributary) depending on the spatial scale desired. The user may decide to define some arrays at particular sites to be their own nodes, while simultaneously lumping all the sites in a particular watershed into a single node. To utilize this kind of grouping, a configuration file or table must be supplied to the <code>configuration</code> argument in the <code><a href="../reference/compress.html">compress()</a></code> function. For more information about configuration files, see <a href="configuration_files.html">this vignette</a></p>
-<p>Each slot in the output is defined as all detections on a particular node before the tag is detected on a different node. As an example, if a tag moves from node A to B and back to A, there will be three slots in the compressed data. The user can define a maximum number of minutes between detections before a new slot should be defined by supplying a value to the <code>max_minutes</code> argument to <code><a href="../reference/compress.html">compress()</a></code>. The units of the <code>duration</code> and <code>travel_time</code> columns can also be defined by the <code>units</code> argument. The default is minutes (<code>mins</code>). The user can translate the output to numeric values by running <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code> on those columns later.</p>
-<p>The help menu for <code><a href="../reference/compress.html">compress()</a></code>, or any function for that matter, can be accessed using:</p>
+<p><strong><em>A note on “nodes”</em></strong>: A node is the spatial
+scale of interest for the user. If a configuration file is not supplied,
+then by default the <code><a href="../reference/compress.html">compress()</a></code> function considers the site
+code as the node. However, a node could be defined as the individual PIT
+antenna a detection was made on, or the array that antenna is a part of,
+or groups of arrays, or sites, or groups of sites, or possibly even
+larger (e.g, any detection in a particular tributary) depending on the
+spatial scale desired. The user may decide to define some arrays at
+particular sites to be their own nodes, while simultaneously lumping all
+the sites in a particular watershed into a single node. To utilize this
+kind of grouping, a configuration file or table must be supplied to the
+<code>configuration</code> argument in the <code><a href="../reference/compress.html">compress()</a></code>
+function. For more information about configuration files, see <a href="configuration_files.html">this vignette</a></p>
+<p>Each slot in the output is defined as all detections on a particular
+node before the tag is detected on a different node. As an example, if a
+tag moves from node A to B and back to A, there will be three slots in
+the compressed data. The user can define a maximum number of minutes
+between detections before a new slot should be defined by supplying a
+value to the <code>max_minutes</code> argument to
+<code><a href="../reference/compress.html">compress()</a></code>. The units of the <code>duration</code> and
+<code>travel_time</code> columns can also be defined by the
+<code>units</code> argument. The default is minutes (<code>mins</code>).
+The user can translate the output to numeric values by running
+<code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code> on those columns later.</p>
+<p>The help menu for <code><a href="../reference/compress.html">compress()</a></code>, or any function for that
+matter, can be accessed using:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">?</span><span class="fu">PITcleanr</span><span class="fu">::</span><span class="va"><a href="../reference/compress.html">compress</a></span></span></code></pre></div>
-<p>Now, re-run the <code><a href="../reference/compress.html">compress()</a></code> function, except supplying a <code>configuration</code>:</p>
+<p>Now, re-run the <code><a href="../reference/compress.html">compress()</a></code> function, except supplying a
+<code>configuration</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org" class="external-link">readr</a></span><span class="op">)</span></span>
 <span><span class="va">my_configuration</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
@@ -502,7 +552,7 @@ Recapture
 <span></span>
 <span><span class="co"># look at first part of comp_obs</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">comp_obs2</span>, <span class="fl">10</span><span class="op">)</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 x 9</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 10 × 9</span></span></span>
 <span><span class="co">#&gt;    tag_code       node   slot event_type_name n_dets min_det            </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>             </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 384.3B239AC47B NAL_U     1 Mark                 1 2016-03-04 <span style="color: #949494;">17:00:00</span></span></span>
@@ -515,7 +565,7 @@ Recapture
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 384.3B239AC47B RIA_U     8 Observation          5 2018-05-30 <span style="color: #949494;">15:56:55</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 384.3B239AC47B TUM       9 Observation         10 2018-06-14 <span style="color: #949494;">20:35:10</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 384.3B239AC47B TUM      10 Recapture            1 2018-06-16 <span style="color: #949494;">15:26:31</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># i 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 3 more variables: max_det &lt;dttm&gt;, duration &lt;drtn&gt;, travel_time &lt;drtn&gt;</span></span></span></code></pre></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
