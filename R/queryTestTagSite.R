@@ -19,9 +19,6 @@ queryTestTagSite = function(site_code = NULL,
                             year = NULL,
                             api_key = NULL) {
 
-  # need a tag code
-  stopifnot(!is.null(tag_code))
-
   if(is.null(year)) {
     year = lubridate::year(lubridate::today())
   }

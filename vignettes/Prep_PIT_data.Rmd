@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 )
 
 library(knitr)
+library(kableExtra)
 library(here)
 ```
 
@@ -44,9 +45,15 @@ This vignette shows how to use the `PITcleanr` package to wrangle PIT tag data t
 
 Once `PITcleanr` is successfully installed, it can be loaded into the R session. In this vignette, we will also use many functions from the `tidyverse` [group of packages](https://www.tidyverse.org/), so load those as well:
 
-```{r load-package}
+```{r load-r-packages}
 library(PITcleanr)
-library(tidyverse)
+library(dplyr)
+library(readr)
+library(stringr)
+library(purrr)
+library(tidyr)
+library(ggplot2)
+library(lubridate)
 ```
 
 Note that many of the various queries in `PITcleanr` require a connection to the internet. 
