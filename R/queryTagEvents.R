@@ -1,4 +1,4 @@
-#' @title PTAGIS Meta Data
+#' @title PTAGIS PIT Tag Events
 #'
 #' @description Query and download event metadata for one tag from PTAGIS. In the interest of not overwhelming PTAGIS with data requests, this function should not be used to query more than a thousand tags a day and there should be a couple of seconds between calls. If a user is looking for more than that, using the advanced reporting system in PTAGIS is the best option at this time.
 #'
@@ -6,21 +6,22 @@
 #'
 #' @param ptagis_tag_code PTAGIS tag code
 #' @param api_key PTAGIS API key, given to individual users
-#' @param type one of `mark`, `recapture`, `recovery`, or `observation`. If one is specified, only data about evernts of that type are returned. The defualt, `NA`, will return data about all events for that tag.
+#' @param type one of `mark`, `recapture`, `recovery`, or `observation`. If one is specified, only data about events of that type are returned. The default, `NA`, will return data about all events for that tag.
 #'
 #' @source \url{http://api.ptagis.org}
 #'
 #' @import dplyr httr lubridate
+#' @export
 #' @return Gets data about all events for a given tag code.
-#' @examples queryTagMeta("3D9.1C2D929849")
+#' @examples queryTagEvents("3D9.1C2D929849")
 
-queryTagMeta = function(ptagis_tag_code = NULL,
-                        api_key = NULL,
-                        type = c(NA,
-                                 "mark",
-                                 "recapture",
-                                 "recovery",
-                                 "observation")) {
+queryTagEvents = function(ptagis_tag_code = NULL,
+                          api_key = NULL,
+                          type = c(NA,
+                                   "mark",
+                                   "recapture",
+                                   "recovery",
+                                   "observation")) {
 
   # need a tag code
   stopifnot(!is.null(ptagis_tag_code))

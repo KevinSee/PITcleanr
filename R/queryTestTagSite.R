@@ -6,7 +6,7 @@
 #'
 #' @param site_code PTAGIS site code
 #' @param year Calendar year to be queried
-#' @inheritParams queryTagMeta
+#' @inheritParams queryTagEvents
 #'
 #' @source \url{http://api.ptagis.org}
 #'
