@@ -98,25 +98,25 @@
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">queryMRRDataFile</span><span class="op">(</span>file_nm <span class="op">=</span> <span class="st">"NBD-2014-188-PRD.xml"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3,426 × 19</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3,426 × 20</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    capture_method conditional_comments event_date          event_site event_type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> LADDER         RE RF MT FE          2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Recapture </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> LADDER         CW FE MT RE RF       2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Recapture </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> LADDER         RF MT AT FE          2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Mark      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> LADDER         RF MT AT MA          2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Mark      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> LADDER         RF MT AT FE          2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Mark      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> LADDER         RF MT AT FE          2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Mark      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> LADDER         RE RF MT MA          2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Recapture </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> LADDER         RF MT AT FE          2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Mark      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> LADDER         RF MT AT FE          2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Mark      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> LADDER         AD AT FE MT RF       2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Mark      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> LADDER         RF MT AT FE          2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Mark      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> LADDER         RF MT AT MA          2014-07-07 <span style="color: #949494;">15:45:00</span> PRDLD1     Mark      </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3,416 more rows</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 14 more variables: length &lt;dbl&gt;, life_stage &lt;chr&gt;, mark_temperature &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 15 more variables: length &lt;dbl&gt;, life_stage &lt;chr&gt;, mark_temperature &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   migration_year &lt;chr&gt;, organization &lt;chr&gt;, pit_tag &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   release_date &lt;dttm&gt;, release_site &lt;chr&gt;, release_temperature &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   sequence_number &lt;dbl&gt;, species_run_rear_type &lt;chr&gt;, tagger &lt;chr&gt;,</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   text_comments &lt;chr&gt;, mark_method &lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   text_comments &lt;chr&gt;, mark_method &lt;chr&gt;, second_pit_tag &lt;chr&gt;</span></span>
 </code></pre></div>
     </div>
   </div>

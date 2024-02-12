@@ -97,7 +97,7 @@
       <h1 data-toc-skip>Reading PIT Tag Data Into R</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">16 January, 2024</h4>
+            <h4 data-toc-skip class="date">12 February, 2024</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/HEAD/vignettes/read_in_data.Rmd" class="external-link"><code>vignettes/read_in_data.Rmd</code></a></small>
       <div class="hidden name"><code>read_in_data.Rmd</code></div>
@@ -1095,7 +1095,7 @@ file structure (text file with various possible file extensions). The
 only requirement is the file name. For example, to pull this data for
 tagging at Tumwater in 2018, use the following code:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">tum_2018_mrr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryMRRDataFile.html">queryMRRDataFile</a></span><span class="op">(</span><span class="st">"NBD15065.TUM"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tum_2018_mrr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/queryMRRDataFile.html">queryMRRDataFile</a></span><span class="op">(</span><span class="st">"NBD-2018-079-001.xml"</span><span class="op">)</span></span></code></pre></div>
 <p>Depending on how comprehensive that MRR data file is, a user might
 filter this data.frame for Spring Chinook by focusing on the species run
 rear type of “11”, and tags that were not collected for broodstock, or
@@ -1120,71 +1120,38 @@ like this is shown below.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span></code></pre></div>
 <table class="table table" style="margin-left: auto; margin-right: auto;">
 <thead><tr>
-<th style="text-align:right;">
-sequence_number
-</th>
 <th style="text-align:left;">
-pit_tag
-</th>
-<th style="text-align:left;">
-species_run_rear_type
-</th>
-<th style="text-align:left;">
-event_date
-</th>
-<th style="text-align:left;">
-event_type
-</th>
-<th style="text-align:right;">
-length
+capture_method
 </th>
 <th style="text-align:left;">
 conditional_comments
 </th>
 <th style="text-align:left;">
-text_comments
+event_date
 </th>
 <th style="text-align:left;">
-file_type
+event_site
 </th>
 <th style="text-align:left;">
-program_version
+event_type
 </th>
 <th style="text-align:left;">
-file_description
+life_stage
 </th>
 <th style="text-align:left;">
-file_title
+mark_method
 </th>
 <th style="text-align:left;">
-tag_date
+mark_temperature
 </th>
 <th style="text-align:left;">
-tagger
-</th>
-<th style="text-align:left;">
-migratory_yr
-</th>
-<th style="text-align:left;">
-tag_site
-</th>
-<th style="text-align:left;">
-capture_method
-</th>
-<th style="text-align:left;">
-tagging_temp
-</th>
-<th style="text-align:left;">
-release_water_temp
-</th>
-<th style="text-align:left;">
-tagging_method
+migration_year
 </th>
 <th style="text-align:left;">
 organization
 </th>
 <th style="text-align:left;">
-coordinator_id
+pit_tag
 </th>
 <th style="text-align:left;">
 release_date
@@ -1193,778 +1160,712 @@ release_date
 release_site
 </th>
 <th style="text-align:left;">
-release_river_km
+release_temperature
+</th>
+<th style="text-align:right;">
+sequence_number
+</th>
+<th style="text-align:left;">
+species_run_rear_type
+</th>
+<th style="text-align:left;">
+tagger
+</th>
+<th style="text-align:left;">
+text_comments
+</th>
+<th style="text-align:right;">
+length
+</th>
+<th style="text-align:left;">
+weight
+</th>
+<th style="text-align:left;">
+location_rkm_ext
+</th>
+<th style="text-align:left;">
+second_pit_tag
 </th>
 </tr></thead>
 <tbody>
 <tr>
+<td style="text-align:left;">
+LADDER
+</td>
+<td style="text-align:left;">
+AD CW MA MT RF
+</td>
+<td style="text-align:left;">
+2018-06-04 19:25:20
+</td>
+<td style="text-align:left;">
+TUM
+</td>
+<td style="text-align:left;">
+Mark
+</td>
+<td style="text-align:left;">
+Adult
+</td>
+<td style="text-align:left;">
+HAND
+</td>
+<td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:left;">
+2018
+</td>
+<td style="text-align:left;">
+WDFW
+</td>
+<td style="text-align:left;">
+3DD.007791C27F
+</td>
+<td style="text-align:left;">
+2018-06-04 19:25:20
+</td>
+<td style="text-align:left;">
+TUMFBY
+</td>
+<td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:right;">
+40
+</td>
+<td style="text-align:left;">
+11H
+</td>
+<td style="text-align:left;">
+HUGHES M
+</td>
+<td style="text-align:left;">
+DNA 1
+</td>
+<td style="text-align:right;">
+840
+</td>
+<td style="text-align:left;">
+67.0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LADDER
+</td>
+<td style="text-align:left;">
+MA MT RF
+</td>
+<td style="text-align:left;">
+2018-06-04 19:48:45
+</td>
+<td style="text-align:left;">
+TUM
+</td>
+<td style="text-align:left;">
+Mark
+</td>
+<td style="text-align:left;">
+Adult
+</td>
+<td style="text-align:left;">
+HAND
+</td>
+<td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:left;">
+2018
+</td>
+<td style="text-align:left;">
+WDFW
+</td>
+<td style="text-align:left;">
+3DD.007791D334
+</td>
+<td style="text-align:left;">
+2018-06-04 19:48:45
+</td>
+<td style="text-align:left;">
+TUMFBY
+</td>
+<td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:right;">
+41
+</td>
+<td style="text-align:left;">
+11W
+</td>
+<td style="text-align:left;">
+HUGHES M
+</td>
+<td style="text-align:left;">
+DNA 2
+</td>
+<td style="text-align:right;">
+810
+</td>
+<td style="text-align:left;">
+54.0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LADDER
+</td>
+<td style="text-align:left;">
+AD CW MA MT RF
+</td>
+<td style="text-align:left;">
+2018-06-05 17:02:49
+</td>
+<td style="text-align:left;">
+TUM
+</td>
+<td style="text-align:left;">
+Mark
+</td>
+<td style="text-align:left;">
+Adult
+</td>
+<td style="text-align:left;">
+HAND
+</td>
+<td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:left;">
+2018
+</td>
+<td style="text-align:left;">
+WDFW
+</td>
+<td style="text-align:left;">
+3DD.00779071E6
+</td>
+<td style="text-align:left;">
+2018-06-05 17:02:49
+</td>
+<td style="text-align:left;">
+TUMFBY
+</td>
+<td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:right;">
+42
+</td>
+<td style="text-align:left;">
+11H
+</td>
+<td style="text-align:left;">
+HUGHES M
+</td>
+<td style="text-align:left;">
+DNA 3
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LADDER
+</td>
+<td style="text-align:left;">
+AD CW FE MT RF
+</td>
+<td style="text-align:left;">
+2018-06-05 17:13:09
+</td>
+<td style="text-align:left;">
+TUM
+</td>
+<td style="text-align:left;">
+Mark
+</td>
+<td style="text-align:left;">
+Adult
+</td>
+<td style="text-align:left;">
+HAND
+</td>
+<td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:left;">
+2018
+</td>
+<td style="text-align:left;">
+WDFW
+</td>
+<td style="text-align:left;">
+3DD.0077923D3A
+</td>
+<td style="text-align:left;">
+2018-06-05 17:13:09
+</td>
+<td style="text-align:left;">
+TUMFBY
+</td>
+<td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:right;">
+43
+</td>
+<td style="text-align:left;">
+11H
+</td>
+<td style="text-align:left;">
+HUGHES M
+</td>
+<td style="text-align:left;">
+DNA 4
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LADDER
+</td>
+<td style="text-align:left;">
+AD CW FE MT RF
+</td>
+<td style="text-align:left;">
+2018-06-06 17:36:29
+</td>
+<td style="text-align:left;">
+TUM
+</td>
+<td style="text-align:left;">
+Mark
+</td>
+<td style="text-align:left;">
+Adult
+</td>
+<td style="text-align:left;">
+HAND
+</td>
+<td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:left;">
+2018
+</td>
+<td style="text-align:left;">
+WDFW
+</td>
+<td style="text-align:left;">
+3DD.0077925482
+</td>
+<td style="text-align:left;">
+2018-06-06 17:36:29
+</td>
+<td style="text-align:left;">
+TUMFBY
+</td>
+<td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:right;">
+46
+</td>
+<td style="text-align:left;">
+11H
+</td>
+<td style="text-align:left;">
+HUGHES M
+</td>
+<td style="text-align:left;">
+DNA 5
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LADDER
+</td>
+<td style="text-align:left;">
+FE MT RF
+</td>
+<td style="text-align:left;">
+2018-06-06 18:02:32
+</td>
+<td style="text-align:left;">
+TUM
+</td>
+<td style="text-align:left;">
+Mark
+</td>
+<td style="text-align:left;">
+Adult
+</td>
+<td style="text-align:left;">
+HAND
+</td>
+<td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:left;">
+2018
+</td>
+<td style="text-align:left;">
+WDFW
+</td>
+<td style="text-align:left;">
+3DD.007791714B
+</td>
+<td style="text-align:left;">
+2018-06-06 18:02:32
+</td>
+<td style="text-align:left;">
+TUMFBY
+</td>
+<td style="text-align:left;">
+15.0
+</td>
 <td style="text-align:right;">
 48
 </td>
 <td style="text-align:left;">
-3D9.1C2E0410BD
-</td>
-<td style="text-align:left;">
 11W
 </td>
 <td style="text-align:left;">
-2015-05-10
+HUGHES M
 </td>
 <td style="text-align:left;">
-Mark
+DNA 7
 </td>
 <td style="text-align:right;">
+710
+</td>
+<td style="text-align:left;">
 NA
 </td>
 <td style="text-align:left;">
-RF MT FE
+NA
 </td>
 <td style="text-align:left;">
-DNA1
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LADDER
 </td>
 <td style="text-align:left;">
-TAGGING
+AD CW FE MT PC RF
 </td>
 <td style="text-align:left;">
-PITTAG3 1.5.4
-</td>
-<td style="text-align:left;">
-2015 TUMWATER DAM ADULT TAGGING
-</td>
-<td style="text-align:left;">
-NBD15065.TUM
-</td>
-<td style="text-align:left;">
-2015-03-06 14:05:00
-</td>
-<td style="text-align:left;">
-DIETRICH N
-</td>
-<td style="text-align:left;">
-15
+2018-06-06 18:09:53
 </td>
 <td style="text-align:left;">
 TUM
 </td>
 <td style="text-align:left;">
-LADDER
+Mark
 </td>
 <td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-15.0
+Adult
 </td>
 <td style="text-align:left;">
 HAND
 </td>
 <td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:left;">
+2018
+</td>
+<td style="text-align:left;">
 WDFW
 </td>
 <td style="text-align:left;">
-NBD
+3DD.00779103AD
 </td>
 <td style="text-align:left;">
-2015-07-30 23:59:00
+2018-06-06 18:09:53
 </td>
 <td style="text-align:left;">
 TUMFBY
 </td>
 <td style="text-align:left;">
-754.044
+15.0
 </td>
-</tr>
-<tr>
 <td style="text-align:right;">
 49
 </td>
 <td style="text-align:left;">
-3D9.1C2E0393D9
-</td>
-<td style="text-align:left;">
 11H
 </td>
 <td style="text-align:left;">
-2015-05-12
+HUGHES M
 </td>
 <td style="text-align:left;">
-Mark
+DNA 8
 </td>
 <td style="text-align:right;">
 NA
 </td>
 <td style="text-align:left;">
-RF MT FE
+NA
 </td>
 <td style="text-align:left;">
-DNA2
+NA
 </td>
 <td style="text-align:left;">
-TAGGING
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LADDER
 </td>
 <td style="text-align:left;">
-PITTAG3 1.5.4
+AI CW FE MT RF
 </td>
 <td style="text-align:left;">
-2015 TUMWATER DAM ADULT TAGGING
-</td>
-<td style="text-align:left;">
-NBD15065.TUM
-</td>
-<td style="text-align:left;">
-2015-03-06 14:05:00
-</td>
-<td style="text-align:left;">
-DIETRICH N
-</td>
-<td style="text-align:left;">
-15
+2018-06-06 18:15:46
 </td>
 <td style="text-align:left;">
 TUM
 </td>
 <td style="text-align:left;">
-LADDER
+Mark
 </td>
 <td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-15.0
+Adult
 </td>
 <td style="text-align:left;">
 HAND
 </td>
 <td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:left;">
+2018
+</td>
+<td style="text-align:left;">
 WDFW
 </td>
 <td style="text-align:left;">
-NBD
+3DD.007791522F
 </td>
 <td style="text-align:left;">
-2015-07-30 23:59:00
+2018-06-06 18:15:46
 </td>
 <td style="text-align:left;">
 TUMFBY
 </td>
 <td style="text-align:left;">
-754.044
+15.0
 </td>
-</tr>
-<tr>
 <td style="text-align:right;">
 50
 </td>
 <td style="text-align:left;">
-3D9.1C2E03B66E
-</td>
-<td style="text-align:left;">
-11W
-</td>
-<td style="text-align:left;">
-2015-05-12
-</td>
-<td style="text-align:left;">
-Mark
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-RF MT MA
-</td>
-<td style="text-align:left;">
-DNA3
-</td>
-<td style="text-align:left;">
-TAGGING
-</td>
-<td style="text-align:left;">
-PITTAG3 1.5.4
-</td>
-<td style="text-align:left;">
-2015 TUMWATER DAM ADULT TAGGING
-</td>
-<td style="text-align:left;">
-NBD15065.TUM
-</td>
-<td style="text-align:left;">
-2015-03-06 14:05:00
-</td>
-<td style="text-align:left;">
-DIETRICH N
-</td>
-<td style="text-align:left;">
-15
-</td>
-<td style="text-align:left;">
-TUM
-</td>
-<td style="text-align:left;">
-LADDER
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-HAND
-</td>
-<td style="text-align:left;">
-WDFW
-</td>
-<td style="text-align:left;">
-NBD
-</td>
-<td style="text-align:left;">
-2015-07-30 23:59:00
-</td>
-<td style="text-align:left;">
-TUMFBY
-</td>
-<td style="text-align:left;">
-754.044
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-51
-</td>
-<td style="text-align:left;">
-3D9.1C2E040410
-</td>
-<td style="text-align:left;">
 11H
 </td>
 <td style="text-align:left;">
-2015-05-12
-</td>
-<td style="text-align:left;">
-Mark
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-RF MT FE
-</td>
-<td style="text-align:left;">
-DNA4
-</td>
-<td style="text-align:left;">
-TAGGING
-</td>
-<td style="text-align:left;">
-PITTAG3 1.5.4
-</td>
-<td style="text-align:left;">
-2015 TUMWATER DAM ADULT TAGGING
-</td>
-<td style="text-align:left;">
-NBD15065.TUM
-</td>
-<td style="text-align:left;">
-2015-03-06 14:05:00
-</td>
-<td style="text-align:left;">
-DIETRICH N
-</td>
-<td style="text-align:left;">
-15
-</td>
-<td style="text-align:left;">
-TUM
-</td>
-<td style="text-align:left;">
-LADDER
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-HAND
-</td>
-<td style="text-align:left;">
-WDFW
-</td>
-<td style="text-align:left;">
-NBD
-</td>
-<td style="text-align:left;">
-2015-07-30 23:59:00
-</td>
-<td style="text-align:left;">
-TUMFBY
-</td>
-<td style="text-align:left;">
-754.044
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-52
-</td>
-<td style="text-align:left;">
-3D9.1C2E091483
-</td>
-<td style="text-align:left;">
-11H
-</td>
-<td style="text-align:left;">
-2015-05-12
-</td>
-<td style="text-align:left;">
-Mark
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-RF MT FE
-</td>
-<td style="text-align:left;">
-DNA5
-</td>
-<td style="text-align:left;">
-TAGGING
-</td>
-<td style="text-align:left;">
-PITTAG3 1.5.4
-</td>
-<td style="text-align:left;">
-2015 TUMWATER DAM ADULT TAGGING
-</td>
-<td style="text-align:left;">
-NBD15065.TUM
-</td>
-<td style="text-align:left;">
-2015-03-06 14:05:00
-</td>
-<td style="text-align:left;">
-DIETRICH N
-</td>
-<td style="text-align:left;">
-15
-</td>
-<td style="text-align:left;">
-TUM
-</td>
-<td style="text-align:left;">
-LADDER
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-HAND
-</td>
-<td style="text-align:left;">
-WDFW
-</td>
-<td style="text-align:left;">
-NBD
-</td>
-<td style="text-align:left;">
-2015-07-30 23:59:00
-</td>
-<td style="text-align:left;">
-TUMFBY
-</td>
-<td style="text-align:left;">
-754.044
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-53
-</td>
-<td style="text-align:left;">
-3D9.1C2E03BA01
-</td>
-<td style="text-align:left;">
-11H
-</td>
-<td style="text-align:left;">
-2015-05-12
-</td>
-<td style="text-align:left;">
-Mark
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-RF MT FE
-</td>
-<td style="text-align:left;">
-DNA6
-</td>
-<td style="text-align:left;">
-TAGGING
-</td>
-<td style="text-align:left;">
-PITTAG3 1.5.4
-</td>
-<td style="text-align:left;">
-2015 TUMWATER DAM ADULT TAGGING
-</td>
-<td style="text-align:left;">
-NBD15065.TUM
-</td>
-<td style="text-align:left;">
-2015-03-06 14:05:00
-</td>
-<td style="text-align:left;">
-DIETRICH N
-</td>
-<td style="text-align:left;">
-15
-</td>
-<td style="text-align:left;">
-TUM
-</td>
-<td style="text-align:left;">
-LADDER
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-HAND
-</td>
-<td style="text-align:left;">
-WDFW
-</td>
-<td style="text-align:left;">
-NBD
-</td>
-<td style="text-align:left;">
-2015-07-30 23:59:00
-</td>
-<td style="text-align:left;">
-TUMFBY
-</td>
-<td style="text-align:left;">
-754.044
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-54
-</td>
-<td style="text-align:left;">
-3D9.1C2E038B4A
-</td>
-<td style="text-align:left;">
-11H
-</td>
-<td style="text-align:left;">
-2015-05-12
-</td>
-<td style="text-align:left;">
-Mark
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-RF MT FE
-</td>
-<td style="text-align:left;">
-DNA7
-</td>
-<td style="text-align:left;">
-TAGGING
-</td>
-<td style="text-align:left;">
-PITTAG3 1.5.4
-</td>
-<td style="text-align:left;">
-2015 TUMWATER DAM ADULT TAGGING
-</td>
-<td style="text-align:left;">
-NBD15065.TUM
-</td>
-<td style="text-align:left;">
-2015-03-06 14:05:00
-</td>
-<td style="text-align:left;">
-DIETRICH N
-</td>
-<td style="text-align:left;">
-15
-</td>
-<td style="text-align:left;">
-TUM
-</td>
-<td style="text-align:left;">
-LADDER
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-HAND
-</td>
-<td style="text-align:left;">
-WDFW
-</td>
-<td style="text-align:left;">
-NBD
-</td>
-<td style="text-align:left;">
-2015-07-30 23:59:00
-</td>
-<td style="text-align:left;">
-TUMFBY
-</td>
-<td style="text-align:left;">
-754.044
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-55
-</td>
-<td style="text-align:left;">
-3D9.1C2E02E40B
-</td>
-<td style="text-align:left;">
-11W
-</td>
-<td style="text-align:left;">
-2015-05-12
-</td>
-<td style="text-align:left;">
-Mark
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-RF MT FE
-</td>
-<td style="text-align:left;">
-DNA8
-</td>
-<td style="text-align:left;">
-TAGGING
-</td>
-<td style="text-align:left;">
-PITTAG3 1.5.4
-</td>
-<td style="text-align:left;">
-2015 TUMWATER DAM ADULT TAGGING
-</td>
-<td style="text-align:left;">
-NBD15065.TUM
-</td>
-<td style="text-align:left;">
-2015-03-06 14:05:00
-</td>
-<td style="text-align:left;">
-DIETRICH N
-</td>
-<td style="text-align:left;">
-15
-</td>
-<td style="text-align:left;">
-TUM
-</td>
-<td style="text-align:left;">
-LADDER
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-HAND
-</td>
-<td style="text-align:left;">
-WDFW
-</td>
-<td style="text-align:left;">
-NBD
-</td>
-<td style="text-align:left;">
-2015-07-30 23:59:00
-</td>
-<td style="text-align:left;">
-TUMFBY
-</td>
-<td style="text-align:left;">
-754.044
-</td>
-</tr>
-<tr>
-<td style="text-align:right;">
-56
-</td>
-<td style="text-align:left;">
-3D9.1C2E045EB1
-</td>
-<td style="text-align:left;">
-11H
-</td>
-<td style="text-align:left;">
-2015-05-13
-</td>
-<td style="text-align:left;">
-Mark
-</td>
-<td style="text-align:right;">
-NA
-</td>
-<td style="text-align:left;">
-RF MT FE
+HUGHES M
 </td>
 <td style="text-align:left;">
 DNA 9
 </td>
-<td style="text-align:left;">
-TAGGING
+<td style="text-align:right;">
+NA
 </td>
 <td style="text-align:left;">
-PITTAG3 1.5.4
+NA
 </td>
 <td style="text-align:left;">
-2015 TUMWATER DAM ADULT TAGGING
+NA
 </td>
 <td style="text-align:left;">
-NBD15065.TUM
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LADDER
 </td>
 <td style="text-align:left;">
-2015-03-06 14:05:00
+AD CW MA MT RF
 </td>
 <td style="text-align:left;">
-DIETRICH N
-</td>
-<td style="text-align:left;">
-15
+2018-06-06 18:26:49
 </td>
 <td style="text-align:left;">
 TUM
 </td>
 <td style="text-align:left;">
-LADDER
+Mark
 </td>
 <td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-15.0
+Adult
 </td>
 <td style="text-align:left;">
 HAND
 </td>
 <td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:left;">
+2018
+</td>
+<td style="text-align:left;">
 WDFW
 </td>
 <td style="text-align:left;">
-NBD
+3DD.007791FCA9
 </td>
 <td style="text-align:left;">
-2015-07-30 23:59:00
+2018-06-06 18:26:49
 </td>
 <td style="text-align:left;">
 TUMFBY
 </td>
 <td style="text-align:left;">
-754.044
+15.0
 </td>
-</tr>
-<tr>
 <td style="text-align:right;">
-57
-</td>
-<td style="text-align:left;">
-3D9.1C2E04282A
+52
 </td>
 <td style="text-align:left;">
 11H
 </td>
 <td style="text-align:left;">
-2015-05-13
+HUGHES M
 </td>
 <td style="text-align:left;">
-Mark
+DNA 11
 </td>
 <td style="text-align:right;">
 NA
 </td>
 <td style="text-align:left;">
-RF MT FE
+NA
 </td>
 <td style="text-align:left;">
-DNA20
+NA
 </td>
 <td style="text-align:left;">
-TAGGING
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LADDER
 </td>
 <td style="text-align:left;">
-PITTAG3 1.5.4
+AI CW FE MT RF
 </td>
 <td style="text-align:left;">
-2015 TUMWATER DAM ADULT TAGGING
-</td>
-<td style="text-align:left;">
-NBD15065.TUM
-</td>
-<td style="text-align:left;">
-2015-03-06 14:05:00
-</td>
-<td style="text-align:left;">
-DIETRICH N
-</td>
-<td style="text-align:left;">
-15
+2018-06-06 18:31:34
 </td>
 <td style="text-align:left;">
 TUM
 </td>
 <td style="text-align:left;">
-LADDER
+Mark
 </td>
 <td style="text-align:left;">
-15.0
-</td>
-<td style="text-align:left;">
-15.0
+Adult
 </td>
 <td style="text-align:left;">
 HAND
 </td>
 <td style="text-align:left;">
+15.0
+</td>
+<td style="text-align:left;">
+2018
+</td>
+<td style="text-align:left;">
 WDFW
 </td>
 <td style="text-align:left;">
-NBD
+3DD.007790FA60
 </td>
 <td style="text-align:left;">
-2015-07-30 23:59:00
+2018-06-06 18:31:34
 </td>
 <td style="text-align:left;">
 TUMFBY
 </td>
 <td style="text-align:left;">
-754.044
+15.0
+</td>
+<td style="text-align:right;">
+53
+</td>
+<td style="text-align:left;">
+11H
+</td>
+<td style="text-align:left;">
+HUGHES M
+</td>
+<td style="text-align:left;">
+DNA 12
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 </tr>
 </tbody>
