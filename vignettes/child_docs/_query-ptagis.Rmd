@@ -160,7 +160,7 @@ readr::read_csv(ptagis_file,
 `PITcleanr` also allows the user to query PTAGIS for an MRR data file. Many projects are set up to record all the tagging information for an entire season, or part of a season from a single site in one file, which is uploaded to PTAGIS. This file can be used to determine the list of tag codes a user may be interested in. The `queryMRRDataFile` will pull this information from PTAGIS, using either the XML information contained in P4 files, or the older file structure (text file with various possible file extensions). The only requirement is the file name. For example, to pull this data for tagging at Tumwater in 2018, use the following code:
 
 ```{r}
-tum_2018_mrr <- queryMRRDataFile("NBD15065.TUM")
+tum_2018_mrr <- queryMRRDataFile("NBD-2018-079-001.xml")
 ```
 
 Depending on how comprehensive that MRR data file is, a user might filter this data.frame for Spring Chinook by focusing on the species run rear type of "11", and tags that were not collected for broodstock, or otherwise killed. An example of some of the data contained in MRR files like this is shown below.

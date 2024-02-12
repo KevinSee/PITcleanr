@@ -6,18 +6,21 @@
 #'
 #' @param site_code PTAGIS site code
 #' @param year Calendar year to be queried
-#' @inheritParams queryTagMeta
+#' @inheritParams queryTagEvents
 #'
 #' @source \url{http://api.ptagis.org}
 #'
 #' @import dplyr httr lubridate
 #' @export
 #' @return NULL
-#' @examples #queryTestTagSite(site_code = "LWE", year = 2023)
+#' @examples #queryTimerTagSite(site_code = "LWE", year = 2023)
 
-queryTestTagSite = function(site_code = NULL,
-                            year = NULL,
-                            api_key = NULL) {
+queryTimerTagSite = function(site_code = NULL,
+                             year = NULL,
+                             api_key = NULL) {
+
+  # need an API key
+  stopifnot(!is.null(api_key))
 
   if(is.null(year)) {
     year = lubridate::year(lubridate::today())
@@ -80,6 +83,6 @@ queryTestTagSite = function(site_code = NULL,
   #   filter(diff_num > 12)
 
 
-    return(results)
-  }
+  return(results)
+}
 

@@ -4,7 +4,12 @@
 \alias{findDwnstrmSite}
 \title{Determine next downstream site}
 \usage{
-findDwnstrmSite(site_id = NULL, flow_lines = NULL, sites_joined = NULL)
+findDwnstrmSite(
+  site_id = NULL,
+  flow_lines = NULL,
+  sites_joined = NULL,
+  quiet = TRUE
+)
 }
 \arguments{
 \item{site_id}{Site code for the starting detection site.}

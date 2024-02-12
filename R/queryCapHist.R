@@ -6,7 +6,7 @@
 #'
 #' @author Kevin See
 #'
-#' @inheritParams queryTagMeta
+#' @inheritParams queryTagEvents
 #' @inheritParams compress
 #' @param include_mark should the mark event information be queried from PTAGIS and added to other detections? If `TRUE`, `api_key` must be supplied for this PTAGIS query.
 #'
