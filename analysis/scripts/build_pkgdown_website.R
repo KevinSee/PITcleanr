@@ -29,3 +29,6 @@ pkgdown::preview_site()
 #-----------------------------------------------------------------
 # deploy site to gh-pages branch on GitHub
 pkgdown::deploy_to_branch()
+
+# configures a GitHub Action to automatically build the pkgdown site and deploy it via GitHub Pages
+usethis::use_github_action("pkgdown")
