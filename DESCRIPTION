@@ -1,6 +1,6 @@
 Package: PITcleanr
 Title: Cleans up PIT tag capture histories
-Version: 3.0.1
+Version: 3.0.2
 Authors@R: person("Kevin", "See", email = "Kevin.See@dfw.wa.gov", role = c("aut", "cre"))
 Maintainer: Kevin See <Kevin.See@dfw.wa.gov>
 Description: This package takes a complete PIT tag history file and cleans it, compresses it and makes it ready for summaries or analyses.
