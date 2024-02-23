@@ -73,11 +73,12 @@ queryMRRDataFile = function(file_nm = NULL,
 
     # fix any date fields
     if(sum(str_detect(names(tag_data), "date")) > 0) {
-      tag_data <- tag_data |>
+      tag_data <-
+        tag_data |>
         dplyr::mutate(
           dplyr::across(
             dplyr::contains("date"),
-            lubridate::ymd_hms))
+             ~ lubridate::ymd_hms(stringr::str_sub(., 1, 19))))
     }
   } else {
 
