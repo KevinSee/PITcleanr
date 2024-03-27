@@ -699,17 +699,13 @@ root_site = "LEMTRP"
 configuration <-
   buildConfig(node_assign = "site") |>
   mutate(across(node,
-                ~ if_else(as.numeric(str_sub(rkm, 1, 3)) <= 234,
-                          "B2J",
-                          .)),
-         across(node,
-                ~ if_else(site_code == "GRS",
-                          "GRJ",
-                          .))) |>
+                ~ case_when(as.numeric(str_sub(rkm, 1, 3)) <= 234 ~ "B2J",
+                            site_code %in% c("GRJ", "GRS") ~ "GRJ",
+                            .default = .))) |>
   filter(!is.na(node))
 
 # read in PTAGIS detections
-ptagis_file = here('inst/extdata/LEMTRP',
+ptagis_file = here('inst/extdata',
                    "LEMTRP_chnk_cth_2021.csv")
 
 
