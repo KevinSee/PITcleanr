@@ -68,10 +68,16 @@ addParentChildNodes = function(parent_child = NULL,
 
 
   if("node_3" %in% names(node_wide)) {
-    node_wide %>%
+    site_3_nodes <-
+      node_wide %>%
       filter(!is.na(node_3)) %>%
-      pull(site_code) %>%
-      paste(paste(., collapse = " and "), "have 3 nodes, causing errors.\n Consider updating configuration file.\n")
+      pull(site_code)
+
+    site_message = if_else(length(site_3_nodes) == 1,
+                           site_3_nodes,
+                           paste(site_3_nodes, collapse = " and "))
+
+    message(paste(site_message, "have 3 nodes, causing errors.\n Consider updating configuration file.\n"))
   }
 
   pc_nodes = parent_child %>%
@@ -85,7 +91,7 @@ addParentChildNodes = function(parent_child = NULL,
     tidyr::nest(node_info = -any_of(names(parent_child))) %>%
     ungroup() %>%
     mutate(pc = map(node_info,
-                    .f = function(x) {
+                    .f = try(function(x) {
                       if(x$n_parent_nodes == 1) {
                         pc_new = x %>%
                           select(parent = node_1.x,
@@ -97,6 +103,8 @@ addParentChildNodes = function(parent_child = NULL,
                           bind_rows(x %>%
                                       select(parent = node_2.x,
                                              child = node_1.y))
+                      } else {
+                        pc_new = NULL
                       }
 
                       if(x$n_child_nodes == 2) {
@@ -107,7 +115,7 @@ addParentChildNodes = function(parent_child = NULL,
                       }
 
                       return(pc_new)
-                    })) %>%
+                    }))) %>%
     select(-parent, -child) %>%
     tidyr::unnest(cols = pc) %>%
     select(parent,
