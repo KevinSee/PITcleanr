@@ -37,7 +37,7 @@ queryCapHist = function(ptagis_tag_code = NULL,
   ua = httr::user_agent('https://github.com/KevinSee/PITcleanr')
 
   # compose url with query
-  url_req = 'http://www.cbr.washington.edu/dart/cs/php/rpt/pit_one_tag?tag_id='
+  url_req = 'https://www.cbr.washington.edu/dart/cs/php/rpt/pit_one_tag?tag_id='
 
   # send query to PTAGIS
   web_req = httr::GET(paste0(url_req, ptagis_tag_code),

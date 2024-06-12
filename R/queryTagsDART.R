@@ -29,7 +29,7 @@ queryTagsDART <- function(species = c('Chinook', 'Coho', 'Steelhead', 'Sockeye')
     pull(spp_code)
 
   # file path to query
-  dart_path <- paste0("http://www.cbr.washington.edu/dart/cs/data/nezperce/", paste("nptspawn", loc, spawnYear, spp_code, sep = "_"), ".tagids")
+  dart_path <- paste0("https://www.cbr.washington.edu/dart/cs/data/nezperce/", paste("nptspawn", loc, spawnYear, spp_code, sep = "_"), ".tagids")
   # read in data from DART
   tag_codes <- readr::read_delim(dart_path,
                                  delim = '\n')
