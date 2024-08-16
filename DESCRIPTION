@@ -26,7 +26,7 @@ Imports:
     nhdplusTools (>= 1.0.0),
     nngeo (>= 0.4.6),
     here (>= 1.0.1),
-    readxl (>= 1.4.2),
+    readxl (>= 1.4.0),
     tidygraph (>= 1.2.3),
     XML (>= 3.99.0.9),
     xml2 (>= 1.3.3),
