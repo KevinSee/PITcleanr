@@ -1,183 +1,63 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/404.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/articles/Prep_PIT_data.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/articles/compress_data.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/articles/configuration_files.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/articles/parent_child.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/articles/quick_prep.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/articles/read_in_data.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/addDirection.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/addParentChildNodes.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/buildCapHist.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/buildConfig.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/buildNodeGraph.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/buildNodeOrder.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/buildParentChild.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/buildPaths.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/compress.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/compressDART.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/defineCapHistCols.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/editParentChild.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/estNodeEff.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/estimateFinalLoc.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/extractSites.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/extractTagObs.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/filterDetections.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/findDwnStrmSite_RKM.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/findDwnstrmHydroseg.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/findDwnstrmSite.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/getNodeInfo.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/listParents.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/plotNodes.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/prepWrapper.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/qcTagHistory.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/queryCapHist.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/queryFlowlines.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/queryInterrogationConfig.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/queryInterrogationMeta.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/queryMRRDataFile.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/queryMRRMeta.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/queryObsDART.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/queryPtagisMeta.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/queryTagEvents.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/queryTagsDART.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/queryTimerTagSite.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/readCTH.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/readTestTag.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/summarizeTagData.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/writeLGRNodeNetwork.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/writeOldNetworks.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/writePRDNodeNetwork.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/writePRONodeNetwork.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/writeTUMNodeNetwork.html</loc>
-  </url>
-  <url>
-    <loc>https://kevinsee.github.io/PITcleanr/reference/writeTUMNodeNetwork_noUWE.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://kevinsee.github.io/PITcleanr/404.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/CONDUCT.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/CONTRIBUTING.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/LICENSE.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/articles/Prep_PIT_data.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/articles/compress_data.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/articles/configuration_files.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/articles/index.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/articles/parent_child.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/articles/quick_prep.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/articles/read_in_data.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/authors.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/index.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/news/index.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/addDirection.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/addParentChildNodes.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/buildCapHist.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/buildConfig.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/buildNodeGraph.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/buildNodeOrder.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/buildParentChild.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/buildPaths.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/compress.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/compressDART.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/defineCapHistCols.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/editParentChild.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/estNodeEff.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/estimateFinalLoc.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/extractSites.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/extractTagObs.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/filterDetections.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/findDwnStrmSite_RKM.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/findDwnstrmHydroseg.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/findDwnstrmSite.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/getNodeInfo.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/index.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/listParents.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/plotNodes.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/prepWrapper.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/qcTagHistory.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/queryCapHist.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/queryFlowlines.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/queryInterrogationConfig.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/queryInterrogationMeta.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/queryMRRDataFile.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/queryMRRMeta.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/queryObsDART.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/queryPtagisMeta.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/queryTagEvents.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/queryTagsDART.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/queryTimerTagSite.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/readCTH.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/readTestTag.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/summarizeTagData.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/writeLGRNodeNetwork.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/writeOldNetworks.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/writePRDNodeNetwork.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/writePRONodeNetwork.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/writeTUMNodeNetwork.html</loc></url>
+<url><loc>https://kevinsee.github.io/PITcleanr/reference/writeTUMNodeNetwork_noUWE.html</loc></url>
 </urlset>
+
