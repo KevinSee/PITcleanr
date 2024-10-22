@@ -8,6 +8,7 @@
 #'
 #' @param parent_child dataframe produced by `buildParentChild()`.
 #' @param configuration a configuration dataframe, such as one built by `buildConfig()`.
+#' @inheritParams buildConfig
 #'
 #' @import dplyr tidyr stringr
 #' @return NULL
@@ -15,24 +16,44 @@
 #' @examples addParentChildNodes()
 
 addParentChildNodes = function(parent_child = NULL,
-                               configuration = NULL) {
+                               configuration = NULL,
+                               array_suffix = c("UD",
+                                                "UMD",
+                                                "A0B0")) {
   stopifnot(!is.null(parent_child),
             !is.null(configuration))
 
+  array_suffix = match.arg(array_suffix)
+
   # get the nodes for all site codes in the parent-child table
-  node_long = tibble(site_code = union(parent_child$child,
+  if(array_suffix %in% c("UD", "UMD")) {
+   node_site <-
+     configuration %>%
+     select(node) %>%
+     distinct() %>%
+     mutate(site_code = case_when(stringr::str_detect(node, "_D$") &
+                                    nchar(node) >= 5 ~ stringr::str_remove(node, "_D$"),
+                                  stringr::str_detect(node, "_U$") &
+                                    nchar(node) >= 5 ~ stringr::str_remove(node, "_U$"),
+                                  stringr::str_detect(node, "_M$") &
+                                    nchar(node) >= 5 ~ stringr::str_remove(node, "_M$"),
+                                  .default = node))
+  } else {
+    node_site <-
+      configuration %>%
+      select(node) %>%
+      distinct() %>%
+      mutate(site_code = case_when(stringr::str_detect(node, "B0$") &
+                                     nchar(node) >= 5 ~ stringr::str_remove(node, "B0$"),
+                                   stringr::str_detect(node, "A0$") &
+                                     nchar(node) >= 5 ~ stringr::str_remove(node, "A0$"),
+                                   .default = node))
+  }
+
+  node_long <-
+    tibble(site_code = union(parent_child$child,
                                        parent_child$parent)) %>%
-    left_join(configuration %>%
-                select(node) %>%
-                distinct() %>%
-                mutate(site_code = if_else(stringr::str_detect(node, "_D$") &
-                                             nchar(node) >= 5,
-                                           stringr::str_remove(node, "_D$"),
-                                           node),
-                       site_code = if_else(stringr::str_detect(site_code, "_U$") &
-                                             nchar(site_code) >= 5,
-                                           stringr::str_remove(site_code, "_U$"),
-                                           site_code)),
+    left_join(node_site,
               by = "site_code") %>%
     distinct() %>%
     arrange(site_code, node) %>%
