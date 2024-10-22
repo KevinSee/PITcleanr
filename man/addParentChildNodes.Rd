@@ -4,12 +4,21 @@
 \alias{addParentChildNodes}
 \title{Add Nodes to Parent-Child Table}
 \usage{
-addParentChildNodes(parent_child = NULL, configuration = NULL)
+addParentChildNodes(
+  parent_child = NULL,
+  configuration = NULL,
+  array_suffix = c("UD", "UMD", "A0B0")
+)
 }
 \arguments{
 \item{parent_child}{dataframe produced by `buildParentChild()`.}
 
 \item{configuration}{a configuration dataframe, such as one built by `buildConfig()`.}
+
+\item{array_suffix}{if \code{node_assign = "array"}, should nodes uses the suffixes of _U & _D (\code{UD}),
+_U, _M, & _D (\code{UMD}), or _A0 & _B0 (\code{A0B0}) to denote upstream, middle, and downstream arrays, respectively.
+Default is \code{UD}. If \code{array_suffix = "UD"} or \code{array_suffix = "A0B0"}, the middle array is grouped
+with the upstream array.}
 }
 \description{
 When some sites in the parent-child table have multiple nodes, this function

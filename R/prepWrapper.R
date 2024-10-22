@@ -60,6 +60,7 @@ prepWrapper = function(compress_obs = NULL,
 
     compress_obs = compress(raw_obs,
                             configuration = configuration,
+                            ignore_event_vs_release = ignore_event_vs_release,
                             ...)
   }
 
