@@ -73,7 +73,11 @@ child locations now refer to nodes, not sites.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">addParentChildNodes</span><span class="op">(</span>parent_child <span class="op">=</span> <span class="cn">NULL</span>, configuration <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">addParentChildNodes</span><span class="op">(</span></span>
+<span>  parent_child <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  configuration <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  array_suffix <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"UD"</span>, <span class="st">"UMD"</span>, <span class="st">"A0B0"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -86,6 +90,13 @@ child locations now refer to nodes, not sites.</p>
 
 <dt id="arg-configuration">configuration<a class="anchor" aria-label="anchor" href="#arg-configuration"></a></dt>
 <dd><p>a configuration dataframe, such as one built by `buildConfig()`.</p></dd>
+
+
+<dt id="arg-array-suffix">array_suffix<a class="anchor" aria-label="anchor" href="#arg-array-suffix"></a></dt>
+<dd><p>if <code>node_assign = "array"</code>, should nodes uses the suffixes of _U &amp; _D (<code>UD</code>),
+_U, _M, &amp; _D (<code>UMD</code>), or _A0 &amp; _B0 (<code>A0B0</code>) to denote upstream, middle, and downstream arrays, respectively.
+Default is <code>UD</code>. If <code>array_suffix = "UD"</code> or <code>array_suffix = "A0B0"</code>, the middle array is grouped
+with the upstream array.</p></dd>
 
 </dl></div>
     <div id="author">
