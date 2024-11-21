@@ -17,7 +17,7 @@ findDwnstrmHydroseg = function(hydro_id,
                                flow_lines,
                                hydro_pause_ids) {
 
-  if(!hydro_id %in% flow_lines$Hydroseq) {
+  if(!hydro_id %in% flow_lines$hydroseq) {
     # stop(paste("HydroSeq", hydro_id, "not found within flow lines.\n"))
 
     warning(paste("HydroSeq", hydro_id, "not found within flow lines.\n"))
@@ -26,8 +26,8 @@ findDwnstrmHydroseg = function(hydro_id,
   }
 
   hydro_dn = flow_lines %>%
-    dplyr::filter(Hydroseq == hydro_id) %>%
-    dplyr::pull(DnHydroseq) %>%
+    dplyr::filter(hydroseq == hydro_id) %>%
+    dplyr::pull(dnhydroseq) %>%
     unique()
   if(hydro_dn %in% hydro_pause_ids) {
     return(hydro_dn)
