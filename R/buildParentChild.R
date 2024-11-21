@@ -34,7 +34,7 @@ buildParentChild = function(sites_sf = NULL,
   # find the closest hydrosegment on the flowline to each site
   sites_NHDseg = st_join(sites_sf,
                          flowlines %>%
-                           select(gnis_name, Hydroseq),
+                           select(gnis_name, hydroseq),
                          join = st_nearest_feature)
 
   parent_child = sites_NHDseg$site_code %>%
@@ -56,12 +56,12 @@ buildParentChild = function(sites_sf = NULL,
     left_join(sites_NHDseg %>%
                 st_drop_geometry() %>%
                 select(parent = site_code,
-                       parent_hydro = Hydroseq),
+                       parent_hydro = hydroseq),
               by = "parent") %>%
     left_join(sites_NHDseg %>%
                 st_drop_geometry() %>%
                 select(child = site_code,
-                       child_hydro = Hydroseq),
+                       child_hydro = hydroseq),
               by = "child") %>%
     arrange(parent_hydro,
             child_hydro)
