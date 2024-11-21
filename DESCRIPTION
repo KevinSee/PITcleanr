@@ -30,7 +30,8 @@ Imports:
     tidygraph (>= 1.2.3),
     XML (>= 3.99.0.9),
     xml2 (>= 1.3.3),
-    ggplot2
+    ggplot2,
+    measurements
 URL: https://github.com/KevinSee/PITcleanr,
     https://kevinsee.github.io/PITcleanr/index.html,
     https://kevinsee.github.io/PITcleanr/
