@@ -94,9 +94,9 @@
       <h1 data-toc-skip>Parent-Child Tables</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">22 October, 2024</h4>
+            <h4 data-toc-skip class="date">22 November, 2024</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/v3.0.3/vignettes/parent_child.Rmd" class="external-link"><code>vignettes/parent_child.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/main/vignettes/parent_child.Rmd" class="external-link"><code>vignettes/parent_child.Rmd</code></a></small>
       <div class="hidden name"><code>parent_child.Rmd</code></div>
 
     </div>
@@ -189,7 +189,7 @@ configuration file should be supplied with latitude and longitudes.</li>
 of sites, queries the NHDPlusv2 stream layers that connect those
 sites.</li>
 <li>
-<code>buildParentChild</code>: Based on the output from
+<code><a href="../reference/buildParentChild.html">buildParentChild()</a></code>: Based on the output from
 <code><a href="../reference/extractSites.html">extractSites()</a></code> and <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code>, this
 function constructs the parent-child table using information in the
 NHDPlusv2 layer about which hydrosequences are downstream of one
@@ -293,64 +293,44 @@ location and is provided to the <code>root_site_code</code> argument.
 The function starts from the <code>root_site_code</code> and downloads
 all flowlines upstream from there, with a minimum stream order set by
 <code>min_strm_order</code>.</p>
-<p>If flowlines downstream of the <code>root_site_code</code> site are
-required, set the argument <code>dwnstrm_sites = TRUE</code> (default is
-<code>FALSE</code>). This might be useful if the user is interesting in
-analyzing or modeling sites downstream of the release site. If you’re
-not interested in analyzing/modeling downstream sites you can set
-<code>dwnstrm_sites = FALSE</code> which may speed up the function
-considerably.</p>
-<p>The user can also control the minimum stream order of the downstream
-flowlines by setting the <code>dwn_min_stream_order_diff</code>
-argument. Note: smaller stream orders correspond to smaller streams.
-This can be useful if the user is not interested or wants to prevent
-downloading all sorts of tiny streams downstream of a tagging or release
-location; the <code>dwn_min_stream_order_diff</code> is an attempt to
-constrain the amount of flowlines downloaded downstream of the
-<code>root_site_code</code> which can be sizable. The
-<code>dwn_min_stream_order_diff</code> corresponds to the difference
-between the stream order of the <code>root_site_code</code> site and the
-minimum stream order desired in the downstream flowlines. In our
-example, our <code>root_site_code</code> is located on a stream order of
-5 (Wenatchee River) and <code>dwn_min_stream_order_diff = 2</code>, in
-this case only downstream flowlines of at least 5-2 = <strong>3</strong>
-will be downloaded. The extent of the downstream flowlines is further
-constrained by the <code>sites_sf</code> object. The
-<code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> function returns a list consisting of:</p>
+<p>If there are sites downstream of the <code>root_site_code</code> site
+in the users site list, downstream flowlines will also be downloaded. By
+default, the upstream and downstream flowlines will be combined into a
+single <code>sf</code> object. However, if the user would like to keep
+them separated, they can set the argument <code>combine_up_down</code>
+to <code>FALSE</code>, and the downstream flowlines will be returned as
+a separate element.</p>
+<p>The <code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> function returns a list consisting
+of:</p>
 <ul>
 <li>
 <code>flowlines</code>: the flowlines upstream of the
-<code>root_site_code</code>
-</li>
+<code>root_site_code</code> (and possibly the downstream ones as
+well)</li>
 <li>
 <code>basin</code>: the polygon containing the upstream
 flowlines</li>
+</ul>
+<p>The default option (<code>combine_up_down = TRUE</code>) like to
+combine the flowlines upstream and downstream of the root site. If the
+user sets <code>combine_up_down == FALSE</code>, the function will
+return a third element in the list called:</p>
+<ul>
 <li>
 <code>dwn_flowlines</code>: the flowlines downstream of the
-<code>root_site_code</code>, if <code>dwnstrm_sites = T</code>
-</li>
+<code>root_site_code</code>.</li>
 </ul>
 <p>Depending on the spatial extent of your flowlines, the
-<code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> function may take awhile. Here we create a
-list of objects, <code>nhd_list</code>. We then use the function
-<code><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind()</a></code> to combine the <code>nhd$flowlines</code> and
-<code>nhd$dwn_flowlines</code> into a single <code>flowlines</code>
-simple feature object. More information on the <code>nhdplusTools</code>
-R package can be found <a href="https://cran.r-project.org/web/packages/nhdplusTools/index.html" class="external-link">here</a>.</p>
+<code><a href="../reference/queryFlowlines.html">queryFlowlines()</a></code> function may take awhile. More information
+on the <code>nhdplusTools</code> R package can be found <a href="https://cran.r-project.org/web/packages/nhdplusTools/index.html" class="external-link">here</a>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># query the flowlines</span></span>
 <span><span class="va">nhd_list</span> <span class="op">=</span> <span class="fu"><a href="../reference/queryFlowlines.html">queryFlowlines</a></span><span class="op">(</span>sites_sf <span class="op">=</span> <span class="va">sites_sf</span>,</span>
 <span>                          root_site_code <span class="op">=</span> <span class="st">"TUM"</span>,</span>
-<span>                          min_strm_order <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>                          dwnstrm_sites <span class="op">=</span> <span class="cn">T</span>,</span>
-<span>                          dwn_min_stream_order_diff <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Querying streams upstream of TUM</span></span>
-<span><span class="co">#&gt; Calculating furthest mainstem point downstream</span></span>
-<span><span class="co">#&gt; Querying streams downstream of TUM</span></span>
+<span>                          min_strm_order <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># join the upstream and downstream flowlines</span></span>
-<span><span class="va">flowlines</span> <span class="op">=</span> <span class="va">nhd_list</span><span class="op">$</span><span class="va">flowlines</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">nhd_list</span><span class="op">$</span><span class="va">dwn_flowlines</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">flowlines</span> <span class="op">=</span> <span class="va">nhd_list</span><span class="op">$</span><span class="va">flowlines</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="mapping-sites">Mapping Sites<a class="anchor" aria-label="anchor" href="#mapping-sites"></a>
@@ -362,8 +342,8 @@ the one in Figure @ref(fig:fig-basin-map)</p>
 <span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">flowlines</span>,</span>
-<span>          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">StreamOrde</span><span class="op">)</span>,</span>
-<span>              size <span class="op">=</span> <span class="va">StreamOrde</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>          <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">as.factor</a></span><span class="op">(</span><span class="va">streamorde</span><span class="op">)</span>,</span>
+<span>              size <span class="op">=</span> <span class="va">streamorde</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_viridis.html" class="external-link">scale_color_viridis_d</a></span><span class="op">(</span>direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>,</span>
 <span>                        option <span class="op">=</span> <span class="st">"D"</span>,</span>
 <span>                        name <span class="op">=</span> <span class="st">"Stream\nOrder"</span>,</span>
@@ -399,22 +379,58 @@ parent-child table.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parent_child</span> <span class="op">=</span> <span class="fu"><a href="../reference/buildParentChild.html">buildParentChild</a></span><span class="op">(</span><span class="va">sites_sf</span>,</span>
 <span>                                <span class="va">flowlines</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
+<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
+<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
 <span><span class="va">parent_child</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 4</span></span></span>
 <span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL    TUM       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">013</span>200</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICL    ICM       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">017</span>117</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TUM    CHL       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TUM    CHW       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> UWE    LWN       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>266</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> UWE    WTL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">026</span>363</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> UWE    NAL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">028</span>949</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> CHL    CHU       50<span style="text-decoration: underline;">022</span>268    50<span style="text-decoration: underline;">023</span>868</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> NAL    NAU       50<span style="text-decoration: underline;">028</span>949    50<span style="text-decoration: underline;">034</span>395</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> <span style="color: #BB0000;">NA</span>     ICL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">012</span>366</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> <span style="color: #BB0000;">NA</span>     LNF             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>752</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>     TUM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">013</span>200</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="color: #BB0000;">NA</span>     LNF             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="color: #BB0000;">NA</span>     ICL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="color: #BB0000;">NA</span>     ICM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">017</span>117</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="color: #BB0000;">NA</span>     UWE             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">018</span>330</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="color: #BB0000;">NA</span>     LWN             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">021</span>266</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="color: #BB0000;">NA</span>     CHL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">022</span>268</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="color: #BB0000;">NA</span>     CHU             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">023</span>868</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="color: #BB0000;">NA</span>     WTL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">026</span>363</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="color: #BB0000;">NA</span>     NAL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">028</span>949</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> <span style="color: #BB0000;">NA</span>     NAU             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">034</span>395</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> <span style="color: #BB0000;">NA</span>     CHW             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">045</span>832</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -477,18 +493,18 @@ of these corrections are implemented below using the
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 4</span></span></span>
 <span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL    LNF       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">016</span>752</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICL    ICM       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">017</span>117</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TUM    ICL       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">012</span>366</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TUM    CHL       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TUM    CHW       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> UWE    LWN       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>266</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> UWE    WTL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">026</span>363</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> UWE    NAL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">028</span>949</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CHL    CHU       50<span style="text-decoration: underline;">022</span>268    50<span style="text-decoration: underline;">023</span>868</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> NAL    NAU       50<span style="text-decoration: underline;">028</span>949    50<span style="text-decoration: underline;">034</span>395</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> <span style="color: #BB0000;">NA</span>     ICL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">012</span>366</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL    LNF       50<span style="text-decoration: underline;">016</span>572    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="color: #BB0000;">NA</span>     TUM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">013</span>200</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="color: #BB0000;">NA</span>     ICL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="color: #BB0000;">NA</span>     ICM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">017</span>117</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="color: #BB0000;">NA</span>     UWE             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">018</span>330</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="color: #BB0000;">NA</span>     LWN             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">021</span>266</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="color: #BB0000;">NA</span>     CHL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">022</span>268</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="color: #BB0000;">NA</span>     CHU             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">023</span>868</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="color: #BB0000;">NA</span>     WTL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">026</span>363</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="color: #BB0000;">NA</span>     NAL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">028</span>949</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> <span style="color: #BB0000;">NA</span>     NAU             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">034</span>395</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> <span style="color: #BB0000;">NA</span>     CHW             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">045</span>832</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="incorporating-nodes">Incorporating Nodes<a class="anchor" aria-label="anchor" href="#incorporating-nodes"></a>
@@ -526,16 +542,16 @@ argument to expand the tibble. Our results are saved to a new object
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 21 × 4</span></span></span>
 <span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL_D  ICL_U     50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">012</span>366</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICL_U  LNF       50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">016</span>752</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ICL_U  ICM_D     50<span style="text-decoration: underline;">012</span>366    50<span style="text-decoration: underline;">017</span>117</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> TUM    ICL_D     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">012</span>366</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> TUM    CHL_D     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> TUM    CHW_D     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ICM_D  ICM_U     50<span style="text-decoration: underline;">017</span>117    50<span style="text-decoration: underline;">017</span>117</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> UWE    LWN_D     50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>266</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> UWE    WTL_D     50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">026</span>363</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL_D  ICL_U     50<span style="text-decoration: underline;">016</span>572    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICL_U  LNF       50<span style="text-decoration: underline;">016</span>572    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ICM_D  ICM_U     50<span style="text-decoration: underline;">017</span>117    50<span style="text-decoration: underline;">017</span>117</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> LWN_D  LWN_U     50<span style="text-decoration: underline;">021</span>266    50<span style="text-decoration: underline;">021</span>266</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CHL_D  CHL_U     50<span style="text-decoration: underline;">022</span>268    50<span style="text-decoration: underline;">022</span>268</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CHU_D  CHU_U     50<span style="text-decoration: underline;">023</span>868    50<span style="text-decoration: underline;">023</span>868</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> WTL_D  WTL_U     50<span style="text-decoration: underline;">026</span>363    50<span style="text-decoration: underline;">026</span>363</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> NAL_D  NAL_U     50<span style="text-decoration: underline;">028</span>949    50<span style="text-decoration: underline;">028</span>949</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> NAU_D  NAU_U     50<span style="text-decoration: underline;">034</span>395    50<span style="text-decoration: underline;">034</span>395</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CHW_D  CHW_U     50<span style="text-decoration: underline;">045</span>832    50<span style="text-decoration: underline;">045</span>832</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more rows</span></span></span></code></pre></div>
 </div>
 </div>

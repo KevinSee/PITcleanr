@@ -60,7 +60,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Download NHDPlus flow lines</h1>
-    <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/v3.0.3/R/queryFlowlines.R" class="external-link"><code>R/queryFlowlines.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/main/R/queryFlowlines.R" class="external-link"><code>R/queryFlowlines.R</code></a></small>
     <div class="hidden name"><code>queryFlowlines.Rd</code></div>
     </div>
 
@@ -73,9 +73,8 @@
 <span>  sites_sf <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  root_site_code <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_strm_order <span class="op">=</span> <span class="fl">0</span>,</span>
-<span>  dwnstrm_sites <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  dwn_min_stream_order_diff <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  buffer_dist <span class="op">=</span> <span class="fl">0</span></span>
+<span>  max_upstream_comid <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  combine_up_down <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,21 +94,17 @@
 <dd><p>minimum stream order to query flowlines for. Default value is `0`.</p></dd>
 
 
-<dt id="arg-dwn-min-stream-order-diff">dwn_min_stream_order_diff<a class="anchor" aria-label="anchor" href="#arg-dwn-min-stream-order-diff"></a></dt>
-<dd><p>Used to control the minimum stream order of downloaded downstream flowlines. This can be useful if the user wants to prevent downloading excessive smaller streams downstream of a tagging or release location. It corresponds to the difference between the stream order of the `root_site_code` site and the minimum stream order desired in the downstream flowlines. For example, if the `root_site_code` is located on a stream order 6 and `dwn_min_stream_order_diff = 2`, then only flowlines of at least 6-2=**4** will be downloaded. The default value is 0, meaning only streams of equal or greater order than the tagging or release site will be returned.</p></dd>
+<dt id="arg-max-upstream-comid">max_upstream_comid<a class="anchor" aria-label="anchor" href="#arg-max-upstream-comid"></a></dt>
+<dd><p>if provided, this function will filter out any flowlines upstream of this unique identifier (COMID) in the NHDPlus stream network. Default value is `NULL`. For assistance identifying a COMID, please see the `nhdplusTools` package, specifically the `discover_nhdplus_id()` function.</p></dd>
 
 
-<dt id="arg-buffer-dist">buffer_dist<a class="anchor" aria-label="anchor" href="#arg-buffer-dist"></a></dt>
-<dd><p>when querying flowlines downstream of `root_site_code`, how big a buffer should be used around all sites in `sites_sf` to capture all the flowlines? Default is `0`. See `?sf::st_buffer()` for more help with possible formats.</p></dd>
-
-
-<dt id="arg-dwnstream-sites">dwnstream_sites<a class="anchor" aria-label="anchor" href="#arg-dwnstream-sites"></a></dt>
-<dd><p>Does `sites_sf` contain sites that are downstream of `root_site_code`? If `TRUE`, then all flowlines within a boundary box of `sites_df` will be downloaded</p></dd>
+<dt id="arg-combine-up-down">combine_up_down<a class="anchor" aria-label="anchor" href="#arg-combine-up-down"></a></dt>
+<dd><p>Should the flowlines upstream and downstream of the starting point (`root_site_code`) be combined into a single object, or be returned as separate elements? The default value is `TRUE`</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>sf</p>
+    <p>list with at least two elements: `flowlines` is the `sf` object of flowlines downloaded from NHDPlus. `basin` is the polygon representing the catchment upstream of the root site. If `combine_up_down` is `FALSE`, there is a third element in the list, called `dwn_flowlines`, containing an `sf` object of flowlines downstream of the root site.</p>
     </div>
     <div id="author">
     <h2>Author</h2>
