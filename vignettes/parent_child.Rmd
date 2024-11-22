@@ -108,7 +108,7 @@ cth_df <- readCTH(cth_file)
 
 ### Mapping Sites
 
-To visualize the sites and stream, the user can make a plot, such as the one in Figure \@ref(fig:fig-basin-map)
+To visualize the sites and stream, the user can make a plot, such as the one in the figure below.
 
 ```{r fig-basin-map}
 library(ggplot2)

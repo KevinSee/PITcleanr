@@ -13,7 +13,7 @@ The `queryFlowlines()` function returns a list consisting of:
 * `flowlines`: the flowlines upstream of the `root_site_code` (and possibly the downstream ones as well)
 * `basin`: the polygon containing the upstream flowlines
 
-The default option (`combine_up_down = TRUE`) like to combine the flowlines upstream and downstream of the root site. If the user sets `combine_up_down == FALSE`, the function will return a third element in the list called:
+The default option (`combine_up_down = TRUE`) like to combine the flowlines upstream and downstream of the root site. If the user sets `combine_up_down = FALSE`, the function will return a third element in the list called:
 
 * `dwn_flowlines`: the flowlines downstream of the `root_site_code`.
 
