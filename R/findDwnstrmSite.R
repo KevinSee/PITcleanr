@@ -26,7 +26,7 @@ findDwnstrmSite = function(site_id = NULL,
     dplyr::pull(Hydroseq)
 
   init_sites = sites_joined %>%
-    dplyr::filter(Hydroseq == init_hydseq) %>%
+    dplyr::filter(hydroseq == init_hydseq) %>%
     dplyr::pull(site_code)
 
   if(length(init_sites) > 1) {
@@ -46,7 +46,7 @@ findDwnstrmSite = function(site_id = NULL,
   } else {
 
     sites_joined %>%
-      dplyr::filter(Hydroseq == dwn_hydseq) %>%
+      dplyr::filter(hydroseq == dwn_hydseq) %>%
       dplyr::pull(site_code) %>%
       return()
 

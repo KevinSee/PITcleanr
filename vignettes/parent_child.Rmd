@@ -83,7 +83,7 @@ When dealing with large number of sites, and many possible connections, it can b
 
 * `extractSites()`: based on the complete tag history (either file path and name, or the result of `readCTH()`), pulls out which sites had detections. If sites are not in PTAGIS, a configuration file should be supplied with latitude and longitudes.
 * `queryFlowlines()`: using an `sf` point object of sites, queries the NHDPlusv2 stream layers that connect those sites.
-* `buildParentChild`: Based on the output from `extractSites()` and `queryFlowlines()`, this function constructs the parent-child table using information in the NHDPlusv2 layer about which hydrosequences are downstream of one another.
+* `buildParentChild()`: Based on the output from `extractSites()` and `queryFlowlines()`, this function constructs the parent-child table using information in the NHDPlusv2 layer about which hydrosequences are downstream of one another.
 
 `PITcleanr` constructs the parent-child relationship by joining a spatial (`sf`) point object of sites with the flowlines queried via `queryFlowlines()`. The NHDPlus layer that is returned contains a unique identifier, or hydrosequence, for every segment, as well as the identifier of the hydrosequence immediately upstream and downstream. Using this information, `PITcleanr` can identify the next downstream site from every known location (using the `findDwnstrmSite()` function), and thus construct the parent child table through the `buildParentChild()` function. By default, `buildParentChild()` returns a tibble identifying every parent-child pair, as well as the hydrosequence joined to the parent and child location. If the argument `add_rkm` is set to `TRUE`, `PITcleanr` will query the PTAGIS metadata again, and attach the river kilometer (or rkm) for each parent and child location. If the sites are not in PTAGIS, the user can join any attributes they wish using their own configuration file. 
 
@@ -115,8 +115,8 @@ library(ggplot2)
 
 ggplot() +
   geom_sf(data = flowlines,
-          aes(color = as.factor(StreamOrde),
-              size = StreamOrde)) +
+          aes(color = as.factor(streamorde),
+              size = streamorde)) +
   scale_color_viridis_d(direction = -1,
                         option = "D",
                         name = "Stream\nOrder",

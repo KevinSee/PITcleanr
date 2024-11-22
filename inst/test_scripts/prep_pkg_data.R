@@ -21,10 +21,10 @@ org_config = buildConfig()
 
 #-----------------------------------------------------------------
 # designate a starting point
-root_site = c("LGR",
-              "PRA",
-              "PRO",
-              "TUM")[1]
+root_site_code = c("LGR",
+                   "PRA",
+                   "PRO",
+                   "TUM")[3]
 
 #-----------------------------------------------------------------
 # update configuration file depending on which DABOM model is being run
@@ -32,7 +32,7 @@ root_site = c("LGR",
 #-----------------------------------------------------------------
 # Lower Granite - LGR
 #-----------------------------------------------------------------
-if(root_site == "LGR") {
+if(root_site_code == "LGR") {
   configuration = org_config %>%
     mutate(
       node = case_when(
@@ -141,7 +141,7 @@ if(root_site == "LGR") {
 #-----------------------------------------------------------------
 # Priest Rapids - PRA
 #-----------------------------------------------------------------
-if(root_site == "PRA") {
+if(root_site_code == "PRA") {
   configuration = org_config %>%
     # # manually add site for Colockum Creek (not in PTAGIS)
     # bind_rows(tibble(site_code = 'CLK',
@@ -345,7 +345,7 @@ if(root_site == "PRA") {
 #-----------------------------------------------------------------
 # Prosser - PRO
 #-----------------------------------------------------------------
-if(root_site == "PRO") {
+if(root_site_code == "PRO") {
   # customize some nodes based on DABOM framework
   configuration = org_config %>%
     mutate(node = if_else(site_code %in% c('PRO'),
@@ -409,7 +409,7 @@ if(root_site == "PRO") {
 #-----------------------------------------------------------------
 # Tumwater - TUM
 #-----------------------------------------------------------------
-if(root_site == "TUM") {
+if(root_site_code == "TUM") {
   configuration = org_config %>%
     mutate(node = ifelse(site_code %in% c('LNF', 'LEAV'),
                          'LNF',
@@ -475,25 +475,13 @@ sites_sf <- sites_df |>
 
 #-----------------------------------------------------------------
 # download the NHDPlus v2 flowlines
-# do you want flowlines downstream of root site? Set to TRUE if you have downstream sites
-dwn_flw = T
-nhd_list = queryFlowlines(sites_sf = sites_sf,
-                          root_site_code = root_site,
-                          min_strm_order = 2,
-                          dwnstrm_sites = dwn_flw,
-                          dwn_min_stream_order_diff = 4)
 
-# compile the upstream and downstream flowlines
-flowlines = nhd_list$flowlines
-if(dwn_flw) {
-  flowlines %<>%
-    rbind(nhd_list$dwn_flowlines)
-}
-
-if(root_site %in% c("LGR", "PRA")) {
-  # upstream extent of study area (cut off areas further upstream)
-  upstrm_loc = case_when(root_site == "PRA" ~ "Chief Joseph Dam",
-                         root_site == "LGR" ~ "Hells Canyon Dam")
+# want to cut up the flowlines at an upstream point?
+# upstream extent of study area (cut off areas further upstream)
+upstrm_loc = case_when(root_site_code == "PRA" ~ "Chief Joseph Dam",
+                       root_site_code == "LGR" ~ "Hells Canyon Dam",
+                       .default = NA_character_)
+if(!is.na(upstrm_loc)) {
 
   library(ggmap)
 
@@ -502,40 +490,33 @@ if(root_site %in% c("LGR", "PRA")) {
              crs = 4326) %>%
     nhdplusTools::discover_nhdplus_id()
 
-  nhd_upstrm_lst = nhdplusTools::plot_nhdplus(outlets = list(upstrm_comid),
-                                              streamorder = min(nhd_list$flowlines$StreamOrde),
-                                              actually_plot = F)
-
-  flowlines <-
-    flowlines |>
-    anti_join(nhd_upstrm_lst$flowline |>
-                st_drop_geometry() |>
-                select(Hydroseq))
+} else {
+  upstrm_comid = NULL
 }
+
+nhd_list = queryFlowlines2(sites_sf = sites_sf,
+                           root_site_code = root_site_code,
+                           min_strm_order = 2,
+                           max_upstream_comid = upstrm_comid)
+
+# compile the upstream and downstream flowlines
+flowlines = nhd_list$flowlines
 
 #-----------------------------------------------------------------
 # plot the flowlines and the sites
 ggplot() +
   geom_sf(data = flowlines,
-          aes(color = as.factor(StreamOrde),
-              size = StreamOrde)) +
+          aes(color = as.factor(streamorde),
+              size = streamorde)) +
   scale_color_viridis_d(direction = -1,
                         option = "D",
                         name = "Stream\nOrder",
                         end = 0.8) +
   scale_size_continuous(range = c(0.2, 1.2),
                         guide = 'none') +
-  # geom_sf(data = nhd_list$basin,
-  #         fill = NA,
-  #         lwd = 2) +
-  # # this cuts out parts of the basin upstream of upstrm_loc
-  # geom_sf(data = flowlines %>%
-  #           filter(!Hydroseq %in% nhd_list$dwn_flowlines$Hydroseq) %>%
-  #           summarise(bndry = 'basin') %>%
-  #           select(bndry) %>%
-  #           st_convex_hull(),
-  #         fill = NA,
-  #         lwd = 2) +
+  geom_sf(data = nhd_list$basin,
+          fill = NA,
+          lwd = 2) +
   geom_sf(data = sites_sf,
           size = 3,
           color = "black") +
@@ -544,7 +525,7 @@ ggplot() +
   #               aes(label = site_code)) +
   ggrepel::geom_label_repel(
     data = sites_sf |>
-      filter(site_code != root_site),
+      filter(site_code != root_site_code),
     aes(label = site_code,
         geometry = geometry),
     size = 1.5,
@@ -553,7 +534,7 @@ ggplot() +
     max.overlaps = 100
   ) +
   geom_sf_label(data = sites_sf %>%
-                  filter(site_code == root_site),
+                  filter(site_code == root_site_code),
                 aes(label = site_code),
                 color = "red") +
   theme_bw() +
@@ -561,7 +542,7 @@ ggplot() +
 
 #-----------------------------------------------------------------
 # build parent child table
-if(root_site == "PRO") {
+if(root_site_code == "PRO") {
   parent_child = sites_sf %>%
     buildParentChild(flowlines,
                      rm_na_parent = F,
@@ -573,7 +554,7 @@ if(root_site == "PRO") {
                            c("MCN", "ICH", "PRO"),
                            c("MCN", "PRA", "PRO")),
                     switch_parent_child = list(c("MCN", "PRO")))
-} else if(root_site == "TUM") {
+} else if(root_site_code == "TUM") {
   parent_child = sites_sf %>%
     buildParentChild(flowlines,
                      rm_na_parent = F,
@@ -582,7 +563,7 @@ if(root_site == "PRO") {
                                     c(NA, "PES", "TUM"),
                                     c(NA, "LNF", "ICL")),
                     switch_parent_child = list(c("ICL", 'TUM')))
-} else if(root_site == "PRA") {
+} else if(root_site_code == "PRA") {
   parent_child = sites_sf %>%
     buildParentChild(flowlines,
                      rm_na_parent = F,
@@ -631,7 +612,7 @@ if(root_site == "PRO") {
                                     c("JOH", 'AEN', 'OKL')),
                     switch_parent_child = list(c("RSH", "PRA"))) %>%
     filter(!parent %in% c("WEH", "PRH"))
-} else if(root_site == "LGR") {
+} else if(root_site_code == "LGR") {
   parent_child = sites_sf %>%
     buildParentChild(flowlines,
                      rm_na_parent = F,
@@ -674,25 +655,25 @@ if(root_site == "PRO") {
 # write configuration & parent-child table
 configuration |>
   write_csv(here("inst/extdata",
-                 paste0(root_site, "_configuration.csv")))
+                 paste0(root_site_code, "_configuration.csv")))
 
 parent_child |>
   write_csv(here("inst/extdata",
-                 paste0(root_site, "_parent_child.csv")))
+                 paste0(root_site_code, "_parent_child.csv")))
 
 save(configuration,
      sites_sf,
      flowlines,
      parent_child,
      file = here("inst/extdata",
-                 paste0(root_site, "_site_config.Rdata")))
+                 paste0(root_site_code, "_site_config.Rdata")))
 
 
 
 #-----------------------------------------------------------------
 # smolts tagged at Upper Lemhi RST
 #-----------------------------------------------------------------
-root_site = "LEMTRP"
+root_site_code = "LEMTRP"
 
 # update configuration file
 # combine some sites at and below Bonneville
@@ -780,15 +761,15 @@ parent_child <-
 # write configuration & parent-child table
 configuration |>
   write_csv(here("inst/extdata/LEMTRP",
-                 paste0(root_site, "_configuration.csv")))
+                 paste0(root_site_code, "_configuration.csv")))
 
 parent_child |>
   write_csv(here("inst/extdata/LEMTRP",
-                 paste0(root_site, "_parent_child.csv")))
+                 paste0(root_site_code, "_parent_child.csv")))
 
 flowlines |>
   st_write(dsn = here("inst/extdata/LEMTRP",
-                      paste0(root_site, "_flowlines.gpkg")),
+                      paste0(root_site_code, "_flowlines.gpkg")),
            delete_dsn = T)
 
 
@@ -797,4 +778,4 @@ save(configuration,
      flowlines,
      parent_child,
      file = here("inst/extdata/LEMTRP",
-                 paste0(root_site, "_site_config.Rdata")))
+                 paste0(root_site_code, "_site_config.Rdata")))
