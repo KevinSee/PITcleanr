@@ -16,7 +16,7 @@ findDwnstrmSite(
 
 \item{flow_lines}{An `sf` object containing the flowlines (output of `queryFlowlines()`). Must have a column name called Hydroseq with unique identifiers, and a column name called DnHydroseq containing the hydro sequence of the next downstream segment}
 
-\item{sites_joined}{An `sf` class object containing points of all detection sites. Must contain a column named `site_code` containing the site code of each site, and a column called Hydroseq containing the hydro sequence closest to each site.}
+\item{sites_joined}{An `sf` class object containing points of all detection sites. Must contain a column named `site_code` containing the site code of each site, and a column called hydroseq containing the hydro sequence closest to each site.}
 }
 \value{
 character of the site code downstream
