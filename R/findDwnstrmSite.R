@@ -5,7 +5,7 @@
 #' @author Kevin See
 #'
 #' @param site_id Site code for the starting detection site.
-#' @param sites_joined An `sf` class object containing points of all detection sites. Must contain a column named `site_code` containing the site code of each site, and a column called Hydroseq containing the hydro sequence closest to each site.
+#' @param sites_joined An `sf` class object containing points of all detection sites. Must contain a column named `site_code` containing the site code of each site, and a column called hydroseq containing the hydro sequence closest to each site.
 #' @inheritParams findDwnstrmHydroseg
 #'
 #' @import dplyr
@@ -23,7 +23,7 @@ findDwnstrmSite = function(site_id = NULL,
 
   init_hydseq = sites_joined %>%
     dplyr::filter(site_code == site_id) %>%
-    dplyr::pull(Hydroseq)
+    dplyr::pull(hydroseq)
 
   init_sites = sites_joined %>%
     dplyr::filter(hydroseq == init_hydseq) %>%
@@ -36,7 +36,7 @@ findDwnstrmSite = function(site_id = NULL,
 
   dwn_hydseq = PITcleanr::findDwnstrmHydroseg(init_hydseq,
                                               flow_lines,
-                                              sites_joined$Hydroseq)
+                                              sites_joined$hydroseq)
 
   if(is.na(dwn_hydseq)) {
     warning(paste("No downstream hydro sequence was found for site", site_id))
