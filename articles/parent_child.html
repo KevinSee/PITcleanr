@@ -94,7 +94,7 @@
       <h1 data-toc-skip>Parent-Child Tables</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">22 November, 2024</h4>
+            <h4 data-toc-skip class="date">11 January, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/main/vignettes/parent_child.Rmd" class="external-link"><code>vignettes/parent_child.Rmd</code></a></small>
       <div class="hidden name"><code>parent_child.Rmd</code></div>
@@ -379,58 +379,22 @@ parent-child table.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">parent_child</span> <span class="op">=</span> <span class="fu"><a href="../reference/buildParentChild.html">buildParentChild</a></span><span class="op">(</span><span class="va">sites_sf</span>,</span>
 <span>                                <span class="va">flowlines</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
-<span><span class="co">#&gt; Error in dplyr::pull(., Hydroseq) : </span></span>
-<span><span class="co">#&gt; <span style="font-weight: bold;">Caused by error:</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BBBB00;">!</span> object 'Hydroseq' not found</span></span>
 <span><span class="va">parent_child</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 4</span></span></span>
 <span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> <span style="color: #BB0000;">NA</span>     TUM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">013</span>200</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="color: #BB0000;">NA</span>     LNF             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>572</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="color: #BB0000;">NA</span>     ICL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>572</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="color: #BB0000;">NA</span>     ICM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">017</span>117</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="color: #BB0000;">NA</span>     UWE             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">018</span>330</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="color: #BB0000;">NA</span>     LWN             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">021</span>266</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="color: #BB0000;">NA</span>     CHL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">022</span>268</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="color: #BB0000;">NA</span>     CHU             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">023</span>868</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="color: #BB0000;">NA</span>     WTL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">026</span>363</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="color: #BB0000;">NA</span>     NAL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">028</span>949</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> <span style="color: #BB0000;">NA</span>     NAU             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">034</span>395</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> <span style="color: #BB0000;">NA</span>     CHW             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">045</span>832</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TUM    CHL       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TUM    CHW       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> UWE    LWN       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>266</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> UWE    WTL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">026</span>363</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> UWE    NAL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">028</span>949</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CHL    CHU       50<span style="text-decoration: underline;">022</span>268    50<span style="text-decoration: underline;">023</span>868</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> NAL    NAU       50<span style="text-decoration: underline;">028</span>949    50<span style="text-decoration: underline;">034</span>395</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="color: #BB0000;">NA</span>     TUM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">013</span>200</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="color: #BB0000;">NA</span>     LNF             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> <span style="color: #BB0000;">NA</span>     ICL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> <span style="color: #BB0000;">NA</span>     ICM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">017</span>117</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -493,18 +457,18 @@ of these corrections are implemented below using the
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 12 × 4</span></span></span>
 <span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL    LNF       50<span style="text-decoration: underline;">016</span>572    50<span style="text-decoration: underline;">016</span>572</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> <span style="color: #BB0000;">NA</span>     TUM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">013</span>200</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> <span style="color: #BB0000;">NA</span>     ICL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>572</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> <span style="color: #BB0000;">NA</span>     ICM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">017</span>117</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> <span style="color: #BB0000;">NA</span>     UWE             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">018</span>330</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> <span style="color: #BB0000;">NA</span>     LWN             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">021</span>266</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> <span style="color: #BB0000;">NA</span>     CHL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">022</span>268</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> <span style="color: #BB0000;">NA</span>     CHU             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">023</span>868</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> <span style="color: #BB0000;">NA</span>     WTL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">026</span>363</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="color: #BB0000;">NA</span>     NAL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">028</span>949</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> <span style="color: #BB0000;">NA</span>     NAU             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">034</span>395</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> <span style="color: #BB0000;">NA</span>     CHW             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">045</span>832</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TUM    CHL       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TUM    CHW       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ICL    LNF       50<span style="text-decoration: underline;">016</span>572    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> UWE    LWN       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>266</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> UWE    WTL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">026</span>363</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> UWE    NAL       50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">028</span>949</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> CHL    CHU       50<span style="text-decoration: underline;">022</span>268    50<span style="text-decoration: underline;">023</span>868</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> NAL    NAU       50<span style="text-decoration: underline;">028</span>949    50<span style="text-decoration: underline;">034</span>395</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> <span style="color: #BB0000;">NA</span>     TUM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">013</span>200</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> <span style="color: #BB0000;">NA</span>     ICL             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> <span style="color: #BB0000;">NA</span>     ICM             <span style="color: #BB0000;">NA</span>    50<span style="text-decoration: underline;">017</span>117</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="incorporating-nodes">Incorporating Nodes<a class="anchor" aria-label="anchor" href="#incorporating-nodes"></a>
@@ -542,16 +506,16 @@ argument to expand the tibble. Our results are saved to a new object
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 21 × 4</span></span></span>
 <span><span class="co">#&gt;    parent child parent_hydro child_hydro</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL_D  ICL_U     50<span style="text-decoration: underline;">016</span>572    50<span style="text-decoration: underline;">016</span>572</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICL_U  LNF       50<span style="text-decoration: underline;">016</span>572    50<span style="text-decoration: underline;">016</span>572</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ICM_D  ICM_U     50<span style="text-decoration: underline;">017</span>117    50<span style="text-decoration: underline;">017</span>117</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> LWN_D  LWN_U     50<span style="text-decoration: underline;">021</span>266    50<span style="text-decoration: underline;">021</span>266</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CHL_D  CHL_U     50<span style="text-decoration: underline;">022</span>268    50<span style="text-decoration: underline;">022</span>268</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CHU_D  CHU_U     50<span style="text-decoration: underline;">023</span>868    50<span style="text-decoration: underline;">023</span>868</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> WTL_D  WTL_U     50<span style="text-decoration: underline;">026</span>363    50<span style="text-decoration: underline;">026</span>363</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> NAL_D  NAL_U     50<span style="text-decoration: underline;">028</span>949    50<span style="text-decoration: underline;">028</span>949</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> NAU_D  NAU_U     50<span style="text-decoration: underline;">034</span>395    50<span style="text-decoration: underline;">034</span>395</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> CHW_D  CHW_U     50<span style="text-decoration: underline;">045</span>832    50<span style="text-decoration: underline;">045</span>832</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> TUM    UWE       50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">018</span>330</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> TUM    CHL_D     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">022</span>268</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> TUM    CHW_D     50<span style="text-decoration: underline;">013</span>200    50<span style="text-decoration: underline;">045</span>832</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> ICL_D  ICL_U     50<span style="text-decoration: underline;">016</span>572    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> ICL_U  LNF       50<span style="text-decoration: underline;">016</span>572    50<span style="text-decoration: underline;">016</span>572</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> ICM_D  ICM_U     50<span style="text-decoration: underline;">017</span>117    50<span style="text-decoration: underline;">017</span>117</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> UWE    LWN_D     50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">021</span>266</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> UWE    WTL_D     50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">026</span>363</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> UWE    NAL_D     50<span style="text-decoration: underline;">018</span>330    50<span style="text-decoration: underline;">028</span>949</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> LWN_D  LWN_U     50<span style="text-decoration: underline;">021</span>266    50<span style="text-decoration: underline;">021</span>266</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 11 more rows</span></span></span></code></pre></div>
 </div>
 </div>
