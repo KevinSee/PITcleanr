@@ -4,7 +4,7 @@ author:
   - Ryan N. Kinzer
   - Mike Ackerman
   - Kevin See
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: "Feb 1, 2024"
 output:
   bookdown::html_document2:
     theme: yeti
@@ -16,8 +16,6 @@ output:
     number_sections: yes
 always_allow_html: yes
 ---
-
-\`
 
 ```{r chunk-opts, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
 # knitr options
@@ -195,13 +193,14 @@ tmp_config <- buildConfig(node_assign = "array",
 
 ## Test Tags
 
-To help assess a site's operational condition `PITcleanr` includes the function `queryTestTagSite()`. The function queries the test tag history from PTAGIS for a single interrogation site during a calendar year. The test tag information is useful to quickly examine the site for operation conditions and to help understand potential assumption violations with future analyses.
+To help assess a site's operational condition `PITcleanr` includes the function `queryTimerTagSite()`. The function queries the timer test tag history from PTAGIS for a single interrogation site during a calendar year. The test tag information is useful to quickly examine the site for operation conditions and to help understand potential assumption violations with future analyses.
 
-```{r test-tag}
+```{r test-tag, eval = F}
 # check for timer tag to evaluate site operation
-test_tag = queryTestTagSite(site_code = "ZEN", 
-                            year = 2023, 
-                            api_key = api_key) # requires an API key
+test_tag <-
+  queryTimerTagSite(site_code = "ZEN", 
+                    year = 2023, 
+                    api_key = api_key) # requires an API key
 
 test_tag %>%
   ggplot(aes(x = time_stamp, y = 1)) +
@@ -211,7 +210,7 @@ test_tag %>%
         axis.ticks.y = element_blank(),
         axis.title.x = element_blank(),
         axis.title.y = element_blank()) +
-  facet_grid(antenna_id~transceiver_id)
+  facet_grid(antenna_id ~ transceiver_id)
 ```
 
 
@@ -443,8 +442,9 @@ The `compress()` function assigns detections on individual antennas to "nodes" (
 
 ```{r compress}
 # compress observations
-comp_obs = compress(cth_file = raw_ptagis,
-                    configuration = config)
+comp_obs <-
+  compress(cth_file = raw_ptagis,
+           configuration = config)
 
 # view compressed observations
 head(comp_obs)
@@ -479,16 +479,18 @@ A next typical step in a PIT-tag analysis within a stream or river network is to
 
 ```{r extract-sites}
 # extract sites from complete tag histories
-sites_sf = extractSites(cth_file = raw_ptagis,
-                        as_sf = T,
-                        min_date = '20180301',
-                        configuration = config)
+sites_sf <-
+  extractSites(cth_file = raw_ptagis,
+               as_sf = T,
+               min_date = '20180301',
+               configuration = config)
 ```
 
 After reviewing the data you may find that some sites should be removed or renamed for your particular analysis. This step can easily be accomplished with `tidyverse` commands. For our example, we are only interested in interrogation sites upstream of Tumwater Dam, and we want to combine both Tumwater detection sites; TUM and TUF.
 
 ```{r remove-sites}
-sites_sf = sites_sf %>%
+sites_sf <-
+  sites_sf %>%
   # all sites in Wenatchee have an rkm greater than or equal to 754
   filter(str_detect(rkm, '^754'),
          type != "MRR",            # ignore MRR sites
@@ -502,15 +504,14 @@ The next step is to download the stream spatial layer from the USGS and the [Nat
 
 ```{r nhd-flowlines}
 # download subset of NHDPlus flowlines
-nhd_list = queryFlowlines(sites_sf = sites_sf,
-                          root_site_code = "TUM",
-                          min_strm_order = 2,
-                          dwnstrm_sites = T,
-                          dwn_min_stream_order_diff = 2)
+nhd_list <-
+  queryFlowlines(sites_sf = sites_sf,
+                 root_site_code = "TUM",
+                 min_strm_order = 2,
+                 combine_up_down = TRUE)
 
-# join upstream and downstream flowlines in nhd_list
-flowlines = nhd_list$flowlines %>%
-    rbind(nhd_list$dwn_flowlines)
+# extract flowlines flowlines nhd_list
+flowlines <- nhd_list$flowlines
 ```
 
 The `sites_sf` and `flowlines` objects can now be used to create a simple map of your site locations which can be used to understand how nodes or sites relate to each other across the stream network.
@@ -521,8 +522,8 @@ library(ggplot2)
 
 tum_map <- ggplot() +
   geom_sf(data = flowlines,
-          aes(color = as.factor(StreamOrde),
-              size = StreamOrde)) +
+          aes(color = as.factor(streamorde),
+              size = streamorde)) +
   scale_color_viridis_d(direction = -1,
                         option = "D",
                         name = "Stream\nOrder",
@@ -569,11 +570,12 @@ Sometimes errors occur in the parent-child table (e.g., due to errors in lat/lon
 
 ```{r edit-parent-child}
 # edit parent-child table
-parent_child = editParentChild(parent_child,
-                               fix_list = list(c(NA, "PES", "TUM"),
-                                               c(NA, "LNF", "ICL"),
-                                               c("PES", "ICL", "TUM")),
-                               switch_parent_child = list(c("ICL", 'TUM'))) %>%
+parent_child <-
+  editParentChild(parent_child,
+                  fix_list = list(c(NA, "PES", "TUM"),
+                                  c(NA, "LNF", "ICL"),
+                                  c("PES", "ICL", "TUM")),
+                  switch_parent_child = list(c("ICL", 'TUM'))) %>%
   filter(!is.na(parent))
 ```
 
@@ -588,8 +590,9 @@ If the configuration file contains multiple nodes for some sites (e.g., a node f
 
 ```{r add-nodes}
 # add nodes for arrays
-parent_child_nodes = addParentChildNodes(parent_child = parent_child,
-                                        configuration = config)
+parent_child_nodes <-
+  addParentChildNodes(parent_child = parent_child,
+                      configuration = config)
 
 # plot parent-child w/ nodes
 plotNodes(parent_child_nodes)
@@ -601,8 +604,9 @@ plotNodes(parent_child_nodes)
 
 ```{r node-order}
 # build paths and add node order
-node_order = buildNodeOrder(parent_child = parent_child_nodes,
-                            direction = "u")
+node_order <-
+  buildNodeOrder(parent_child = parent_child_nodes,
+                 direction = "u")
 
 # view node paths and orders
 node_order %>%
@@ -618,9 +622,10 @@ With the parent-child relationships established, `PITcleanr` can assign a moveme
 
 ```{r add-direction}
 # add direction based on parent-child table
-comp_dir <- addDirection(compress_obs = comp_obs, 
-                         parent_child = parent_child_nodes, 
-                         direction = "u")
+comp_dir <- 
+  addDirection(compress_obs = comp_obs, 
+               parent_child = parent_child_nodes, 
+               direction = "u")
 
 head(comp_dir, 6) %>%
   kable() %>%
@@ -638,10 +643,11 @@ If a tag fails to meet that assumption (e.g., at least one direction is unknown)
 
 ```{r filter-detections}
 # add direction, and filter detections
-comp_filter = filterDetections(compress_obs = comp_obs, 
-                               parent_child = parent_child_nodes,
-                               # remove any detections after spawning season
-                               max_obs_date = "20180930")
+comp_filter <-
+  filterDetections(compress_obs = comp_obs, 
+                   parent_child = parent_child_nodes,
+                   # remove any detections after spawning season
+                   max_obs_date = "20180930")
 
 # view filtered observations
 comp_filter %>%
@@ -662,13 +668,15 @@ Below, we move forward trusting `PITcleanr`'s algorithm.
 
 ```{r auto-keep}
 # after double-checking PITcleanr calls, filter out the final dataset for further analysis
-comp_final = comp_filter %>%
+comp_final <-
+  comp_filter %>%
   filter(auto_keep_obs = TRUE)
 ```
 
 ```{r summarise-dets}
 # number of unique tags per node
-node_tags = comp_final %>%
+node_tags <-
+  comp_final %>%
   group_by(node) %>%
   summarise(n_tags = n_distinct(tag_code))
 
@@ -678,8 +686,9 @@ node_tags
 
 ```{r plot-est-tags, eval = FALSE, echo = FALSE}
 # Or you could map the number of tags at each site.
-node_tags <- sites_sf %>%
-   left_join(node_tags, by = c('node_site' = 'node'))
+node_tags <- 
+  sites_sf %>%
+  left_join(node_tags, by = c('node_site' = 'node'))
 
 # plot tags on the map from above
 tum_map +
@@ -701,8 +710,9 @@ Oftentimes, we want to use the number of tags detected at a site as a surrogate 
 
 ```{r est-eff}
 # estimate detection efficiencies for nodes
-node_eff = estNodeEff(capHist_proc = comp_final,
-                      node_order = node_order)
+node_eff <-
+  estNodeEff(capHist_proc = comp_final,
+             node_order = node_order)
 
 # view node efficiencies
 node_eff %>%
@@ -717,10 +727,11 @@ Finally, various mark-recapture models require a capture history of 1's and 0's 
 
 ```{r cap-hist}
 # build capture histories
-cap_hist = buildCapHist(filter_ch = comp_filter,
-                        parent_child = parent_child,
-                        configuration = config,
-                        drop_nodes = T)
+cap_hist <-
+  buildCapHist(filter_ch = comp_filter,
+               parent_child = parent_child,
+               configuration = config,
+               drop_nodes = T)
 
 # view capture histories
 cap_hist
@@ -729,9 +740,10 @@ cap_hist
 The `defineCapHistCols()` function can be used to identify the site or node associated with the position of each 1 and 0 in the capture history matrix.
 
 ```{r cap-hist-names}
-col_nodes <- defineCapHistCols(parent_child = parent_child,
-                               configuration = config,
-                               use_rkm = T)
+col_nodes <- 
+  defineCapHistCols(parent_child = parent_child,
+                    configuration = config,
+                    use_rkm = T)
 
 col_nodes
 ```
@@ -747,12 +759,14 @@ In this example, we'll estimate the survival of Lemhi River, Idaho juvenile Chin
 
 ```{r load-lemhi-data}
 # read in PTAGIS detections
-ptagis_file <- system.file("extdata",
-                           "LEMTRP_chnk_cth_2021.csv",
-                           package = "PITcleanr",
-                           mustWork = TRUE)
+ptagis_file <- 
+  system.file("extdata",
+              "LEMTRP_chnk_cth_2021.csv",
+              package = "PITcleanr",
+              mustWork = TRUE)
 
-ptagis_cth <- readCTH(ptagis_file) %>%
+ptagis_cth <- 
+  readCTH(ptagis_file) %>%
   arrange(tag_code,
           event_date_time_value)
 
@@ -766,13 +780,9 @@ The configuration file we will use starts with the standard PTAGIS configuration
 configuration <-
   buildConfig(node_assign = "site") %>% 
   mutate(across(node,
-                ~ if_else(as.numeric(str_sub(rkm, 1, 3)) <= 234,
-                          "B2J",
-                          .)),
-         across(node,
-                ~ if_else(site_code == "GRS",
-                          "GRJ",
-                          .))) %>%
+                ~ case_when(as.numeric(str_sub(rkm, 1, 3)) <= 234 ~ "B2J",
+                            site_code == "GRS" ~ "GRJ",
+                            .default = .))) %>%
   filter(!is.na(node))
 ```
 
@@ -781,11 +791,11 @@ configuration <-
 With the capture histories and a configuration file that shows what node each detection is mapped onto, we can compress those capture histories into a more manageable and meaningful object. For more detail about compressing, see the [Compressing](https://kevinsee.github.io/PITcleanr/articles/compress_data.html) data vignette.
 
 ```{r config-2, echo=FALSE, eval = FALSE}
-## configuration <- system.file("extdata/LEMTRP",
-##                           "LEMTRP_configuration.csv",
-##                           package = "PITcleanr",
-##                           mustWork = TRUE) |>
-##   readr::read_csv(show_col_types = F)
+# configuration <- system.file("extdata",
+#                              "LEMTRP_configuration.csv",
+#                              package = "PITcleanr",
+#                              mustWork = TRUE) |>
+#   readr::read_csv(show_col_types = F)
 ```
 
 ```{r lemhi-compress}
@@ -847,25 +857,21 @@ Once the sites have been finalized, we query the NHDPlus v2 flowlines from USGS,
 
 ```{r lemhi-lines}
 nhd_list = queryFlowlines(sites_sf,
-                          root_site_code = "LLR",
-                          min_strm_order = 2,
-                          dwnstrm_sites = T,
-                          dwn_min_stream_order_diff = 4,
-                          buffer_dist = units::as_units(10, "km"))
+                          root_site_code = "LLRTP",
+                          min_strm_order = 2)
 
-# compile the upstream and downstream flowlines
-flowlines = nhd_list$flowlines %>%
-  rbind(nhd_list$dwn_flowlines)
+# pull out the flowlines
+flowlines <- nhd_list$flowlines
 ```
 
 ```{r load-lines, echo = F, eval = FALSE}
-## flowlines <- system.file("extdata/LEMTRP",
-##                           "LEMTRP_flowlines.gpkg",
-##                           package = "PITcleanr",
-##                           mustWork = TRUE) |>
-##   st_read(quiet = T) |>
-##   rename(geometry = geom) |>
-##   select(-id)
+# flowlines <- system.file("extdata/LEMTRP",
+#                           "LEMTRP_flowlines.gpkg",
+#                           package = "PITcleanr",
+#                           mustWork = TRUE) |>
+#   st_read(quiet = T) |>
+#   rename(geometry = geom) |>
+#   select(-id)
 ```
 
 This figure plots the NHDplus flowlines and our sites.
@@ -873,7 +879,7 @@ This figure plots the NHDplus flowlines and our sites.
 ```{r map-lemhi}
 ggplot() +
   geom_sf(data = flowlines,
-          aes(color = as.factor(StreamOrde))) +
+          aes(color = as.factor(streamorde))) +
   scale_color_viridis_d(direction = -1,
                         option = "D",
                         name = "Stream\nOrder",
@@ -899,10 +905,12 @@ ggplot() +
 
 ```{r lemhi-parent-child}
 # construct parent-child table
-parent_child = sites_sf %>%
+parent_child <-
+  sites_sf %>%
   buildParentChild(flowlines,
                    rm_na_parent = T,
                    add_rkm = F) %>% 
+  editParentChild(fix_list = list(c("LMJ", "GRJ", "GOJ"))) %>%
   select(parent,
          child)
 ```
@@ -959,7 +967,8 @@ prepped_df <- prepWrapper(compress_obs = comp_obs,
 In our example, we are content deleting the observations that `PITcleanr` has flagged with `auto_keep_obs = FALSE`.
 
 ```{r prepped-lemhi}
-prepped_df <- prepped_df %>%
+prepped_df <- 
+  prepped_df %>%
   mutate(
     across(user_keep_obs,
            ~ if_else(is.na(.),
@@ -974,9 +983,10 @@ Often, the inputs to a CJS model include a capture history matrix, with one row 
 
 ```{r lemhi-caphist}
 # translate PIT tag observations into capture histories, one per tag
-cap_hist <- buildCapHist(prepped_df,
-                         parent_child = parent_child,
-                         configuration = configuration)
+cap_hist <- 
+  buildCapHist(prepped_df,
+               parent_child = parent_child,
+               configuration = configuration)
 
 # show an example
 cap_hist
@@ -986,26 +996,29 @@ To determine which position in the `cap_hist` string corresponds to which node, 
 
 ```{r lemhi-cols}
 # to find out the node associated with each column
-col_nodes <- defineCapHistCols(parent_child = parent_child,
-                               configuration = configuration)
+col_nodes <- 
+  defineCapHistCols(parent_child = parent_child,
+                    configuration = configuration)
 col_nodes
 ```
 
 Users have the option to keep each detection node as a separate column when creating the capture histories, by setting `drop_nodes = F`.
 
 ```{r lemhi-cap-columns}
-cap_hist2 <- buildCapHist(prepped_df,
-                          parent_child = parent_child,
-                          configuration = configuration,
-                          drop_nodes = F)
+cap_hist2 <- 
+  buildCapHist(prepped_df,
+               parent_child = parent_child,
+               configuration = configuration,
+               drop_nodes = F)
 cap_hist2
 ```
 
 If the user wanted to find out how many tags were detected at each node, something like the following could be run:
 
 ```{r lemhi-tag-nums}
-cap_hist2 %>% select(-c(tag_code,
-                        cap_hist)) %>% 
+cap_hist2 %>% 
+  select(-c(tag_code,
+            cap_hist)) %>% 
   colSums()
 ```
 
@@ -1094,7 +1107,9 @@ Now, we can plot estimate survival (`Phi`) and examine the estimates in a table.
 est_preds$Phi %>%
   ggplot(aes(x = fct_reorder(reach, est_preds$Phi$occ), y = estimate)) +
   geom_point() +
-  geom_errorbar(aes(ymin = lcl, ymax = ucl))
+  geom_errorbar(aes(ymin = lcl, ymax = ucl)) +
+  labs(x = "Location",
+       y = "Survival")
 
 # examine the estimates
 # Survival
@@ -1113,7 +1128,9 @@ We can also look at the estimates of detection probabilities.
 est_preds$p %>%
   ggplot(aes(x = fct_reorder(site, est_preds$p$occ), y = estimate)) +
   geom_point() +
-  geom_errorbar(aes(ymin = lcl, ymax = ucl))
+  geom_errorbar(aes(ymin = lcl, ymax = ucl)) +
+  labs(x = "Location",
+       y = "Detection")
 
 # Detection
 est_preds$p %>% 
@@ -1140,6 +1157,8 @@ est_preds$Phi %>%
 Estimating fish survival is complex and requires multiple assumptions. Be careful following this script and reproducing results with your own data. We do not guarantee the steps listed above will yield perfect results, and they will require adjustments to fit your needs. The steps were only provided to get you started with `PITcleanr`. Please reach out to the authors if you have questions or need assistance using the package.
 
 ```{r build-script, eval=FALSE, echo = FALSE}
-knitr::purl(input = paste0(here::here(),"/docs/PITcleanr_workshop.Rmd"),
-            output = paste0(here::here(),"/docs/PITcleanr_workshop_script.R"))
+knitr::purl(input = here::here("vignettes",
+                               "PITcleanr_workshop.Rmd"),
+            output = here::here("vignettes",
+                                "PITcleanr_workshop_script.R"))
 ```
