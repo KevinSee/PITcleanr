@@ -41,8 +41,6 @@ knitr::opts_chunk$set(
 library(knitr)
 library(here)
 library(kableExtra)
-
-# api_key = '1AA5CF55-C98E-4001-96E4-1E96CEE1E806'
 ```
 
 # Introduction
@@ -229,7 +227,7 @@ To help assess a site's operational condition `PITcleanr` includes the function 
 test_tag <-
   queryTimerTagSite(site_code = "ZEN", 
                     year = 2023, 
-                    api_key = api_key) # requires an API key
+                    api_key = my_api_key) # requires an API key
 
 test_tag %>%
   ggplot(aes(x = time_stamp, y = 1)) +
@@ -376,7 +374,7 @@ DART no longer provides mark event information with a tag code's observation dat
 ```{r complete-tag-history-node, eval = FALSE}
 cth_node <- queryCapHist(ptagis_tag_code = tagID,
                          include_mark = TRUE,
-                         api_key = api_key)
+                         api_key = my_api_key)
 ```
 
 Additionally, the `queryMRRDataFile()` function can be used to query a raw MRR file from PTAGIS. NOTE: only the latest corrected version of the MRR file is returned.
