@@ -180,6 +180,16 @@ queryMRRDataFile = function(file_nm = NULL,
                                                                        length),
                                                                      ~ as.numeric(.) |>
                                                                        suppressWarnings()))
+                                                 } else if(length(x) == 5) {
+                                                   dplyr::tibble(id = x[1],
+                                                                 pit_tag = x[2],
+                                                                 length = x[3],
+                                                                 comments = x[5]) |>
+                                                     dplyr::mutate(
+                                                       dplyr::across(c(id,
+                                                                       length),
+                                                                     ~ as.numeric(.) |>
+                                                                       suppressWarnings()))
                                                  }
                                                })) |>
       tidyr::unnest(split_text_df) |>

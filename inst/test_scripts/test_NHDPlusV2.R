@@ -18,7 +18,8 @@ devtools::load_all()
 all_meta = queryPtagisMeta()
 
 # which sites do we care about for this exercise?
-model_sites = writeLGRNodeNetwork()
+model_sites = writeLGRNodeNetwork() |>
+  rename(site_code = SiteID)
 xtabs(~ Step3, model_sites)
 
 # model_sites = writeTUMNodeNetwork()
@@ -28,23 +29,22 @@ xtabs(~ Step3, model_sites)
 # create sf points of a subset of sites
 sub_sites = model_sites %>%
   # filter(Step3 == "SFSalmon") %>%
-  # filter(SiteID == "GRA" | Step3 == "SFSalmon") %>%
-  filter(SiteID == "GRA" | Step3 == "Potlatch") %>%
-  # filter(SiteID == "GRA" | Step2 == "NE_Oregon") %>%
-  # filter(Step3 == "UpperSalmon") %>%
+  # filter(site_code == "GRA" | Step3 == "SFSalmon") %>%
+  # filter(site_code == "GRA" | Step3 == "Potlatch") %>%
+  # filter(site_code == "GRA" | Step2 == "NE_Oregon") %>%
+  filter(Step3 == "UpperSalmon") %>%
   # filter(Step3 == "UpperSalmon" | SiteID == "GRA") %>%
-  select(SiteID) %>%
   left_join(all_meta %>%
-              select(SiteID = siteCode,
-                     siteName,
-                     siteType,
-                     coordinateType,
+              select(site_code,
+                     site_name,
+                     site_type,
+                     coordinate_type,
                      latitude,
                      longitude,
                      rkm) %>%
               distinct()) %>%
   filter(!is.na(latitude)) %>%
-  group_by(SiteID) %>%
+  group_by(site_code) %>%
   slice(1) %>%
   ungroup() %>%
   st_as_sf(coords = c("longitude",
@@ -56,45 +56,43 @@ sub_sites = model_sites %>%
 # root_site = sub_sites %>%
 #   slice(1)
 root_site = sub_sites %>%
-  filter(SiteID == "USE")
+  filter(site_code == "USE") |>
+  # filter(site_code == "GRA") |>
+  pull(site_code)
 
 # download the NHDPlus v2 flowlines
-# do you want flowlines downstream of root site? Set to TRUE if you have downstream sites
-dwn_flw = T
 nhd_list = queryFlowlines(sites_sf = sub_sites,
-                          root_site_code = root_site$SiteID,
-                          min_strm_order = 2,
-                          dwnstrm_sites = dwn_flw,
-                          dwn_min_stream_order_diff = 2)
+                          root_site_code = root_site,
+                          min_strm_order = 2)
 
 
 flowlines = nhd_list$flowlines
-if(dwn_flw) {
-  flowlines %<>%
-  rbind(nhd_list$dwn_flowlines)
-}
 
 # join sites to nearest hydro sequence
 sites_NHDseg = st_join(sub_sites,
                        flowlines %>%
-                         select(gnis_name, Hydroseq),
+                         select(gnis_name, hydroseq),
                        join = st_nearest_feature)
 
 
 # plot the flowlines and the sites
 ggplot() +
   geom_sf(data = flowlines,
-          aes(color = as.factor(StreamOrde))) +
+          aes(color = as.factor(streamorde))) +
   scale_color_viridis_d(direction = -1,
                         end = 0.7) +
   geom_sf(data = nhd_list$basin,
           fill = NA,
           lwd = 2) +
-  geom_sf(data = sites_NHDseg,
-          size = 4,
-          color = "black") +
+  # geom_sf(data = sites_NHDseg,
+  #         size = 4,
+  #         color = "black") +
   geom_sf_label(data = sub_sites,
-                aes(label = SiteID)) +
+                aes(label = site_code)) +
+  geom_sf_label(data = sub_sites %>%
+                  filter(site_code == root_site),
+                aes(label = site_code),
+                color = "red") +
   theme_bw() +
   theme(axis.title = element_blank()) +
   labs(color = "Stream\nOrder")

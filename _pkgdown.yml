@@ -103,4 +103,7 @@ articles:
   desc: |
     Vignettes aimed at preparing data for DABOM
   contents: quick_prep
-
+- title: PTAGIS Conference Workshop 2024
+  desc: |
+    Workshop presentation focused on teaching participants how to use PITcleanr
+  contents: PITcleanr_workshop

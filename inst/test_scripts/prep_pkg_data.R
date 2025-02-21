@@ -384,10 +384,10 @@ if(!is.na(upstrm_loc)) {
   upstrm_comid = NULL
 }
 
-nhd_list = queryFlowlines2(sites_sf = sites_sf,
-                           root_site_code = root_site_code,
-                           min_strm_order = 2,
-                           max_upstream_comid = upstrm_comid)
+nhd_list = queryFlowlines(sites_sf = sites_sf,
+                          root_site_code = root_site_code,
+                          min_strm_order = 2,
+                          max_upstream_comid = upstrm_comid)
 
 # compile the upstream and downstream flowlines
 flowlines = nhd_list$flowlines
