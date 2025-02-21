@@ -117,13 +117,15 @@ Or, we can use the `int_meta` object to map our interrogation sites using the `s
 # install.packages('maps')
 
 # get state boundaries
-pnw = st_as_sf(maps::map("state", 
-                   region = c('ID', 'WA', 'OR'), 
-                   plot = FALSE, 
-                   fill = TRUE))
+pnw <-
+  st_as_sf(maps::map("state", 
+                     region = c('ID', 'WA', 'OR'), 
+                     plot = FALSE, 
+                     fill = TRUE))
 
 # create spatial feature object of IPTDS
-int_sf <- int_meta %>% 
+int_sf <- 
+  int_meta %>% 
   filter(siteType == "Instream Remote Detection System",
          !is.na(longitude),
          !is.na(latitude)) %>%
