@@ -5,7 +5,11 @@ author:
   - Mike Ackerman
   - Kevin See
 date: "Feb 1, 2024"
-output:
+output: 
+  rmarkdown::html_vignette:
+    toc: true
+    toc_depth: 3
+    number_sections: yes
   bookdown::html_document2:
     theme: yeti
     toc: yes
@@ -15,6 +19,10 @@ output:
       smooth_scroll: yes
     number_sections: yes
 always_allow_html: yes
+vignette: >
+  %\VignetteIndexEntry{PITcleanr Workshop}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r chunk-opts, echo = FALSE, message = FALSE, warning = FALSE, results = "hide"}
@@ -33,8 +41,6 @@ knitr::opts_chunk$set(
 library(knitr)
 library(here)
 library(kableExtra)
-
-api_key = '1AA5CF55-C98E-4001-96E4-1E96CEE1E806'
 ```
 
 # Introduction
@@ -65,13 +71,23 @@ remotes::install_github("KevinSee/PITcleanr",
 
 Once `PITcleanr` is successfully installed it can be loaded into the R session using the `library()` function. In this workshop, we will also use functions from the following packages; `tidyverse`, `sf`, and `kableExtra`. Use the `install.packages()` function for packages that are not already installed.
 
-```{r load-packages}
+```{r load-packages, eval = F}
 # E.g., for packages not installed:
 # install.packages(c("tidyverse", "sf"))
 
 # load necessary packages
 library(PITcleanr)
-# library(tidyverse)
+library(tidyverse)
+library(sf)
+library(kableExtra)
+```
+
+
+```{r load-packages-bkgrnd, echo = F}
+
+# load necessary packages
+library(PITcleanr)
+# load individual packages from tidyverse
 library(dplyr)
 library(ggplot2)
 library(readr)
@@ -80,6 +96,7 @@ library(stringr)
 library(purrr)
 library(forcats)
 library(tidyr)
+# other packages
 library(sf)
 library(kableExtra)
 ```
@@ -210,7 +227,7 @@ To help assess a site's operational condition `PITcleanr` includes the function 
 test_tag <-
   queryTimerTagSite(site_code = "ZEN", 
                     year = 2023, 
-                    api_key = api_key) # requires an API key
+                    api_key = my_api_key) # requires an API key
 
 test_tag %>%
   ggplot(aes(x = time_stamp, y = 1)) +
@@ -357,7 +374,7 @@ DART no longer provides mark event information with a tag code's observation dat
 ```{r complete-tag-history-node, eval = FALSE}
 cth_node <- queryCapHist(ptagis_tag_code = tagID,
                          include_mark = TRUE,
-                         api_key = api_key)
+                         api_key = my_api_key)
 ```
 
 Additionally, the `queryMRRDataFile()` function can be used to query a raw MRR file from PTAGIS. NOTE: only the latest corrected version of the MRR file is returned.
@@ -828,6 +845,23 @@ comp_obs %>%
                 ~ round(., digits = 3))) %>% 
   DT::datatable(filter = "top")
 ```
+
+```{r lemhi-table-kbl, echo = FALSE, eval = F}
+# alternative to the code above, without using DT package
+comp_obs %>% 
+  select(tag_code) |> 
+  distinct() |> 
+  slice_sample(n = 4) |> 
+  left_join(comp_obs,
+            by = join_by(tag_code)) |> 
+  mutate(across(where(is.difftime),
+                as.numeric),
+         across(where(is.numeric),
+                ~ round(., digits = 3))) %>% 
+  kable() %>%
+  kable_styling()
+```
+
 
 ## Build Parent-Child Table
 
