@@ -71,7 +71,15 @@ Once `PITcleanr` is successfully installed it can be loaded into the R session u
 
 # load necessary packages
 library(PITcleanr)
-library(tidyverse)
+# library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(readr)
+library(lubridate)
+library(stringr)
+library(purrr)
+library(forcats)
+library(tidyr)
 library(sf)
 library(kableExtra)
 ```
