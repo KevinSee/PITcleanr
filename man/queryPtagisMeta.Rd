@@ -10,7 +10,7 @@
 queryPtagisMeta()
 }
 \description{
-Compile metadata from all MRR and interogation sites from PTAGIS
+Compile metadata from all MRR and interrogation sites from PTAGIS
 }
 \examples{
 queryPtagisMeta()

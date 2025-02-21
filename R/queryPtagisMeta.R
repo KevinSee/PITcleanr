@@ -1,6 +1,6 @@
 #' @title Query PTAGIS Site Metadata
 #'
-#' @description Compile metadata from all MRR and interogation sites from PTAGIS
+#' @description Compile metadata from all MRR and interrogation sites from PTAGIS
 #'
 #' @author Kevin See
 #'
