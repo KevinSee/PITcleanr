@@ -43,6 +43,7 @@ Suggests:
     ggrepel,
     kableExtra,
     knitr,
+    maps,
     marked,
     rmarkdown
 VignetteBuilder: knitr
