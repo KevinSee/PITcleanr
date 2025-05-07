@@ -88,6 +88,7 @@ prepWrapper = function(compress_obs = NULL,
     message(paste("Filtering observations prior to", start_node, "\n"))
 
     obs = compress_obs %>%
+      select(-any_of("start_date")) |>
       left_join(compress_obs %>%
                   filter(node == start_node,
                          event_type_name %in% c("Mark", "Recapture")) %>%
@@ -115,6 +116,7 @@ prepWrapper = function(compress_obs = NULL,
       ungroup()
   } else {
     obs = compress_obs %>%
+      select(-any_of("start_date")) |>
       group_by(tag_code) %>%
       mutate(start_date = min(min_det)) %>%
       ungroup()
