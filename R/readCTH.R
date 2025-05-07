@@ -25,7 +25,7 @@
 #' @export
 #' @return a tibble containing the data downloaded from PTAGIS through a complete capture history query.
 #' @examples
-#' ptagis_file = system.file("extdata", "TUM_Chinook_2015.csv", package = "PITcleanr")
+#' ptagis_file = system.file("extdata", "TUM_chnk_cth_2018.csv", package = "PITcleanr")
 #' readCTH(ptagis_file)
 
 readCTH = function(cth_file = NULL,

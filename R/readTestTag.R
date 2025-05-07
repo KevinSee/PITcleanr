@@ -10,7 +10,7 @@
 #' @export
 #' @return a tibble containing the raw detections of test tags
 #' @examples
-#' ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+#' ptagis_file = system.file("extdata", "PRO_sthd_cth_2012.csv", package = "PITcleanr")
 #' readTestTag(ptagis_file)
 
 readTestTag <- function(cth_file = NULL,
