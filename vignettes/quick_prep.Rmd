@@ -55,7 +55,8 @@ parent_child = read_csv(parent_child_file) %>%
   addParentChildNodes(configuration = my_config)
 
 # read in PTAGIS observations (ptagis_file), site configuration, and parent-child, 
-prepped_df = prepWrapper(ptagis_file = ptagis_file,
+prepped_df = prepWrapper(cth_file = ptagis_cth,
+                         file_type = "PTAGIS",
                          configuration = my_config,
                          parent_child = parent_child,
                          # filter out detections after a particular date
