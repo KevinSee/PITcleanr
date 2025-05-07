@@ -6,12 +6,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Querying, Compressing, and Making Sense of PIT Tag Detection Data • PITcleanr</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
+<!-- favicons --><link rel="icon" type="image/png" sizes="48x48" href="../favicon-48x48.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/sandstone/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
@@ -96,7 +95,7 @@
 Tag Detection Data</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">21 February, 2025</h4>
+            <h4 data-toc-skip class="date">07 May, 2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/main/vignettes/Prep_PIT_data.Rmd" class="external-link"><code>vignettes/Prep_PIT_data.Rmd</code></a></small>
       <div class="hidden name"><code>Prep_PIT_data.Rmd</code></div>
@@ -2197,13 +2196,13 @@ be performed on either the <code>parent_child</code> or
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 14 × 2</span></span></span>
 <span><span class="co">#&gt;    end_loc path           </span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> LNF     TUM ICL LNF    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> ICM     TUM ICL ICM    </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> ICL     TUM ICL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> UWE     TUM UWE        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CHL     TUM CHL        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> PES     TUM PES        </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> CHW     TUM CHW        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> ICL     TUM ICL        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> UWE     TUM UWE        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> CHL     TUM CHL        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> PES     TUM PES        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> CHW     TUM CHW        </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> LNF     TUM ICL LNF    </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> ICM     TUM ICL ICM    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ICU     TUM ICL ICM ICU</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> LWN     TUM UWE LWN    </span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> WTL     TUM UWE WTL    </span></span>
@@ -2786,7 +2785,7 @@ within <code><a href="../reference/buildCapHist.html">buildCapHist()</a></code>)
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
       </footer>
