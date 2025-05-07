@@ -1,7 +1,7 @@
 # Author: Kevin See
 # Purpose: Test new functions for processing PTAGIS data for DABOM
 # Created: 2/10/2021
-# Last Modified: 9/13/2023
+# Last Modified: 2/26/25
 # Notes:
 
 #-----------------------------------------------------------------
@@ -272,32 +272,46 @@ if(root_site_code == "PRA") {
 #-----------------------------------------------------------------
 if(root_site_code == "PRO") {
   # customize some nodes based on DABOM framework
-  configuration = org_config %>%
-    mutate(
-      across(
-        node,
-        ~ case_when(site_code %in% "PRO" ~ "PRO",
-                    site_code %in% c("NFTEAN", "TEANAR", "TEANM", "TEANWF") ~ "LMT_U",
-                    site_code == "ROZ" & !antenna_id %in% c('01', '02', '03') ~ NA_character_,
-                    site_code == 'TAN' & config_id %in% c(120, 130) ~ "TAN_D",
-                    site_code %in% c('MC1', 'MC2', 'MCJ', 'MCN') ~ 'MCN',
-                    site_code == 'ICH' ~ 'ICH_D',
-                    str_detect(rkm, '522\\.') & rkm_total > 538 ~ 'ICH_U',
-                    as.integer(stringr::str_split(rkm, '\\.', simplify = T)[,1]) == 351 &
-                      site_code != "JD1" ~ "JD1_U",
-                    site_code == 'JD1' ~ 'JD1_D',
-                    site_code != 'JD1' &
-                      as.integer(stringr::str_split(rkm, '\\.', simplify = T)[,1]) < 351 &
-                      str_detect(site_code, "^COLR", negate = T) ~ 'JDA',
-                    site_code == 'PRA' ~ 'PRA_D',
-                    site_code != 'PRA' & as.integer(stringr::str_split(rkm, '\\.', simplify = T)[,1]) >= 639 ~ 'PRA_U',
-                    .default = .))) |>
-    # add a missing lat/long
-    mutate(across(latitude,
-                  ~ case_when(site_code == "SWK" ~ 47.210348,
-                                .default = .)),
-           across(longitude,
-                  ~ case_when(site_code == "SWK" ~ -120.699021,
+  configuration <-
+    org_config |>
+    mutate(across(node,
+                  ~ case_when(site_code %in% c("PRO") ~ "PRO",
+                              site_code %in% c("NFTEAN",
+                                               "TEANAR",
+                                               "TEANM",
+                                               "TEANWF",
+                                               "NFT",
+                                               "UMT") ~ "LMTA0",
+                              site_code %in% c("ROZ",
+                                               "RZF") &
+                                antenna_id %in% c('01', '02', '03') ~ "ROZ",
+                              site_code == "ROZ" &
+                                antenna_id %in% c('A1', 'A2', 'C0') ~ NA_character_,
+                              site_code == "ROZ" &
+                                site_type == "MRR" ~ "ROZ",
+                              site_code %in% c('MC1',
+                                               'MC2',
+                                               'MCJ',
+                                               'MCN') ~ 'MCN',
+                              site_code == 'ICH' ~ "ICH_D",
+                              str_detect(rkm, '^522\\.') &
+                                rkm_total > 538 ~ 'ICH_U',
+                              as.integer(stringr::str_split_i(rkm, '\\.', 1)) == 351 &
+                                site_code != "JD1" ~ "JD1_U",
+                              site_code == 'JD1' ~ 'JD1_D',
+                              site_code != 'JD1' &
+                                as.integer(stringr::str_split_i(rkm, '\\.', 1)) < 351 &
+                                str_detect(site_code, "^COLR", negate = T) ~ 'JDA',
+                              site_code %in% c("PRA",
+                                               "PRDLDR") ~ "PRA_D",
+                              site_code != "PRA" &
+                                as.integer(stringr::str_split_i(rkm, '\\.', 1)) >= 639 ~ "PRA_U",
+                              .default = .)),
+           # add a missing lat/long
+           across(c(latitude,
+                    longitude),
+                  ~ case_when(site_code == "SWK" &
+                                is.na(.) ~ unique(.[site_code == "SWAUKC"]),
                               .default = .)))
 
   sites_df = writeOldNetworks()$Prosser |>
@@ -317,7 +331,7 @@ if(root_site_code == "PRO") {
 #-----------------------------------------------------------------
 if(root_site_code == "TUM") {
   configuration = org_config %>%
-    muate(
+    mutate(
       across(
         node,
         ~ case_when(site_code %in% c('LNF', 'LEAV') ~ 'LNF',
@@ -451,8 +465,10 @@ if(root_site_code == "PRO") {
                      add_rkm = F) %>%
     editParentChild(fix_list = list(c(NA, "ICL", "TUM"),
                                     c(NA, "PES", "TUM"),
-                                    c(NA, "LNF", "ICL")),
-                    switch_parent_child = list(c("ICL", 'TUM')))
+                                    c(NA, "LNF", "ICL"),
+                                    c(NA, "ICM", "ICL")),
+                    switch_parent_child = list(c("ICL", 'TUM'))) %>%
+    filter(!is.na(parent))
 } else if(root_site_code == "PRA") {
   parent_child = sites_sf %>%
     buildParentChild(flowlines,
@@ -614,20 +630,21 @@ nhd_list <-
   queryFlowlines(sites_sf,
                  # root_site_code = "LEMTRP",
                  root_site_code = "LLR",
-                 min_strm_order = 2,
-                 dwnstrm_sites = T,
-                 dwn_min_stream_order_diff = 4,
-                 buffer_dist = units::as_units(10, "km"))
+                 min_strm_order = 2)
 
-# compile the upstream and downstream flowlines
-flowlines = nhd_list$flowlines |>
-  rbind(nhd_list$dwn_flowlines)
+# pull out flowlines
+flowlines = nhd_list$flowlines
 
 # construct parent-child table
-parent_child = sites_sf |>
+parent_child <-
+  sites_sf |>
   buildParentChild(flowlines,
                    rm_na_parent = T,
-                   add_rkm = T)
+                   add_rkm = T) |>
+  editParentChild(fix_list =
+                    list(c("LMJ", "GRJ", "GOJ"))) |>
+  arrange(parent_rkm,
+          child_rkm)
 
 plotNodes(parent_child)
 
@@ -650,15 +667,21 @@ parent_child <-
 #-----------------------------------------------------------------
 # write configuration & parent-child table
 configuration |>
-  write_csv(here("inst/extdata/LEMTRP",
+  write_csv(here("inst",
+                 "extdata",
+                 # "LEMTRP",
                  paste0(root_site_code, "_configuration.csv")))
 
 parent_child |>
-  write_csv(here("inst/extdata/LEMTRP",
+  write_csv(here("inst",
+                 "extdata",
+                 # "LEMTRP",
                  paste0(root_site_code, "_parent_child.csv")))
 
 flowlines |>
-  st_write(dsn = here("inst/extdata/LEMTRP",
+  st_write(dsn = here("inst",
+                      "extdata",
+                      "LEMTRP",
                       paste0(root_site_code, "_flowlines.gpkg")),
            delete_dsn = T)
 
@@ -667,5 +690,7 @@ save(configuration,
      sites_sf,
      flowlines,
      parent_child,
-     file = here("inst/extdata/LEMTRP",
+     file = here("inst",
+                 "extdata",
+                 "LEMTRP",
                  paste0(root_site_code, "_site_config.Rdata")))

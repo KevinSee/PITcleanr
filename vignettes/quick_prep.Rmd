@@ -54,8 +54,9 @@ my_config = read_csv(config_file)
 parent_child = read_csv(parent_child_file) %>%
   addParentChildNodes(configuration = my_config)
 
-# read in PTAGIS observations (ptagis_file), site configuration, and parent-child, 
-prepped_df = prepWrapper(ptagis_file = ptagis_file,
+# read in PTAGIS complete tag histories (cth_file), site configuration, and parent-child, 
+prepped_df = prepWrapper(cth_file = ptagis_cth,
+                         file_type = "PTAGIS",
                          configuration = my_config,
                          parent_child = parent_child,
                          # filter out detections after a particular date
@@ -216,7 +217,8 @@ prepped_df = prepWrapper(cth_file = ptagis_file,
 The user can even save that output directly to an Excel workbook or .csv file by setting `save_file = TRUE` and defining a file path and name in the `file_name` argument. Within this output (either in R, or in the saved Excel file), all the rows where the field `user_keep_obs` is NA or blank must be filled in with either `TRUE` or `FALSE`. The field `auto_keep_obs` provides a suggestion, but the ultimate choice is up to the user. 
 
 ```{r, eval = F}
-prepped_df = prepWrapper(ptagis_file = ptagis_file,
+prepped_df = prepWrapper(cth_file = ptagis_file,
+                         file_type = "PTAGIS",
                          configuration = my_config,
                          parent_child = parent_child_nodes,
                          min_obs_date = "20180301",
@@ -226,5 +228,3 @@ prepped_df = prepWrapper(ptagis_file = ptagis_file,
 ```
 
 The `prepWrapper()` function also contains an option to add a column showing a character string of all the nodes a tag was detected at, in chronological order. Some users may find this display useful in determining which detections to retain. This option can be invoked by setting the argument `add_tag_detects = TRUE` within the `prepWrapper()` function.
-
-#### End Vignette
