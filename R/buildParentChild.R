@@ -14,7 +14,6 @@
 #'
 #' @import dplyr lubridate
 #' @importFrom stringr str_replace
-#' @importFrom magrittr %<>%
 #' @export
 #' @return NULL
 #' @examples #buildParentChild()
@@ -27,7 +26,8 @@ buildParentChild = function(sites_sf = NULL,
 
   if(!identical(st_crs(sites_sf),
                 st_crs(flowlines))) {
-    sites_sf %<>%
+    sites_sf <-
+      sites_sf |>
       st_transform(st_crs(flowlines))
   }
 
@@ -69,7 +69,8 @@ buildParentChild = function(sites_sf = NULL,
   if(rm_na_parent & sum(is.na(parent_child$parent)) > 0) {
     cat(paste0("These child locations: ", paste(parent_child$child[is.na(parent_child$parent)], collapse = ", "),
                ",\n had no parent location and were removed from the table.\n"))
-    parent_child %<>%
+    parent_child <-
+      parent_child |>
       filter(!is.na(parent))
   }
 
@@ -79,7 +80,8 @@ buildParentChild = function(sites_sf = NULL,
     # query PTAGIS for RKMs
     all_meta = queryPtagisMeta()
 
-    parent_child %<>%
+    parent_child <-
+      parent_child |>
       left_join(all_meta %>%
                   select(parent = site_code,
                          parent_rkm = rkm) %>%

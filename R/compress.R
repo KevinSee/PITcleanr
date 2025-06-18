@@ -24,7 +24,6 @@
 #' @import dplyr lubridate
 #' @importFrom janitor clean_names
 #' @importFrom readr read_csv
-#' @importFrom magrittr %<>%
 #' @importFrom tidyr replace_na
 #' @export
 #' @return a tibble
@@ -82,7 +81,8 @@ compress = function(cth_file = NULL,
     mutate(use_release_time = T)
 
   # set event time to the release time for selected
-  observations %<>%
+  observations <-
+    observations |>
     mutate(year = year(event_date_time_value)) %>%
     left_join(rel_time_batches,
               by = c("mark_species_name",
@@ -99,23 +99,27 @@ compress = function(cth_file = NULL,
   }
 
   # put observations in correct order in time
-  observations %<>%
+  observations <-
+    observations |>
     arrange(tag_code, event_date_time_value)
 
   # filter out disowned and orphan tags
   if(filter_orphan_disown_tags) {
-  observations %<>%
-    filter(! tag_code %in% unique(c(qc_list$disown_tags,
-                                  qc_list$orphan_tags)))
+    observations <-
+      observations |>
+      filter(! tag_code %in% unique(c(qc_list$disown_tags,
+                                      qc_list$orphan_tags)))
   } else {
     # this only filters out the specific DISOWN or ORPHAN record from PTAGIS
-    observations %<>%
+    observations <-
+      observations |>
       filter(! event_site_code_value %in% c("DISOWN",
                                            "ORPHAN"))
   }
 
   if(!is.null(configuration)) {
-    observations %<>%
+    observations <-
+      observations |>
       left_join(configuration %>%
                   select(event_site_code_value = site_code,
                          antenna_group_configuration_value = config_id,
@@ -128,7 +132,8 @@ compress = function(cth_file = NULL,
                             event_site_code_value,
                             node))
   } else {
-    observations %<>%
+    observations <-
+      observations |>
       mutate(node = event_site_code_value)
   }
 

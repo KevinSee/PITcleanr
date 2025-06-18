@@ -599,9 +599,9 @@ Sometimes errors occur in the parent-child table (e.g., due to errors in lat/lon
 # edit parent-child table
 parent_child <-
   editParentChild(parent_child,
-                  fix_list = list(c(NA, "PES", "TUM"),
-                                  c(NA, "LNF", "ICL"),
-                                  c("PES", "ICL", "TUM")),
+                  fix_list = list(c(NA, "LNF", "ICL"),
+                                  c(NA, "ICL", "TUM"),
+                                  c(NA, "ICM", "ICL")),
                   switch_parent_child = list(c("ICL", 'TUM'))) %>%
   filter(!is.na(parent))
 ```

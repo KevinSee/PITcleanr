@@ -20,7 +20,6 @@
 #' @import dplyr purrr
 #' @importFrom stringr str_replace
 #' @importFrom rlang set_names
-#' @importFrom magrittr %<>%
 #' @export
 #' @return NULL
 #' @examples createParentChildDf()
@@ -50,30 +49,31 @@ editParentChild = function(parent_child = NULL,
 
   # switch old and new parents
   if(!is.null(fix_list)) {
-  parent_child %<>%
-    inner_join(fix_list %>%
-                 purrr::map_df(.f = function(x) {
-                   tibble::tibble(parent = x[1],
-                          child = x[2],
-                          new_parent = x[3])
-                 }),
-               by = c("parent", "child")) %>%
-    mutate(parent = new_parent) %>%
-    select(-starts_with("parent_"),
-           -new_parent) %>%
-    left_join(parent_child %>%
-                select(starts_with("child")) %>%
-                rlang::set_names(str_replace,
-                                 pattern = "child",
-                                 replacement = "parent") %>%
-                bind_rows(parent_child %>%
-                            select(starts_with("parent"))) %>%
-                distinct(),
-              by = "parent") %>%
-    select(all_of(names(parent_child))) %>%
-    bind_rows(anti_join(parent_child,
-                        .,
-                        by = c("child")))
+    parent_child <-
+      parent_child |>
+      inner_join(fix_list %>%
+                   purrr::map_df(.f = function(x) {
+                     tibble::tibble(parent = x[1],
+                                    child = x[2],
+                                    new_parent = x[3])
+                   }),
+                 by = c("parent", "child")) %>%
+      mutate(parent = new_parent) %>%
+      select(-starts_with("parent_"),
+             -new_parent) %>%
+      left_join(parent_child %>%
+                  select(starts_with("child")) %>%
+                  rlang::set_names(str_replace,
+                                   pattern = "child",
+                                   replacement = "parent") %>%
+                  bind_rows(parent_child %>%
+                              select(starts_with("parent"))) %>%
+                  distinct(),
+                by = "parent") %>%
+      select(all_of(names(parent_child))) %>%
+      bind_rows(anti_join(parent_child,
+                          .,
+                          by = c("child")))
   }
 
   # switch some parent/child pairs
@@ -98,7 +98,8 @@ editParentChild = function(parent_child = NULL,
   }
 
   # fix the parent and child hyrdo sequences (and other meta-data)
-  parent_child %<>%
+  parent_child <-
+    parent_child |>
     select(parent, child) %>%
     left_join(pc_meta %>%
                 rlang::set_names(nm =  ~ paste("parent", ., sep = "_")) %>%

@@ -1,6 +1,6 @@
 #' @title Tag Summary
 #'
-#' @description For each tag, summarises final spawning location as well as important pieces of biological information.
+#' @description For each tag, summarizes the final spawning location as well as important pieces of biological information.
 #'
 #' @author Kevin See
 #'

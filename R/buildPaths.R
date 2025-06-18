@@ -10,7 +10,6 @@
 #' @param direction the direction of movement. Parent-child tables are generally built imagining parents as downstream from children. Assuming that's the case, should the paths be upstream (`u` or `upstream`), the default, or downstream (`d` or `downstream`)?
 #'
 #' @import dplyr purrr
-#' @importFrom magrittr %<>%
 #' @export
 #' @return data frame containing a column,`end_loc`, showing the possible final locations,
 #' and a column, `path`, showing all the detection locations to pass on the way
@@ -46,7 +45,8 @@ buildPaths = function(parent_child = NULL,
              tibble(path = paste(listParents(x, parent_child), collapse = ' '))
            })
   # add the end location to each path
-  path_df %<>%
+  path_df <-
+    path_df |>
     mutate(path = paste(path, end_loc))
 
   if(direction == "d") {
