@@ -946,15 +946,15 @@ detections to a user-specified spatial scale.</p>
 <span></span>
 <span><span class="co"># number of unique sites in PTAGIS</span></span>
 <span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">config</span><span class="op">$</span><span class="va">site_code</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1930</span></span>
+<span><span class="co">#&gt; [1] 1953</span></span>
 <span></span>
 <span><span class="co"># number of unique nodes in PTAGIS</span></span>
 <span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">config</span><span class="op">$</span><span class="va">node</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 2201</span></span>
+<span><span class="co">#&gt; [1] 2224</span></span>
 <span></span>
 <span><span class="co"># the number of detection locations/antennas in PTAGIS</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">config</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 7681</span></span>
+<span><span class="co">#&gt; [1] 7736</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">config</span>, <span class="fl">9</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">site_description</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co"># remove site_description column for formatting</span></span>
@@ -2780,9 +2780,9 @@ these functions can be found <a href="https://kevinsee.github.io/PITcleanr/artic
 <code class="sourceCode R"><span><span class="co"># edit parent-child table</span></span>
 <span><span class="va">parent_child</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/editParentChild.html">editParentChild</a></span><span class="op">(</span><span class="va">parent_child</span>,</span>
-<span>                  fix_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"PES"</span>, <span class="st">"TUM"</span><span class="op">)</span>,</span>
-<span>                                  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"LNF"</span>, <span class="st">"ICL"</span><span class="op">)</span>,</span>
-<span>                                  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"PES"</span>, <span class="st">"ICL"</span>, <span class="st">"TUM"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                  fix_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"LNF"</span>, <span class="st">"ICL"</span><span class="op">)</span>,</span>
+<span>                                  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"ICL"</span>, <span class="st">"TUM"</span><span class="op">)</span>,</span>
+<span>                                  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="cn">NA</span>, <span class="st">"ICM"</span>, <span class="st">"ICL"</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                  switch_parent_child <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ICL"</span>, <span class="st">'TUM'</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">parent</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
@@ -2920,10 +2920,10 @@ TUM CHW_D CHW_U
 ICL_D
 </td>
 <td style="text-align:right;">
-1
+2
 </td>
 <td style="text-align:left;">
-ICL_D
+TUM ICL_D
 </td>
 </tr>
 <tr>
@@ -2931,10 +2931,32 @@ ICL_D
 ICL_U
 </td>
 <td style="text-align:right;">
-2
+3
 </td>
 <td style="text-align:left;">
-ICL_D ICL_U
+TUM ICL_D ICL_U
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ICM_D
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:left;">
+TUM ICL_D ICL_U ICM_D
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ICM_U
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:left;">
+TUM ICL_D ICL_U ICM_D ICM_U
 </td>
 </tr>
 <tr>
@@ -2942,10 +2964,10 @@ ICL_D ICL_U
 LNF_D
 </td>
 <td style="text-align:right;">
-3
+4
 </td>
 <td style="text-align:left;">
-ICL_D ICL_U LNF_D
+TUM ICL_D ICL_U LNF_D
 </td>
 </tr>
 <tr>
@@ -2953,10 +2975,10 @@ ICL_D ICL_U LNF_D
 LNF_U
 </td>
 <td style="text-align:right;">
-4
+5
 </td>
 <td style="text-align:left;">
-ICL_D ICL_U LNF_D LNF_U
+TUM ICL_D ICL_U LNF_D LNF_U
 </td>
 </tr>
 <tr>
@@ -3760,7 +3782,7 @@ algorithm.</p>
 <span></span>
 <span><span class="co"># view tags per node</span></span>
 <span><span class="va">node_tags</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 20 × 2</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 22 × 2</span></span></span>
 <span><span class="co">#&gt;    node  n_tags</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> CHL_D      1</span></span>
@@ -3771,18 +3793,9 @@ algorithm.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> CHW_U     29</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> ICL_D      6</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> ICL_U      4</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> LNF_D      7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> LNF_U      7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">11</span> LWN_D     17</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">12</span> LWN_U     14</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">13</span> NAL_D    126</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">14</span> NAL_U    104</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">15</span> NAU_D    132</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">16</span> NAU_U    130</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">17</span> TUM     <span style="text-decoration: underline;">1</span>406</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">18</span> UWE      361</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">19</span> WTL_D     20</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">20</span> WTL_U     27</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> ICM_D     12</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> ICM_U     12</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 12 more rows</span></span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="detection-efficiencies">Detection Efficiencies<a class="anchor" aria-label="anchor" href="#detection-efficiencies"></a>
@@ -3837,120 +3850,16 @@ eff_se
 <tbody>
 <tr>
 <td style="text-align:left;">
-ICL_D
-</td>
-<td style="text-align:right;">
-6
-</td>
-<td style="text-align:right;">
-11
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:right;">
-16
-</td>
-<td style="text-align:right;">
-2.8
-</td>
-<td style="text-align:right;">
-0.3750000
-</td>
-<td style="text-align:right;">
-0.0656250
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-ICL_U
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:right;">
-13
-</td>
-<td style="text-align:right;">
-4
-</td>
-<td style="text-align:right;">
-13
-</td>
-<td style="text-align:right;">
-0.0
-</td>
-<td style="text-align:right;">
-0.3076923
-</td>
-<td style="text-align:right;">
-0.0000000
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-LNF_D
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-0.0
-</td>
-<td style="text-align:right;">
-1.0000000
-</td>
-<td style="text-align:right;">
-0.0000000
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-LNF_U
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-7
-</td>
-<td style="text-align:right;">
-0.0
-</td>
-<td style="text-align:right;">
-1.0000000
-</td>
-<td style="text-align:right;">
-0.0000000
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
 TUM
 </td>
 <td style="text-align:right;">
 1406
 </td>
 <td style="text-align:right;">
-1022
+1039
 </td>
 <td style="text-align:right;">
-1022
+1039
 </td>
 <td style="text-align:right;">
 1406
@@ -4110,6 +4019,162 @@ CHW_U
 </td>
 <td style="text-align:right;">
 29
+</td>
+<td style="text-align:right;">
+0.0
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ICL_D
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+23
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+33
+</td>
+<td style="text-align:right;">
+6.5
+</td>
+<td style="text-align:right;">
+0.1818182
+</td>
+<td style="text-align:right;">
+0.0358127
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ICL_U
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+0.0
+</td>
+<td style="text-align:right;">
+0.1600000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ICM_D
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+0.3
+</td>
+<td style="text-align:right;">
+0.9230769
+</td>
+<td style="text-align:right;">
+0.0213018
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ICM_U
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+12
+</td>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+13
+</td>
+<td style="text-align:right;">
+0.3
+</td>
+<td style="text-align:right;">
+0.9230769
+</td>
+<td style="text-align:right;">
+0.0213018
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LNF_D
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+0.0
+</td>
+<td style="text-align:right;">
+1.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+LNF_U
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+7
 </td>
 <td style="text-align:right;">
 0.0
@@ -4382,18 +4447,18 @@ retain columns for individual nodes.</p>
 <span><span class="co"># view capture histories</span></span>
 <span><span class="va">cap_hist</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,406 × 2</span></span></span>
-<span><span class="co">#&gt;    tag_code       cap_hist            </span></span>
-<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>               </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 384.3B239AC47B 00001000000100010000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 3DD.003B9DD720 00001000000000000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 3DD.003B9DD725 00001000100000000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 3DD.003B9DDAB0 00001000000000000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3DD.003B9F123C 00001000000100000000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3DD.003BC7A654 00001000000100101100</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 3DD.003BC7F0E3 00001000000100101100</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3DD.003BC80A3C 00001000000100010000</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3DD.003BC80D81 00001000000100111100</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3DD.003BC80F20 00001000000000100000</span></span>
+<span><span class="co">#&gt;    tag_code       cap_hist              </span></span>
+<span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 </span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span> 384.3B239AC47B 1000000000000100010000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span> 3DD.003B9DD720 1000000000000000000000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span> 3DD.003B9DD725 1000100000000000000000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span> 3DD.003B9DDAB0 1000000000000000000000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span> 3DD.003B9F123C 1000000000000100000000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span> 3DD.003BC7A654 1000000000000100101100</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span> 3DD.003BC7F0E3 1000000000000100101100</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 3DD.003BC80A3C 1000000000000100010000</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 3DD.003BC80D81 1000000000000100111100</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 3DD.003BC80F20 1000000000000000100000</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,396 more rows</span></span></span></code></pre></div>
 <p>The <code><a href="../reference/defineCapHistCols.html">defineCapHistCols()</a></code> function can be used to identify
 the site or node associated with the position of each 1 and 0 in the
@@ -4405,9 +4470,9 @@ capture history matrix.</p>
 <span>                    use_rkm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">col_nodes</span></span>
-<span><span class="co">#&gt;  [1] "ICL_D" "TUM"   "ICL_U" "LNF_D" "LNF_U" "CHW_D" "CHW_U" "CHL_D" "CHL_U"</span></span>
-<span><span class="co">#&gt; [10] "CHU_D" "CHU_U" "UWE"   "NAL_D" "NAL_U" "NAU_D" "NAU_U" "WTL_D" "WTL_U"</span></span>
-<span><span class="co">#&gt; [19] "LWN_D" "LWN_U"</span></span></code></pre></div>
+<span><span class="co">#&gt;  [1] "TUM"   "ICL_D" "ICL_U" "LNF_D" "LNF_U" "ICM_D" "ICM_U" "CHW_D" "CHW_U"</span></span>
+<span><span class="co">#&gt; [10] "CHL_D" "CHL_U" "CHU_D" "CHU_U" "UWE"   "NAL_D" "NAL_U" "NAU_D" "NAU_U"</span></span>
+<span><span class="co">#&gt; [19] "WTL_D" "WTL_U" "LWN_D" "LWN_U"</span></span></code></pre></div>
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># clear environment, if desired</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span>list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ls.html" class="external-link">ls</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -5523,7 +5588,7 @@ questions or need assistance using the package.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
       </footer>
