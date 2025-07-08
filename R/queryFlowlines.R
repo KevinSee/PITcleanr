@@ -52,11 +52,35 @@ queryFlowlines = function(sites_sf = NULL,
 
     message("Removing some upstream areas")
 
-    upstrm_basin <-
-      nhdplusTools::get_nldi_basin(list(featureSource = "comid",
-                                        featureID = upstrm_comid)) |>
-      nngeo::st_remove_holes() |>
-      sf::st_transform(sf::st_crs(sites_sf))
+    upstrm_basin_list <- vector("list",
+                                length = length(max_upstream_comid))
+
+    for(i in seq_along(max_upstream_comid)) {
+      upstrm_basin_list[[i]] <-
+        nhdplusTools::get_nldi_basin(list(featureSource = "comid",
+                                          featureID = max_upstream_comid[i])) |>
+        nngeo::st_remove_holes() |>
+        sf::st_transform(sf::st_crs(sites_sf))
+    }
+
+    if(length(upstrm_basin_list) == 1) {
+
+      upstrm_basin <- upstrm_basin_list[[1]]
+
+    } else {
+
+      upstrm_basin <-
+        upstrm_basin_list |>
+        dplyr::bind_rows() |>
+        sf::st_union() |>
+        sf::st_transform(sf::st_crs(sites_sf))
+    }
+
+    # upstrm_basin <-
+    #   nhdplusTools::get_nldi_basin(list(featureSource = "comid",
+    #                                     featureID = max_upstream_comid)) |>
+    #   nngeo::st_remove_holes() |>
+    #   sf::st_transform(sf::st_crs(sites_sf))
 
     new_basin <-
       sf::st_difference(basin,
