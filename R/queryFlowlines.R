@@ -43,7 +43,7 @@ queryFlowlines = function(sites_sf = NULL,
   # query flowlines from NHDPlus layer
   message(paste("Querying streams upstream of", root_site_code, "\n"))
 
-  basin <-
+  full_basin <-
     nhdplusTools::get_nldi_basin(start_pt) |>
     nngeo::st_remove_holes() |>
     sf::st_transform(sf::st_crs(sites_sf))
@@ -82,14 +82,13 @@ queryFlowlines = function(sites_sf = NULL,
     #   nngeo::st_remove_holes() |>
     #   sf::st_transform(sf::st_crs(sites_sf))
 
-    new_basin <-
-      sf::st_difference(basin,
+    basin <-
+      sf::st_difference(full_basin,
                         upstrm_basin |>
                           st_buffer(1000))
-    basin <-
-      new_basin
 
-    rm(new_basin)
+  } else {
+    basin <- full_basin
   }
 
   flowlines <-
@@ -115,7 +114,7 @@ queryFlowlines = function(sites_sf = NULL,
     sites_sf |>
     dplyr::mutate(dwnstrm = purrr::map_lgl(geometry,
                                            .f = function(x) {
-                                             !sf::st_covers(basin,
+                                             !sf::st_covers(full_basin,
                                                             x,
                                                             sparse = F)
                                            })) |>
