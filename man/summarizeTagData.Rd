@@ -22,7 +22,7 @@ summarizeTagData(
 \item{save_csv}{should the resulting dataframe be saved as a csv file? Default value is `FALSE`.}
 }
 \description{
-For each tag, summarises final spawning location as well as important pieces of biological information.
+For each tag, summarizes the final spawning location as well as important pieces of biological information.
 }
 \examples{
 summarizeTagData()
