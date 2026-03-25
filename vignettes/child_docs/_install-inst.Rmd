@@ -4,19 +4,19 @@ output:
   html_document: default
 ---
 
-The `PITcleanr` package can be installed as an R package from GitHub by using Hadley Wickham's `devtools` package:
+The `PITcleanr` package can be installed as an R package from GitHub by using Hadley Wickham's `remotes` package:
 
 ```{r gh-installation, eval = FALSE}
 # install and load remotes, if necessary
-install.packages("devtools")
+install.packages("remotes")
 remotes::install_github("KevinSee/PITcleanr", 
                          build_vignettes = TRUE)
 ```
 
-`devtools` may require a working development environment. Further details around the installation of `devtools` can be found [here](https://www.r-project.org/nosvn/pandoc/devtools.html).
+`remotes` may require a working development environment. Further details around the installation of `remotes` can be found [here](https://cran.r-project.org/package=remotes).
 
 * For Windows, that will involve the downloading and installation of Rtools. The latest version of Rtools can be found [here](https://cran.r-project.org/bin/windows/Rtools/). 
-* For Mac OS, that may involve installing Xcode from teh Mac App Store.
+* For Mac OS, that may involve installing Xcode from the Mac App Store.
 * For Linux, that may involve installing a compiler and various development libraries, depending on the specific version of Linux.
 
 To install the latest development version of `PITcleanr`:
