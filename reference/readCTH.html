@@ -112,9 +112,26 @@ Event Release Site Code, and Event Release Date Time.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"TUM_Chinook_2015.csv"</span>, package <span class="op">=</span> <span class="st">"PITcleanr"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">ptagis_file</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"TUM_chnk_cth_2018.csv"</span>, package <span class="op">=</span> <span class="st">"PITcleanr"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">readCTH</span><span class="op">(</span><span class="va">ptagis_file</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> '' does not exist in current working directory ('/home/runner/work/PITcleanr/PITcleanr/docs/reference').</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 13,501 × 12</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    tag_code       event_site_code_value event_date_time_value antenna_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                 <span style="color: #949494; font-style: italic;">&lt;dttm&gt;</span>                <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> 384.3B239AC47B NASONC                2016-03-01 <span style="color: #949494;">10:34:00</span>   <span style="color: #BB0000;">NA</span>        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> 384.3B239AC47B NAL                   2018-07-01 <span style="color: #949494;">00:06:16</span>   63        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> 384.3B239AC47B UWE                   2018-06-23 <span style="color: #949494;">22:03:13</span>   B2        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> 384.3B239AC47B BO3                   2018-05-18 <span style="color: #949494;">09:36:59</span>   18        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> 384.3B239AC47B BO3                   2018-05-18 <span style="color: #949494;">09:37:11</span>   16        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> 384.3B239AC47B BO3                   2018-05-18 <span style="color: #949494;">09:37:12</span>   16        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> 384.3B239AC47B BO3                   2018-05-18 <span style="color: #949494;">09:42:16</span>   14        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> 384.3B239AC47B BO3                   2018-05-18 <span style="color: #949494;">09:44:03</span>   12        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> 384.3B239AC47B BO3                   2018-05-18 <span style="color: #949494;">11:38:57</span>   22        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> 384.3B239AC47B BO3                   2018-05-18 <span style="color: #949494;">11:38:57</span>   24        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 13,491 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 8 more variables: antenna_group_configuration_value &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   mark_species_name &lt;chr&gt;, mark_rear_type_name &lt;chr&gt;, event_type_name &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   event_site_type_description &lt;chr&gt;, event_release_site_code_code &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   event_release_date_time_value &lt;dttm&gt;, cth_count &lt;dbl&gt;</span></span>
 </code></pre></div>
     </div>
   </div>
@@ -129,7 +146,7 @@ Event Release Site Code, and Event Release Date Time.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>

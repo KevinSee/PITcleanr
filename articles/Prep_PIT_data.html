@@ -95,7 +95,7 @@
 Tag Detection Data</h1>
                         <h4 data-toc-skip class="author">Kevin See</h4>
             
-            <h4 data-toc-skip class="date">18 June, 2025</h4>
+            <h4 data-toc-skip class="date">25 March, 2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/KevinSee/PITcleanr/blob/main/vignettes/Prep_PIT_data.Rmd" class="external-link"><code>vignettes/Prep_PIT_data.Rmd</code></a></small>
       <div class="hidden name"><code>Prep_PIT_data.Rmd</code></div>
@@ -133,19 +133,19 @@ closely, and which detections can be kept.</p>
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>The <code>PITcleanr</code> package can be installed as an R package
-from GitHub by using Hadley Wickham’s <code>devtools</code> package:</p>
+from GitHub by using Hadley Wickham’s <code>remotes</code> package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install and load remotes, if necessary</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"remotes"</span><span class="op">)</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"KevinSee/PITcleanr"</span>, </span>
 <span>                         build_vignettes <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><code>devtools</code> may require a working development environment.
-Further details around the installation of <code>devtools</code> can be
-found <a href="https://www.r-project.org/nosvn/pandoc/devtools.html" class="external-link">here</a>.</p>
+<p><code>remotes</code> may require a working development environment.
+Further details around the installation of <code>remotes</code> can be
+found <a href="https://cran.r-project.org/package=remotes" class="external-link">here</a>.</p>
 <ul>
 <li>For Windows, that will involve the downloading and installation of
 Rtools. The latest version of Rtools can be found <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">here</a>.</li>
-<li>For Mac OS, that may involve installing Xcode from teh Mac App
+<li>For Mac OS, that may involve installing Xcode from the Mac App
 Store.</li>
 <li>For Linux, that may involve installing a compiler and various
 development libraries, depending on the specific version of Linux.</li>
@@ -2156,7 +2156,7 @@ constructing parent-child tables, please see the <a href="parent_child.html">par
 <code><a href="../reference/plotNodes.html">plotNodes()</a></code> function.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Prep_PIT_data_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<p><img src="Prep_PIT_data_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" alt="" width="700"></p>
 <p>The initial parent-child table only contains entire sites. However,
 in our configuration file we have defined the nodes to be distinct
 arrays (e.g. rows of antennas), and most sites in this example contain
@@ -2174,7 +2174,7 @@ files</a> vignette.</p>
 <span>                                          configuration <span class="op">=</span> <span class="va">configuration</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child_nodes</span><span class="op">)</span></span></code></pre></div>
-<p><img src="Prep_PIT_data_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
+<p><img src="Prep_PIT_data_files/figure-html/unnamed-chunk-9-1.png" class="r-plt" alt="" width="700"></p>
 <div class="section level3">
 <h3 id="movement-paths-node-order">Movement Paths &amp; Node Order<a class="anchor" aria-label="anchor" href="#movement-paths-node-order"></a>
 </h3>
@@ -2785,7 +2785,7 @@ within <code><a href="../reference/buildCapHist.html">buildCapHist()</a></code>)
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>

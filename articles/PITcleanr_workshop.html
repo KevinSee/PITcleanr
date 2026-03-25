@@ -88,14 +88,14 @@
 
 
       </header><script src="PITcleanr_workshop_files/kePrint-0.0.1/kePrint.js"></script><link href="PITcleanr_workshop_files/lightable-0.0.1/lightable.css" rel="stylesheet">
-<link href="PITcleanr_workshop_files/htmltools-fill-0.5.8.1/fill.css" rel="stylesheet">
+<link href="PITcleanr_workshop_files/htmltools-fill-0.5.9/fill.css" rel="stylesheet">
 <script src="PITcleanr_workshop_files/htmlwidgets-1.6.4/htmlwidgets.js"></script><link href="PITcleanr_workshop_files/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet">
-<script src="PITcleanr_workshop_files/datatables-binding-0.33/datatables.js"></script><link href="PITcleanr_workshop_files/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
+<script src="PITcleanr_workshop_files/datatables-binding-0.34.0/datatables.js"></script><link href="PITcleanr_workshop_files/dt-core-1.13.6/css/jquery.dataTables.min.css" rel="stylesheet">
 <link href="PITcleanr_workshop_files/dt-core-1.13.6/css/jquery.dataTables.extra.css" rel="stylesheet">
 <script src="PITcleanr_workshop_files/dt-core-1.13.6/js/jquery.dataTables.min.js"></script><link href="PITcleanr_workshop_files/nouislider-7.0.10/jquery.nouislider.min.css" rel="stylesheet">
 <script src="PITcleanr_workshop_files/nouislider-7.0.10/jquery.nouislider.min.js"></script><link href="PITcleanr_workshop_files/selectize-0.12.0/selectize.bootstrap3.css" rel="stylesheet">
-<script src="PITcleanr_workshop_files/selectize-0.12.0/selectize.min.js"></script><link href="PITcleanr_workshop_files/crosstalk-1.2.1/css/crosstalk.min.css" rel="stylesheet">
-<script src="PITcleanr_workshop_files/crosstalk-1.2.1/js/crosstalk.min.js"></script><div class="row">
+<script src="PITcleanr_workshop_files/selectize-0.12.0/selectize.min.js"></script><link href="PITcleanr_workshop_files/crosstalk-1.2.2/css/crosstalk.min.css" rel="stylesheet">
+<script src="PITcleanr_workshop_files/crosstalk-1.2.2/js/crosstalk.min.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>PITcleanr Workshop</h1>
@@ -204,7 +204,7 @@ functions.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">operationsOrganizationCode</span>, y <span class="op">=</span> <span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/count-iptds-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/count-iptds-1.png" class="r-plt" alt="" width="672"></p>
 <p>Or, we can use the <code>int_meta</code> object to map our
 interrogation sites using the <code>sf</code> package. State polygons
 are available from the <code>maps</code> package.</p>
@@ -231,7 +231,7 @@ are available from the <code>maps</code> package.</p>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">pnw</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggsf.html" class="external-link">geom_sf</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">int_sf</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>color <span class="op">=</span> <span class="va">active</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/int-map-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/int-map-1.png" class="r-plt" alt="" width="672"></p>
 <p><code>PITcleanr</code> also includes the
 <code><a href="../reference/queryInterrogationConfig.html">queryInterrogationConfig()</a></code> function to query and download
 configuration metadata for PTAGIS interrogation sites. The configuration
@@ -946,15 +946,15 @@ detections to a user-specified spatial scale.</p>
 <span></span>
 <span><span class="co"># number of unique sites in PTAGIS</span></span>
 <span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">config</span><span class="op">$</span><span class="va">site_code</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1953</span></span>
+<span><span class="co">#&gt; [1] 2000</span></span>
 <span></span>
 <span><span class="co"># number of unique nodes in PTAGIS</span></span>
 <span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">config</span><span class="op">$</span><span class="va">node</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 2224</span></span>
+<span><span class="co">#&gt; [1] 2283</span></span>
 <span></span>
 <span><span class="co"># the number of detection locations/antennas in PTAGIS</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">config</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 7736</span></span>
+<span><span class="co">#&gt; [1] 7906</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">config</span>, <span class="fl">9</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">site_description</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="co"># remove site_description column for formatting</span></span>
@@ -2479,7 +2479,7 @@ corrected version of the MRR file is returned.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="va">mrr_data</span><span class="op">$</span><span class="va">release_site</span><span class="op">)</span>, <span class="st">' : '</span>, <span class="va">mrr_file</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/MRR-single-file-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/MRR-single-file-1.png" class="r-plt" alt="" width="672"></p>
 <p>If more than one mark file is desired the user could iterate over
 <code><a href="../reference/queryMRRDataFile.html">queryMRRDataFile()</a></code> using <code><a href="https://purrr.tidyverse.org/reference/map_dfr.html" class="external-link">purrr::map_df()</a></code> to
 query multiple files and combine them into a single data frame or
@@ -2653,7 +2653,7 @@ ways, including the number of unique tags at each node.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="va">node</span>,<span class="va">n</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html" class="external-link">geom_col</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/distinct-tags-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/distinct-tags-1.png" class="r-plt" alt="" width="672"></p>
 <p>Compressing individual antenna detections to a more useful spatial
 scale and a more manageable size and format is a useful initial step.
 Further, summaries of compressed detections can answer some questions.
@@ -2752,7 +2752,7 @@ network.</p>
 <span>    min.segment.length <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>    max.overlaps <span class="op">=</span> <span class="fl">50</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/map-sites-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/map-sites-1.png" class="r-plt" alt="" width="672"></p>
 <p>These same objects can also be used to construct the parent-child
 table using <code><a href="../reference/buildParentChild.html">buildParentChild()</a></code>. The parent-child table is
 necessary to understand whether fish movements are upstream or
@@ -2770,7 +2770,7 @@ relationship of nodes to each other can be easily plotted with the
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot parent-child table</span></span>
 <span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/plot-parent-child-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/plot-parent-child-1.png" class="r-plt" alt="" width="672"></p>
 <p>Sometimes errors occur in the parent-child table (e.g., due to errors
 in lat/lon data, points being “snapped” poorly to flowlines). In this
 case, the parent-child table can be edited using the
@@ -2788,7 +2788,7 @@ these functions can be found <a href="https://kevinsee.github.io/PITcleanr/artic
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot new parent-child table</span></span>
 <span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/plot-pc-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/plot-pc-1.png" class="r-plt" alt="" width="672"></p>
 <div class="section level4">
 <h4 id="add-nodes-arrays">Add Nodes (Arrays)<a class="anchor" aria-label="anchor" href="#add-nodes-arrays"></a>
 </h4>
@@ -2804,7 +2804,7 @@ be expanded to accommodate these nodes using the
 <span></span>
 <span><span class="co"># plot parent-child w/ nodes</span></span>
 <span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child_nodes</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/add-nodes-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/add-nodes-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 </div>
 <div class="section level3">
@@ -4516,7 +4516,7 @@ so.</p>
 <code class="sourceCode R"><span><span class="va">configuration</span> <span class="op">&lt;-</span></span>
 <span>  <span class="fu"><a href="../reference/buildConfig.html">buildConfig</a></span><span class="op">(</span>node_assign <span class="op">=</span> <span class="st">"site"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/across.html" class="external-link">across</a></span><span class="op">(</span><span class="va">node</span>,</span>
-<span>                <span class="op">~</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu">str_sub</span><span class="op">(</span><span class="va">rkm</span>, <span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">234</span> <span class="op">~</span> <span class="st">"B2J"</span>,</span>
+<span>                <span class="op">~</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case-and-replace-when.html" class="external-link">case_when</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu">str_sub</span><span class="op">(</span><span class="va">rkm</span>, <span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;=</span> <span class="fl">234</span> <span class="op">~</span> <span class="st">"B2J"</span>,</span>
 <span>                            <span class="va">site_code</span> <span class="op">==</span> <span class="st">"GRS"</span> <span class="op">~</span> <span class="st">"GRJ"</span>,</span>
 <span>                            .default <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">node</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -4636,7 +4636,7 @@ from USGS, using the <code><a href="../reference/queryFlowlines.html">queryFlowl
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_blank</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>        legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/map-lemhi-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/map-lemhi-1.png" class="r-plt" alt="" width="672"></p>
 <p><code>PITcleanr</code> can make use of some of the covariates
 associated with each reach in the NHDPlus_v2 layer to determine which
 sites are downstream or upstream of one another. This is how we
@@ -4669,7 +4669,7 @@ renaming.</p>
 <span>         <span class="va">child</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotNodes.html">plotNodes</a></span><span class="op">(</span><span class="va">parent_child</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/lemhi-node-plot-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/lemhi-node-plot-1.png" class="r-plt" alt="" width="672"></p>
 </div>
 <div class="section level3">
 <h3 id="filter-strange-capture-histories">Filter Strange Capture Histories<a class="anchor" aria-label="anchor" href="#filter-strange-capture-histories"></a>
@@ -4950,7 +4950,7 @@ estimates in a table.</p>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html" class="external-link">geom_errorbar</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">lcl</span>, ymax <span class="op">=</span> <span class="va">ucl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Location"</span>,</span>
 <span>       y <span class="op">=</span> <span class="st">"Survival"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/plot-surv-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/plot-surv-1.png" class="r-plt" alt="" width="672"></p>
 <div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># examine the estimates</span></span>
@@ -5249,7 +5249,7 @@ JDJ_B2J
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_linerange.html" class="external-link">geom_errorbar</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>ymin <span class="op">=</span> <span class="va">lcl</span>, ymax <span class="op">=</span> <span class="va">ucl</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Location"</span>,</span>
 <span>       y <span class="op">=</span> <span class="st">"Detection"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="PITcleanr_workshop_files/figure-html/plot-p-1.png" width="672"></p>
+<p><img src="PITcleanr_workshop_files/figure-html/plot-p-1.png" class="r-plt" alt="" width="672"></p>
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># Detection</span></span>
@@ -5588,7 +5588,7 @@ questions or need assistance using the package.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer>
