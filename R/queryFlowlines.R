@@ -43,7 +43,7 @@ queryFlowlines = function(sites_sf = NULL,
   # query flowlines from NHDPlus layer
   message(paste("Querying streams upstream of", root_site_code, "\n"))
 
-  basin <-
+  full_basin <-
     nhdplusTools::get_nldi_basin(start_pt) |>
     nngeo::st_remove_holes() |>
     sf::st_transform(sf::st_crs(sites_sf))
@@ -52,20 +52,43 @@ queryFlowlines = function(sites_sf = NULL,
 
     message("Removing some upstream areas")
 
-    upstrm_basin <-
-      nhdplusTools::get_nldi_basin(list(featureSource = "comid",
-                                        featureID = upstrm_comid)) |>
-      nngeo::st_remove_holes() |>
-      sf::st_transform(sf::st_crs(sites_sf))
+    upstrm_basin_list <- vector("list",
+                                length = length(max_upstream_comid))
 
-    new_basin <-
-      sf::st_difference(basin,
+    for(i in seq_along(max_upstream_comid)) {
+      upstrm_basin_list[[i]] <-
+        nhdplusTools::get_nldi_basin(list(featureSource = "comid",
+                                          featureID = max_upstream_comid[i])) |>
+        nngeo::st_remove_holes() |>
+        sf::st_transform(sf::st_crs(sites_sf))
+    }
+
+    if(length(upstrm_basin_list) == 1) {
+
+      upstrm_basin <- upstrm_basin_list[[1]]
+
+    } else {
+
+      upstrm_basin <-
+        upstrm_basin_list |>
+        dplyr::bind_rows() |>
+        sf::st_union() |>
+        sf::st_transform(sf::st_crs(sites_sf))
+    }
+
+    # upstrm_basin <-
+    #   nhdplusTools::get_nldi_basin(list(featureSource = "comid",
+    #                                     featureID = max_upstream_comid)) |>
+    #   nngeo::st_remove_holes() |>
+    #   sf::st_transform(sf::st_crs(sites_sf))
+
+    basin <-
+      sf::st_difference(full_basin,
                         upstrm_basin |>
                           st_buffer(1000))
-    basin <-
-      new_basin
 
-    rm(new_basin)
+  } else {
+    basin <- full_basin
   }
 
   flowlines <-
@@ -91,7 +114,7 @@ queryFlowlines = function(sites_sf = NULL,
     sites_sf |>
     dplyr::mutate(dwnstrm = purrr::map_lgl(geometry,
                                            .f = function(x) {
-                                             !sf::st_covers(basin,
+                                             !sf::st_covers(full_basin,
                                                             x,
                                                             sparse = F)
                                            })) |>

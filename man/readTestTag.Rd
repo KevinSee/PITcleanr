@@ -35,7 +35,7 @@ The function reads in complete tag histories and filters out any tag not designa
 test tag by the tag code prefix.
 }
 \examples{
-ptagis_file = system.file("extdata", "PRO_Steelhead_2019.csv", package = "PITcleanr")
+ptagis_file = system.file("extdata", "PRO_sthd_cth_2012.csv", package = "PITcleanr")
 readTestTag(ptagis_file)
 }
 \author{
