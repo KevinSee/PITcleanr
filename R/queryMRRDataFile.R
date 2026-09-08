@@ -72,7 +72,7 @@ queryMRRDataFile = function(file_nm = NULL,
     }
 
     # fix any date fields
-    if(sum(str_detect(names(tag_data), "date")) > 0) {
+    if(sum(stringr::str_detect(names(tag_data), "date")) > 0) {
       tag_data <-
         tag_data |>
         dplyr::mutate(
