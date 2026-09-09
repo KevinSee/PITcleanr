@@ -81,11 +81,32 @@ queryFlowlines = function(sites_sf = NULL,
     sf::st_transform(set_crs)
 
   # entire basin upstream of most downstream site
-  full_basin <-
-    hydrogeofetch::get_nldi_basin(list(featureSource = "comid",
-                                       featureID = start_comid$comid)) |>
-    nngeo::st_remove_holes() |>
-    sf::st_transform(set_crs)
+  if(start_comid$site_code != root_site_code) {
+    full_basin <-
+      hydrogeofetch::get_nldi_basin(list(featureSource = "comid",
+                                         featureID = start_comid$comid)) |>
+      nngeo::st_remove_holes() |>
+      sf::st_transform(set_crs)
+  } else {
+    full_basin <- root_basin
+  }
+
+  # full_basin <-
+  #   sites_comid |>
+  #   st_drop_geometry() |>
+  #   select(site_code,
+  #          comid) |>
+  #   mutate(basin = map(comid,
+  #                      .f = function(x) {
+  #                        hydrogeofetch::get_nldi_basin(list(featureSource = "comid",
+  #                                                           featureID = x))
+  #                      })) |>
+  #   pull(basin) |>
+  #   dplyr::bind_rows() |>
+  #   sf::st_union() |>
+  #   nngeo::st_remove_holes() |>
+  #   sf::st_transform(set_crs)
+
 
   # cutout basins upstream of max_upstream_comid
   if(!is.null(max_upstream_comid)) {
@@ -185,6 +206,8 @@ queryFlowlines = function(sites_sf = NULL,
              dist_km = rkm_total_max - rkm_total_min) |>
       pull(dist_km)
 
+    if(max_dist < 10) max_dist <- 10
+
     dwn_flow_comid <-
       dwnstrm_sites_comid |>
       st_drop_geometry() |>
@@ -203,15 +226,6 @@ queryFlowlines = function(sites_sf = NULL,
       dplyr::pull(nhdplus_comid) |>
       unique()
 
-    # drop flowlines downstream of lowest point
-    drop_flow <-
-      hydrogeofetch::navigate_nldi(list(featureSource = "comid",
-                                        featureID = start_comid$comid),
-                                   mode = "DM",
-                                   distance_km = max_dist)$DM_flowlines |>
-      filter_out(nhdplus_comid == start_comid$comid) |>
-      st_drop_geometry()
-
     dwn_flow <-
       hydrogeofetch::get_nhdplus(comid = dwn_flow_comid,
                                  realization = "flowline") |>
@@ -222,11 +236,28 @@ queryFlowlines = function(sites_sf = NULL,
             rareahload,
             hwnodesqkm),
           ~ as.numeric(.))) |>
-      sf::st_transform(set_crs) |>
-      # hydroloom::hy() |>
-      # hydroloom::add_toids() |>
-      filter_out(comid %in% drop_flow$nhdplus_comid) #|>
+      sf::st_transform(set_crs) #|>
+    # hydroloom::hy() |>
+    # hydroloom::add_toids() |>
     # sf::st_set_geometry("geometry")
+
+    # drop flowlines downstream of lowest point
+    if(start_comid$site_code != root_site_code) {
+      drop_flow <-
+        hydrogeofetch::navigate_nldi(list(featureSource = "comid",
+                                          featureID = start_comid$comid),
+                                     mode = "DM",
+                                     distance_km = max_dist)$DM_flowlines |>
+        filter_out(nhdplus_comid == start_comid$comid) |>
+        st_drop_geometry()
+
+      if(nrow(drop_flow) > 0) {
+        dwn_flow <-
+          dwn_flow |>
+          filter_out(comid %in% drop_flow$nhdplus_comid)
+      }
+
+    }
 
     flowlines <-
       up_flow |>
