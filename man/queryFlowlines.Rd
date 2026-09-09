@@ -9,7 +9,7 @@ queryFlowlines(
   root_site_code = NULL,
   min_strm_order = 0,
   max_upstream_comid = NULL,
-  combine_up_down = TRUE
+  set_crs = NULL
 )
 }
 \arguments{
@@ -19,12 +19,12 @@ queryFlowlines(
 
 \item{min_strm_order}{minimum stream order to query flowlines for. Default value is `0`.}
 
-\item{max_upstream_comid}{if provided, this function will filter out any flowlines upstream of this unique identifier (COMID) in the NHDPlus stream network. Default value is `NULL`. For assistance identifying a COMID, please see the `nhdplusTools` package, specifically the `discover_nhdplus_id()` function.}
+\item{max_upstream_comid}{if provided, this function will filter out any flowlines upstream of this unique identifier (COMID) in the NHDPlus stream network. Default value is `NULL`. For assistance identifying a COMID, please see the `hydrogeofetch` package, specifically the `discover_nhdplus_id()` function.}
 
-\item{combine_up_down}{Should the flowlines upstream and downstream of the starting point (`root_site_code`) be combined into a single object, or be returned as separate elements? The default value is `TRUE`}
+\item{set_crs}{What CRS should be used? Default will read the CRS from the `sites_sf` object.}
 }
 \value{
-list with at least two elements: `flowlines` is the `sf` object of flowlines downloaded from NHDPlus. `basin` is the polygon representing the catchment upstream of the root site. If `combine_up_down` is `FALSE`, there is a third element in the list, called `dwn_flowlines`, containing an `sf` object of flowlines downstream of the root site.
+list with at least two elements: `flowlines` is the `sf` object of flowlines downloaded from NHDPlus. `basin` is the polygon representing the catchment upstream of the root site.
 }
 \description{
 Download a subset of the NHDPlus v2.1 flowlines that covers a list of detection sites.
