@@ -110,10 +110,11 @@ estNodeEff = function(capHist_proc = NULL,
                                     .f = function(x) {
                                       x %>%
                                       mutate(across(N,
-                                                    round)) %>%
+                                                    ~ round(.,
+                                                            digits = 0))) %>%
                                       mutate(across(SE,
-                                                    round,
-                                                    digits = 1))
+                                                    ~ round(.,
+                                                            digits = 1)))
                                       })
 
                     n_hat = tag_est %>%
